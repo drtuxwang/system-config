@@ -21,7 +21,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '6.1.0'
+RELEASE = '6.1.1'
 
 
 class Options:
@@ -317,10 +317,11 @@ class ChineseDictionary:
         self._isjunk = re.compile('[()| ]')
         self._issound = re.compile(r'[A-Z]$|[a-z]+\d+')
 
-        if options.get_dialect() == 'zhy':
-            path = Path(options.get_speak_dir(), 'zhy.json')
-        else:
-            path = Path(options.get_speak_dir(), 'zh.json')
+        path = (
+            Path(options.get_speak_dir(), 'zhy.json')
+            if options.get_dialect() == 'zhy'
+            else Path(options.get_speak_dir(), 'zh.json')
+        )
         if not path.is_file():
             self.create_cache()
 
@@ -603,10 +604,7 @@ class Avplay(Ffplay):
     """
 
     def _config(self) -> None:
-        self._player: command_mod.Command = command_mod.Command(
-            'ffplay',
-            errors='ignore',
-        )
+        self._player = command_mod.Command('ffplay', errors='ignore')
         self._player.set_args(['-nodisp', '-autoexit', '-i'])
 
 

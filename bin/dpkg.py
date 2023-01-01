@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command (removes wrapper directory from PATH)
+Wrapper for "dpkg" command (force system Python)
 """
 
 import glob

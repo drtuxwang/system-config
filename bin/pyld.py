@@ -177,15 +177,15 @@ class Options:
 
         self._verbose_flag = self._args.verbosity >= 1
         self._dump_flag = self._args.verbosity >= 2
-        if self._args.name:
-            self._module_name = self._args.name[0]
-        else:
-            self._module_name = self._args.module[0]
+        self._module_name = (
+            self._args.name[0] if self._args.name else self._args.module[0]
+        )
         self._module_args = mod_args[1:]
-        if self._args.libpath:
-            self._library_path = self._args.libpath[0].split(os.pathsep)
-        else:
-            self._library_path = []
+        self._library_path = (
+            self._args.libpath[0].split(os.pathsep)
+            if self._args.libpath
+            else []
+        )
 
 
 class ArgparseVerboseAction(  # pylint: disable=too-few-public-methods

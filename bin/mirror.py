@@ -208,16 +208,18 @@ class Main:
 
     def _mirror_link(self, source_path: Path, target_path: Path) -> None:
         source_link = source_path.readlink()
-        if target_path.exists():
-            if target_path.is_symlink():
-                target_link = target_path.readlink()
-                if target_link == source_link:
-                    return
+
+        if target_path.is_symlink():
+            target_link = target_path.readlink()
+            if target_link == source_link:
+                return
+            target_path.unlink()
             logger.info(
                 '[%s] Updating "%s" link.',
                 self._get_stats(),
                 target_path,
             )
+        elif target_path.exists():
             try:
                 if target_path.is_dir() and not target_path.is_symlink():
                     shutil.rmtree(target_path)
@@ -310,8 +312,8 @@ class Main:
 
     @staticmethod
     def _mirror_directory_time(source_path: Path, target_path: Path) -> None:
-        source_time = Path(source_path).stat().st_mtime
-        target_time = Path(target_path).stat().st_mtime
+        source_time = int(Path(source_path).stat().st_mtime)
+        target_time = int(Path(target_path).stat().st_mtime)
         if source_time != target_time:
             try:
                 os.utime(target_path, (source_time, source_time))

@@ -101,10 +101,9 @@ class Options:
                 "X-axis column number.",
             )
 
-        if self._args.xrange:
-            self._xrange = f'[{self._args.xrange[0]}] '
-        else:
-            self._xrange = ''
+        self._xrange = (
+            f'[{self._args.xrange[0]}] ' if self._args.xrange else ''
+        )
 
 
 class Main:

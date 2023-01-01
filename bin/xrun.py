@@ -78,10 +78,11 @@ class Options:
             md5 = hashlib.md5()
             md5.update(url.encode())
             directory = Path(url[:-1]).name
-            if 'jpg' in directory:
-                output = f'index-{md5.hexdigest()[:9]}.jpg'
-            else:
-                output = f'index-{md5.hexdigest()[:9]}.html'
+            output = (
+                f'index-{md5.hexdigest()[:9]}.jpg'
+                if 'jpg' in directory
+                else f'index-{md5.hexdigest()[:9]}.html'
+            )
         return output
 
     @classmethod
@@ -95,6 +96,8 @@ class Options:
                 nargs.extend(['pget', arg, ';'])
             elif 'www.youtube.com/watch?' in arg:
                 nargs.extend(['vget', arg, ';'])
+            elif 'azvprv.com/' in arg:
+                nargs.extend(['vlcget', arg, ';'])
             else:
                 output = cls._get_output(arg)
                 if not Path(output).is_file():
@@ -112,6 +115,8 @@ class Options:
             nargs = ['mget', '-O', output, url, ';', 'sleep', SLEEP]
         elif 'www.youtube.com/watch?' in url:
             nargs = ['vget', '-O', output, url, ';', 'sleep', SLEEP]
+        elif 'azvprv.com/' in url:
+            nargs = ['vlcget', '-O', output, url, ';', 'sleep', SLEEP]
         else:
             nargs = ['wget', '-O', output, url, ';', 'sleep', SLEEP]
         return nargs

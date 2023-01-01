@@ -34,6 +34,12 @@ class Options:
         )
 
         parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help="Show contents of archive (default).",
+        )
+        parser.add_argument(
             'files',
             nargs='+',
             metavar='file.sqlite',

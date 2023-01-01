@@ -196,7 +196,7 @@ the years.
  * bin/dockerreg.py
  * bin/docker-sandbox       Starts Docker sandbox environment
  * bin/docker-sudo          Starts Docker sudo app
- * bin/dpkg                 dpkg wrapper (force system Python)
+ * bin/dpkg                 Wrapper for "dpkg" command (force system Python)
  * bin/dpkg.py
  * bin/eclipse              Wrapper for 'eclipse' command
  * bin/eclipse.py
@@ -450,6 +450,8 @@ the years.
  * bin/kubectl.bat
  * bin/kubectl.py
  * bin/kubeseal             Wrapper for "kubeseal" command
+ * bin/lsblk                Wrapper for "lsblk" command (sensible defaults)
+ * bin/lsblk.py
  * bin/markdown             Markdown wrapper (for markdown_py)
  * bin/markdown.bat
  * bin/md5                  Calculate MD5 checksums of files
@@ -694,6 +696,8 @@ the years.
  * bin/ungpg.py
  * bin/ungz                 Uncompress a file in GZIP format
  * bin/ungz.py
+ * bin/uninitrd             Unpack a compressed archive in INITRAMFS format
+ * bin/uninitrd.py
  * bin/uniso                Unpack a portable CD/DVD archive in ISO9660 format
  * bin/uniso.py
  * bin/unjar                Unpack a compressed JAVA archive in JAR format
@@ -707,6 +711,8 @@ the years.
  * bin/unrar.py
  * bin/unrpm                Unpack a compressed archive in RPM format
  * bin/unrpm.py
+ * bin/unsquashfs           Unpack a compressed archive in SQUASHFS format
+ * bin/unsquashfs.py
  * bin/unsqlite             Unpack a sqlite database file
  * bin/unsqlite.py
  * bin/unt7z                Unpack a compressed archive in TAR.7Z format
@@ -743,7 +749,7 @@ the years.
  * bin/ut.py
  * bin/vbox                 VirtualBox virtual machine manager
  * bin/vbox.py              (uses VBoxManage)
- * bin/vget                 Streaming video downloader (Youtube, m3u8 and compatible websites)
+ * bin/vget                 Streaming video downloader using yt-dlp
  * bin/vget.py
  * bin/vi                   Wrapper for "vim" command
  * bin/vim
@@ -755,6 +761,8 @@ the years.
  * bin/vlc                  Sandbox for "vlc" launcher
  * bin/vlc.bat
  * bin/vlc.py
+ * bin/vlcget               Streaming video downloader using VLC
+ * bin/vlcget.py
  * bin/vmware               VMware Player launcher
  * bin/vmware.py
  * bin/vncpasswd            Wrapper for "vncpasswd command
@@ -842,7 +850,7 @@ the years.
  * bin/zst                  Compress a file in ZST format.
  * bin/zst.py
  * bin/zstd                 Wrapper for "zstd" command
- * bin/zstd.py
+ * bin/zstd_.py
  * bin/cdinst.bat           Windows command prompt batch file or changing directory
  * bin/cdsrc.bat
  * bin/cdtest.bat

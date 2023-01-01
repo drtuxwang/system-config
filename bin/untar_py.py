@@ -60,10 +60,10 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        for archive in self._args.archives:
-            if not archive.endswith('.tar'):
+        for path in [Path(x) for x in self._args.archives]:
+            if path.suffix != '.tar':
                 raise SystemExit(
-                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
+                    f'{sys.argv[0]}: Unsupported "{path}" archive format.',
                 )
 
 

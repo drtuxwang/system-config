@@ -7,9 +7,9 @@ TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ/T7Z format (GNU Tar version).
 import argparse
 import glob
 import os
-import re
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -59,14 +59,27 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        isarchive = re.compile(
-            '[.](tar|tar[.]gz|tar[.]bz2|tar[.]zstd?|tar[.]lzma|tar[.]xz|'
-            'tar[.]7z|t[bglx7]z|tzst?)$',
+        tar_extensions = (
+            '.tar',
+            '.tar.gz',
+            '.tar.bz2',
+            '.tar.zst',
+            '.tar.zstd',
+            '.tar.lzma',
+            '.tar.xz',
+            '.tar.7z',
+            '.tgz',
+            '.tbz',
+            '.tzs',
+            '.tzst',
+            '.tlz',
+            '.txz',
+            '.t7z',
         )
-        for archive in self._args.archives:
-            if not isarchive.search(archive):
+        for path in [Path(x) for x in self._args.archives]:
+            if path.suffix not in tar_extensions:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
+                    f'{sys.argv[0]}: Unsupported "{path}" archive format.',
                 )
 
     def parse(self, args: List[str]) -> None:

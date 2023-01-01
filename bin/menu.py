@@ -87,10 +87,11 @@ class Menu:
             '.config',
             Path(sys.argv[0]).with_suffix('.json').name,
         )
-        if self._status_file.is_file():
-            file = self._status_file
-        else:
-            file = self._config_file
+        file = (
+            self._status_file
+            if self._status_file.is_file()
+            else self._config_file
+        )
 
         data = config_mod.Data()
         data.read(file)
@@ -108,7 +109,7 @@ class Menu:
             if Path(check).is_file():
                 return True
             for directory in os.environ.get('PATH', '').split(os.pathsep):
-                if Path(directory).parent.glob('*/*/{check}'):
+                if Path(directory).parent.glob(f'*/*/{check}'):
                     return True
         return False
 

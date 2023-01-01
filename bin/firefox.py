@@ -213,12 +213,10 @@ class Options:
             )
             for directory in firefox_path.glob('*'):
                 if Path(directory, 'prefs.js').is_file():
-                    for path in (
-                        list(directory.glob('.*')) + list(directory.glob('*'))
-                    ):
+                    for path in list(directory.glob('*')):
                         if path.name not in keep_list:
                             print(f'Removing "{path}"...')
-                            path.unlink()
+                            self._remove(path)
                     for path in directory.glob(
                         'adblockplus/patterns-backup*ini'
                     ):

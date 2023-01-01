@@ -87,10 +87,7 @@ class Options:
         self._parse_args(args[1:])
 
         path = Path(self._args.archive[0])
-        if path.is_dir():
-            self._archive = f'{path.resolve()}.zip'
-        else:
-            self._archive = str(path)
+        self._archive = f'{path.resolve()}.zip' if path.is_dir() else str(path)
         if '.zip' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'

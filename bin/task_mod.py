@@ -13,8 +13,8 @@ import subprocess
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.3.0'
-VERSION = 20221218
+RELEASE = '2.3.1'
+VERSION = 20221226
 
 
 class Tasks:
@@ -405,7 +405,7 @@ class _System:
                         break
                     if not bline:
                         break
-                    line = bline.decode('utf-8', 'replace')
+                    line = bline.decode(errors='replace')
                     lines.append(line.rstrip('\r\n'))
         except OSError as exception:
             raise ExecutableCallError(

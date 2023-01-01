@@ -54,10 +54,10 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        for archive in self._args.archives:
-            if not archive.endswith(('.tar.gz', '.gz')):
+        for path in [Path(x) for x in self._args.archives]:
+            if not path.name.endswith(('.tar.gz', '.tgz')):
                 raise SystemExit(
-                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
+                    f'{sys.argv[0]}: Unsupported "{path}" archive format.',
                 )
 
     def parse(self, args: List[str]) -> None:

@@ -85,10 +85,11 @@ class Options:
         """
         command_args = self._parse_args(args[1:])
 
-        if self._args.command:
-            self._command = self._get_command(self._args.command, command_args)
-        else:
-            self._command = self._get_command('bash', ['-l'])
+        self._command = (
+            self._get_command(self._args.command, command_args)
+            if self._args.command
+            else self._get_command('bash', ['-l'])
+        )
 
         if self._args.allow_mounts:
             configs = ['/']

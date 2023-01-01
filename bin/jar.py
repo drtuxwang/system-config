@@ -103,7 +103,7 @@ class Main:
                 f'{sys.argv[0]}: Cannot find "{source}" Java source file.',
             )
         if target.is_file():
-            if Path(source).stat().st_mtime > target.stat().st_mtime:
+            if int(Path(source).stat().st_mtime) > int(target.stat().st_mtime):
                 try:
                     target.unlink()
                 except OSError as exception:
@@ -130,10 +130,11 @@ class Main:
 
     def _create_manifest(self) -> None:
         if not Path(self._manifest).is_file():
-            if 'Main.class' in self._jar.get_args():
-                main = 'Main'
-            else:
-                main = self._jar_file[:-4]
+            main = (
+                'Main'
+                if 'Main.class' in self._jar.get_args()
+                else self._jar_file[:-4]
+            )
             print(
                 f'Building "{self._manifest}" Java manifest file with '
                 f'"{main}" main class.',

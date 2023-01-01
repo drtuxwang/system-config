@@ -55,15 +55,15 @@ check-python:        # Check Python code
 	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
 	${PYTHON} -m unittest discover --buffer bin
 	@echo "\n*** Running \"${PYTHON}\" COOKIECUTTER check ***"
-	make --no-print-directory --directory cookiecutter test
+	@make --no-print-directory --directory cookiecutter test
 	@echo "\n*** Running \"${PYTHON}\" PYFLAKES checks ***"
 	${PYTHON} -m flake8 bin/*.py
 	@echo "\n*** Running \"${PYTHON}\" PYCODESTYLE (PEP8) checks ***"
 	${PYTHON} -m pycodestyle --max-line-length=79 bin/*.py
-	make check-python-lint
+	@make --no-print-directory check-python-lint
 	@case ${PYTHON} in \
 	python3|python3.9|python3.1?) \
-		make check-python-types \
+		make --no-print-directory check-python-types \
 		;; \
 	esac
 

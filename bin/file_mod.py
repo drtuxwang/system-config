@@ -159,7 +159,7 @@ class FileUtil:
         new_time = -1.
         paths = [Path(x) for x in files]
         for path in [x for x in paths if x.exists() and not x.is_symlink()]:
-            file_time = path.stat().st_mtime
+            file_time = int(path.stat().st_mtime)
             if file_time > new_time:
                 path_new = path
                 new_time = file_time
@@ -177,7 +177,7 @@ class FileUtil:
         new_time = float('inf')
         paths = [Path(x) for x in files]
         for path in [x for x in paths if x.exists() and not x.is_symlink()]:
-            file_time = path.stat().st_mtime
+            file_time = int(path.stat().st_mtime)
             if file_time < new_time:
                 path_new = path
                 new_time = file_time

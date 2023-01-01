@@ -1,30 +1,15 @@
 #!/usr/bin/env python3
 """
-Wrapper for GNOME/KDE/XFCE screen snapshot
+Wrapper for "lsblk" command (sensible defaults)
 """
 
 import glob
 import os
 import signal
 import sys
-from pathlib import Path
 
 import command_mod
-import desktop_mod
 import subtask_mod
-
-PROGRAMS = {
-    'cinnamon': ['gnome-screenshot', '--interactive'],
-    'gnome': ['gnome-screenshot', '--interactive'],
-    'kde': ['ksnapshot'],
-    'macos': [
-        '/System/Applications/Utilities/Screenshot.app/'
-        'Contents/MacOS/Screenshot',
-    ],
-    'mate': ['mate-screenshot'],
-    'xfce': ['xfce4-screenshooter'],
-}
-GENERIC = ['true']
 
 
 class Main:
@@ -59,26 +44,19 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def run() -> None:
         """
         Start program
         """
-        desktop = desktop_mod.Desktop.detect()
-        cmdline = PROGRAMS.get(desktop, GENERIC)
-        command = (
-            command_mod.CommandFile(cmdline[0], errors='ignore')
-            if Path(cmdline[0]).is_file()
-            else command_mod.Command(cmdline[0], errors='ignore')
-        )
-
-        if not command.is_found():
-            cmdline = GENERIC
-            command = command_mod.Command(cmdline[0], errors='stop')
-
-        command.set_args(cmdline[1:] + sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
-
-        return 0
+        lsblk = command_mod.Command('lsblk', errors='stop')
+        if len(sys.argv) == 1:
+            lsblk.set_args([
+                '-o',
+                'NAME,SIZE,FSTYPE,LABEL,UUID,DISC-GRAN,MOUNTPOINT',
+            ])
+        else:
+            lsblk.set_args(sys.argv[1:])
+        subtask_mod.Exec(lsblk.get_cmdline()).run()
 
 
 if __name__ == '__main__':

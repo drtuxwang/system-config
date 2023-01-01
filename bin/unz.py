@@ -30,11 +30,23 @@ class Options:
         """
         return self._args.archives
 
+    def get_view_flag(self) -> bool:
+        """
+        Return view flag.
+        """
+        return self._args.view_flag
+
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description="Unpack a compressed archive using suitable tool.",
         )
 
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help="Show contents of archive.",
+        )
         parser.add_argument(
             'archives',
             nargs='+',
@@ -88,29 +100,30 @@ class Main:
         Start program
         """
         options = Options()
+        view_args = ['-v'] if options.get_view_flag() else []
         os.umask(0o022)
 
         for file in options.get_archives():
             name = Path(file).name
-            args = [file]
+            args = view_args + [file]
             if name.endswith('.ace'):
                 command = command_mod.Command('unace', errors='stop')
             elif name.endswith('.deb'):
                 command = command_mod.Command('undeb', errors='stop')
             elif name.endswith('.gpg'):
                 command = command_mod.Command('ungpg', errors='stop')
-            elif name.startswith('initrd'):
-                command = command_mod.Command('unmkinitramfs', errors='stop')
-                args = [file, '.']
+            elif name.startswith('initr'):
+                command = command_mod.Command('uninitrd', errors='stop')
             elif name.endswith('.pdf'):
                 command = command_mod.Command('unpdf', errors='stop')
             elif name.endswith('.pyc'):
                 command = command_mod.Command('unpyc', errors='stop')
+                args = [file]
             elif name.endswith('.sqlite'):
                 command = command_mod.Command('unsqlite', errors='stop')
+                args = [file]
             elif name.endswith('.squashfs'):
                 command = command_mod.Command('unsquashfs', errors='stop')
-                args = ['-f', '-d', '.', file]
             elif name.endswith((
                 '.tar',
                 '.tar.gz',

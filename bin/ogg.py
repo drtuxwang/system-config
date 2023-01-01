@@ -350,7 +350,7 @@ class Encoder:
 
         while True:
             byte = child.stdout.read(1)
-            line += byte.decode('utf-8', 'replace')
+            line += byte.decode(errors='replace')
             if not byte:
                 break
             if byte in (b'\n', b'\r'):

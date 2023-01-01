@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unpack PDF file into series of JPG files.
+Unpack a compressed archive in INITRAMFS format.
 """
 
 import argparse
@@ -8,7 +8,6 @@ import glob
 import os
 import signal
 import sys
-from pathlib import Path
 from typing import List
 
 import command_mod
@@ -24,17 +23,17 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self) -> List[str]:
+    def get_archiver(self) -> command_mod.Command:
         """
-        Return list of files.
+        Return archiver Command class object.
         """
-        return self._args.files
+        return self._archiver
 
-    def get_gs(self) -> command_mod.Command:
+    def get_archives(self) -> List[str]:
         """
-        Return gs Command class object.
+        Return list of archives files.
         """
-        return self._gs
+        return self._args.archives
 
     def get_view_flag(self) -> bool:
         """
@@ -44,16 +43,9 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Unpack PDF file into series of JPG files.",
+            description="Unpack a compressed archive in INITRAMFS format.",
         )
 
-        parser.add_argument(
-            '-dpi',
-            nargs=1,
-            type=int,
-            default=[300],
-            help="Selects DPI resolution (default is 300).",
-        )
         parser.add_argument(
             '-v',
             dest='view_flag',
@@ -61,18 +53,13 @@ class Options:
             help="Show contents of archive.",
         )
         parser.add_argument(
-            'files',
+            'archives',
             nargs='+',
-            metavar='file.pdf',
-            help="PDF document file.",
+            metavar='initrd.img',
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
-
-        if self._args.dpi[0] < 50:
-            raise SystemExit(
-                f'{sys.argv[0]}: DPI resolution must be at least 50.',
-            )
 
     def parse(self, args: List[str]) -> None:
         """
@@ -80,14 +67,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._gs = command_mod.Command('gs', errors='stop')
-        self._gs.set_args([
-            '-dNOPAUSE',
-            '-dBATCH',
-            '-dSAFER',
-            '-sDEVICE=jpeg',
-            f'-r{self._args.dpi[0]}',
-        ])
+        self._archiver = command_mod.Command('unmkinitramfs', errors='stop')
 
 
 class Main:
@@ -129,30 +109,27 @@ class Main:
         options = Options()
         view_flag = options.get_view_flag()
 
-        command = options.get_gs()
+        os.umask(0o022)
+        archiver = (
+            command_mod.Command('lsinitramfs', errors='stop')
+            if view_flag else
+            options.get_archiver()
+        )
 
-        for path in [Path(x) for x in options.get_files()]:
-            if not path.is_file():
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{path}" PDF file.',
-                )
-            prefix = path.name.rsplit('.', 1)[0]
-            print(f'Unpacking "{prefix}-page*.jpg" file...')
-            file = '/dev/null' if view_flag else f'{prefix}-page%02d.jpg'
-            task = subtask_mod.Task(command.get_cmdline() + [
-                f'-sOutputFile={file}',
-                '-c',
-                'save',
-                'pop',
-                '-f',
-                str(path),
-            ])
-            task.run(pattern='Ghostscript|^Copyright|WARRANTY:|^Processing')
+        for archive in options.get_archives():
+            task = (
+                subtask_mod.Task(archiver.get_cmdline() + [archive])
+                if view_flag
+                else subtask_mod.Task(archiver.get_cmdline() + [archive, '.'])
+            )
+            task.run()
             if task.get_exitcode():
-                raise SystemExit(
+                print(
                     f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
+                    file=sys.stderr
                 )
+                raise SystemExit(task.get_exitcode())
 
         return 0
 

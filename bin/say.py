@@ -153,11 +153,11 @@ class Main:
 
         if options.get_run_flag():
             start_time = time.time()
-            command: command_mod.Command
-            if Path(args[0]).is_file():
-                command = command_mod.CommandFile(args[0])
-            else:
-                command = command_mod.Command(args[0], errors='ignore')
+            command = (
+                command_mod.CommandFile(args[0])
+                if Path(args[0]).is_file()
+                else command_mod.Command(args[0], errors='ignore')
+            )
             if command.is_found():
                 command.set_args(args[1:])
                 task = subtask_mod.Task(command.get_cmdline())

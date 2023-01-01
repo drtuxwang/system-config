@@ -169,7 +169,7 @@ class DropboxClient:
 
         file = url.split('dropbox:/', 1)[1]
         name = Path(url).name
-        logger.info('Downloading "{url}%s" to "{name}%s".')
+        logger.info(f'Downloading "{url}%s" to "{name}%s".')
 
         try:
             metadata, response = self._client.files_download(file)
@@ -181,7 +181,7 @@ class DropboxClient:
             with Path(name).open('wb') as ofile:
                 ofile.write(response.content)
         except OSError:
-            logger.error('Cannot write "{name}" file.')
+            logger.error('Cannot write "%s" file.', name)
             return False
         file_time = time.mktime(metadata.server_modified.timetuple())
         os.utime(name, (file_time, file_time))
@@ -199,13 +199,13 @@ class DropboxClient:
 
         file = url.split('dropbox:/', 1)[1]
         name = Path(url).name
-        logger.info('Uploading "{name}" to "{url}".')
+        logger.info('Uploading "%s" to "%s".', name, url)
 
         try:
             with Path(name).open('rb') as ifile:
                 data = ifile.read()
         except OSError:
-            logger.error('Cannot read "{name}" file.')
+            logger.error('Cannot read "%s" file.', name)
             return False
 
         try:

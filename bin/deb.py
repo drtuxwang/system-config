@@ -152,10 +152,7 @@ class Options:
         self._arch = task.get_output()[0]
 
         if self._args.mode == 'list':
-            if self._args.args:
-                self._arch_sub = self._args.args[0]
-            else:
-                self._arch_sub = ''
+            self._arch_sub = self._args.args[0] if self._args.args else ''
         elif self._args.mode in ('depends', 'nodepends'):
             self._package_names = self._args.args
         elif self._args.option:

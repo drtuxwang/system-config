@@ -256,7 +256,7 @@ class Main:
                 for bline in ifile:
                     line = is_not_printable.sub(
                         ' ',
-                        bline.decode('utf-8', 'replace').rstrip('\r\n\004')
+                        bline.decode(errors='replace').rstrip('\r\n\004')
                     )
                     lines = textwrap.wrap(line, chars)
                     if not lines:

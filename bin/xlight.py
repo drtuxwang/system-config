@@ -254,7 +254,7 @@ class BacklightIntelSetpci(Backlight):
         """
         Set brightness
         """
-        self._command.set_args(['F4.B={int(brightness*16 + 15):x}'])
+        self._command.set_args([f'F4.B={int(brightness*16 + 15):x}'])
         subtask_mod.Exec(self._command.get_cmdline()).run()
 
     def detect(self) -> bool:

@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.6.0'
-VERSION = 20221218
+RELEASE = '2.6.1'
+VERSION = 20221226
 
 
 class Command:
@@ -70,10 +70,11 @@ class Command:
             _platform = _System.get_platform()
         extensions = cls._get_extensions(_platform)
 
-        if info['directory']:
-            directory_path = Path(info['directory'])
-        else:
-            directory_path = Path(sys.argv[0]).resolve().parent
+        directory_path = (
+            Path(info['directory'])
+            if info['directory']
+            else Path(sys.argv[0]).resolve().parent
+        )
         if directory_path.name == 'bin':
             directory_path = directory_path.parent
             path = cls._search_ports(
@@ -187,10 +188,11 @@ class Command:
             if mydir in directories:
                 directories = directories[directories.index(mydir) + 1:]
 
-        if sys.argv[0].endswith('.py'):
-            mynames = (sys.argv[0][:-3], sys.argv[0])
-        else:
-            mynames = (sys.argv[0], f'{sys.argv[0]}.py')
+        mynames = (
+            (sys.argv[0][:-3], sys.argv[0])
+            if sys.argv[0].endswith('.py')
+            else (sys.argv[0], f'{sys.argv[0]}.py')
+        )
 
         for directory in directories:
             if Path(directory).is_dir():
@@ -454,10 +456,7 @@ class Platform:
         if machine == 'x86_64':
             arch = 'x86_64'
         elif machine.endswith('86'):
-            if 'WOW64' in osname:
-                arch = 'x86_64'
-            else:
-                arch = 'x86'
+            arch = 'x86_64' if 'WOW64' in osname else 'x86'
         return arch
 
     @staticmethod
@@ -493,7 +492,7 @@ class Platform:
                         break
                     if not bline:
                         break
-                    line = bline.decode('utf-8', 'replace')
+                    line = bline.decode(errors='replace')
                     lines.append(line.rstrip('\r\n'))
         except OSError as exception:
             raise ExecutableCallError(
@@ -553,10 +552,11 @@ class Platform:
         if system in ('linux', 'macos'):
             kernel = os.uname()[2]
         elif system == 'windows':
-            if os.name == 'posix':
-                kernel = cls._get_arch_windows_cygwin()
-            else:
-                kernel = platform.version()
+            kernel = (
+                cls._get_arch_windows_cygwin()
+                if os.name == 'posix'
+                else platform.version()
+            )
         return kernel
 
     @staticmethod
@@ -591,10 +591,11 @@ class Platform:
         elif system == 'macos':
             arch = cls._get_arch_macos()
         elif system == 'windows':
-            if os.name == 'posix':
-                arch = cls._get_arch_windows_cygwin()
-            else:
-                arch = cls._get_arch_windows()
+            arch = (
+                cls._get_arch_windows_cygwin()
+                if os.name == 'posix'
+                else cls._get_arch_windows()
+            )
         return arch
 
     @classmethod

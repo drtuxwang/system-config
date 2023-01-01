@@ -152,11 +152,11 @@ class Main:
                     continue
 
                 fpar_path = Path(directory_path, '...')
-                file_time = path.stat().st_mtime
+                file_time = int(path.stat().st_mtime)
                 par_path = Path(directory_path, '...', f'{name}.par2')
                 if (
                     not par_path.is_file() or
-                    file_time != par_path.stat().st_mtime
+                    file_time != int(par_path.stat().st_mtime)
                 ):
                     tmp_path = Path(directory_path, '....par2')
                     size = path.stat().st_size // 400 * 4 + 4

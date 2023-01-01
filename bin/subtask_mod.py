@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.3.0'
-VERSION = 20221218
+RELEASE = '2.3.1'
+VERSION = 20221226
 
 BUFFER_SIZE = 131072
 
@@ -148,10 +148,7 @@ class Task:
             try:
                 info[key] = kwargs[key]
             except KeyError:
-                if key in ('file', 'pattern'):
-                    info[key] = ''
-                else:
-                    info[key] = None
+                info[key] = '' if key in ('file', 'pattern') else None
         try:
             env: Dict[Any, Any] = copy.copy(kwargs['env'])
             for key in os.environ:
@@ -172,22 +169,19 @@ class Task:
 
         for line in info['stdin']:
             try:
-                child.stdin.write(line.encode("utf-8") + b"\n")
+                child.stdin.write(line.encode() + b"\n")
             except OSError:
                 break
         child.stdin.close()
 
     @staticmethod
     def _recv_stdout(child: subprocess.Popen, info: dict) -> None:
-        if info['pattern']:
-            ismatch = re.compile(info['pattern'])
-        else:
-            ismatch = None
+        ismatch = re.compile(info['pattern']) if info['pattern'] else None
         replace = info['replace']
 
         while True:
             try:
-                line = child.stdout.readline().decode('utf-8', 'replace')
+                line = child.stdout.readline().decode(errors='replace')
             except (KeyboardInterrupt, OSError):
                 break
             if not line:
@@ -197,15 +191,12 @@ class Task:
 
     @staticmethod
     def _recv_stderr(child: subprocess.Popen, info: dict) -> None:
-        if info['pattern']:
-            ismatch = re.compile(info['pattern'])
-        else:
-            ismatch = None
+        ismatch = re.compile(info['pattern']) if info['pattern'] else None
         replace = info['replace']
 
         while True:
             try:
-                line = child.stderr.readline().decode('utf-8', 'replace')
+                line = child.stderr.readline().decode(errors='replace')
             except (KeyboardInterrupt, OSError):
                 break
             if not line:
@@ -238,10 +229,7 @@ class Task:
         else:
             pipe = False
 
-        if info['error2output']:
-            stderr = subprocess.STDOUT
-        else:
-            stderr = subprocess.PIPE
+        stderr = subprocess.STDOUT if info['error2output'] else subprocess.PIPE
         return subprocess.Popen(  # pylint: disable=consider-using-with
             command,
             env=info['env'],
@@ -392,10 +380,7 @@ class Batch(Task):
 
     @staticmethod
     def _write_file(child: subprocess.Popen, path: Path, append: bool) -> None:
-        if append:
-            mode = 'ab'
-        else:
-            mode = 'wb'
+        mode = 'ab' if append else 'wb'
         try:
             with path.open(mode) as ofile:
                 while True:
@@ -426,8 +411,7 @@ class Batch(Task):
         else:
             while True:
                 try:
-                    line = child.stdout.readline().decode(
-                        'utf-8', 'replace')
+                    line = child.stdout.readline().decode(errors='replace')
                 except (KeyboardInterrupt, OSError):
                     break
                 if not line:
@@ -438,8 +422,7 @@ class Batch(Task):
         if not info['error2output']:
             while True:
                 try:
-                    line = child.stderr.readline().decode(
-                        'utf-8', 'replace')
+                    line = child.stderr.readline().decode(errors='replace')
                 except (KeyboardInterrupt, OSError):
                     break
                 if not line:

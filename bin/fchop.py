@@ -60,10 +60,9 @@ class Options:
 
         try:
             size = self._args.size[0]
-            if size.endswith('MB'):
-                self._max_size = int(size[:-2]) * 1024**2
-            else:
-                self._max_size = int(size)
+            self._max_size = (
+                int(size[:-2]) * 1024**2 if size.endswith('MB') else int(size)
+            )
         except ValueError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: You must specific an integer for chunksize.',

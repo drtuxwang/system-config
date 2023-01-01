@@ -101,7 +101,7 @@ class Main:
                     print(f'exec "$MYDIR/{path}" "$@"', file=ofile)
 
             link_path.chmod(0o755)
-            file_time = path.stat().st_mtime
+            file_time = int(path.stat().st_mtime)
             os.utime(link_path, (file_time, file_time))
         except OSError as exception:
             raise SystemExit(

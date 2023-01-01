@@ -32,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.5.0'
-VERSION = 20221218
+RELEASE = '6.5.1'
+VERSION = 20221231
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -122,7 +122,7 @@ class CommandThread(threading.Thread):
                 continue
             if not byte:
                 break
-            self._stdout += byte.decode('utf-8', 'replace')
+            self._stdout += byte.decode(errors='replace')
 
     def kill(self) -> None:
         """
@@ -202,7 +202,7 @@ class Detect:
                 timeout=2,
             ) as response:
                 if response.getcode() == 200:
-                    address = response.read().decode('utf-8', 'replace')
+                    address = response.read().decode(errors='replace')
         except urllib.error.URLError:
             pass
         self._ip_address(address, 'Net IPvx Public')
@@ -865,10 +865,7 @@ class LinuxSystem(PosixSystem):
                     f"/dev/snd/pcmC{card}D"
                     f"{str(Path(file).parent).rsplit('pcm', 1)[-1]}"
                 )
-                if device.endswith('p'):
-                    comment = 'SPK'
-                else:
-                    comment = 'MIC'
+                comment = 'SPK' if device.endswith('p') else 'MIC'
                 Writer.output(
                     name='Audio device',
                     device=device,
@@ -927,10 +924,11 @@ class LinuxSystem(PosixSystem):
             if 'Vendor: ' in line and 'Model: ' in line:
                 model = isjunk.sub('', line.rstrip('\r\n'))
             elif 'Type:' in line and 'CD-ROM' in line:
-                if Path(f'/dev/sr{unit}').exists():
-                    device = f'/dev/sr{unit}'
-                else:
-                    device = f'/dev/scd{unit}'
+                device = (
+                    f'/dev/sr{unit}'
+                    if Path(f'/dev/sr{unit}').exists()
+                    else f'/dev/scd{unit}'
+                )
                 Writer.output(name='CD device', device=device, value=model)
                 model = '???'
                 unit += 1
@@ -1114,7 +1112,7 @@ class LinuxSystem(PosixSystem):
         sdx = f'sd{chr(97)}{unit}'
         if Path(f'/dev/{sdx}').exists():
             for partition in info['partitions']:
-                if partition.endswith(sdx) or '{sdx} ' in partition:
+                if partition.endswith(sdx) or 'f{sdx} ' in partition:
                     try:
                         size = partition.split()[2]
                     except IndexError:
@@ -1257,10 +1255,11 @@ class LinuxSystem(PosixSystem):
         cls._detect_remote_disks(info)
 
     def _detect_graphics(self) -> None:
-        if Path('/dev/dri').is_dir():
-            gpus = glob.glob('/sys/bus/pci/devices/*/drm/card*')
-        else:
-            gpus = glob.glob('/sys/bus/pci/devices/*/graphics/fb*')
+        gpus = (
+            glob.glob('/sys/bus/pci/devices/*/drm/card*')
+            if Path('/dev/dri').is_dir()
+            else glob.glob('/sys/bus/pci/devices/*/graphics/fb*')
+        )
         if gpus:
             for gpu in sorted(gpus):
                 if Path('/dev/dri').is_dir():
@@ -1788,10 +1787,11 @@ class LinuxSystem(PosixSystem):
                         except (IndexError, ValueError):
                             pass
                         break
-            if cores_per_socket:
-                cpu_cores = sockets * cores_per_socket
-            else:
-                cpu_cores = sockets
+            cpu_cores = (
+                sockets * cores_per_socket
+                if cores_per_socket
+                else sockets
+            )
 
         return cpu_cores
 
@@ -1829,10 +1829,11 @@ class LinuxSystem(PosixSystem):
         info = super().get_cpu_info()
 
         if info['CPU Addressability'] == 'Unknown':
-            if command_mod.Platform.get_arch().endswith('64'):
-                info['CPU Addressability'] = '64bit'
-            else:
-                info['CPU Addressability'] = '32bit'
+            info['CPU Addressability'] = (
+                '64bit'
+                if command_mod.Platform.get_arch().endswith('64')
+                else '32bit'
+            )
 
         lines = self._read_file('/proc/cpuinfo')
         self._scan_cpu_model(info, lines)
@@ -2223,10 +2224,7 @@ class WindowsSystem(OperatingSystem):
         info['OS Kernel'] = command_mod.Platform.get_kernel()
         info['OS Patch'] = self._isitset(values, 'CSDVersion')
         patch_number = self._isitset(values, 'CSDBuildNumber')
-        if patch_number == 'Unknown':
-            info['OS Patch X'] = ''
-        else:
-            info['OS Patch X'] = patch_number
+        info['OS Patch X'] = '' if patch_number == 'Unknown' else patch_number
         return info
 
     def get_cpu_info(self) -> dict:

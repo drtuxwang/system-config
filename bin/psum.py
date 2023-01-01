@@ -187,7 +187,7 @@ class Main:
                         pass
             elif path.is_file():
                 file_stat = file_mod.FileStat(path)
-                key = (path, file_stat.get_size(), file_stat.get_time())
+                key = (str(path), file_stat.get_size(), file_stat.get_time())
                 if key in phashes:
                     phash = phashes[key]
                 else:

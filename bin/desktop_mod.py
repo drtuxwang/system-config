@@ -12,8 +12,8 @@ import subprocess
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.7.0'
-VERSION = 20221218
+RELEASE = '2.7.1'
+VERSION = 20221226
 
 
 class _System:
@@ -66,7 +66,7 @@ class _System:
                         break
                     if not bline:
                         break
-                    line = bline.decode('utf-8', 'replace')
+                    line = bline.decode(errors='replace')
                     lines.append(line.rstrip('\r\n'))
         except OSError:
             return []

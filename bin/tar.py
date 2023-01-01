@@ -64,19 +64,17 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        if Path(self._args.archive[0]).is_dir():
-            self._archive = f'{Path(self._args.archive[0]).resolve()}.tar'
-        else:
-            self._archive = self._args.archive[0]
+        self._archive = (
+            f'{Path(self._args.archive[0]).resolve()}.tar'
+            if Path(self._args.archive[0]).is_dir()
+            else self._args.archive[0]
+        )
         if '.tar' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )
 
-        if self._args.files:
-            self._files = self._args.files
-        else:
-            self._files = os.listdir()
+        self._files = self._args.files if self._args.files else os.listdir()
 
 
 class Main:
@@ -112,13 +110,14 @@ class Main:
 
     @staticmethod
     def _get_cmdline(archive: str, files: List[str]) -> List[str]:
-        if os.name == 'nt':
-            tar = command_mod.Command('tar.exe', errors='stop')
-        else:
-            tar = command_mod.Command('tar', errors='stop')
+        tar = (
+            command_mod.Command('tar.exe', errors='stop')
+            if os.name == 'nt'
+            else command_mod.Command('tar', errors='stop')
+        )
         task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
-        task.run(pattern='--xattrs')
-        has_xattrs = task.has_output()
+        task.run(pattern='--numeric-owner|--xattrs')
+
         monitor = command_mod.Command('pv', errors='ignore')
 
         cmdline = tar.get_cmdline()
@@ -127,7 +126,9 @@ class Main:
             monitor.set_args(['>', archive+'.part'])
         else:
             cmdline.extend(['cfv', archive+'.part'] + files)
-        if has_xattrs:
+        if task.is_match_output('--numeric-owner'):
+            cmdline.append('--numeric-owner')
+        if task.is_match_output('--xattrs'):
             cmdline.extend(['--xattrs', '--xattrs-include=*'])
         if monitor.is_found():
             cmdline.extend(['|'] + monitor.get_cmdline())

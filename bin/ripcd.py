@@ -98,10 +98,9 @@ class Options:
                 f'"{self._args.device[0]}" CD/DVD device.',
             )
 
-        if self._args.tracks:
-            self._tracks = self._args.tracks[0].split(',')
-        else:
-            self._tracks = []
+        self._tracks = (
+            self._args.tracks[0].split(',') if self._args.tracks else []
+        )
 
 
 class Cdrom:

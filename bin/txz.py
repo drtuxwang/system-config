@@ -63,19 +63,17 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        if Path(self._args.archive[0]).is_dir():
-            self._archive = f'{Path(self._args.archive[0]).resolve()}.tar.xz'
-        else:
-            self._archive = self._args.archive[0]
+        self._archive = (
+            f'{Path(self._args.archive[0]).resolve()}.tar.xz'
+            if Path(self._args.archive[0]).is_dir()
+            else self._args.archive[0]
+        )
         if '.tar.xz' not in self._archive and '.txz' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )
 
-        if self._args.files:
-            self._files = self._args.files
-        else:
-            self._files = os.listdir()
+        self._files = self._args.files if self._args.files else os.listdir()
 
         self._tar = command_mod.Command('tar', errors='stop')
         self._tar.set_args(['cfv', self._archive+'.part'] + self._files)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Streaming video downloader (Youtube, m3u8 and compatible websites).
+Streaming video downloader using yt-dlp.
 """
 
 import argparse
@@ -49,8 +49,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Streaming video downloader "
-            "(Youtube, m3u8 and compatible websites).",
+            description="Streaming video downloader using yt-dlp."
         )
         parser.add_argument(
             '-f',

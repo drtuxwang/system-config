@@ -52,12 +52,12 @@ class Options:
     @staticmethod
     def _clean_preferences(config_path: Path) -> None:
         path = Path(config_path, 'Preferences')
+        path_new = Path(f'{path}.part')
         try:
             with path.open(encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
             data['profile']['exit_type'] = 'Normal'
             data['partition']['per_host_zoom_levels'] = {}
-            path_new = Path(f'{path}.part')
             with path_new.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(json.dumps(
                     data,

@@ -36,6 +36,12 @@ class Options:
         """
         return self._gpg
 
+    def get_view_flag(self) -> bool:
+        """
+        Return view flag.
+        """
+        return self._args.view_flag
+
     @staticmethod
     def _config() -> None:
         os.umask(0o077)
@@ -66,6 +72,12 @@ class Options:
             "(pgp compatible) format.",
         )
 
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help="Show contents of archive.",
+        )
         parser.add_argument(
             'files',
             nargs='+',
@@ -126,15 +138,25 @@ class Main:
         Start program
         """
         options = Options()
-
+        view_flag = options.get_view_flag()
         gpg = options.get_gpg()
 
+        task: subtask_mod.Task
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
-            gpg.set_args([path])
-            task = subtask_mod.Task(gpg.get_cmdline())
+            if view_flag:
+                task = subtask_mod.Batch(
+                    gpg.get_cmdline() + ['--list-packets', path]
+                )
+                task.run(env={'GPG_TTY': None})
+                print(f"\n{path}:")
+                for line in task.get_output():
+                    print(line)
+                continue
+
+            task = subtask_mod.Task(gpg.get_cmdline() + [path])
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -144,7 +166,7 @@ class Main:
 
             path_new = Path(path.parent, path.stem)
             if path_new.is_file():
-                file_time = path.stat().st_mtime
+                file_time = int(path.stat().st_mtime)
                 os.utime(path_new, (file_time, file_time))
 
         return 0

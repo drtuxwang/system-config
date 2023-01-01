@@ -357,10 +357,11 @@ class Main:
     @staticmethod
     def _breakup_url(url: str) -> Tuple[str, str, str]:
         if '://' not in url:
-            if url.startswith('localhost'):
-                url = f'http://{url}'
-            else:
-                url = f'https://{url}'
+            url = (
+                f'http://{url}'
+                if url.startswith('localhost')
+                else f'https://{url}'
+            )
         columns = url.split('/')
         server = '/'.join(columns[:3])
         repo_match = '/'.join(columns[3:])

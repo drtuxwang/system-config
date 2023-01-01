@@ -84,16 +84,14 @@ class Options:
             'mate': MateTerminal,
             'xfce': XfceTerminal,
         }
-        if invis_flag:
-            desktop = 'invisible'
-        else:
-            desktop = desktop_mod.Desktop.detect()
+        desktop = 'invisible' if invis_flag else desktop_mod.Desktop.detect()
         self._terminal = terminals.get(desktop, Xterm)(self)
 
-        if len(args) == 1:
-            self._hosts = [socket.gethostname().split('.')[0].lower()]
-        else:
-            self._hosts = args[1:]
+        self._hosts = (
+            [socket.gethostname().split('.')[0].lower()]
+            if len(args) == 1
+            else args[1:]
+        )
 
 
 class Terminal:
@@ -381,7 +379,7 @@ class XfceTerminal(GnomeTerminal):
 
     def _config(self) -> None:
         path = Path(Path.home(), '.config/xfce4/terminal/accels.scm')
-        path_new = Path('{path}.part')
+        path_new = Path(f'{path}.part')
         try:
             with path.open(encoding='utf-8', errors='replace') as ifile:
                 data = ifile.read()

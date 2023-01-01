@@ -251,7 +251,7 @@ class VideoDownloader:
         if task.get_exitcode():
             raise SystemExit(1)
 
-        source_time = self._m3u8_file.stat().st_mtime
+        source_time = int(self._m3u8_file.stat().st_mtime)
         os.utime(mp4_file, (source_time, source_time))
         shutil.move(mp4_file, self._output)
         shutil.move(self._directory, self._output+'.full')

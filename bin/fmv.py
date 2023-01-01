@@ -162,6 +162,8 @@ class Main:
                 )
 
         try:
+            if not target_path.parent.exists():
+                target_path.parent.mkdir(parents=True)
             source_path.replace(target_path)
         except OSError as exception:
             if source_path.is_dir():

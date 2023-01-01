@@ -49,10 +49,11 @@ class Main:
         """
         Start program
         """
-        if sys.argv[0].endswith('.py'):
-            sound = f'{sys.argv[0][:-3]}.ogg'
-        else:
-            sound = f'{sys.argv[0]}.ogg'
+        sound = (
+            f'{sys.argv[0][:-3]}.ogg'
+            if sys.argv[0].endswith('.py')
+            else f'{sys.argv[0]}.ogg'
+        )
 
         if not Path(sound).is_file():
             raise SystemExit(f'{sys.argv[0]}: Cannot find "{sound}" file.')

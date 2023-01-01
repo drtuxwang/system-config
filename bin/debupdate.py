@@ -11,12 +11,12 @@ import logging
 import os
 import re
 import signal
-import sre_constants
 import sys
 from pathlib import Path
 from typing import List
 
 import packaging.version  # type: ignore
+import pyzstd
 
 import logging_mod
 
@@ -174,11 +174,16 @@ class Main:
     @staticmethod
     def _read_data(path: Path) -> dict:
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
-                data = json.load(ifile)
-        except (OSError, json.decoder.JSONDecodeError) as exception:
+            data = json.loads(pyzstd.decompress(  # pylint: disable=no-member
+                 path.read_bytes()
+            ))
+        except json.decoder.JSONDecodeError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{path}" json file.',
+                f'{sys.argv[0]}: Corrupt "{path}" file.',
+            ) from exception
+        except OSError as exception:
+            raise SystemExit(
+                f'{sys.argv[0]}: Cannot read "{path}" file.'
             ) from exception
 
         return data
@@ -224,16 +229,17 @@ class Main:
                     if columns:
                         pattern = columns[0]
                         if not pattern.startswith('#'):
-                            path = Path(pin_path.parent, f'{columns[1]}.json')
+                            path = Path(
+                                pin_path.parent,
+                                f'{columns[1]}.json.zstd',
+                            )
                             if path not in packages_cache:
                                 packages_cache[path] = (
                                     self._read_distro_packages(path)
                                 )
-                            try:
-                                ispattern = re.compile(pattern.replace(
-                                    '?', '.').replace('*', '.*'))
-                            except sre_constants.error:
-                                continue
+                            ispattern = re.compile(
+                                pattern.replace('?', '.').replace('*', '.*')
+                            )
                             for key, value in packages_cache[path].items():
                                 if ispattern.fullmatch(key):
                                     self._packages[key] = copy.copy(value)
@@ -353,7 +359,7 @@ class Main:
                     distro = ispattern.sub('', str(path))
                     logger.info('Checking "%s" list file.', path)
                     self._packages = self._read_distro_packages(
-                        Path(f'{distro}.json')
+                        Path(f'{distro}.json.zstd')
                     )
                     self._read_distro_pin_packages(
                         Path(f'{distro}.debs:select')

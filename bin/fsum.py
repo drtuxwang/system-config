@@ -299,10 +299,11 @@ class Main:
     def _extra(self, directory_path: Path, found: List[str]) -> List[str]:
         extra = []
         try:
-            if directory_path:
-                paths = list(directory_path.iterdir())
-            else:
-                paths = [Path(x) for x in os.listdir()]
+            paths = (
+                list(directory_path.iterdir())
+                if directory_path
+                else [Path(x) for x in os.listdir()]
+            )
         except PermissionError:
             pass
         else:

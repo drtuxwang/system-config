@@ -124,10 +124,11 @@ class Options:
         if self._args.split:
             self._archiver.extend_args([f'-v{self._args.split[0]}b'])
 
-        if Path(self._args.archive[0]).is_dir():
-            self._archive = str(Path(f'{self._args.archive[0]}.7z').resolve())
-        else:
-            self._archive = self._args.archive[0]
+        self._archive = (
+            str(Path(f'{self._args.archive[0]}.7z').resolve())
+            if Path(self._args.archive[0]).is_dir()
+            else self._args.archive[0]
+        )
         self._archiver.append_arg(self._archive+'.part')
 
         if self._args.files:

@@ -10,7 +10,6 @@ import glob
 import json
 import logging
 import os
-import shutil
 import signal
 import socket
 import sys
@@ -18,6 +17,8 @@ import time
 import urllib.request
 from pathlib import Path
 from typing import List
+
+import pyzstd
 
 import command_mod
 import file_mod
@@ -100,20 +101,16 @@ class Main:
         self.tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'debget'))
 
     @staticmethod
-    def _get_urls(distribution_file: str) -> List[str]:
+    def _get_urls(path: Path) -> List[str]:
         urls = []
         try:
-            with open(
-                distribution_file,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for url in ifile:
                     url = url.rstrip()
                     if url and not url.startswith('#'):
                         if (
                             not url.startswith(('http://', 'https://')) or
-                            str(Path(url).name) not in (
+                            Path(url).name not in (
                                 'Packages.xz',
                                 'Packages.bz2',
                                 'Packages.gz',
@@ -125,8 +122,7 @@ class Main:
                         urls.append(url)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read '
-                f'"{distribution_file}" distribution file.',
+                f'{sys.argv[0]}: Cannot read "{path}" distribution file.',
             ) from exception
         return urls
 
@@ -232,41 +228,40 @@ class Main:
         return data
 
     @staticmethod
-    def _read_data(file: str) -> dict:
+    def _read_data(path: Path) -> dict:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
-                data = json.load(ifile)
+            data = json.loads(pyzstd.decompress(  # pylint: disable=no-member
+                 path.read_bytes()
+            ))
         except json.decoder.JSONDecodeError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Corrupt "{file}" json file.',
+                f'{sys.argv[0]}: Corrupt "{path}" file.',
             ) from exception
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" json file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.'
             ) from exception
 
         return data
 
     @staticmethod
-    def _write_data(file: str, data: dict) -> None:
-        logger.info('Creating "%s" packages file.', file)
+    def _write_data(path: Path, data: dict) -> None:
+        logger.info('Creating "%s" packages file.', path)
+        path_new = Path(f'{path}.part')
         try:
-            with open(
-                file + '.part',
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
-                print(json.dumps(data, ensure_ascii=False), file=ofile)
+            path_new.write_bytes(pyzstd.compress(  # pylint: disable=no-member
+                json.dumps(data, ensure_ascii=False).encode(),
+                11,
+            ))
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{file}.part" file.',
+                f'{sys.argv[0]}: Cannot create "{path_new}" file.',
             ) from exception
         try:
-            shutil.move(file + '.part', file)
+            path_new.replace(path)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{file}" file.',
+                f'{sys.argv[0]}: Cannot create "{path}" file.',
             ) from exception
 
     def run(self) -> int:
@@ -283,41 +278,32 @@ class Main:
             errors='stop'
         )
 
-        for distribution_file in options.get_distribution_files():
-            if distribution_file.endswith('.dist'):
-                logger.info(
-                    'Checking "%s" distribution file.',
-                    distribution_file,
+        for dist_path in [Path(x) for x in options.get_distribution_files()]:
+            if dist_path.suffix == '.dist':
+                logger.info('Checking "%s" distribution file.', dist_path)
+
+                path = dist_path.with_suffix('.json.zstd')
+                data = (
+                    self._read_data(path)
+                    if path.is_file()
+                    else {'data': {}, 'urls': []}
+                )
+                old_time = max(
+                    [0] + [x['time'] for x in data['data'].values()]
                 )
 
-                json_file = distribution_file[:-4] + 'json'
-                if Path(json_file).is_file():
-                    distribution_data = self._read_data(json_file)
-                else:
-                    distribution_data = {
-                        'data': {},
-                        'urls': []
-                    }
-                old_time = max([0] + [
-                    data['time']
-                    for data in distribution_data['data'].values()
-                ])
-
-                urls = self._get_urls(distribution_file)
+                urls = self._get_urls(dist_path)
                 for url in urls:
-                    distribution_data['data'][url] = self._get_packages(
-                        distribution_data['data'].get(url, {'time': 0}),
+                    data['data'][url] = self._get_packages(
+                        data['data'].get(url, {'time': 0}),
                         wget,
                         url
                     )
 
-                new_time = max(
-                    data['time']
-                    for data in distribution_data['data'].values()
-                )
-                if new_time > old_time or distribution_data['urls'] != urls:
-                    distribution_data['urls'] = urls
-                    self._write_data(json_file, distribution_data)
+                new_time = max(x['time'] for x in data['data'].values())
+                if new_time > old_time or data['urls'] != urls:
+                    data['urls'] = urls
+                    self._write_data(path, data)
 
         return 0
 

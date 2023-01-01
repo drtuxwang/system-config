@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Search Debian package json file.
+Search Debian package json.zstd file.
 """
 
-# Annotation: Fix Class reference run time NameError
 import argparse
 import glob
 import json
@@ -11,7 +10,10 @@ import os
 import re
 import signal
 import sys
+from pathlib import Path
 from typing import List
+
+import pyzstd
 
 
 class Options:
@@ -62,7 +64,7 @@ class Options:
         parser.add_argument(
             'packages_files',
             nargs='+',
-            metavar='distro.json',
+            metavar='distro.json.zstd',
             help="Debian package file.",
         )
 
@@ -108,20 +110,25 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _read_data(file: str) -> dict:
+    def _read_data(path: Path) -> dict:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
-                data = json.load(ifile)
-        except (OSError, json.decoder.JSONDecodeError) as exception:
+            data = json.loads(pyzstd.decompress(  # pylint: disable=no-member
+                 path.read_bytes()
+            ))
+        except json.decoder.JSONDecodeError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" json file.',
+                f'{sys.argv[0]}: Corrupt "{path}" file.',
+            ) from exception
+        except OSError as exception:
+            raise SystemExit(
+                f'{sys.argv[0]}: Cannot read "{path}" file.'
             ) from exception
 
         return data
 
     @classmethod
-    def _grep(cls, message: str, pattern: str, file: str) -> None:
-        distro_data = cls._read_data(file)
+    def _grep(cls, message: str, pattern: str, path: Path) -> None:
+        distro_data = cls._read_data(path)
         lines = []
         for url in distro_data['urls']:
             lines.extend(distro_data['data'][url]['text'])
@@ -137,8 +144,8 @@ class Main:
                 print(message.format(file))
 
     @classmethod
-    def _grep_full(cls, message: str, pattern: str, file: str) -> None:
-        distro_data = cls._read_data(file)
+    def _grep_full(cls, message: str, pattern: str, path: Path) -> None:
+        distro_data = cls._read_data(path)
         lines = []
         for url in distro_data['urls']:
             lines.extend(distro_data['data'][url]['text'])
@@ -158,14 +165,14 @@ class Main:
         pattern = options.get_pattern()
         package_files = options.get_packages_file()
 
-        for file in package_files:
+        for path in [Path(x) for x in package_files]:
             message = "{0:s}"
             if len(package_files) > 1:
-                message = f"{file}: {message}"
+                message = f"{path}: {message}"
             if full:
-                cls._grep_full(message, pattern, file)
+                cls._grep_full(message, pattern, path)
             else:
-                cls._grep(message, pattern, file)
+                cls._grep(message, pattern, path)
 
     @classmethod
     def run(cls) -> int:

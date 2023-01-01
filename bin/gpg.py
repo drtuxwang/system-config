@@ -246,7 +246,7 @@ class Main:
         if path.is_file() and len(task.get_cmdline()) > 3:
             path_new = Path(task.get_cmdline()[-3].split('--output=')[-1])
             if path_new.is_file():
-                file_time = path.stat().st_mtime
+                file_time = int(path.stat().st_mtime)
                 os.utime(path_new, (file_time, file_time))
 
         return 0

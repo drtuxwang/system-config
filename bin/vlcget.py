@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unpack a compressed archive in TAR.XZ format (previously called lzma).
+Streaming video downloader using VLC.
 """
 
 import argparse
@@ -24,49 +24,51 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archives(self) -> List[str]:
+    def get_output(self) -> Path:
         """
-        Return list of archives.
+        Return output file.
         """
-        return self._args.archives
+        return self._output
 
-    def get_view_flag(self) -> bool:
+    def get_url(self) -> str:
         """
-        Return view flag.
+        Return URL.
         """
-        return self._args.view_flag
+        return self._args.url[0]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Unpack a compressed archive in TAR.XZ format.",
-        )
-
-        parser.add_argument(
-            '-v',
-            dest='view_flag',
-            action='store_true',
-            help="Show contents of archive.",
+            description="Streaming video downloader using VLC.",
         )
         parser.add_argument(
-            'archives',
-            nargs='+',
-            metavar='file.tar.xz|file.txz',
-            help="Archive file.",
+            '-O',
+            nargs=1,
+            dest='output',
+            default=None,
+            help="Output file name.",
+        )
+        parser.add_argument(
+            'url',
+            nargs=1,
+            help="Video URL.",
         )
 
         self._args = parser.parse_args(args)
-
-        for path in [Path(x) for x in self._args.archives]:
-            if not path.name.endswith(('.tar.xz', '.txz')):
-                raise SystemExit(
-                    f'{sys.argv[0]}: Unsupported "{path}" archive format.',
-                )
 
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
         self._parse_args(args[1:])
+
+        if self._args.output:
+            self._output = Path(self._args.output[0])
+        else:
+            path = Path(self._args.url[0])
+            self._output = Path(f'{path.name[:31]}{path.suffix}')
+
+        if self._output.exists():
+            raise SystemExit(f"Output file already exists: {self._output}")
 
 
 class Main:
@@ -106,21 +108,20 @@ class Main:
         Start program
         """
         options = Options()
-        os.umask(0o022)
+        url = options.get_url()
+        path = options.get_output()
+        path_new = Path(f'{path}.part')
 
-        tar = command_mod.Command('tar', errors='stop')
-        if options.get_view_flag():
-            tar.set_args(['tfv'])
-        else:
-            tar.set_args(['xfv'])
-        task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
-        task.run(pattern='--xattrs')
-        if task.has_output():
-            tar.extend_args(['--xattrs', '--xattrs-include=*'])
+        vlc = command_mod.Command('cvlc', errors='stop')
+        vlc.set_args(
+            ['-v', '--sout', f'file/ts:{path_new}', url, 'vlc://quit']
+        )
+        task = subtask_mod.Task(vlc.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(task.get_exitcode())
 
-        for file in options.get_archives():
-            print(f"{file}:")
-            subtask_mod.Task(tar.get_cmdline() + [file]).run()
+        path_new.replace(path)
 
         return 0
 

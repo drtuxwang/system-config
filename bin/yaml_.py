@@ -98,10 +98,11 @@ class Main:
                 except config_mod.ReadConfigError as exception:
                     raise SystemExit(f"{path}: {exception}") from exception
 
-                if path.suffix in ('yaml', 'yml'):
-                    yaml_path = path
-                else:
-                    yaml_path = path.with_suffix('.yaml')
+                yaml_path = (
+                    path
+                    if path.suffix in ('yaml', 'yml')
+                    else path.with_suffix('.yaml')
+                )
                 print(f'Converting "{path}" to "{yaml_path}"...')
                 try:
                     data.write(yaml_path)

@@ -63,19 +63,17 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        if Path(self._args.archive[0]).is_dir():
-            self._archive = f'{Path(self._args.archive[0]).resolve()}.tar.7z'
-        else:
-            self._archive = self._args.archive[0]
+        self._archive = (
+            f'{Path(self._args.archive[0]).resolve()}.tar.7z'
+            if Path(self._args.archive[0]).is_dir()
+            else self._args.archive[0]
+        )
         if '.tar.7z' not in self._archive and '.t7z' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )
 
-        if self._args.files:
-            self._files = self._args.files
-        else:
-            self._files = os.listdir()
+        self._files = self._args.files if self._args.files else os.listdir()
 
 
 class Main:
