@@ -45,7 +45,7 @@ executing==1.1.1             #   (required by stack-data)
 filelock==3.7.1              #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 flake8==6.0.0                # Python modular source code checker
-future==0.18.2               #   (required by Glances)
+future==0.18.3               #   (required by Glances)
 geomet==0.2.1.post1          #   (< 0.3 required by cassandra-driver)
 gitdb==4.0.9                 #   (required by GitPython)
 GitPython==3.1.30            # Library to interact with Git repositories
