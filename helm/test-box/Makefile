@@ -1,13 +1,7 @@
-NAME := mongodb
-CHART_REPO := bitnami
-CHART_URL := https://charts.bitnami.com/bitnami
-CHART_NAME := mongodb
-CHART_VERSION := 12.1.31
-APP_VERSION := 4.4.15
-IMAGE_TAG := 4.4.15-debian-10-r8
-NAMESPACE ?= infra
-HOSTNAME ?= mongodb.kube.local
-LOCALPORT ?=
+NAME := test
+CHART_REPO := ./drtuxwang
+CHART_NAME := test-box
+NAMESPACE ?= default
 
 ifndef CHART_VERSION
 	CHART_VERSION=$(shell make --no-print-directory list | awk 'END {print $$2}')
@@ -30,19 +24,18 @@ else
 endif
 HELM_INSTALL := helm upgrade --install --wait
 
-EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
 HELM_FLAGS := \
 	--namespace=$(NAMESPACE) \
 	--values values.yaml \
-	--set fullnameOverride=$(NAME) \
-	--version $(CHART_VERSION)
-ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
-	HELM_FLAGS += --set service.externalIPs='{$(EXTERNAL_IP)}'
-endif
+	--set image.name=$(APP_IMAGE) \
+	--set fullnameOverride=$(NAME)
 ifdef IMAGE_TAG
 	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
 endif
 
+
+.PHONY: default
+default: status      # Default
 
 .PHONY: status
 status:              # Show workload status
@@ -59,28 +52,18 @@ status-helm:         # Show Helm release status
 
 .PHONY: status-kube
 status-kube:         # Show Kube workload status
-	@kubectl --namespace=$(NAMESPACE) get ServiceAccount -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@$(NAMESPACE)   ServiceAccount/@" ||:
 	@kubectl --namespace=$(NAMESPACE) get all -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s/^/$(NAMESPACE)   /" ||:
-
-.PHONY: repo-add
-repo-add:            # Add Helm repository
-	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: list
 list:                # List Helm chart versions
-	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
-		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
-		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
+	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("<%s>   ", $$2)}'
+	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: version
 version: list        # Show Helm chart and app version
 	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
-
-.PHONY: fetch
-fetch: repo-add clean # Fetch Helm chart
-	mkdir $(CHART_REPO) && \
-		cd $(CHART_REPO) && \
-		helm fetch --untar --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: images
 images:              # Show Docker images
@@ -88,48 +71,29 @@ images:              # Show Docker images
 
 .PHONY: pull
 pull:                # Pull Docker images
-	@for IMAGE in `make --no-print-directory images`; do \
-		docker pull $$IMAGE; \
-	done
 
 .PHONY: save
 save:                # Save Docker images as tar file
-	../bin/helm-save.sh \
-		$(CHART_REPO)-$(CHART_NAME) \
-		$(CHART_VERSION) \
-		$(APP_VERSION) \
-		$(shell make --no-print-directory images)
 
 .PHONY: template
-template: repo-add   # Show Helm template
+template:            # Show Helm template
 	helm template $(HELM_FLAGS) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check: repo-add      # Install Helm release dryrun
+check:               # Install Helm release dryrun
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME) --dry-run --debug
 
 .PHONY: install
-install: repo-add    # Install Helm release
+install:             # Install Helm release
 	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
-.PHONY: local
-local:               # Run Docker container locally
-	@echo "\n*** Running Doker container loclly ***"
-	docker run -it bitnami/mongodb:$(IMAGE_TAG) -- /bin/bash
-
-.PHONY: forward
-forward:             # Forward traffic to endpoint
-	@echo "\n*** Checking status ***"
-	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):27017
-
 .PHONY: connect
 connect:             # Connect to endpoint
-	@if [ "$(EXTERNAL_IP)" ]; then \
-		../../kubernetes/bin/kube-connect.sh mongodb://${HOSTNAME}:27017; \
-	else \
-		../../kubernetes/bin/kube-connect.sh mongodb://$(NAMESPACE)/service/${NAME}:27017; \
-	fi
+	@echo "\n*** Connecting to Ops box ***"
+	@kubectl --namespace=$(NAMESPACE) exec -it \
+		`kubectl --namespace=$(NAMESPACE) get pod | grep $(NAME)-box | awk 'NR==1 {print $$1}'` \
+		-- bash -l
 
 .PHONY: uninstall
 uninstall:           # Uninstall Helm release
@@ -138,13 +102,9 @@ uninstall:           # Uninstall Helm release
 
 .PHONY: clean
 clean:               # Remove temporary build files
-	rm -rf $(CHART_REPO)
 
 .PHONY: rmi
 rmi:                 # Remove Docker images
-	@for IMAGE in `make --no-print-directory images`; do \
-		docker rmi -f $$IMAGE ||:; \
-	done
 
 .PHONY: help
 help:                # Show Makefile options

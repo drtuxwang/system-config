@@ -38,7 +38,7 @@ check-makefile:      # Check Makefile files
 .PHONY: check-config
 check-config:        # Check all config files
 	@echo "\n*** Running BSON/JSON/YAML check ***"
-	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
+	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} + > /dev/null
 
 .PHONY: check-python-lint
 check-python-lint:   # Check Python code linting

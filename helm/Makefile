@@ -11,6 +11,7 @@ BUILD_DIRS := \
 	nginx \
 	ops-server \
 	oracle-xe \
+	postgresql \
 	prometheus \
 	pushgateway \
 	rabbitmq \

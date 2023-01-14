@@ -1098,6 +1098,8 @@ the years.
  * kubernetes/nginx-proxy-fwd/nginx-proxy-fwd.yaml
  * kubernetes/nginx-proxy-fwd/proxy-kube-local.crt
  * kubernetes/nginx-proxy-fwd/proxy-kube-local.key
+ * kubernetes/test-box/Makefile          Kubernetes: Test Box (drtuxwang/debian-bash:stable)
+ * kubernetes/test-box/test-box.yaml
  * kubernetes/test-server/Makefile       Kubernetes: examples (drtuxwang/debian-bash:stable)
  * kubernetes/test-server/test-server-daemonset.yaml
  * kubernetes/test-server/test-server-deployment.yaml
@@ -1138,9 +1140,6 @@ the years.
  * helm/nexus/values.yaml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 13.1.8 (app-1.18.0)
  * helm/nginx/values.yaml
- * helm/ops-server/Makefile              Helm Chart: drtuxwang/ops-server (drtuxwang/debian-bash:stable)
- * helm/ops-server/drtuxwang/ops-server/Chart.yaml
- * helm/ops-server/drtuxwang/ops-server/templates/_helpers.tpl
  * helm/ops-server/ops-server/templates/box-deployment.yaml
  * helm/ops-server/values.yaml
  * helm/oracle-xe/Makefile               Helm Chart: Oracle XE test (datagrip/oracle:11.2)
@@ -1150,12 +1149,17 @@ the years.
  * helm/oracle-xe/oracle-xe/templates/box-service.yaml
  * helm/oracle-xe/oracle-xe/templates/box-statefulset.yaml
  * helm/oracle-xe/values.yaml
+ * helm/postgresql/Makefile              Helm Chart: bitnami/postgresql 11.9.13 (app-11.18.0)
+ * helm/postgresql/values.yaml
  * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 15.5.3 (app-2.31.1)
  * helm/prometheus/values.yaml
  * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.16.1 (app-1.3.1)
  * helm/pushgateway/values.yaml
  * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 9.1.4 (app-3.8.35)
  * helm/rabbitmq/values.yaml
+ * helm/test-box/Makefile                Helm Chart: drtuxwang/test-box (drtuxwang/debian-bash:stable)
+ * helm/test-box/drtuxwang/test-box/Chart.yaml
+ * helm/test_box/drtuxwang/text-box/templates/_helpers.tpl
  * helm/test-server/Makefile             Helm Chart: drtuxwang/test-server (drtuxwang/debian-bash:stable)
  * helm/test-server/drtuxwang/test-server/Chart.yaml
  * helm/test-server/drtuxwang/test-server/requirements.lock

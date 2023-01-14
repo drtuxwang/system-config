@@ -1,7 +1,12 @@
-NAME := ops-server
-CHART_REPO := ./drtuxwang
-CHART_NAME := ops-server
-NAMESPACE ?= default
+NAME := postgresql
+CHART_REPO := bitnami
+CHART_URL := https://charts.bitnami.com/bitnami
+CHART_NAME := postgresql
+CHART_VERSION := 11.9.13
+APP_VERSION := 11.18.0
+IMAGE_TAG := 11.18.0-debian-11-r20
+NAMESPACE ?= infra
+LOCALPORT ?=
 
 ifndef CHART_VERSION
 	CHART_VERSION=$(shell make --no-print-directory list | awk 'END {print $$2}')
@@ -27,15 +32,15 @@ HELM_INSTALL := helm upgrade --install --wait
 HELM_FLAGS := \
 	--namespace=$(NAMESPACE) \
 	--values values.yaml \
-	--set image.name=$(APP_IMAGE) \
-	--set fullnameOverride=$(NAME)
+	--set fullnameOverride=$(NAME) \
+	--version $(CHART_VERSION)
+ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
+	HELM_FLAGS += --set service.externalIPs='{$(EXTERNAL_IP)}'
+endif
 ifdef IMAGE_TAG
 	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
 endif
 
-
-.PHONY: default
-default: status      # Default
 
 .PHONY: status
 status:              # Show workload status
@@ -52,18 +57,28 @@ status-helm:         # Show Helm release status
 
 .PHONY: status-kube
 status-kube:         # Show Kube workload status
+	@kubectl --namespace=$(NAMESPACE) get ServiceAccount -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@$(NAMESPACE)   ServiceAccount/@" ||:
 	@kubectl --namespace=$(NAMESPACE) get all -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s/^/$(NAMESPACE)   /" ||:
+
+.PHONY: repo-add
+repo-add:            # Add Helm repository
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: list
 list:                # List Helm chart versions
-	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
-	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("<%s>   ", $$2)}'
-	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
-	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
+	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
+		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
+		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
 
 .PHONY: version
 version: list        # Show Helm chart and app version
 	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+
+.PHONY: fetch
+fetch: repo-add clean # Fetch Helm chart
+	mkdir $(CHART_REPO) && \
+		cd $(CHART_REPO) && \
+		helm fetch --untar --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: images
 images:              # Show Docker images
@@ -71,29 +86,49 @@ images:              # Show Docker images
 
 .PHONY: pull
 pull:                # Pull Docker images
+	@for IMAGE in `make --no-print-directory images`; do \
+		docker pull $$IMAGE; \
+	done
 
 .PHONY: save
 save:                # Save Docker images as tar file
+	../bin/helm-save.sh \
+		$(CHART_REPO)-$(CHART_NAME) \
+		$(CHART_VERSION) \
+		$(APP_VERSION) \
+		$(shell make --no-print-directory images)
 
 .PHONY: template
-template:            # Show Helm template
+template: repo-add   # Show Helm template
 	helm template $(HELM_FLAGS) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check:               # Install Helm release dryrun
+check: repo-add      # Install Helm release dryrun
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME) --dry-run --debug
 
 .PHONY: install
-install:             # Install Helm release
+install: repo-add    # Install Helm release
 	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
+.PHONY: local
+local:               # Run Docker container locally
+	@echo "\n*** Running Doker container loclly ***"
+	@echo "Example: psql --host postgresql -U postgres -d postgres -p 5432"
+	docker run -it bitnami/postgresql:$(IMAGE_TAG) /bin/bash
+
+.PHONY: forward
+forward:             # Forward traffic to endpoint
+	@echo "\n*** Checking status ***"
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):27017
+
 .PHONY: connect
 connect:             # Connect to endpoint
-	@echo "\n*** Connecting to Ops box ***"
-	@kubectl --namespace=$(NAMESPACE) exec -it \
-		`kubectl --namespace=$(NAMESPACE) get pod | grep $(NAME)-box | awk 'NR==1 {print $$1}'` \
-		-- bash -l
+	@echo "\n*** Connecting to PostgreSQL Server box ***"
+	@kubectl --namespace=$(NAMESPACE) get secret postgresql -o jsonpath="{.data.postgres-password}" \
+		| base64 -d | awk '{printf("password: %s\n\n", $$1)}'
+	kubectl --namespace=$(NAMESPACE) exec -it postgresql-0 -- \
+		/opt/bitnami/scripts/postgresql/entrypoint.sh /bin/bash
 
 .PHONY: uninstall
 uninstall:           # Uninstall Helm release
@@ -102,9 +137,13 @@ uninstall:           # Uninstall Helm release
 
 .PHONY: clean
 clean:               # Remove temporary build files
+	rm -rf $(CHART_REPO)
 
 .PHONY: rmi
 rmi:                 # Remove Docker images
+	@for IMAGE in `make --no-print-directory images`; do \
+		docker rmi -f $$IMAGE ||:; \
+	done
 
 .PHONY: help
 help:                # Show Makefile options

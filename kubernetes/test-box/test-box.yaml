@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test-box
+    matchLabels: text-box
+  name: test-box
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-box
+  template:
+    metadata:
+      labels:
+        app: test-box
+    spec:
+      containers:
+      - command:
+        - /bin/sleep
+        - '86400'
+        env:
+        - name: NAME
+          value: VALUE
+        image: drtuxwang/debian-bash:stable
+        imagePullPolicy: IfNotPresent
+        name: box
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024M
+          requests:
+            cpu: 100m
+            memory: 64M
+        volumeMounts:
+        - mountPath: /vol/host/bin
+          name: bin
+          readOnly: true
+        - mountPath: /vol/host/boot
+          name: boot
+          readOnly: true
+        - mountPath: /vol/host/dev
+          name: dev
+          readOnly: true
+        - mountPath: /vol/host/etc
+          name: etc
+          readOnly: true
+        - mountPath: /vol/host/home
+          name: home
+          readOnly: true
+        - mountPath: /vol/host/lib
+          name: lib
+          readOnly: true
+        - mountPath: /vol/host/lib64
+          name: lib64
+          readOnly: true
+        - mountPath: /vol/host/logs
+          name: logs
+          readOnly: true
+        - mountPath: /vol/host/opt
+          name: opt
+          readOnly: true
+        - mountPath: /vol/host/proc
+          name: proc
+          readOnly: true
+        - mountPath: /vol/host/root
+          name: root
+          readOnly: true
+        - mountPath: /vol/host/run
+          name: run
+          readOnly: true
+        - mountPath: /vol/host/sbin
+          name: sbin
+          readOnly: true
+        - mountPath: /vol/host/sys
+          name: sys
+          readOnly: true
+        - mountPath: /vol/host/tmp
+          name: tmp
+          readOnly: true
+        - mountPath: /vol/host/usr
+          name: usr
+          readOnly: true
+        - mountPath: /vol/host/var
+          name: var
+          readOnly: true
+      nodeSelector:
+        kubernetes.io/os: linux
+        ##kubernetes.io/hostname: ryzen.local
+      volumes:
+      - hostPath:
+          path: /bin
+        name: bin
+      - hostPath:
+          path: /boot
+        name: boot
+      - hostPath:
+          path: /dev
+        name: dev
+      - hostPath:
+          path: /etc
+        name: etc
+      - hostPath:
+          path: /home
+        name: home
+      - hostPath:
+          path: /lib
+        name: lib
+      - hostPath:
+          path: /lib64
+        name: lib64
+      - hostPath:
+          path: /logs
+        name: logs
+      - hostPath:
+          path: /opt
+        name: opt
+      - hostPath:
+          path: /proc
+        name: proc
+      - hostPath:
+          path: /root
+        name: root
+      - hostPath:
+          path: /run
+        name: run
+      - hostPath:
+          path: /sbin
+        name: sbin
+      - hostPath:
+          path: /sys
+        name: sys
+      - hostPath:
+          path: /tmp
+        name: tmp
+      - hostPath:
+          path: /usr
+        name: usr
+      - hostPath:
+          path: /var
+        name: var
