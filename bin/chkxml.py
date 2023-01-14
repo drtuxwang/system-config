@@ -130,25 +130,6 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    @staticmethod
-    def _get_xml(path: Path) -> str:
-        """
-        Return XML content of file.
-
-        Workaround for bug in xml.sax call to urllib requiring 'http_proxy'
-        """
-        lines = []
-        try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
-                for line in ifile:
-                    if line.startswith('<!DOCTYPE html'):
-                        lines.append('\n')
-                    else:
-                        lines.append(line.replace('&', '.'))
-        except OSError:
-            print(f'{sys.argv[0]}: Cannot parse "{path}" XML file.')
-        return ''.join(lines)
-
     @classmethod
     def run(cls) -> bool:
         """
@@ -164,6 +145,7 @@ class Main:
                     f'{sys.argv[0]}: Cannot open "{path}" XML file.',
                 )
 
+            print(f'Checking "{path}" XML file...')
             task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [path])
             task.run()
             if task.has_error():
@@ -173,14 +155,8 @@ class Main:
                 continue
 
             try:
-                if path.suffix in ('.htm', '.html', '.xhtml'):
-                    xml.sax.parseString(cls._get_xml(path), handler)
-                else:
-                    with path.open(
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
-                        xml.sax.parse(ifile, handler)
+                with path.open(encoding='utf-8', errors='replace') as ifile:
+                    xml.sax.parse(ifile, handler)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot parse "{path}" XML file.',

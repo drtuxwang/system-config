@@ -121,7 +121,11 @@ class Main:
 
         for album, directory in enumerate(options.get_directories()):
             linkdir = '_'.join(directory.split(os.sep)[-depth:])
-            for number, file in enumerate(sorted(Path(directory).glob('*'))):
+            for number, file in enumerate(sorted([
+                x
+                for x in Path(directory).glob('*.*')
+                if x.suffix.lower() in images_extensions
+            ])):
                 ext = Path(file).suffix.lower()
                 if ext in images_extensions:
                     link = Path(f'{album+1:02d}.{number+1:03d}_{linkdir}{ext}')

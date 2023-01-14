@@ -174,9 +174,9 @@ class Main:
         wget: command_mod.Command,
         url: str,
     ) -> dict:
-        for _ in range(3):
+        for _ in range(8):  # Workaround some mirrors down
             try:
-                with urllib.request.urlopen(url, timeout=1) as conn:
+                with urllib.request.urlopen(url, timeout=0.2) as conn:
                     url_time = time.mktime(time.strptime(
                         conn.info().get('Last-Modified'),
                         '%a, %d %b %Y %H:%M:%S %Z',
@@ -185,7 +185,8 @@ class Main:
             except (socket.timeout, urllib.error.URLError):
                 pass
         else:
-            raise SystemExit(f"Error: Cannot fetch URL: {url}")
+            logger.warning("Skipping unreachable URL: %s", url)
+            return data
 
         if url_time > data['time']:
             self._show_times(data['time'], url_time)
@@ -201,10 +202,9 @@ class Main:
                 self._remove()
             else:
                 print("  [ERROR (", task.get_exitcode, ")]", url)
-                raise SystemExit(
-                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
-                    f'received from "{task.get_file()}".',
-                )
+                logger.warning("Skipping URL: %s", url)
+                return data
+
             self._unpack(archive_path)
             site = url[:url.find('/dists/') + 1]
 

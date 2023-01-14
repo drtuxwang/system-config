@@ -33,6 +33,7 @@ decorator==5.1.1             #   (required by ipdb/ipython)
 defusedxml==0.7.1            #   (required by Glances)
 devpi-client==5.2.3          # Manages devpi-server
 devpi-common==3.6.0          #   (required by devpi-client)
+dicttoxml==1.7.16            # Convert Python dict to XML
 dill==0.3.6                  #   (required by pylint)
 distlib==0.3.6               #   (required by humpty/virtualenv)
 dnspython==2.1.0             # DNS client

@@ -102,16 +102,14 @@ class Main:
                     f'{sys.argv[0]}: Cannot read "{path}" file.',
                 ) from exception
             xml_doc = xml.dom.minidom.parseString(''.join(lines))
-            xml_text = xml_doc.toprettyxml(indent='    ', newl='\n')
 
             path_new = Path(f'{path}.part')
             try:
-                with path_new.open(
-                    'w',
+                path_new.write_bytes(xml_doc.toprettyxml(
+                    indent='  ',
+                    newl='\n',
                     encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
-                    print(xml_text, end='', file=ofile)
+                ))
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{path_new}" file.',

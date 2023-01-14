@@ -25,10 +25,9 @@ class Options:
 
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
-        self._output: str = None
         self.parse(sys.argv)
 
-    def get_output(self) -> str:
+    def get_output(self) -> Path:
         """
         Return output file.
         """
@@ -62,30 +61,26 @@ class Options:
             raise SystemExit(
                 f"{sys.argv[0]}: Wrong URL extension: {self._args.output}",
             )
-        if self._args.output:
-            if not self._args.output.endswith('.mp4'):
-                raise SystemExit(
-                    f"{sys.argv[0]}: Wrong MP4 file extension: "
-                    f"{self._args.output}",
-                )
-            self._output = self._args.output
-        else:
-            md5 = hashlib.md5()
-            md5.update(self._args.url[0].encode())
-            path = Path(self._args.url[0]).name
-            self._output = (
-                f"{path.rsplit('?', 1)[0].rsplit('.', 1)[0]}-"
-                f"{md5.hexdigest()[:9]}.mp4"
-            )
-        if Path(self._output).is_file():
-            print(f"{self._output}: already exists")
-            raise SystemExit(0)
 
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
         self._parse_args(args[1:])
+
+        if self._args.output:
+            self._output = Path(self._args.output).with_suffix('.mp4')
+        else:
+            md5 = hashlib.md5()
+            md5.update(self._args.url[0].encode())
+            path = Path(self._args.url[0]).name
+            self._output = Path(
+                f"{path.rsplit('?', 1)[0].rsplit('.', 1)[0]}-"
+                f"{md5.hexdigest()[:9]}.mp4"
+            )
+        if Path(self._output).is_file():
+            print(f"{self._output}: already exists")
+            raise SystemExit(0)
 
 
 class VideoDownloader:
@@ -97,8 +92,8 @@ class VideoDownloader:
         self._url = options.get_url()
 
         self._wget = command_mod.Command('wget', errors='stop')
-        self._directory = self._output + '.parts'
-        self._m3u8_file = Path(self._directory, Path(self._url).name)
+        self._directory_path = Path(f'{self._output}.parts')
+        self._m3u8_file = Path(self._directory_path, Path(self._url).name)
 
     def _write_resume(self) -> None:
         """
@@ -125,8 +120,8 @@ class VideoDownloader:
         """
         if self._m3u8_file.is_file():
             return
-        if not Path(self._directory).is_dir():
-            os.makedirs(self._directory)
+        if not self._directory_path.is_dir():
+            self._directory_path.mkdir(parents=True)
         self._write_resume()
 
         self._wget.set_args(['-O', self._m3u8_file, self._url])
@@ -254,9 +249,9 @@ class VideoDownloader:
         source_time = int(self._m3u8_file.stat().st_mtime)
         os.utime(mp4_file, (source_time, source_time))
         shutil.move(mp4_file, self._output)
-        shutil.move(self._directory, self._output+'.full')
+        shutil.move(self._directory_path, f'{self._output}.full')
         print(f"{self._output}: generated from {len(chunk_files)} chunks!")
-        shutil.rmtree(self._output+'.full')
+        shutil.rmtree(f'{self._output}.full')
 
 
 class Main:

@@ -31,7 +31,7 @@ class Options:
         return self._args.files
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description="re-format JSON file.")
+        parser = argparse.ArgumentParser(description="Re-format JSON file.")
 
         parser.add_argument(
             'files',

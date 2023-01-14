@@ -90,15 +90,20 @@ class Main:
         data = config_mod.Data()
         error = 0
 
+        types = config_mod.Data.TYPES
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
-                print(f"{path}: Cannot find file")
+                print(f"{path}: Cannot find file", file=sys.stderr)
                 error = 1
-            elif path.suffix in ('.bson', '.json', '.yaml', '.yml'):
+                continue
+
+            file_type = types.get(path.suffix)
+            if file_type in ('bson', 'json', 'yaml'):
+                print(f'Checking "{path}" {file_type.upper()} file...')
                 try:
                     data.read(path, check=True)
                 except config_mod.ReadConfigError as exception:
-                    print(f"{path}: {exception}")
+                    print(f"{path}: {exception}", file=sys.stderr)
                     error = 1
 
         return error

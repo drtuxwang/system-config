@@ -1,4 +1,4 @@
-# 1996-2022 By Dr Colin Kong
+# 1996-2023 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -139,7 +139,7 @@ the years.
  * bin/bell                 Play bell.ogg sound
  * bin/bell.ogg             (uses cvlc or ogg123)
  * bin/bell.py
- * bin/bson                 Convert BSON/JSON/YAML to BSON
+ * bin/bson                 Convert BSON/JSON/XML/YAML to BSON
  * bin/bson.bat
  * bin/bson_.py
  * bin/breaktimer           Break reminder timer
@@ -163,6 +163,9 @@ the years.
  * bin/chksequence          Check for missing sequence in numbered files
  * bin/chksequence.bat
  * bin/chksequence.py
+ * bin/chkxml               Check XML file for errors
+ * bin/chkxml.bat
+ * bin/chkxml.py
  * bin/chrome               Wrapper for "google-chrome" command
  * bin/chrome-proxy
  * bin/chrome-proxy.bat
@@ -408,7 +411,7 @@ the years.
  * bin/hearts.py
  * bin/helm                 helm wrapper (for Kubernetes)
  * bin/helm.py
- * bin/htmlformat           HTML file re-formatter
+ * bin/htmlformat           Re-format XHTML file.
  * bin/htmlformat.bat
  * bin/htmlformat.py
  * bin/httpd                Start a simple Python HTTP server
@@ -436,7 +439,7 @@ the years.
  * bin/json                 Convert BSON/JSON/YAML to JSON
  * bin/json.bat
  * bin/json_.py
- * bin/jsonformat           JSON file re-formatter
+ * bin/jsonformat           Re-format JSON file.
  * bin/jsonformat.bat
  * bin/jsonformat.py
  * bin/jython               Wrapper for "jython" command
@@ -809,10 +812,9 @@ the years.
  * bin/xmail.py
  * bin/xmixer               Start GNOME/KDE/XFCE audio mixer
  * bin/xmixer.py
- * bin/xmlcheck             Check XML file for errors
- * bin/xmlcheck.bat
- * bin/xmlcheck.py
- * bin/xmlformat            XML file re-formatter
+ * bin/xml                  Convert BSON/JSON/XML/YAML to XML
+ * bin/xml_.py
+ * bin/xmlformat            Re-format XML file.
  * bin/xmlformat.bat
  * bin/xmlformat.py
  * bin/xournal              Sandbox for "xournalpp" launcher

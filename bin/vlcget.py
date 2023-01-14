@@ -62,10 +62,10 @@ class Options:
         self._parse_args(args[1:])
 
         if self._args.output:
-            self._output = Path(self._args.output[0])
+            self._output = Path(self._args.output[0]).with_suffix('.mpegts')
         else:
             path = Path(self._args.url[0])
-            self._output = Path(f'{path.name[:31]}{path.suffix}')
+            self._output = Path(f'{path.name[:31]}.mpegts')
 
         if self._output.exists():
             raise SystemExit(f"Output file already exists: {self._output}")

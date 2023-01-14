@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Re-format HTML file.
+Re-format XHTML file.
 """
 
 import argparse
@@ -34,7 +34,7 @@ class Options:
         return self._args.files
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description="Re-format HTML file.")
+        parser = argparse.ArgumentParser(description="Re-format XHTML file.")
 
         parser.add_argument(
             'files',
@@ -130,7 +130,7 @@ class Main:
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
             if path.suffix in ('.htm', '.html', '.xhtml'):
-                print(f'Re-formatting "{path}" HTML file...')
+                print(f'Re-formatting "{path}" XHTML file...')
 
                 task = subtask_mod.Batch(
                     cls._xmllint.get_cmdline() + [str(path)]

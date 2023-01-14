@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.6.1'
-VERSION = 20221226
+RELEASE = '2.6.2'
+VERSION = 20230104
 
 
 class Command:
@@ -205,7 +205,7 @@ class Command:
         return None
 
     @staticmethod
-    def args2cmd(args: List[str]) -> str:
+    def args2cmd(args: list) -> str:
         """
         Join list of arguments into a command string.
 
@@ -214,7 +214,7 @@ class Command:
         subprocess.list2cmdline() does not handle "&" properly)
         """
         nargs = []
-        for arg in args:
+        for arg in [str(x) for x in args]:
             for char in '"\' &;':
                 if char in arg and arg != ';':
                     quoted = arg.replace('\\', '\\\\').replace('"', '\\"')

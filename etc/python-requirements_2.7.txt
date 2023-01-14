@@ -24,6 +24,7 @@ cqlsh==None
 cryptography==3.3.2
 cx-Oracle==7.3.0
 decorator==4.4.2
+dicttoxml==None
 dill==None
 dnspython==None
 docker==None

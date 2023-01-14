@@ -11,7 +11,9 @@ import sys
 from pathlib import Path
 from typing import List
 
+import command_mod
 import config_mod
+import subtask_mod
 
 
 class Options:
@@ -22,6 +24,12 @@ class Options:
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
+
+    def get_check_flag(self) -> bool:
+        """
+        Return check flag.
+        """
+        return self._args.check_flag
 
     def get_compact_flag(self) -> bool:
         """
@@ -42,6 +50,12 @@ class Options:
 
         parser.add_argument(
             '-c',
+            dest='check_flag',
+            action='store_true',
+            help="Check JSON configuration files for errors.",
+        )
+        parser.add_argument(
+            '-s',
             dest='compact_flag',
             action='store_true',
             help="Compact JSON data on one line.",
@@ -94,29 +108,63 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def _check(paths: List[Path]) -> None:
+        if paths:
+            command = command_mod.Command('chkconfig', errors='stop')
+            task = subtask_mod.Task(command.get_cmdline() + paths)
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(1)
+
+    @staticmethod
+    def _convert(paths: List[Path], compact: bool) -> None:
+        data = config_mod.Data()
+        json_paths = []
+
+        types = config_mod.Data.TYPES
+        for path in paths:
+            if types.get(path.suffix) == 'JSON':
+                json_paths.append(path)
+                continue
+
+            try:
+                data.read(path)
+            except config_mod.ReadConfigError as exception:
+                raise SystemExit(f"{path}: {exception}") from exception
+
+            json_path = path.with_suffix('.json')
+            print(f'Converting "{path}" to "{json_path}"...')
+            try:
+                data.write(json_path, compact)
+            except config_mod.WriteConfigError as exception:
+                raise SystemExit(f"{path}: {exception}") from exception
+
+        if json_paths:
+            command = command_mod.Command('jsonformat', errors='stop')
+            task = subtask_mod.Task(command.get_cmdline() + json_paths)
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(1)
+
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
-        data = config_mod.Data()
-
+        check = options.get_check_flag()
         compact = options.get_compact_flag()
-        for path in [Path(x) for x in options.get_files()]:
-            if not path.is_file():
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
-            if path.suffix in ('.bson', '.json', '.yaml', '.yml', '.xml'):
-                try:
-                    data.read(path)
-                except config_mod.ReadConfigError as exception:
-                    raise SystemExit(f"{path}: {exception}") from exception
 
-                json_path = path.with_suffix('.json')
-                print(f'Converting "{path}" to "{json_path}"...')
-                try:
-                    data.write(json_path, compact)
-                except config_mod.WriteConfigError as exception:
-                    raise SystemExit(f"{path}: {exception}") from exception
+        paths = [Path(x) for x in options.get_files()]
+        for path in paths:
+            if not path.exists():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
+
+        types = config_mod.Data.TYPES
+        if check:
+            cls._check([x for x in paths if types.get(x.suffix) == 'JSON'])
+        else:
+            cls._convert([x for x in paths if x.suffix in types], compact)
 
         return 0
 
