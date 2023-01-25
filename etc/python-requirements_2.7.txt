@@ -1,5 +1,5 @@
 ansible-core==2.11.4
-ansible==4.5.0
+ansible                      # ==4.5.0 (last compatible version)
 appimage-builder==None
 arrow==0.17.0
 astroid==1.6.6
@@ -7,7 +7,7 @@ asttokens==None
 backports-abc==0.5           #   (required by tornado for 2.7)
 backports.functools-lru-cache==1.6.4  #   (required by pylint for 2.7)
 bcrypt==3.1.7
-beautifulsoup4               # ==4.9.3 (last compatible version))
+beautifulsoup4               # ==4.9.3 (last compatible version)
 bleach==None
 Brotli==None
 build==None

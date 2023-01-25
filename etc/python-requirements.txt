@@ -1,5 +1,5 @@
-ansible-core==2.13.7         # Ansible IT automation system core
-ansible==6.7.0               # Ansible IT automation system plugins
+ansible-core==2.14.1         # Ansible IT automation system core
+ansible==7.1.0               # Ansible IT automation system plugins
 appimage-builder==1.0.3      # Generate portable appimages
 appnope==0.1.3               #   (required by ipython)
 args==0.1.0                  #   (required by clint)

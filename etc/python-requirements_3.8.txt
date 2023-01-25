@@ -1,1 +1,4 @@
+ansible-core                 # ==2.13.7 (last compatible version)
+ansible                      # ==6.7.0 (last compatible version)
 ruamel.yaml.clib==0.2.7      #   (required by ruamel.yaml for 3.8)
+
