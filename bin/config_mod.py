@@ -28,8 +28,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.1.0'
-VERSION = 20230111
+RELEASE = '2.1.1'
+VERSION = 20230122
 
 
 class Data:
@@ -78,7 +78,7 @@ class Data:
         Replace Jinja directives.
         """
         lines = []
-        for line in data.replace('\r\n', '\n').split('\n'):
+        for line in data.split('\n'):
             if line.startswith('{{') and line.endswith('}}'):
                 if ' toYaml ' in line and ' indent ' in line:
                     indent = int(line.split(' indent ')[1].split()[0])
@@ -194,7 +194,7 @@ class Data:
             elif config == 'BSON':
                 blocks = self._read_bson(path)
             else:
-                with path.open(encoding='utf-8') as ifile:
+                with path.open(errors='replace') as ifile:
                     data = ifile.read()
                 if check:
                     data = self._unjinja(data)
@@ -215,7 +215,7 @@ class Data:
 
     @staticmethod
     def _write_json(path: Path, blocks: List[dict], compact: bool) -> None:
-        with path.open('w', encoding='utf-8', newline='\n') as ofile:
+        with path.open('w', newline='\n') as ofile:
             for block in blocks:
                 indent = 0 if compact else 4
                 print(json.dumps(
@@ -256,12 +256,12 @@ class Data:
             cls._reformat_yaml(yaml.dump(x, allow_unicode=True, indent=2))
             for x in blocks
         ]
-        with path.open('w', encoding='utf-8', newline='\n') as ofile:
+        with path.open('w', newline='\n') as ofile:
             print('--\n'.join(yaml_data), end='', file=ofile)
 
     @staticmethod
     def _write_xml(path: Path, block: dict, compact: bool) -> None:
-        with path.open('w', encoding='utf-8', newline='\n') as ofile:
+        with path.open('w', newline='\n') as ofile:
             root = len(block) > 1
             data = dicttoxml.dicttoxml(block, root=root)
             if not compact:
@@ -336,31 +336,33 @@ class Config:
         """
         Return (command, daemon_flag) or None
         """
-        app = self._apps.get(app_name)
-        if app_name:
-            command = app['command']
-            if view and 'view_flag' in app:
-                command.append(app['view_flag'])
-            daemon = app.get('daemon') is True
-            return command, daemon
+        app = self._apps.get(app_name.lower())
+        if not app:
+            raise ConfigError(
+                f'Undefined "{app_name.lower()}" app in configuration.'
+            )
 
-        return None
+        command = app['command']
+        if view and 'view_flag' in app:
+            command.append(app['view_flag'])
+        daemon = app.get('daemon') is True
+        return command, daemon
 
-    def get_open_app(self, extension: str) -> Tuple[List[str], bool]:
+    def get_open_app(self, suffix: str) -> Tuple[List[str], bool]:
         """
         Return (command, daemon_flag) or None
         """
-        app_name = self._bindings.get(extension, {}).get('open')
+        app_name = self._bindings.get(suffix.lower(), {}).get('open')
         if app_name:
             return self.get_app(app_name)
 
         return None
 
-    def get_view_app(self, extension: str) -> Tuple[List[str], bool]:
+    def get_view_app(self, suffix: str) -> Tuple[List[str], bool]:
         """
         Return (command, daemon_flag) or None
         """
-        app_name = self._bindings.get(extension, {}).get('view')
+        app_name = self._bindings.get(suffix.lower(), {}).get('view')
         if app_name:
             return self.get_app(app_name, view=True)
 

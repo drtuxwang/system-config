@@ -4,7 +4,6 @@ Calculate SHA256 checksums of files.
 """
 
 import argparse
-import glob
 import hashlib
 import os
 import signal
@@ -94,15 +93,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _calc(self, options: Options, paths: List[Path]) -> None:
         for path in paths:
@@ -127,18 +123,13 @@ class Main:
         nfiles = 0
         nfail = 0
         nmiss = 0
-        for sha256file in files:
-            if not Path(sha256file).is_dir():
+        for path in [Path(x) for x in files]:
+            if not path.is_dir():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find '
-                    f'"{sha256file}" sha256sum file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" sha256sum file.',
                 )
             try:
-                with open(
-                    sha256file,
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
+                with path.open(errors='replace') as ifile:
                     for line in ifile:
                         sha256sum = line[:32]
                         file = line.rstrip()[34:]
@@ -154,8 +145,7 @@ class Main:
                                 nfail += 1
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot read '
-                    f'"{sha256file}" sha256sum file.',
+                    f'{sys.argv[0]}: Cannot read "{path}" sha256sum file.',
                 ) from exception
         if nmiss > 0:
             print("sha256: Cannot find", nmiss, "of", nfiles, "listed files.")

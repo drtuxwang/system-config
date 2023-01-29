@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2022 By Dr Colin Kong
+Copyright GPL v2: 2006-2023 By Dr Colin Kong
 """
 
 import copy
@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.3.1'
-VERSION = 20221226
+RELEASE = '2.3.2'
+VERSION = 20230122
 
 BUFFER_SIZE = 131072
 
@@ -37,11 +37,7 @@ class Task:
             if '|' in cmdline:
                 raise PipeNotSupportedError('Windows does not support pipes.')
             try:
-                with open(
-                    cmdline[0],
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
+                with Path(cmdline[0]).open(errors='replace') as ifile:
                     if ifile.readline().startswith('#!/usr/bin/env python'):
                         self._cmdline = [sys.executable, '-B'] + cmdline
             except OSError:
@@ -417,8 +413,7 @@ class Batch(Task):
                 if not line:
                     break
                 if ismatch.search(line):
-                    self._status['output'].append(
-                        line.rstrip('\r\n'))
+                    self._status['output'].append(line.rstrip('\n'))
         if not info['error2output']:
             while True:
                 try:
@@ -428,7 +423,7 @@ class Batch(Task):
                 if not line:
                     break
                 if ismatch.search(line):
-                    self._status['error'].append(line.rstrip('\r\n'))
+                    self._status['error'].append(line.rstrip('\n'))
         return child.wait()
 
     def run(self, **kwargs: Any) -> int:
@@ -696,7 +691,7 @@ class Main:
         child.stdin.close()
         if file:
             try:
-                with open(file, 'ab') as ofile:
+                with Path(file).open('ab') as ofile:
                     while True:
                         byte = child.stdout.read(1)
                         if not byte:

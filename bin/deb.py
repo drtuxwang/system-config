@@ -4,10 +4,11 @@ Make a compressed archive in DEB format or query database/files.
 """
 
 import argparse
-import glob
+import dataclasses
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -170,22 +171,15 @@ class Options:
             raise SystemExit(1)
 
 
+@dataclasses.dataclass
 class Package:
     """
     Package class
     """
-
-    def __init__(
-        self,
-        version: str,
-        size: int,
-        depends: List[str],
-        description: str,
-    ) -> None:
-        self._version = version
-        self._size = size
-        self._depends = depends
-        self._description = description
+    version: str
+    size: int
+    depends: List[str]
+    description: str
 
     def append_depends(self, name: str) -> None:
         """
@@ -193,13 +187,13 @@ class Package:
 
         name = Package name
         """
-        self._depends.append(name)
+        self.depends.append(name)
 
     def get_depends(self) -> List[str]:
         """
         Return depends.
         """
-        return self._depends
+        return self.depends
 
     def set_depends(self, names: List[str]) -> None:
         """
@@ -207,13 +201,13 @@ class Package:
 
         names = List of package names
         """
-        self._depends = names
+        self.depends = names
 
     def get_description(self) -> str:
         """
         Return description.
         """
-        return self._description
+        return self.description
 
     def set_description(self, description: str) -> None:
         """
@@ -221,13 +215,13 @@ class Package:
 
         description = Package description
         """
-        self._description = description
+        self.description = description
 
     def get_size(self) -> int:
         """
         Return size.
         """
-        return self._size
+        return self.size
 
     def set_size(self, size: int) -> None:
         """
@@ -235,13 +229,13 @@ class Package:
 
         size = Package size
         """
-        self._size = size
+        self.size = size
 
     def get_version(self) -> str:
         """
         Return version.
         """
-        return self._version
+        return self.version
 
     def set_version(self, version: str) -> None:
         """
@@ -249,7 +243,7 @@ class Package:
 
         version = Package version
         """
-        self._version = version
+        self.version = version
 
 
 class Main:
@@ -273,15 +267,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _calc_dependencies(packages: dict, names_all: List[str]) -> None:
@@ -302,13 +293,9 @@ class Main:
         name = ''
         package = Package('', -1, [], '')
         try:
-            with open(
-                '/var/lib/dpkg/status',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with Path('/var/lib/dpkg/status').open(errors='replace') as ifile:
                 for line in ifile:
-                    line = line.rstrip('\r\n')
+                    line = line.rstrip('\n')
                     if line.startswith('Package: '):
                         name = line.replace('Package: ', '', 1)
                     elif line.startswith('Architecture: '):

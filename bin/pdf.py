@@ -4,7 +4,6 @@ Create PDF from text/images/postscript/PDF files.
 """
 
 import argparse
-import glob
 import os
 import re
 import signal
@@ -117,15 +116,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def __del__(self) -> None:
         for file in self._tempfiles:
@@ -170,16 +166,17 @@ class Main:
     def _postscript(self, path: Path) -> str:
         try:
             with path.open('rb') as ifile:
+                path_new = Path(self._tmpfile)
                 try:
-                    with open(self._tmpfile, 'wb') as ofile:
+                    with path_new.open('wb') as ofile:
                         for line in ifile:
                             ofile.write(line.rstrip(b"\r\n\004") + b"\n")
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create '
-                        f'"{self._tmpfile}" temporary file.',
+                        f'"{path_new}" temporary file.',
                     ) from exception
-                self._postscript_fix(Path(self._tmpfile))
+                self._postscript_fix(path_new)
                 return f'Postscript file "{path}"'
         except OSError as exception:
             raise SystemExit(
@@ -189,11 +186,7 @@ class Main:
     def _postscript_fix(self, path: Path) -> None:
         scaling = None
         try:
-            with open(
-                self._tmpfile,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with Path(self._tmpfile).open(errors='replace') as ifile:
                 for line in ifile:
                     if '/a3 setpagesize' in line:
                         scaling = 0.7071
@@ -201,15 +194,11 @@ class Main:
         except OSError:
             pass
         if scaling:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 path_new = Path(f'{path}.part')
-                with path_new.open(
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with path_new.open('w') as ofile:
                     for line in ifile:
-                        line = line.rstrip('\r\n')
+                        line = line.rstrip('\n')
                         if line.endswith(' setpagesize'):
                             columns = line.split()
                             columns[2] = '/a4'

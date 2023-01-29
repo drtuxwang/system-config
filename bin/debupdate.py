@@ -5,7 +5,7 @@ Check whether installed debian packages in '.debs' list have updated versions.
 
 import argparse
 import copy
-import glob
+import dataclasses
 import json
 import logging
 import os
@@ -27,62 +27,14 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
+@dataclasses.dataclass
 class Package:
     """
     Package class
     """
-
-    def __init__(
-        self,
-        version: str = '0',
-        depends: List[str] = None,
-        url: str = '',
-    ) -> None:
-        self._version = version
-        self._depends = depends if depends else []
-        self._url = url
-
-    def get_depends(self) -> List[str]:
-        """
-        Return list of required dependent packages.
-        """
-        return self._depends
-
-    def set_depends(self, depends: List[str]) -> None:
-        """
-        Set list of required dependent packages.
-
-        depends = List of required dependent packages
-        """
-        self._depends = depends
-
-    def get_url(self) -> str:
-        """
-        Return package url.
-        """
-        return self._url
-
-    def set_url(self, url: str) -> None:
-        """
-        Set package url.
-
-        url = Package url
-        """
-        self._url = url
-
-    def get_version(self) -> str:
-        """
-        Return version.
-        """
-        return self._version
-
-    def set_version(self, version: str) -> None:
-        """
-        Set package version.
-
-        version = package version.
-        """
-        self._version = version
+    version: str = '0'
+    depends: List[str] = dataclasses.field(default_factory=list)
+    url: str = ''
 
     @staticmethod
     def _get_loose_version(version: str) -> packaging.version.LegacyVersion:
@@ -96,8 +48,8 @@ class Package:
         Return True if version newer than package.
         """
         if (
-            self._get_loose_version(self._version) >
-            self._get_loose_version(package.get_version())
+            self._get_loose_version(self.version) >
+            self._get_loose_version(package.version)
         ):
             return True
         return False
@@ -161,15 +113,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _read_data(path: Path) -> dict:
@@ -200,22 +149,21 @@ class Main:
         name = ''
         package = Package()
         for line in lines:
-            line = line.rstrip('\r\n')
+            line = line.rstrip('\n')
             if line.startswith('Package: '):
                 name = line.replace('Package: ', '')
             elif line.startswith('Version: '):
-                package.set_version(
-                    line.replace('Version: ', '').split(':')[-1])
+                package.version = line.replace('Version: ', '').split(':')[-1]
             elif line.startswith('Depends: '):
                 if not disable_deps:
                     depends = []
                     for i in line.replace('Depends: ', '').split(', '):
                         depends.append(i.split()[0])
-                    package.set_depends(depends)
+                    package.depends = depends
             elif line.startswith('Filename: '):
                 if name in packages and not package.is_newer(packages[name]):
                     continue
-                package.set_url(line[10:])
+                package.url = line[10:]
                 packages[name] = package
                 package = Package()
         return packages
@@ -223,7 +171,7 @@ class Main:
     def _read_distro_pin_packages(self, pin_path: Path) -> None:
         packages_cache = {}
         try:
-            with pin_path.open(encoding='utf-8', errors='replace') as ifile:
+            with pin_path.open(errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -248,27 +196,24 @@ class Main:
 
     def _read_distro_deny_list(self, path: Path) -> None:
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
                         name = columns[0]
                         if not line.strip().startswith('#'):
                             if name in self._packages:
-                                if (columns[1] == '*' or
-                                        columns[1] ==
-                                        self._packages[name].get_version()):
+                                if (
+                                    columns[1] == '*' or
+                                    columns[1] == self._packages[name].version
+                                ):
                                     del self._packages[name]
         except OSError:
             return
 
-    def _check_distro_updates(
-        self,
-        distro: str,
-        path: Path,
-    ) -> None:
+    def _check_distro_updates(self, distro: str, path: Path,) -> None:
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 versions = {}
                 for line in ifile:
                     if not line.startswith('#'):
@@ -285,16 +230,18 @@ class Main:
                 f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
 
-        urlfile = Path(distro).name + str(path).rsplit('.debs', 1)[-1]+'.url'
+        url_path = Path(
+            f"{Path(distro).name}{str(path).rsplit('.debs', 1)[-1]}.url"
+        )
         try:
-            with open(urlfile, 'w', encoding='utf-8', newline='\n') as ofile:
+            with url_path.open('w') as ofile:
                 for name, version in sorted(versions.items()):
                     if name in self._packages:
-                        new_version = self._packages[name].get_version()
+                        new_version = self._packages[name].version
                         if new_version != version:
                             file = self._local(
                                 distro,
-                                self._packages[name].get_url()
+                                self._packages[name].url,
                             )
                             logger.info(
                                 "Update: %s (%s => %s)",
@@ -305,22 +252,22 @@ class Main:
                             logger.info("  %s", file)
                             print(f"{file}  # {version}", file=ofile)
                             for dependency in sorted(self._depends(
-                                    versions,
-                                    self._packages[name].get_depends()
+                                versions,
+                                self._packages[name].depends,
                             )):
                                 if dependency in self._packages:
                                     file = self._local(
                                         distro,
-                                        self._packages[dependency].get_url()
+                                        self._packages[dependency].url,
                                     )
                                     logger.warning("    %s", file)
                                     print(f"  {file}", file=ofile)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{urlfile}" file.',
+                f'{sys.argv[0]}: Cannot create "{url_path}" file.',
             ) from exception
-        if Path(urlfile).stat().st_size == 0:
-            os.remove(urlfile)
+        if url_path.stat().st_size == 0:
+            url_path.unlink()
 
     def _depends(self, versions: dict, depends: List[str]) -> List[str]:
         names = []
@@ -332,7 +279,7 @@ class Main:
                     if name in self._packages:
                         names.extend(self._depends(
                             versions,
-                            self._packages[name].get_depends()
+                            self._packages[name].depends,
                         ))
         return names
 

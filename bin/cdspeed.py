@@ -6,7 +6,6 @@ Set CD/DVD drive speed.
 """
 
 import argparse
-import glob
 import json
 import os
 import signal
@@ -119,8 +118,7 @@ class Configuration:
         self._data: dict = {'cdspeed': {}}
         if path:
             try:
-                with path.open(encoding='utf-8', errors='replace') as ifile:
-                    self._data = json.load(ifile)
+                self._data = json.loads(path.read_text(errors='replace'))
             except (KeyError, OSError):
                 pass
 
@@ -144,7 +142,7 @@ class Configuration:
         Write file
         """
         try:
-            with path.open('w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w') as ofile:
                 print(json.dumps(
                     self._data,
                     ensure_ascii=False,
@@ -176,15 +174,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

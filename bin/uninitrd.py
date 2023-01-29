@@ -4,7 +4,6 @@ Unpack a compressed archive in INITRAMFS format.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -91,15 +90,8 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+
+        os.umask(0o022)
 
     @staticmethod
     def run() -> int:
@@ -109,7 +101,6 @@ class Main:
         options = Options()
         view_flag = options.get_view_flag()
 
-        os.umask(0o022)
         archiver = (
             command_mod.Command('lsinitramfs', errors='stop')
             if view_flag else

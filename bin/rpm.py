@@ -3,7 +3,7 @@
 Wrapper for "rpm" command (adds 'rpm -l')
 """
 
-import glob
+import dataclasses
 import os
 import shutil
 import signal
@@ -48,57 +48,14 @@ class Options:
         self._mode = 'show_packages_info'
 
 
+@dataclasses.dataclass
 class Package:
     """
     Package class
     """
-
-    def __init__(self, version: str, size: int, description: str) -> None:
-        self._version = version
-        self._size = size
-        self._description = description
-
-    def get_description(self) -> str:
-        """
-        Return package description.
-        """
-        return self._description
-
-    def set_description(self, description: str) -> None:
-        """
-        Set package description.
-
-        description = Package description
-        """
-        self._description = description
-
-    def get_size(self) -> int:
-        """
-        Return package size.
-        """
-        return self._size
-
-    def set_size(self, size: int) -> None:
-        """
-        Set package size.
-
-        size = Package size
-        """
-        self._size = size
-
-    def get_version(self) -> str:
-        """
-        Return package version.
-        """
-        return self._version
-
-    def set_version(self, version: str) -> None:
-        """
-        Set package version.
-
-        version = Package version
-        """
-        self._version = version
+    version: str
+    size: int
+    description: str
 
 
 class Main:
@@ -122,28 +79,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
-
-        # Send ".rpmdb" to tmpfs
-        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'rpmdb'))
-        path = Path(Path.home(), '.rpmdb')
-        if not path.is_symlink():
-            try:
-                shutil.rmtree(path)
-            except OSError:
-                pass
-            try:
-                path.symlink_to(tmpdir)
-            except OSError:
-                pass
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _read_rpm_status(options: Options) -> dict:
@@ -159,17 +100,17 @@ class Main:
             if line.startswith('Name '):
                 name = line.split()[2]
             elif line.startswith('Version '):
-                package.set_version(line.split()[2])
+                package.version = line.split()[2]
             elif line.startswith('Size '):
                 try:
-                    package.set_size(int((int(line.split()[2]) + 1023) / 1024))
+                    package.size = int((int(line.split()[2]) + 1023) / 1024)
                 except ValueError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Package '
                         f'"{name}" has non integer size.',
                     ) from exception
             elif line.startswith('Summary '):
-                package.set_description(line.split(': ')[1])
+                package.description = line.split(': ')[1]
                 packages[name] = package
                 package = Package('', 0, '')
         return packages
@@ -179,15 +120,28 @@ class Main:
         for name, package in sorted(packages.items()):
             print(
                 f"{name.split(':')[0]:35s} "
-                f"{package.get_version():15s} "
-                f"{package.get_size():5d}KB "
-                f"{package.get_description()}",
+                f"{package.version:15s} "
+                f"{package.size:5d}KB "
+                f"{package.description}",
             )
 
     def run(self) -> int:
         """
         Start program
         """
+        # Send ".rpmdb" to tmpfs
+        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'rpmdb'))
+        path = Path(Path.home(), '.rpmdb')
+        if not path.is_symlink():
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                pass
+            try:
+                path.symlink_to(tmpdir)
+            except OSError:
+                pass
+
         options = Options()
 
         packages = self._read_rpm_status(options)

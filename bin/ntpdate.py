@@ -3,9 +3,7 @@
 Wrapper for "ntpdate" command
 """
 
-import glob
 import logging
-import os
 import signal
 import sys
 import time
@@ -14,7 +12,7 @@ import command_mod
 import logging_mod
 import subtask_mod
 
-RELEASE = 20221129
+RELEASE = 20230122
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -44,15 +42,6 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
 
     @staticmethod
     def run() -> int:

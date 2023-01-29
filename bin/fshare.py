@@ -94,7 +94,7 @@ class DropboxClient:
         file = os.environ.get('DROPBOX_KEY_FILE')
         if file:
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with Path(file).open(errors='replace') as ifile:
                     return ifile.readline().strip()
             except OSError:
                 logger.error('Cannot read "%s" file.', file)
@@ -169,7 +169,7 @@ class DropboxClient:
 
         file = url.split('dropbox:/', 1)[1]
         name = Path(url).name
-        logger.info(f'Downloading "{url}%s" to "{name}%s".')
+        logger.info('Downloading "%s" to "%s".', url, name)
 
         try:
             metadata, response = self._client.files_download(file)
@@ -270,6 +270,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _list(urls: List[str]) -> int:

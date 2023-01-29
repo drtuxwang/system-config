@@ -4,7 +4,6 @@ Menu for launching software
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -77,8 +76,8 @@ class Menu:
         self._view_flag = options.get_view_flag()
         self._menus = options.get_menus()
 
-        template = f"{sys.argv[0].rsplit('.py', 1)[0]}.tcl.jinja2"
-        with open(template, encoding='utf-8', errors='replace') as ifile:
+        path = Path(f"{sys.argv[0].rsplit('.py', 1)[0]}.tcl.jinja2")
+        with path.open(errors='replace') as ifile:
             self._template = jinja2.Template(ifile.read())
 
         self._config_file = Path(sys.argv[0]).with_suffix('.yaml')
@@ -109,7 +108,7 @@ class Menu:
             if Path(check).is_file():
                 return True
             for directory in os.environ.get('PATH', '').split(os.pathsep):
-                if Path(directory).parent.glob(f'*/*/{check}'):
+                if list(Path(directory).parent.glob(f'*/*/{check}')):
                     return True
         return False
 
@@ -143,7 +142,7 @@ class Menu:
         for menu in self._menus:
             path = Path(tmpdir, f'{menu}.tcl')
             try:
-                with path.open('w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w') as ofile:
                     for line in self.generate(menu):
                         if self._view_flag:
                             print(line)
@@ -212,15 +211,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

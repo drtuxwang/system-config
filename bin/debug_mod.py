@@ -2,19 +2,20 @@
 """
 Python debugging tools module
 
-Copyright GPL v2: 2015-2021 By Dr Colin Kong
+Copyright GPL v2: 2015-2023 By Dr Colin Kong
 """
 
 import os
 import sys
 import time
 import traceback
+from pathlib import Path
 
 import jsonpickle  # type: ignore
 
 
-RELEASE = '2.3.1'
-VERSION = 20211107
+RELEASE = '2.3.2'
+VERSION = 20230122
 
 
 class Dump:
@@ -30,7 +31,7 @@ class Dump:
         data = Bytes
         file = Output file to append
         """
-        with open(file, 'ab') as ofile:
+        with Path(file).open('ab') as ofile:
             ofile.write(data)
 
     @classmethod

@@ -4,7 +4,6 @@ MyQS, My Queuing System batch job deletion.
 """
 
 import argparse
-import glob
 import os
 import signal
 import socket
@@ -14,7 +13,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.7'
+RELEASE = '2.8.8'
 
 
 class Options:
@@ -94,15 +93,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _remove(self, jobid: str) -> None:
         path = Path(self._myqsdir, f'{jobid}.q')
@@ -121,7 +117,7 @@ class Main:
         path = Path(self._myqsdir, f'{jobid}.r')
         if path.is_file():
             try:
-                with path.open(encoding='utf-8', errors='replace') as ifile:
+                with path.open(errors='replace') as ifile:
                     if not self._force_flag:
                         print(
                             'MyQS cannot delete batch job with jobid',
@@ -173,7 +169,7 @@ class Main:
             socket.gethostname().split('.')[0].lower()
         )
         for jobid in options.get_jobids():
-            if not Path(self._myqsdir).glob(f'{jobid}.[qr]'):
+            if not list(Path(self._myqsdir).glob(f'{jobid}.[qr]')):
                 print(
                     'MyQS cannot delete batch job with jobid',
                     jobid,

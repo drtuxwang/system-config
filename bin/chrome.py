@@ -7,7 +7,6 @@ Use '-reset' to clean junk from profile
 Use '-restart' to restart chrome
 """
 
-import glob
 import json
 import os
 import re
@@ -54,11 +53,10 @@ class Options:
         path = Path(config_path, 'Preferences')
         path_new = Path(f'{path}.part')
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
-                data = json.load(ifile)
+            data = json.loads(path.read_text(errors='replace'))
             data['profile']['exit_type'] = 'Normal'
             data['partition']['per_host_zoom_levels'] = {}
-            with path_new.open('w', encoding='utf-8', newline='\n') as ofile:
+            with path_new.open('w') as ofile:
                 print(json.dumps(
                     data,
                     ensure_ascii=False,
@@ -98,12 +96,8 @@ class Options:
         for path in config_path.glob('File System/*/p/00/*'):
             path_new = Path(f'{path}.part')
             try:
-                with path.open(encoding='utf-8', errors='replace') as ifile:
-                    with path_new.open(
-                        'w',
-                        encoding='utf-8',
-                        newline='\n',
-                    ) as ofile:
+                with path.open(errors='replace') as ifile:
+                    with path_new.open('w') as ofile:
                         for line in ifile:
                             if not ispattern.search(line):
                                 print(line, end='', file=ofile)
@@ -309,15 +303,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

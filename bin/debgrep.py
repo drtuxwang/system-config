@@ -4,7 +4,6 @@ Search Debian package json.zstd file.
 """
 
 import argparse
-import glob
 import json
 import os
 import re
@@ -99,15 +98,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _read_data(path: Path) -> dict:
@@ -137,10 +133,10 @@ class Main:
         matched = ispattern.search('')
         for line in lines:
             if line.startswith('Package: '):
-                name = line.split('Package: ')[1].rstrip('\r\n')
+                name = line.split('Package: ')[1].rstrip('\n')
                 matched = ispattern.search(name)
             elif matched and line.startswith('Filename: '):
-                file = line.split('Filename: ')[1].rstrip('\r\n')
+                file = line.split('Filename: ')[1].rstrip('\n')
                 print(message.format(file))
 
     @classmethod
@@ -154,7 +150,7 @@ class Main:
         matched = ispattern.search('')
         for line in lines:
             if line.startswith('Package: '):
-                name = line.split('Package: ')[1].rstrip('\r\n')
+                name = line.split('Package: ')[1].rstrip('\n')
                 matched = ispattern.search(name)
             if matched:
                 print(message.format(line))
@@ -165,7 +161,9 @@ class Main:
         pattern = options.get_pattern()
         package_files = options.get_packages_file()
 
-        for path in [Path(x) for x in package_files]:
+        for path in [
+            Path(x) for x in package_files if x.endswith('.json.zstd')
+        ]:
             message = "{0:s}"
             if len(package_files) > 1:
                 message = f"{path}: {message}"

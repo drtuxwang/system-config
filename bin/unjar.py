@@ -4,7 +4,6 @@ Unpack a compressed JAVA archive in JAR format.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -90,15 +89,8 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+
+        os.umask(0o022)
 
     @staticmethod
     def run() -> int:
@@ -107,7 +99,6 @@ class Main:
         """
         options = Options()
 
-        os.umask(0o022)
         cmdline = options.get_archiver().get_cmdline()
 
         for archive in options.get_archives():

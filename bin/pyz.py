@@ -4,10 +4,10 @@ Make a Python 3 ZIP Application in PYZ format.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import BinaryIO, List
 
 import command_mod
@@ -119,32 +119,30 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
-    def _make_pyz(self, archive: str) -> None:
+    def _make_pyz(self, path: Path) -> None:
+        path_new = Path(f'{path}-zip')
         try:
-            with open(archive, 'wb') as ofile:
+            with path.open('wb') as ofile:
                 ofile.write(b"#!/usr/bin/env python3\n")
-                with open(archive + '-zip', 'rb') as ifile:
+                with path_new.open('rb') as ifile:
                     self._copy(ifile, ofile)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create '
-                f'"{archive}" Python3 ZIP Application.',
+                f'"{path}" Python3 ZIP Application.',
             ) from exception
         try:
-            os.remove(archive + '-zip')
+            path_new.replace(path)
         except OSError:
             pass
-        os.chmod(archive, 0o755)
+        path.chmod(0o755)
 
     @staticmethod
     def _copy(ifile: BinaryIO, ofile: BinaryIO) -> None:
@@ -170,7 +168,7 @@ class Main:
                 file=sys.stderr,
             )
             raise SystemExit(task.get_exitcode())
-        self._make_pyz(options.get_archive())
+        self._make_pyz(Path(options.get_archive()))
 
         return 0
 

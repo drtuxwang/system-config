@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2022 By Dr Colin Kong
+1996-2023 By Dr Colin Kong
 """
 
 import argparse
@@ -32,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.5.1'
-VERSION = 20221231
+RELEASE = '6.5.2'
+VERSION = 20230122
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -602,9 +602,9 @@ class OperatingSystem:
         path = Path(*paths)
         lines = []
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
-                    lines.append(line.rstrip('\r\n'))
+                    lines.append(line.rstrip('\n'))
         except OSError:
             lines = []
         return lines
@@ -922,7 +922,7 @@ class LinuxSystem(PosixSystem):
         isjunk = re.compile('.*Vendor: | *Model:| *Rev: .*')
         for line in cls._read_file('/proc/scsi/scsi'):
             if 'Vendor: ' in line and 'Model: ' in line:
-                model = isjunk.sub('', line.rstrip('\r\n'))
+                model = isjunk.sub('', line.rstrip('\n'))
             elif 'Type:' in line and 'CD-ROM' in line:
                 device = (
                     f'/dev/sr{unit}'
@@ -2457,6 +2457,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

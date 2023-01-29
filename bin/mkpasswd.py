@@ -4,8 +4,6 @@ Create secure random password.
 """
 
 import argparse
-import glob
-import os
 import secrets
 import signal
 import string
@@ -88,15 +86,6 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
 
     @staticmethod
     def run() -> int:
@@ -109,8 +98,9 @@ class Main:
         if options.get_symbols_flag():
             chars += '!@#$%^&*()'
 
-        print("".join(secrets.choice(chars) for i in range(
-            options.get_length())))
+        print("".join(
+            secrets.choice(chars) for i in range(options.get_length())
+        ))
 
         return 0
 

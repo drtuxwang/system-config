@@ -46,15 +46,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @classmethod
     def _checksum(cls) -> None:
@@ -76,23 +73,16 @@ class Main:
             lines = []
             path = Path('index.fsum')
             if path.is_file():
-                with path.open(
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
+                with path.open(errors='replace') as ifile:
                     for line in ifile:
-                        lines.append(line.rstrip('\r\n'))
+                        lines.append(line.rstrip('\n'))
                 if lines == task.get_output():
                     return
 
             logger.info("Writing checksums: index.fsum")
 
             path_new = Path('index.fsum.part')
-            with path_new.open(
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with path_new.open('w') as ofile:
                 for line in task.get_output():
                     time_new = max(
                         time_new,
@@ -199,10 +189,7 @@ class Main:
             try:
                 lines = []
                 if path.is_file():
-                    with path.open(
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
+                    with path.open(errors='replace') as ifile:
                         for line in ifile:
                             lines.append(line.rstrip('\r\n'))
                     if lines == fsums[directory]:
@@ -210,11 +197,7 @@ class Main:
 
                 logger.info("Writing checksums: %s", path)
                 path_new = Path(f'{path}.part')
-                with path_new.open(
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with path_new.open('w') as ofile:
                     for line in fsums[directory]:
                         time_new = max(
                             time_new,

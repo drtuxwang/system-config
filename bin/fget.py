@@ -4,7 +4,6 @@ Download http/https/ftp/file URLs.
 """
 
 import argparse
-import glob
 import http
 import json
 import os
@@ -94,15 +93,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _check_file(file: str, size: int, mtime: float) -> bool:
@@ -154,20 +150,18 @@ class Main:
         Return 'download', 'resume' or 'skip'
         """
         try:
-            with open(
-                file + '.part.json',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                json_data = json.load(ifile)
-                host = json_data['fget']['lock']['host']
-                pid = json_data['fget']['lock']['pid']
+            path = Path(f'{file}.part.json')
+            json_data = json.loads(path.read_text(errors='replace'))
+            host = json_data['fget']['lock']['host']
+            pid = json_data['fget']['lock']['pid']
 
-                if (host == socket.gethostname().split('.')[0].lower() and
-                        task_mod.Tasks.factory().haspid(pid)):
-                    return 'skip'
-                if json_data['fget']['data'] == data:
-                    return 'resume'
+            if (
+                host == socket.gethostname().split('.')[0].lower() and
+                task_mod.Tasks.factory().haspid(pid)
+            ):
+                return 'skip'
+            if json_data['fget']['data'] == data:
+                return 'resume'
         except (KeyError, OSError, ValueError):
             pass
 
@@ -186,12 +180,7 @@ class Main:
         }
 
         try:
-            with open(
-                file+'.part.json',
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with Path(f'{ file}.part.json').open('w') as ofile:
                 print(json.dumps(
                     json_data,
                     ensure_ascii=False,
@@ -236,7 +225,7 @@ class Main:
         self._write_resume(file, data)
 
         try:
-            with open(file+'.part', mode) as ofile:
+            with Path(f'{file}.part').open(mode) as ofile:
                 while True:
                     chunk = conn.read(self._chunk_size)
                     if not chunk:

@@ -4,7 +4,6 @@ De-compile PYC file to Python source file.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -77,15 +76,8 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+
+        os.umask(0o022)
 
     @staticmethod
     def run() -> int:
@@ -94,7 +86,6 @@ class Main:
         """
         options = Options()
 
-        os.umask(0o022)
         command = command_mod.Command('pydisasm', errors='stop')
         command.set_args(['--format=bytes'] + options.get_files())
         subtask_mod.Exec(command.get_cmdline()).run()

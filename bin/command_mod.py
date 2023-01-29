@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2022 By Dr Colin Kong
+Copyright GPL v2: 2006-2023 By Dr Colin Kong
 """
 
 import functools
@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.6.2'
-VERSION = 20230104
+RELEASE = '2.6.3'
+VERSION = 20230121
 
 
 class Command:
@@ -493,7 +493,7 @@ class Platform:
                     if not bline:
                         break
                     line = bline.decode(errors='replace')
-                    lines.append(line.rstrip('\r\n'))
+                    lines.append(line.rstrip('\n'))
         except OSError as exception:
             raise ExecutableCallError(
                 f'Error in calling "{program}" program.',
@@ -527,15 +527,11 @@ class Platform:
             'SOFTWARE/Microsoft/Windows NT/CurrentVersion'
         )
         try:
-            with Path(registry_key, 'CurrentVersion').open(
-                encoding='utf-8',
-                errors='replace'
-            ) as ifile:
+            path = Path(registry_key, 'CurrentVersion')
+            with path.open(errors='replace') as ifile:
                 kernel = ifile.readline()
-            with Path(registry_key, 'CurrentBuildNumber').open(
-                encoding='utf-8',
-                errors='replace'
-            ) as ifile:
+            path = Path(registry_key, 'CurrentBuildNumber')
+            with path.open(errors='replace') as ifile:
                 kernel += f'.{ifile.readline()}'
         except OSError:
             kernel = 'unknown'

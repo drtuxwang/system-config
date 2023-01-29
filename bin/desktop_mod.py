@@ -2,7 +2,7 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2013-2022 By Dr Colin Kong
+Copyright GPL v2: 2013-2023 By Dr Colin Kong
 """
 
 import functools
@@ -12,8 +12,8 @@ import subprocess
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.7.1'
-VERSION = 20221226
+RELEASE = '2.7.2'
+VERSION = 20230122
 
 
 class _System:
@@ -67,7 +67,7 @@ class _System:
                     if not bline:
                         break
                     line = bline.decode(errors='replace')
-                    lines.append(line.rstrip('\r\n'))
+                    lines.append(line.rstrip('\n'))
         except OSError:
             return []
 

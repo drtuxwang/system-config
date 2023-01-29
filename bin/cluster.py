@@ -4,7 +4,6 @@ Run command on a list of nodes in parallel.
 """
 
 import argparse
-import glob
 import logging
 import logging.handlers
 import os
@@ -138,7 +137,7 @@ class SecureShell:
         username, self._host = host.split('@', 1)
 
         try:
-            with open(os.devnull, 'w', encoding='utf-8') as sys.stderr:
+            with Path(os.devnull).open('w') as sys.stderr:
                 self._client.connect(
                     self._host,
                     username=username,
@@ -162,18 +161,13 @@ class SecureShell:
                 get_pty=True,
                 timeout=timeout
             )
-            with open(
-                self._host + '.txt',
-                'a',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with Path(f'{self._host}.txt').open('a') as ofile:
                 print(
                     time.strftime('%Y-%m-%d-%H:%M:%S: connected'),
                     file=ofile
                 )
                 for line in stdout:
-                    print(line.rstrip('\r\n'), file=ofile)
+                    print(line.rstrip('\n'), file=ofile)
         except Exception as exception:
             self.close()
             raise SecureShellError(exception) from exception
@@ -282,15 +276,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _config_logging() -> None:

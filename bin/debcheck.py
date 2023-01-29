@@ -4,7 +4,7 @@ Check debian directory for old, unused or missing '.deb' packages.
 """
 
 import argparse
-import glob
+import dataclasses
 import os
 import signal
 import sys
@@ -51,33 +51,14 @@ class Options:
         self._parse_args(args[1:])
 
 
+@dataclasses.dataclass
 class Package:
     """
     Package class
     """
-
-    def __init__(self, file: str, time: int, version: str) -> None:
-        self._file = file
-        self._time = time
-        self._version = version
-
-    def get_file(self) -> str:
-        """
-        Return package file location.
-        """
-        return self._file
-
-    def get_time(self) -> int:
-        """
-        Return package time stamp.
-        """
-        return self._time
-
-    def get_version(self) -> str:
-        """
-        Return version.
-        """
-        return self._version
+    file: str
+    time: int
+    version: str
 
 
 class Main:
@@ -106,8 +87,8 @@ class Main:
             file_stat = file_mod.FileStat(path)
             version = path.name.split('_')[1]
             if name in packages:
-                if file_stat.get_time() > packages[name].get_time():
-                    print(f"rm {packages[name].get_file()}")
+                if file_stat.get_time() > packages[name].time:
+                    print(f"rm {packages[name].file}")
                     print(f"#  {path}")
                     packages[name] = Package(
                         str(path),
@@ -116,7 +97,7 @@ class Main:
                     )
                 else:
                     print(f"rm {path}")
-                    print(f"#  {packages[name].get_file()}")
+                    print(f"#  {packages[name].file}")
             else:
                 packages[name] = Package(
                     str(path),
@@ -129,15 +110,15 @@ class Main:
     def _check_used(distribution: str) -> dict:
         packages = {}
         try:
-            file = distribution + '.debs'
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            path = Path(f'{distribution}.debs')
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     try:
                         name, version = line.split()[:2]
                     except ValueError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot read corrupt '
-                            f'"{file}" package ".debs" list file.',
+                            f'"{path}" package ".debs" list file.',
                         ) from exception
                     packages[name] = Package(
                         f'{distribution}/{name}_{version}_*.deb',
@@ -148,18 +129,18 @@ class Main:
             pass
 
         try:
-            file = distribution + '.debs:base'
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            path = Path(f'{distribution}.debs:base')
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     try:
                         name, version = line.split()[:2]
                     except ValueError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot read corrupt '
-                            f'"{file}" package ".debs" list file.',
+                            f'"{path}" package ".debs" list file.',
                         ) from exception
                     if name in packages:
-                        if packages[name].get_file() == str(
+                        if packages[name].file == str(
                             Path(distribution, f'{name}_{version}_*.deb')
                         ):
                             del packages[name]
@@ -171,7 +152,7 @@ class Main:
     def _read_distribution_allow(file: str) -> dict:
         packages = {}
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with Path(file).open(errors='replace') as ifile:
                 for line in ifile:
                     if not line.strip().startswith('#'):
                         try:
@@ -199,17 +180,14 @@ class Main:
                         packages_allow[name] in
                         ('*', packages_files[name])):
                     continue
-                print("rm", packages_files[name].get_file(), "# Unused")
-            elif (
-                    packages_files[name].get_version() !=
-                    packages_used[name].get_version()
-            ):
-                print("rm", packages_files[name].get_file(), "# Unused")
-                print("# ", packages_used[name].get_file(), "Missing")
+                print("rm", packages_files[name].file, "# Unused")
+            elif packages_files[name].version != packages_used[name].version:
+                print("rm", packages_files[name].file, "# Unused")
+                print("# ", packages_used[name].file, "Missing")
 
         for name in names_used:
             if name not in names_files:
-                print("# ", packages_used[name].get_file(), "Missing")
+                print("# ", packages_used[name].file, "Missing")
 
     @staticmethod
     def config() -> None:
@@ -218,15 +196,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def run(self) -> int:
         """

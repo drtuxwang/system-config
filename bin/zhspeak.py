@@ -2,11 +2,10 @@
 """
 Zhong Hua Speak Chinese TTS software.
 
-2009-2022 By Dr Colin Kong
+2009-2023 By Dr Colin Kong
 """
 
 import argparse
-import glob
 import json
 import os
 import re
@@ -21,7 +20,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '6.1.1'
+RELEASE = '6.1.2'
 
 
 class Options:
@@ -326,8 +325,7 @@ class ChineseDictionary:
             self.create_cache()
 
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
-                self._mappings = json.load(ifile)
+            self._mappings = json.loads(path.read_text(errors='replace'))
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot open "{path}" dialect file.',
@@ -348,7 +346,7 @@ class ChineseDictionary:
         self.readmap(Path(directory, 'zh_listx'))
         self.readmap(Path(directory, 'zh_listck'))
         try:
-            with path.open('w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w') as ofile:
                 print(
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
@@ -365,7 +363,7 @@ class ChineseDictionary:
         self.readmap(Path(directory, 'zhy_list'))
         self.readmap(Path(directory, 'zhy_listck'))
         try:
-            with path.open('w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w') as ofile:
                 print(
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
@@ -380,7 +378,7 @@ class ChineseDictionary:
         Read map
         """
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile.readlines():
                     if line.startswith(('//', '$')):
                         continue
@@ -630,15 +628,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'  # Override '\r\n' to '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

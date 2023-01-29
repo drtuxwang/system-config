@@ -4,7 +4,6 @@ Load Python main program as module (must have Main class).
 """
 
 import argparse
-import glob
 import importlib.machinery
 import importlib.util
 import os
@@ -13,8 +12,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-if sys.version_info < (3, 6) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.6, < 4.0).")
+if sys.version_info < (3, 7) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.7, < 4.0).")
 if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
@@ -309,15 +308,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

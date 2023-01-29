@@ -4,8 +4,8 @@ Check installation dependencies of packages against '.debs' list file.
 """
 
 import argparse
+import dataclasses
 import copy
-import glob
 import json
 import logging
 import os
@@ -27,87 +27,16 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
+@dataclasses.dataclass
 class Package:
     """
     Package class
     """
-
-    def __init__(self, depends: List[str] = None, url: str = '') -> None:
-        self._checked_flag = False
-        self._installed_flag = False
-        self._version: str = None
-        self._depends = depends if depends else []
-        self._url = url
-
-    def get_checked_flag(self) -> bool:
-        """
-        Return packaged checked flag.
-        """
-        return self._checked_flag
-
-    def set_checked_flag(self, checked_flag: bool) -> None:
-        """
-        Set package checked flag.
-
-        checked_flag = Package checked flag
-        """
-        self._checked_flag = checked_flag
-
-    def get_depends(self) -> List[str]:
-        """
-        Return list of required dependent packages.
-        """
-        return self._depends
-
-    def set_depends(self, names: List[str]) -> None:
-        """
-        Set package dependency list.
-
-        names = List of package names
-        """
-        self._depends = names
-
-    def get_installed_flag(self) -> bool:
-        """
-        Return package installed flag.
-        """
-        return self._installed_flag
-
-    def set_installed_flag(self, installed_flag: bool) -> None:
-        """
-        Set package installed flag.
-
-        installed_flag = Package installed flag
-        """
-        self._installed_flag = installed_flag
-
-    def get_version(self) -> str:
-        """
-        Return version.
-        """
-        return self._version
-
-    def set_version(self, version: str) -> None:
-        """
-        Set package version.
-
-        version = package version.
-        """
-        self._version = version
-
-    def get_url(self) -> str:
-        """
-        Return package url.
-        """
-        return self._url
-
-    def set_url(self, url: str) -> None:
-        """
-        Set package url.
-
-        url = Package url
-        """
-        self._url = url
+    depends: List[str] = dataclasses.field(default_factory=list)
+    url: str = ''
+    version: str = None
+    installed: bool = False
+    checked: bool = False
 
     @staticmethod
     def _get_loose_version(version: str) -> packaging.version.LegacyVersion:
@@ -121,8 +50,8 @@ class Package:
         Return True if version newer than package.
         """
         if (
-            self._get_loose_version(self._version) >
-            self._get_loose_version(package.get_version())
+            self._get_loose_version(self.version) >
+            self._get_loose_version(package.version)
         ):
             return True
         return False
@@ -213,15 +142,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _read_data(path: Path) -> dict:
@@ -252,23 +178,22 @@ class Main:
         name = ''
         package = Package()
         for line in lines:
-            line = line.rstrip('\r\n')
+            line = line.rstrip('\n')
             if line.startswith('Package: '):
                 name = line.replace('Package: ', '')
                 name = line.replace('Package: ', '')
             elif line.startswith('Version: '):
-                package.set_version(
-                    line.replace('Version: ', '').split(':')[-1])
+                package.version = line.replace('Version: ', '').split(':')[-1]
             elif line.startswith('Depends: '):
                 if not disable_deps:
                     depends = []
                     for i in line.replace('Depends: ', '').split(', '):
                         depends.append(i.split()[0])
-                    package.set_depends(depends)
+                    package.depends = depends
             elif line.startswith('Filename: '):
                 if name in packages and not package.is_newer(packages[name]):
                     continue
-                package.set_url(line[10:])
+                package.url = line[10:]
                 packages[name] = package
                 package = Package()
         return packages
@@ -276,7 +201,7 @@ class Main:
     def _read_distro_pin_packages(self, pin_path: Path) -> None:
         packages_cache = {}
         try:
-            with pin_path.open(encoding='utf-8', errors='replace') as ifile:
+            with pin_path.open(errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -301,17 +226,13 @@ class Main:
 
     def _read_distro_installed(self, installed_file: str) -> None:
         try:
-            with open(
-                installed_file,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with Path(installed_file).open(errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     name = columns[0]
                     if not name.startswith('#'):
                         if name in self._packages:
-                            self._packages[name].set_installed_flag(True)
+                            self._packages[name].installed = True
         except OSError:
             return
 
@@ -323,28 +244,28 @@ class Main:
         name: str,
     ) -> None:
         if name in self._packages:
-            self._packages[name].set_checked_flag(True)
-            if self._packages[name].get_installed_flag():
+            self._packages[name].checked = True
+            if self._packages[name].installed:
                 logger.info(
                     "%s%s [Installed]",
                     indent,
-                    self._packages[name].get_url(),
+                    self._packages[name].url,
                 )
             else:
-                file = self._local(distro, self._packages[name].get_url())
+                file = self._local(distro, self._packages[name].url)
                 logger.warning("%s%s", indent, file)
                 print(f"{indent}{file}", file=ofile)
-            for i in self._packages[name].get_depends():
+            for i in self._packages[name].depends:
                 if i in self._packages:
-                    if self._packages[i].get_installed_flag():
+                    if self._packages[i].installed:
                         logger.info(
                             "%s  %s [Installed]",
                             indent,
-                            self._packages[i].get_url(),
+                            self._packages[i].url,
                         )
                     elif (
-                        not self._packages[i].get_checked_flag() and
-                        not self._packages[name].get_installed_flag()
+                        not self._packages[i].checked and
+                        not self._packages[name].installed
                     ):
                         self._check_package_install(
                             distro,
@@ -352,11 +273,11 @@ class Main:
                             f"{indent}  ",
                             i,
                         )
-                    self._packages[i].set_checked_flag(True)
+                    self._packages[i].checked = True
 
     def _read_distro_deny_list(self, file: str) -> None:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with Path(file).open(errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -365,7 +286,7 @@ class Main:
                             if name in self._packages:
                                 if columns[1] == (
                                     '*',
-                                    self._packages[name].get_version()
+                                    self._packages[name].version
                                 ):
                                     del self._packages[name]
         except OSError:
@@ -377,18 +298,18 @@ class Main:
         list_file: str,
         names: List[str],
     ) -> None:
-        urlfile = Path(distro).name + list_file.split('.debs')[-1] + '.url'
+        path = Path(f"{Path(distro).name}{list_file.split('.debs')[-1]}.url")
         try:
-            with open(urlfile, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w') as ofile:
                 indent = ''
                 for i in names:
                     self._check_package_install(distro, ofile, indent, i)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{urlfile}" file.',
+                f'{sys.argv[0]}: Cannot create "{path}" file.',
             ) from exception
-        if Path(urlfile).stat().st_size == 0:
-            os.remove(urlfile)
+        if path.stat().st_size == 0:
+            os.remove(path)
 
     @staticmethod
     def _local(distro: str, url: str) -> str:

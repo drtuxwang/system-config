@@ -3,7 +3,6 @@
 Wrapper for "vncserver" command
 """
 
-import glob
 import os
 import signal
 import sys
@@ -45,11 +44,7 @@ class Options:
                 "Would you like to use GNOME(g), KDE(k) or XFCE(x)? "
             )
             try:
-                with path.open(
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with path.open('w') as ofile:
                     print("#!/usr/bin/env bash", file=ofile)
                     print("unset DBUS_SESSION_BUS_ADDRESS", file=ofile)
                     print("unset SESSION_MANAGER", file=ofile)
@@ -117,15 +112,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

@@ -1,180 +1,180 @@
 menu_main:
 - button:
     name: console
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Console
     run: exec xterm &
 - button:
     name: desktop
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Desktop
     run: exec xdesktop Desktop &
 - button:
     name: browser
-    color: "#ffff00"
+    color: '#ffff00'
     label: WWW
     run: exec xweb &
 - button:
     name: document
-    color: "#00ff00"
+    color: '#00ff00'
     label: Document
     run: exec menu document &
 - button:
     name: games
-    color: "#00ff00"
+    color: '#00ff00'
     label: Games
     run: exec menu games &
 - button:
     name: graphics
-    color: "#00ff00"
+    color: '#00ff00'
     label: Graphics
     run: exec menu graphics &
 - button:
     name: multimedia
-    color: "#00ff00"
+    color: '#00ff00'
     label: Multimedia
     run: exec menu multimedia &
 - button:
     name: network
-    color: "#00ff00"
+    color: '#00ff00'
     label: Network
     run: exec menu network &
 - button:
     name: system
-    color: "#00ff00"
+    color: '#00ff00'
     label: System
     run: exec menu system &
 - button:
     name: utility
-    color: "#00ff00"
+    color: '#00ff00'
     label: Utility
     run: exec menu utility &
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Lock Screen
     run: exec xlock &
 
 menu_document:
 - button:
     name: evince
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Evince
     run: exec evince &
   checks:
   - evince
 - button:
     name: libreoffice
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: LibreOffice
     run: exec soffice &
   checks:
   - program/soffice
 - button:
     name: xournal
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Xournal
     run: exec xournal &
   checks:
   - xournalpp
 - button:
     name: xedit
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Xedit
     run: exec xedit &
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit
 
 menu_games:
 - button:
     name: billard
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Billard
     run: exec foobillardplus &
   checks:
   - foobillardplus
 - button:
     name: chess
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Dream Chess
     run: exec dreamchess &
   checks:
   - dreamchess
 - button:
     name: frozenbubble
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Frozen Bubble
     run: exec frozen-bubble &
   checks:
   - frozen-bubble
 - button:
     name: hearts
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Hearts
     run: exec hearts &
   checks:
   - Hearts
 - button:
     name: hexxagon
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Hexxagon
     run: exec hexxagon &
   checks:
   - hexxagon
 - button:
     name: mines
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Mines
     run: exec gnomine &
   checks:
   - gnome-mines
 - button:
     name: neverputt
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Neverputt
     run: exec neverputt &
   checks:
   - neverputt
 - button:
     name: reversi
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Iagno
     run: exec iagno &
   checks: iagno
 - button:
     name: sudoku
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Sudoku
     run: exec gnome-sudoku &
   checks:
   - gnome-sudoku
 - button:
     name: swellfoop
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Swell Foop
     run: exec swell-foop &
   checks:
   - /usr/games/swell-foop
 - button:
     name: steam
-    color: "#00ff00"
+    color: '#00ff00'
     label: Steam
     run: exec steam &
   checks:
   - steam
 - button:
     name: etwolf
-    color: "#00ff00"
+    color: '#00ff00'
     label: ET
     run: exec et.tcl &
   checks:
   - et.x86
 - button:
     name: 0ad
-    color: "#ffff00"
+    color: '#ffff00'
     label: 0AD
     run: exec 0ad &
   checks:
@@ -182,7 +182,7 @@ menu_games:
   - pyrogenesis
 - button:
     name: assaultcube
-    color: "#ffff00"
+    color: '#ffff00'
     label: AssaultCube
     run: exec assaultcube &
   checks:
@@ -190,42 +190,42 @@ menu_games:
 - button:
     name: padman
     button:
-    color: "#ffff00"
+    color: '#ffff00'
     label: Padman
     run: exec padman &
   checks:
   - wop.x86_64
 - button:
     name: torcs
-    color: "#ffff00"
+    color: '#ffff00'
     label: TORCS
     run: exec torcs &
   checks:
   - torcs
 - button:
     name: tuxracer
-    color: "#ffff00"
+    color: '#ffff00'
     label: Tux Racer
     run: exec etr &
   checks:
   - etr
 - button:
     name: urban_terror
-    color: "#ffff00"
+    color: '#ffff00'
     label: Urban Terror
     run: exec ut &
   checks:
   - Quake3-UrT.x86_64
 - button:
     name: warsow
-    color: "#ffff00"
+    color: '#ffff00'
     label: Warsow
     run: exec warsow &
   checks:
   - warsow.x86_64
 - button:
     name: wesnoth
-    color: "#ffff00"
+    color: '#ffff00'
     label: Wesnoth
     run: exec wesnoth &
   checks:
@@ -234,14 +234,14 @@ menu_games:
 - button:
     name: close
     button:
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit
 
 menu_graphics:
 - button:
     name: gimp
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Gimp
     run: exec gimp &
   checks:
@@ -249,14 +249,14 @@ menu_graphics:
   - gimp-console
 - button:
     name: geeqie
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Geeqie
     run: exec gqview &
   checks:
   - geeqie
 - button:
     name: inkscape
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Inkscape
     run: exec inkscape &
   checks:
@@ -264,26 +264,26 @@ menu_graphics:
   - inkview
 - button:
     name: xsane
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Xsane
     run: exec xsane &
   checks:
   - xsane
 - button:
     name: screenshot
-    color: "#ffff00"
+    color: '#ffff00'
     label: ScreenShot
     run: exec xsnapshot &
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit
 
 menu_multimedia:
 - button:
     name: audacity
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Audacity
     run: exec audacity &
   checks:
@@ -291,26 +291,26 @@ menu_multimedia:
   - /usr/bin/audacity
 - button:
     name: xmixer
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Audio Mixer
     run: exec xmixer &
 - button:
     name: zhspeak
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: ZHSpeak
     run: exec zhspeak -g &
   checks:
   - zhspeak-data/zh.json
 - button:
     name: shotcut
-    color: "#ffff00"
+    color: '#ffff00'
     label: Shotcut
     run: exec shotcut &
   checks:
   - shotcut.desktop
 - button:
     name: vlc
-    color: "#ffff00"
+    color: '#ffff00'
     label: VLC
     run: exec vlc &
   checks:
@@ -318,224 +318,224 @@ menu_multimedia:
   - vlc
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit
 
 menu_network:
 - button:
     name: chrome
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Chrome
     run: exec chrome &
   checks:
   - google-chrome
 - button:
     name: chromium
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Chromium
     run: exec chromium &
   checks:
   - chromium-browser
 - button:
     name: edge
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Edge
     run: exec edge &
   checks:
   - microsoft-edge
 - button:
     name: firefox
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Firefox
     run: exec firefox &
   checks:
   - firefox-bin
 - button:
     name: teams
-    color: "#ffff00"
+    color: '#ffff00'
     label: Teams
     run: exec teams &
   checks:
   - teams
 - button:
     name: vncviewer
-    color: "#ffff00"
+    color: '#ffff00'
     label: VNC Viewer
     run: exec vncviewer &
   checks:
   - vncviewer
 - button:
     name: xfreerdp
-    color: "#ffff00"
+    color: '#ffff00'
     label: X FreeRDP
     run: exec xfreerdp.tcl &
   checks:
   - xfreerdp
 - button:
     name: zoom
-    color: "#ffff00"
+    color: '#ffff00'
     label: Zoom
     run: exec zoom &
   checks:
   - zoom
 - button:
     name: radiotuner
-    color: "#00ff00"
+    color: '#00ff00'
     label: Radiotuner
     run: exec menu radiotuner &
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit
 
 menu_radiotuner:
 - button:
     name: magic
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Magic 105.4
     run: exec xweb http://magic1054.radio.net/ &
 - button:
     name: 988
-    color: "#ffff00"
+    color: '#ffff00'
     label: 988最好听
     run: exec xweb http://listen.988.com.my/ &
 - button:
     name: rthk1
-    color: "#ffff00"
+    color: '#ffff00'
     label: RTHK 1
     run: exec xweb http://www.rthk.hk/radio/radio1/ &
 - button:
     name: rthk2
-    color: "#ffff00"
+    color: '#ffff00'
     label: RTHK 2
     run: exec xweb http://www.rthk.hk/radio/radio2/ &
 - button:
     name: rthk3
-    color: "#ffff00"
+    color: '#ffff00'
     label: RTHK 3
     run: exec xweb http://www.rthk.hk/radio/radio3/ &
 - button:
     name: rthk4
-    color: "#ffff00"
+    color: '#ffff00'
     label: RTHK 4
     run: exec xweb http://www.rthk.hk/radio/radio4/ &
 - button:
     name: rthk5
-    color: "#ffff00"
+    color: '#ffff00'
     label: RTHK 5
     run: exec xweb http://www.rthk.hk/radio/radio5/ &
 - button:
     name: rthkpth
-    color: "#ffff00"
+    color: '#ffff00'
     label: RTHK普通話
     run: exec xweb http://www.rthk.hk/radio/pth/ &
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit
 
 menu_system:
 - button:
     name: fullcharge
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Full Charge
     run: exec sudo /usr/sbin/tlp fullcharge &
   checks:
   - tlp
 - button:
     name: hardinfo
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Hardware Info
     run: exec hardinfo &
   checks:
   - hardinfo
 - button:
     name: settimezone
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Set Time Zone
     run: exec xsudo sh -c "dpkg-reconfigure tzdata; ntpdate pool.ntp.org" &
 - button:
     name: keymap
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Set Key Map
     run: exec keymap.tcl &
 - button:
     name: vbox
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: VirtualBox
     run: exec VirtualBox &
   checks:
   - VirtualBox
 - button:
     name: logout
-    color: "#ffff00"
+    color: '#ffff00'
     label: Logout
     run: exec xlogout -force &
 - button:
     name: reboot
-    color: "#ffff00"
+    color: '#ffff00'
     label: Restart
     run: exec sudo /sbin/reboot &
 - button:
     name: shutdown
-    color: "#ffff00"
+    color: '#ffff00'
     label: Shut Down
     run: exec sudo /sbin/poweroff &
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit
 
 menu_utility:
 - button:
     name: breaktimer
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Break Timer
     run: exec breaktimer -g 10 &
 - button:
     name: calculator
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Calculator
     run: exec xcalc &
 - button:
     name: ibus
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Ibus Input
     run: exec ibus-daemon &
   checks:
   - ibus-daemon
 - button:
     name: keyboard
-    color: "#ffcc00"
+    color: '#ffcc00'
     label: Keyboard
     run: exec xvkbd &
   checks:
   - xvkbd
 - button:
     name: printer
-    color: "#ffff00"
+    color: '#ffff00'
     label: Printer
     run: exec system-config-printer &
   checks:
   - system-config-printer
 - button:
     name: xkill
-    color: "#ffff00"
+    color: '#ffff00'
     label: Xkill
     run: exec xkill &
   checks:
   - xkill
 - button:
     name: xrun
-    color: "#ffff00"
+    color: '#ffff00'
     label: Xrun
     run: exec xrun.tcl &
 - button:
     name: close
-    color: "#ff0000"
+    color: '#ff0000'
     label: Close
     run: exit

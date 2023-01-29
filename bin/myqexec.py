@@ -3,7 +3,6 @@
 MyQS, My Queuing System batch job execution.
 """
 
-import glob
 import os
 import signal
 import socket
@@ -15,7 +14,7 @@ from typing import List
 import command_mod
 import subtask_mod
 
-RELEASE = '2.8.5'
+RELEASE = '2.8.6'
 
 
 class Options:
@@ -92,15 +91,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _get_command(file: str) -> command_mod.Command:
@@ -109,12 +105,9 @@ class Main:
         return command_mod.Command(file, errors='stop')
 
     def _spawn(self, options: Options) -> None:
+        path = Path(self._myqsdir, f'{self._jobid}.r')
         try:
-            with Path(self._myqsdir, f'{self._jobid}.r').open(
-                'a',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with path.open('a') as ofile:
                 mypid = os.getpid()
                 os.setpgid(mypid, mypid)  # New PGID
                 pgid = os.getpgid(mypid)
@@ -123,10 +116,7 @@ class Main:
             return
 
         try:
-            with Path(self._myqsdir, f'{self._jobid}.r').open(
-                encoding='utf-8',
-                errors='replace'
-            ) as ifile:
+            with path.open(errors='replace') as ifile:
                 info = {}
                 for line in ifile:
                     line = line.strip()
@@ -154,11 +144,7 @@ class Main:
     @staticmethod
     def _sh(command: command_mod.Command) -> None:
         try:
-            with open(
-                command.get_file(),
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with Path(command.get_file()).open(errors='replace') as ifile:
                 line = ifile.readline().rstrip()
                 if line == '#!/bin/sh':
                     command.set_args(['/bin/sh'] + command.get_cmdline())
@@ -166,11 +152,9 @@ class Main:
             pass
 
     def _start(self) -> None:
+        path = Path(self._myqsdir, f'{self._jobid}.r')
         try:
-            with Path(self._myqsdir, f'{self._jobid}.r').open(
-                encoding='utf-8',
-                errors='replace'
-            ) as ifile:
+            with path.open(errors='replace') as ifile:
                 info = {}
                 for line in ifile:
                     line = line.strip()
@@ -195,7 +179,7 @@ class Main:
         print("MyQS FINISH =", time.strftime('%Y-%m-%d-%H:%M:%S'))
         time.sleep(1)
         try:
-            Path(self._myqsdir, f'{self._jobid}.r').unlink()
+            path.unlink()
         except OSError:
             pass
 

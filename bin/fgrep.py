@@ -4,11 +4,11 @@ Print lines matching a pattern.
 """
 
 import argparse
-import glob
 import os
 import re
 import signal
 import sys
+from pathlib import Path
 from typing import List, TextIO
 
 
@@ -116,19 +116,16 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _file(self, options: Options, file: str, prefix: str = '') -> None:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with Path(file).open(errors='replace') as ifile:
                 self._pipe(options, ifile, prefix)
         except OSError as exception:
             raise SystemExit(
@@ -139,7 +136,7 @@ class Main:
         number = 0
         if options.get_invert_flag():
             for line in pipe:
-                line = line.rstrip('\r\n')
+                line = line.rstrip('\n')
                 number += 1
                 if not self._is_match.search(line):
                     if options.get_number_flag():
@@ -150,7 +147,7 @@ class Main:
                         raise SystemExit(0) from exception
         else:
             for line in pipe:
-                line = line.rstrip('\r\n')
+                line = line.rstrip('\n')
                 number += 1
                 if self._is_match.search(line):
                     if options.get_number_flag():

@@ -4,12 +4,13 @@ Extract Facebook friends list from saved HTML file.
 """
 
 import argparse
-import glob
+import dataclasses
 import os
 import re
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 
@@ -44,26 +45,13 @@ class Options:
         self._parse_args(args[1:])
 
 
+@dataclasses.dataclass
 class Profile:
     """
     Profile class
     """
-
-    def __init__(self, name: str, url: str) -> None:
-        self._name = name
-        self._url = url
-
-    def get_name(self) -> str:
-        """
-        Return name.
-        """
-        return self._name
-
-    def get_url(self) -> str:
-        """
-        Return url.
-        """
-        return self._url
+    name: str
+    url: str
 
 
 class Main:
@@ -87,20 +75,17 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
-    def _read_html(self, file: str) -> None:
+    def _read_html(self, path: Path) -> None:
         isjunk = re.compile('(&amp;|[?])ref=pb$|[?&]fref=.*|&amp;.*')
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     for block in line.split('href="'):
                         if '://www.facebook.com/' in block:
@@ -115,7 +100,7 @@ class Main:
                                 self._profiles[uid] = Profile(name, url)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" HTML file.',
+                f'{sys.argv[0]}: Cannot read "{path}" HTML file.',
             ) from exception
 
     def run(self) -> int:
@@ -125,31 +110,31 @@ class Main:
         options = Options()
 
         self._profiles: dict = {}
-        self._read_html(options.get_file())
+        self._read_html(Path(options.get_file()))
 
-        file = time.strftime('facebook-%Y%m%d.csv', time.localtime())
-        print(f'Writing "{file}" with {len(self._profiles.keys())} friends...')
+        path = Path(time.strftime('facebook-%Y%m%d.csv', time.localtime()))
+        print(f'Writing "{path}" with {len(self._profiles.keys())} friends...')
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w') as ofile:
                 print("uid,name,profile_url", file=ofile)
                 for uid, profile in sorted(self._profiles.items()):
                     if uid < 0:
                         print("???", end='', file=ofile)
                     else:
                         print(uid, end='', file=ofile)
-                    if ' ' in profile.get_name():
+                    if ' ' in profile.name():
                         print(
-                            f',"{profile.get_name()}",{profile.get_url()}',
+                            f',"{profile.name}",{profile.url}',
                             file=ofile,
                         )
                     else:
                         print(
-                            f",{profile.get_name()},{profile.get_url()}",
+                            f",{profile.name},{profile.url}",
                             file=ofile,
                         )
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{file}" CSV file.',
+                f'{sys.argv[0]}: Cannot create "{path}" CSV file.',
             ) from exception
 
         return 0

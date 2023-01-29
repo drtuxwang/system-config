@@ -4,7 +4,6 @@ MyQS, My Queuing System batch job scheduler daemon
 """
 
 import argparse
-import glob
 import os
 import signal
 import socket
@@ -17,7 +16,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.8.6'
+RELEASE = '2.8.7'
 
 
 class Options:
@@ -98,7 +97,7 @@ class Lock:
         self._path = path
         self._pid = -1
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 try:
                     self._pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -117,11 +116,7 @@ class Lock:
         Create lock file
         """
         try:
-            with self._path.open(
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with self._path.open('w') as ofile:
                 print(os.getpid(), file=ofile)
         except OSError as exception:
             raise SystemExit(
@@ -130,7 +125,7 @@ class Lock:
             ) from exception
         time.sleep(1)
         try:
-            with self._path.open(encoding='utf-8', errors='replace') as ifile:
+            with self._path.open(errors='replace') as ifile:
                 try:
                     int(ifile.readline().strip())
                 except (OSError, ValueError) as exception:
@@ -178,23 +173,17 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _restart(self) -> None:
         for path in sorted(self._myqsdir.glob('*.r'), key=lambda s: s.stem):
             try:
-                with path.open(
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
+                with path.open(errors='replace') as ifile:
                     info = {}
                     for line in ifile:
                         line = line.strip()
@@ -217,9 +206,9 @@ class Main:
 
     def _schedule_job(self) -> None:
         running = 0
-        for file in self._myqsdir.glob('*.r'):
+        for path in [Path(x) for x in self._myqsdir.glob('*.r')]:
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(errors='replace') as ifile:
                     info = {}
                     for line in ifile:
                         line = line.strip()
@@ -231,7 +220,7 @@ class Main:
                 if not task_mod.Tasks.factory().haspgid(int(info['PGID'])):
                     time.sleep(0.5)
                     try:
-                        os.remove(file)
+                        path.unlink()
                     except OSError:
                         continue
             if 'NCPUS' in info:
@@ -251,10 +240,7 @@ class Main:
                 key=lambda s: int(s.stem),
             ):
                 try:
-                    with path.open(
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
+                    with path.open(errors='replace') as ifile:
                         info = {}
                         for line in ifile:
                             line = line.strip()

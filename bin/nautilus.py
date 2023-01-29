@@ -3,7 +3,6 @@
 Wrapper for "nautilus" command
 """
 
-import glob
 import os
 import signal
 import sys
@@ -44,7 +43,7 @@ class Options:
         path = Path(config_path, 'mimeapps.list')
         if not path.is_file():
             try:
-                with path.open('w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w') as ofile:
                     print("[Added Associations]", file=ofile)
                     print("audio/ac3=vlc.desktop;", file=ofile)
                     print("audio/mp4=vlc.desktop;", file=ofile)
@@ -97,7 +96,7 @@ class Options:
         path = Path(config_path, f'{app_name}-userapp.desktop')
         if not path.is_dir():
             try:
-                with path.open('w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w') as ofile:
                     print("[Desktop Entry]", file=ofile)
                     print(f"Name={app_name}", file=ofile)
                     print(f"Exec={app_name}", ' %f', file=ofile)
@@ -109,12 +108,12 @@ class Options:
         path = Path(config_path, 'mimeinfo.cache')
         try:
             if not path.is_file():
-                with path.open('w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w') as ofile:
                     print("[MIME Cache]", file=ofile)
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 if f'{mime_type}={app_name}-userapp.desktop' in ifile:
                     return
-            with path.open('a', encoding='utf-8', newline='\n') as ofile:
+            with path.open('a') as ofile:
                 print(f"{mime_type}={app_name}-userapp.desktop", file=ofile)
         except OSError:
             return
@@ -157,15 +156,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

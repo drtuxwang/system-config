@@ -4,7 +4,6 @@ View files using default application
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -73,15 +72,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _get_program(command: List[str]) -> command_mod.Command:
@@ -119,16 +115,13 @@ class Main:
             elif not path.is_file():
                 raise SystemExit(f"{sys.argv[0]}: cannot find file: {path}")
             else:
-                action = config.get_view_app(
-                    '.'.join(path.name.rsplit('.', 2)[-2:]).lower()
-                )
+                action = config.get_view_app(path.suffix.lower())
                 if not action:
-                    action = config.get_view_app(path.suffix.lower())
+                    action = config.get_open_app(path.suffix.lower())
                     if not action:
-                        view = command_mod.Command('view', errors='stop')
-                        view.set_args([path])
-                        subtask_mod.Task(view.get_cmdline()).run()
-                        continue
+                        raise SystemExit(
+                            f"{sys.argv[0]}: unknown file extension: {path}",
+                        )
             self._spawn(action, str(path))
 
         return 0

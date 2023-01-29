@@ -3,8 +3,6 @@
 Wrapper for GNOME/KDE/XFCE audio mixer
 """
 
-import glob
-import os
 import signal
 import sys
 
@@ -44,15 +42,6 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
 
     @staticmethod
     def run() -> int:

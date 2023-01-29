@@ -4,7 +4,6 @@ Generate multiple graph files with X/Y plots.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -127,22 +126,19 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _config_labels(file: str) -> List[str]:
         if not Path(file).is_file():
             raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" data file.')
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with Path(file).open(errors='replace') as ifile:
                 line = ifile.readline().strip()
                 if line[0] == '#':
                     labels = line[1:].split()
@@ -194,7 +190,7 @@ class Main:
     @staticmethod
     def _writefile(file: str, lines: Sequence[str]) -> int:
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with Path(file).open('w') as ofile:
                 for line in lines:
                     print(line, file=ofile)
         except OSError:

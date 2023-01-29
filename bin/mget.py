@@ -105,11 +105,7 @@ class VideoDownloader:
             f'xrun "{self._output}" {self._url}',
         )
         resume_file = Path(f'{self._m3u8_file}-resume.sh')
-        with resume_file.open(
-            'w',
-            encoding='utf-8',
-            newline='\n',
-        ) as ofile:
+        with resume_file.open('w') as ofile:
             for line in script:
                 print(line, file=ofile)
         resume_file.chmod(0o755)
@@ -137,12 +133,9 @@ class VideoDownloader:
         base_url = self._url.rsplit('/', 1)[0]
 
         chunks: dict = {}
+        path = Path(self._m3u8_file)
         try:
-            with open(
-                self._m3u8_file,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     line = line.strip()
                     if not line.startswith('#'):
@@ -154,12 +147,12 @@ class VideoDownloader:
                             chunks[len(chunks)] = [url]
         except OSError as exception:
             raise SystemExit(
-                f"{sys.argv[0]}: Cannot open file: {self._m3u8_file}",
+                f"{sys.argv[0]}: Cannot open file: {path}",
             ) from exception
 
         if len(chunks) == 0:
             raise SystemExit(
-                f"{sys.argv[0]}: Cannot find chunks: {self._m3u8_file}",
+                f"{sys.argv[0]}: Cannot find chunks: {path}",
             )
         return chunks
 
@@ -195,7 +188,7 @@ class VideoDownloader:
                 self._get_chunk(path, urls)
                 if path.is_file():
                     nfiles += 1
-                    with status_file.open('w', encoding='utf-8') as ofile:
+                    with status_file.open('w') as ofile:
                         print(
                             f"{self._output}: {nfiles}/{nchunks}",
                             file=ofile,
@@ -216,16 +209,16 @@ class VideoDownloader:
         Join video parts.
         """
         chunk_files = sorted(glob.glob(f'{self._m3u8_file}-c*.ts'))
-        full_file = f'{self._m3u8_file}-full.ts'
-        with open(full_file, 'wb') as ofile:
-            for file in chunk_files:
-                print(f"{file}...")
+        full_path = Path(f'{self._m3u8_file}-full.ts')
+        with full_path.open('wb') as ofile:
+            for path in [Path(x) for x in chunk_files]:
+                print(f"{path}...")
                 try:
-                    with open(file, 'rb') as ifile:
+                    with path.open('rb') as ifile:
                         self._copy(ifile, ofile)
                 except OSError as exception:
                     raise SystemExit(
-                        f"{sys.argv[0]}: Cannot read file: {file}",
+                        f"{sys.argv[0]}: Cannot read file: {path}",
                     ) from exception
 
         mp4_file = Path(f'{self._m3u8_file}-full.mp4')
@@ -234,7 +227,7 @@ class VideoDownloader:
         ffmpeg = command_mod.Command('ffmpeg', errors='stop')
         ffmpeg.set_args([
             '-i',
-            full_file,
+            full_path,
             '-acodec',
             'copy',
             '-vcodec',
@@ -275,15 +268,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

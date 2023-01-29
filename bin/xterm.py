@@ -5,7 +5,6 @@ Wrapper for GNOME/KDE/XFCE/Invisible terminal session
 Use '-i' for invisible terminal
 """
 
-import glob
 import os
 import re
 import signal
@@ -219,12 +218,7 @@ class Xterm(Terminal):
         sshconfig = Path(sshdir, 'config')
         if not sshconfig.is_file():
             try:
-                with open(
-                    str(sshconfig),
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with sshconfig.open('w') as ofile:
                     print("Protocol 2\n", file=ofile)
                     print("#Host hostname", file=ofile)
                     print("#User username\n", file=ofile)
@@ -381,14 +375,10 @@ class XfceTerminal(GnomeTerminal):
         path = Path(Path.home(), '.config/xfce4/terminal/accels.scm')
         path_new = Path(f'{path}.part')
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open() as ifile:
                 data = ifile.read()
                 if '"<Alt>' in data:
-                    with path_new.open(
-                        'w',
-                        encoding='utf-8',
-                        newline='\n',
-                    ) as ofile:
+                    with path_new.open('w') as ofile:
                         print(re.sub(r'"<Alt>\d+"', '""', data), file=ofile)
                     path_new.replace(path)
         except OSError:
@@ -439,15 +429,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

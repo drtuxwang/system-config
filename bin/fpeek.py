@@ -4,10 +4,10 @@ Dump the first and last few bytes of a binary file.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import file_mod
@@ -59,7 +59,7 @@ class Options:
         )
         parser.add_argument(
             'files',
-            nargs=1,
+            nargs='+',
             metavar='file',
             help="File to view.",
         )
@@ -94,15 +94,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _format(options: Options, data: bytes) -> str:
@@ -129,11 +126,11 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
+        for path in [Path(x) for x in options.get_files()]:
             try:
-                with open(file, 'rb') as ifile:
-                    print("\nFile:", file)
-                    file_stat = file_mod.FileStat(file)
+                with path.open('rb') as ifile:
+                    print(f"\nFile: {path}")
+                    file_stat = file_mod.FileStat(path)
                     if options.get_all_flag() or file_stat.get_size() < 128:
                         for position in range(1, file_stat.get_size() + 1, 16):
                             print(
@@ -159,7 +156,7 @@ class Main:
                             )
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot read "{file}" file.',
+                    f'{sys.argv[0]}: Cannot read "{path}" file.',
                 ) from exception
 
         return 0

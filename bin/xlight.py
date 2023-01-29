@@ -5,7 +5,6 @@ Desktop screen backlight utility.
 
 import argparse
 import getpass
-import glob
 import os
 import signal
 import sys
@@ -110,11 +109,9 @@ class Backlight:
         """
         Return brightness
         """
+        path = Path(self._device, 'brightness')
         try:
-            with Path(self._device, 'brightness').open(
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with path.open(errors='replace') as ifile:
                 brightness = int(ifile.readline())
         except (OSError, ValueError):
             brightness = 0
@@ -130,11 +127,9 @@ class Backlight:
         """
         Return brightness max
         """
+        path = Path(self._device, 'max_brightness')
         try:
-            with Path(self._device, 'max_brightness').open(
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with path.open(errors='replace') as ifile:
                 brightness = int(ifile.readline())
         except (OSError, ValueError):
             brightness = 0
@@ -153,7 +148,6 @@ class Backlight:
         try:
             with Path(self._device, 'brightness').open(
                 'w',
-                encoding='utf-8',
                 newline='\n',
             ) as ofile:
                 print(brightness, file=ofile)
@@ -362,15 +356,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

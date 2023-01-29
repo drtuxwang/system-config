@@ -2,7 +2,7 @@
 """
 Python task handling utility module
 
-Copyright GPL v2: 2006-2022 By Dr Colin Kong
+Copyright GPL v2: 2006-2023 By Dr Colin Kong
 """
 
 import functools
@@ -13,8 +13,8 @@ import subprocess
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.3.1'
-VERSION = 20221226
+RELEASE = '2.3.2'
+VERSION = 20230122
 
 
 class Tasks:
@@ -406,7 +406,7 @@ class _System:
                     if not bline:
                         break
                     line = bline.decode(errors='replace')
-                    lines.append(line.rstrip('\r\n'))
+                    lines.append(line.rstrip('\n'))
         except OSError as exception:
             raise ExecutableCallError(
                 f'Error in calling "{program}" program.',

@@ -3,7 +3,6 @@
 JAVA jar tool launcher
 """
 
-import glob
 import os
 import signal
 import sys
@@ -85,15 +84,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _compile(source: str) -> None:
@@ -129,7 +125,8 @@ class Main:
                 )
 
     def _create_manifest(self) -> None:
-        if not Path(self._manifest).is_file():
+        path = Path(self._manifest)
+        if not path.is_file():
             main = (
                 'Main'
                 if 'Main.class' in self._jar.get_args()
@@ -140,17 +137,12 @@ class Main:
                 f'"{main}" main class.',
             )
             try:
-                with open(
-                    self._manifest,
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with path.open('w') as ofile:
                     print("Main-Class:", main, file=ofile)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create '
-                    f'"{self._manifest}" Java manifest file.',
+                    f'"{path}" Java manifest file.',
                 ) from exception
 
     def run(self) -> int:

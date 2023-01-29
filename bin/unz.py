@@ -4,7 +4,6 @@ Unpack a compressed archive using suitable tool.",
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -84,15 +83,14 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
+
+        os.umask(0o022)
 
     @classmethod
     def run(cls) -> int:
@@ -101,37 +99,16 @@ class Main:
         """
         options = Options()
         view_args = ['-v'] if options.get_view_flag() else []
-        os.umask(0o022)
 
-        for file in options.get_archives():
-            name = Path(file).name
-            args = view_args + [file]
-            if name.endswith('.ace'):
-                command = command_mod.Command('unace', errors='stop')
-            elif name.endswith('.deb'):
-                command = command_mod.Command('undeb', errors='stop')
-            elif name.endswith('.gpg'):
-                command = command_mod.Command('ungpg', errors='stop')
-            elif name.startswith('initr'):
-                command = command_mod.Command('uninitrd', errors='stop')
-            elif name.endswith('.pdf'):
-                command = command_mod.Command('unpdf', errors='stop')
-            elif name.endswith('.pyc'):
-                command = command_mod.Command('unpyc', errors='stop')
-                args = [file]
-            elif name.endswith('.sqlite'):
-                command = command_mod.Command('unsqlite', errors='stop')
-                args = [file]
-            elif name.endswith('.squashfs'):
-                command = command_mod.Command('unsquashfs', errors='stop')
-            elif name.endswith((
+        for path in [Path(x) for x in options.get_archives()]:
+            args = view_args + [path]
+            suffix = path.suffix
+            if path.name.endswith((
                 '.tar',
                 '.tar.gz',
                 '.tar.bz2',
                 '.tar.zst',
-                '.tar.lzma',
-                '.tar.xz',
-                '.tar.zst',
+                '.tar.zstd',
                 '.tar.lzma',
                 '.tar.xz',
                 '.tar.7z',
@@ -144,6 +121,20 @@ class Main:
                 '.t7z',
             )):
                 command = command_mod.Command('untar', errors='stop')
+            elif suffix in (
+                '.ace',
+                '.deb',
+                '.gpg',
+                '.pdf',
+                '.squashfs',
+                '.zstd',
+            ):
+                command = command_mod.Command(f'un{suffix[1:]}', errors='stop')
+            elif suffix in ('.pyc', 'unsqlite'):
+                command = command_mod.Command(f'un{suffix[1:]}', errors='stop')
+                args = [path]
+            elif suffix == 'initr':
+                command = command_mod.Command('uninitrd', errors='stop')
             else:
                 command = command_mod.Command('un7z', errors='stop')
             cmdline = command.get_cmdline() + args

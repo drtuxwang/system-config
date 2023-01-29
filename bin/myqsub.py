@@ -4,7 +4,6 @@ MyQS, My Queuing System batch job submission.
 """
 
 import argparse
-import glob
 import os
 import signal
 import socket
@@ -115,25 +114,18 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _lastjob(self) -> int:
-        lastjob = Path(self._myqsdir, 'myqs.last')
-        if lastjob.is_file():
+        path = Path(self._myqsdir, 'myqs.last')
+        if path.is_file():
             try:
-                with open(
-                    lastjob,
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
+                with path.open(errors='replace') as ifile:
                     try:
                         jobid = int(ifile.readline().strip()) + 1
                     except (OSError, ValueError):
@@ -141,19 +133,19 @@ class Main:
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot read '
-                    f'"{lastjob}" MyQS lastjob file.',
+                    f'"{path}" MyQS lastjob file.',
                 ) from exception
             if jobid > 32767:
                 jobid = 1
         else:
             jobid = 1
         try:
-            with open(lastjob, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w') as ofile:
                 print(jobid, file=ofile)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot update '
-                f'"{lastjob}" MyQS lastjob file.',
+                f'"{path}" MyQS lastjob file.',
             ) from exception
         return jobid
 
@@ -162,10 +154,7 @@ class Main:
             path = Path(self._myqsdir, 'myqsub.pid')
             if path.is_file():
                 try:
-                    with path.open(
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
+                    with path.open(errors='replace') as ifile:
                         try:
                             pid = int(ifile.readline().strip())
                         except (OSError, ValueError):
@@ -180,11 +169,7 @@ class Main:
                     ) from exception
             if not path.is_file():
                 try:
-                    with path.open(
-                        'w',
-                        encoding='utf-8',
-                        newline='\n',
-                    ) as ofile:
+                    with path.open('w') as ofile:
                         print(os.getpid(), file=ofile)
                 except OSError as exception:
                     raise SystemExit(
@@ -198,7 +183,7 @@ class Main:
     def _myqsd(self) -> None:
         path = Path(self._myqsdir, 'myqsd.pid')
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -222,11 +207,7 @@ class Main:
                 return
             jobid = self._lastjob()
             try:
-                with path_new.open(
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with path_new.open('w') as ofile:
                     print(f"COMMAND={path}", file=ofile)
                     print(f"DIRECTORY={os.getcwd()}", file=ofile)
                     print(f"PATH={os.environ['PATH']}", file=ofile)

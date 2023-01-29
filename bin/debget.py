@@ -6,7 +6,6 @@ Download Debian packages list files.
 import argparse
 import datetime
 import functools
-import glob
 import json
 import logging
 import os
@@ -88,23 +87,18 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
-
-        self.tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'debget'))
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _get_urls(path: Path) -> List[str]:
         urls = []
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for url in ifile:
                     url = url.rstrip()
                     if url and not url.startswith('#'):
@@ -211,13 +205,16 @@ class Main:
             lines = []
             path = Path(archive_path.parent, archive_path.stem)
             try:
-                with path.open(encoding='utf-8', errors='replace') as ifile:
+                with path.open(errors='replace') as ifile:
                     for line in ifile:
                         if line.startswith('Filename: '):
-                            lines.append(line.rstrip('\r\n').replace(
-                                'Filename: ', f'Filename: {site}', 1))
+                            lines.append(line.rstrip('\n').replace(
+                                'Filename: ',
+                                f'Filename: {site}',
+                                1,
+                            ))
                         else:
-                            lines.append(line.rstrip('\r\n'))
+                            lines.append(line.rstrip('\n'))
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot read "Packages" packages file.',
@@ -268,6 +265,7 @@ class Main:
         """
         Start program
         """
+        self.tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'debget'))
         os.umask(0o022)
 
         options = Options()

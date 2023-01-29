@@ -4,7 +4,6 @@ Calculate PAR2 parity and repair tool.
 """
 
 import argparse
-import glob
 import logging
 import os
 import signal
@@ -16,7 +15,7 @@ import command_mod
 import logging_mod
 import subtask_mod
 
-IGNORE_EXTENSIONS = ('.fsum', '.md5', '.md5sum', '.par2')
+IGNORE_SUFFIXES = ('.fsum', '.md5', '.md5sum', '.par2')
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -89,15 +88,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _create_3dot_directory(path: Path) -> None:
@@ -148,7 +144,8 @@ class Main:
                 not path.is_symlink() and
                 path.stat().st_size
             ):
-                if name.endswith(IGNORE_EXTENSIONS):
+                suffix = path.suffix
+                if len(path.name) == 1 or suffix in IGNORE_SUFFIXES:
                     continue
 
                 fpar_path = Path(directory_path, '...')

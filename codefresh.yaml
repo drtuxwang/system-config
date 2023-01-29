@@ -12,8 +12,8 @@ steps:
     title: Cloning main repository
     stage: default
     type: git-clone
-    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
-    revision: "${{CF_REVISION}}"
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_REVISION}}'
     git: drtuxwang
 
   setup_config:

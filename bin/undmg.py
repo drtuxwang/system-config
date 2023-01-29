@@ -4,7 +4,6 @@ Unpack a compressed DMG disk file.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -84,15 +83,14 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
+
+        os.umask(0o022)
 
     @staticmethod
     def run() -> int:
@@ -101,7 +99,6 @@ class Main:
         """
         options = Options()
 
-        os.umask(0o022)
         dmg2img = command_mod.Command('dmg2img', errors='stop')
         unpacker = command_mod.Command('7z', errors='stop')
         if options.get_view_flag():

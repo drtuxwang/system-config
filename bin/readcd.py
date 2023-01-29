@@ -142,10 +142,7 @@ class Cdrom:
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with Path(directory, file).open(
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
+                    with Path(directory, file).open(errors='replace') as ifile:
                         model += f' {ifile.readline().strip()}'
                 except OSError:
                     continue
@@ -173,15 +170,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _cdspeed(device: str, speed: str) -> None:
@@ -294,7 +288,7 @@ class Main:
         pad = int(blocks * 2048 - Path(file).stat().st_size)
         if 0 < pad < 16777216:
             print(pad, 'bytes flushing from CD/DVD prefetch bug...')
-            with open(file, 'ab') as ofile:
+            with Path(file).open('ab') as ofile:
                 ofile.write(b"\0" * pad)
         self._isosize(file, Path(file).stat().st_size)
 

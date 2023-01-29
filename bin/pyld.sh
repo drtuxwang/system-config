@@ -107,6 +107,7 @@ locate_python() {
         esac
         ;;
     *NT*)
+        export PYTHONUTF8=1  # Python 3.7+ UTF-8 files
         PYLD_EXE="$PYLD_EXE.exe"
         if  [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
         then

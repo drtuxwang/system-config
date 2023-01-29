@@ -22,7 +22,7 @@ test-docker:         # Run tests in docker
 test-all: test       # Run tests for all versions
 	@for VERSION in $(PYTHONS_VERSIONS); do \
 		case $$VERSION in \
-		3.[6-9]|3.??) \
+		3.[7-9]|3.??) \
 			PYTHON=python$$VERSION make --no-print-directory check-python || exit 1 \
 			;; \
 		esac; \

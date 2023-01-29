@@ -4,7 +4,6 @@ Extracts http references from a HTML file.
 """
 
 import argparse
-import glob
 import os
 import re
 import signal
@@ -71,26 +70,23 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _extract(self, path: Path) -> List[str]:
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 urls = []
                 for line in ifile:
                     line = line.strip()
                     for token in self._is_iframe.sub('href=', line).split():
                         if (
-                                self._is_url.match(token) and
-                                not self._is_ignore.search(token)
+                            self._is_url.match(token) and
+                            not self._is_ignore.search(token)
                         ):
                             url = token[5:].split('>')[0]
                             for quote in ('"', "'"):

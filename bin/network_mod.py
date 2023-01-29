@@ -2,7 +2,7 @@
 """
 Python network handling utility module
 
-Copyright GPL v2: 2015-2022 By Dr Colin Kong
+Copyright GPL v2: 2015-2023 By Dr Colin Kong
 """
 
 import getpass
@@ -15,8 +15,8 @@ from typing import Any, List, Tuple, Union
 
 import command_mod
 
-RELEASE = '3.4.0'
-VERSION = 20221218
+RELEASE = '3.4.1'
+VERSION = 20230124
 
 
 class NetNice(command_mod.Command):
@@ -46,9 +46,8 @@ class NetNice(command_mod.Command):
         """
         if path.is_file():
             try:
-                with path.open(encoding='utf-8') as ifile:
-                    data = json.load(ifile)
-                    self._drate = data['trickle']['download']
+                data = json.loads(path.read_text(errors='replace'))
+                self._drate = data['trickle']['download']
             except (KeyError, OSError, ValueError):
                 pass
             else:
@@ -66,7 +65,7 @@ class NetNice(command_mod.Command):
             }
         }
         try:
-            with path.open('w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w', newline='\n') as ofile:
                 print(json.dumps(
                     data,
                     ensure_ascii=False,

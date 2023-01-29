@@ -4,7 +4,6 @@ Wrapper for "git" command
 """
 
 import getpass
-import glob
 import os
 import signal
 import socket
@@ -41,7 +40,7 @@ class Options:
         path = Path(Path.home(), '.gitconfig')
         if not path.is_file():
             try:
-                with path.open('w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w') as ofile:
                     user = getpass.getuser()
                     host = socket.gethostname().split('.')[0].lower()
                     print("[user]", file=ofile)
@@ -93,15 +92,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

@@ -125,12 +125,9 @@ class Cdrom:
         for directory in glob.glob('/sys/block/sr*/device'):
             device = f'/dev/{Path(directory).parent.name}'
             model = ''
-            for file in ('vendor', 'model'):
+            for path in [Path(directory, x) for x in ('vendor', 'model')]:
                 try:
-                    with Path(directory, file).open(
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
+                    with path.open(errors='replace') as ifile:
                         model += f' {ifile.readline().strip()}'
                 except OSError:
                     continue
@@ -160,15 +157,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _rip_tracks(self, ntracks: int) -> None:
         tee = command_mod.Command('tee', errors='stop')
@@ -187,14 +181,10 @@ class Main:
                     except ValueError:
                         pass
                     break
-            logfile = track.zfill(2) + '.log'
+
+            log_path = Path(f'{track.zfill(2)}.log')
             try:
-                with open(
-                    logfile,
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with log_path.open('w') as ofile:
                     line = (
                         f'\nRipping track {track}/{ntracks} ({length} seconds)'
                     )
@@ -202,23 +192,24 @@ class Main:
                     print(line, file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{logfile}" file.',
+                    f'{sys.argv[0]}: Cannot create "{log_path}" file.',
                 ) from exception
-            warnfile = track.zfill(2) + '.warning'
+
+            warn_path = Path(f'{track.zfill(2)}.warning')
             try:
-                with open(warnfile, 'wb'):
-                    pass
+                warn_path.touch()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{warnfile}" file.',
+                    f'{sys.argv[0]}: Cannot create "{warn_path}" file.',
                 ) from exception
-            wavfile = track.zfill(2) + '.wav'
-            tee.set_args(['-a', logfile])
+
+            wav_path = Path(f'{track.zfill(2)}.wav')
+            tee.set_args(['-a', log_path])
             task = subtask_mod.Task(self._icedax.get_cmdline() + [
                 'verbose-level=disable',
                 f'track={track}',
                 f'dev={self._device}',
-                wavfile,
+                wav_path,
                 '2>&1',
                 '|'
                 ] + tee.get_cmdline())
@@ -228,10 +219,10 @@ class Main:
                     f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
                 )
-            if Path(wavfile).is_file():
-                self._pregap(wavfile)
-            if not self._hasprob(logfile):
-                os.remove(warnfile)
+            if wav_path.is_file():
+                self._pregap(wav_path)
+            if not self._hasprob(log_path):
+                os.remove(warn_path)
 
     def _rip(self) -> None:
         self._icedax.set_args([
@@ -243,12 +234,7 @@ class Main:
             '-H'
         ])
         try:
-            with open(
-                '00.log',
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with Path('00.log').open('w') as ofile:
                 for line in self._toc:
                     print(line, file=ofile)
         except OSError as exception:
@@ -267,10 +253,10 @@ class Main:
         self._rip_tracks(ntracks)
 
     @staticmethod
-    def _hasprob(logfile: str) -> bool:
-        with open(logfile, encoding='utf-8', errors='replace') as ifile:
+    def _hasprob(log_path: Path) -> bool:
+        with log_path.open(errors='replace') as ifile:
             for line in ifile:
-                line = line.rstrip('\r\n')
+                line = line.rstrip('\n')
                 if line.endswith('problems'):
                     if line[-14:] != 'minor problems':
                         ifile.close()
@@ -278,10 +264,10 @@ class Main:
         return False
 
     @staticmethod
-    def _pregap(wavfile: str) -> None:
+    def _pregap(wav_path: Path) -> None:
         # 1s = 176400 bytes
-        size = Path(wavfile).stat().st_size
-        with open(wavfile, 'rb+') as ifile:
+        size = wav_path.stat().st_size
+        with wav_path.open('rb+') as ifile:
             ifile.seek(size - 2097152)
             data = ifile.read(2097152)
             for i in range(len(data) - 1, 0, -1):

@@ -4,7 +4,6 @@ MyQS, My Queuing System batch job statistics.
 """
 
 import argparse
-import glob
 import os
 import signal
 import socket
@@ -15,7 +14,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.6'
+RELEASE = '2.8.7'
 
 
 class Options:
@@ -69,20 +68,17 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _myqsd(self) -> None:
         path = Path(self._myqsdir, 'myqsd.pid')
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -111,20 +107,16 @@ class Main:
         for jobid in sorted(jobids):
             try:
                 state = 'QUEUE'
-                with Path(self._myqsdir, f'{jobid}.q').open(
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
+                path = Path(self._myqsdir, f'{jobid}.q')
+                with path.open(errors='replace') as ifile:
                     for line in ifile:
                         line = line.strip()
                         if '=' in line:
                             info[line.split('=')[0]] = line.split('=', 1)[1]
             except OSError:
                 try:
-                    with Path(self._myqsdir, f'{jobid}.r').open(
-                        encoding='utf-8',
-                        errors='replace'
-                    ) as ifile:
+                    path = Path(self._myqsdir, f'{jobid}.r')
+                    with path.open(errors='replace') as ifile:
                         for line in ifile:
                             line = line.strip()
                             if '=' in line:
@@ -160,10 +152,7 @@ class Main:
                             f"{Path(info['COMMAND']).name}.o{jobid}",
                         )
                     try:
-                        with log_path.open(
-                            encoding='utf-8',
-                            errors='replace',
-                        ) as ifile:
+                        with log_path.open(errors='replace') as ifile:
                             output = []
                             for line in ifile:
                                 output = (output + [line.rstrip()])[-5:]

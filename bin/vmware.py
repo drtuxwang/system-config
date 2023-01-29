@@ -3,7 +3,6 @@
 VMware Player launcher
 """
 
-import glob
 import os
 import signal
 import sys
@@ -42,10 +41,7 @@ class Options:
 
         if path.is_file():
             try:
-                with path.open(
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
+                with path.open(errors='replace') as ifile:
                     configdata = ifile.readlines()
             except OSError as exception:
                 raise SystemExit(
@@ -56,11 +52,7 @@ class Options:
                 ifile.close()
                 return
             try:
-                with path.open(
-                    'a',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ofile:
+                with path.open('a', errors='replace') as ofile:
                     print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(
@@ -77,11 +69,7 @@ class Options:
                         f'"{path.parent}" directory.',
                     ) from exception
             try:
-                with path.open(
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with path.open('w') as ofile:
                     print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(
@@ -120,15 +108,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

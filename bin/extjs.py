@@ -4,7 +4,6 @@ Extracts Javascript from a HTML file.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -71,21 +70,18 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _extract(path: Path) -> Generator[str, None, None]:
         lines = []
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.strip().replace('&gt;', '>').replace(
                         '&lt;', '<').replace('SCRIPT>', 'script>'))
@@ -102,7 +98,7 @@ class Main:
         lines = jsbeautifier.beautify(script).splitlines()
         print(f'Writing "{path}" with {len(lines)} lines...')
         try:
-            with path.open('w', encoding='utf-8') as ofile:
+            with path.open('w') as ofile:
                 for line in lines:
                     print(line, file=ofile)
         except OSError as exception:

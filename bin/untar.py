@@ -5,7 +5,6 @@ TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ/T7Z format (GNU Tar version).
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -77,7 +76,7 @@ class Options:
             '.t7z',
         )
         for path in [Path(x) for x in self._args.archives]:
-            if path.suffix not in tar_extensions:
+            if not path.name.endswith(tar_extensions):
                 raise SystemExit(
                     f'{sys.argv[0]}: Unsupported "{path}" archive format.',
                 )
@@ -110,15 +109,14 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
+
+        os.umask(0o022)
 
     def _unpack(self, file: str) -> None:
         task: subtask_mod.Task
@@ -171,7 +169,6 @@ class Main:
         """
         options = Options()
 
-        os.umask(0o022)
         if os.name == 'nt':
             self._tar = command_mod.Command('tar.exe', errors='stop')
         else:

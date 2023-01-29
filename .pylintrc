@@ -6,7 +6,8 @@
 jobs=0
 
 [MESSAGES CONTROL]
-disable=duplicate-code
+# Use "python3.exe -X utf8" for Python 3.7+ UTF-8 files on Windows
+disable=duplicate-code,unspecified-encoding
 
 [REPORTS]
 output-format=parseable

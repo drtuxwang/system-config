@@ -4,8 +4,6 @@ Get the IP number of hosts.
 """
 
 import argparse
-import glob
-import os
 import signal
 import sys
 from typing import List, Generator
@@ -70,15 +68,6 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
 
     @staticmethod
     def resolve(host: str) -> Generator[str, None, None]:

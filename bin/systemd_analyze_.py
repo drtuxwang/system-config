@@ -3,8 +3,6 @@
 Wrapper for "systemd-analyze" command
 """
 
-import glob
-import os
 import re
 import signal
 import sys
@@ -35,15 +33,6 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
 
     @staticmethod
     def _get_timings(line: str) -> Generator[tuple, None, None]:

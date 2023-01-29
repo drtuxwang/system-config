@@ -4,7 +4,6 @@ Generate XHTML files to view pictures.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -158,11 +157,7 @@ class Gallery:
 
                 xhtml_file = Path(self._path, file).with_suffix('.xhtml')
                 try:
-                    with xhtml_file.open(
-                        'w',
-                        encoding='utf-8',
-                        newline='\n',
-                    ) as ofile:
+                    with xhtml_file.open('w') as ofile:
                         for line in self.generate(i, file, next_file):
                             print(line, file=ofile)
                 except OSError as exception:
@@ -264,11 +259,7 @@ class Xhtml:
         )
 
         try:
-            with Path('index.xhtml').open(
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with Path('index.xhtml').open('w') as ofile:
                 for line in self.generate(file_stats):
                     print(line, file=ofile)
         except OSError as exception:
@@ -298,15 +289,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def run() -> int:

@@ -4,7 +4,6 @@ Make uncompressed archive in TAR format (GNU Tar version).
 """
 
 import argparse
-import glob
 import os
 import shutil
 import signal
@@ -98,15 +97,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _get_cmdline(archive: str, files: List[str]) -> List[str]:
@@ -136,16 +132,16 @@ class Main:
         return cmdline
 
     @staticmethod
-    def _check_tar(archive: str) -> None:
-        size = file_mod.FileStat(archive).get_size()
+    def _check_tar(path: Path) -> None:
+        size = file_mod.FileStat(path).get_size()
         if size % 1024:
-            raise SystemExit(f'{sys.argv[0]}: Truncated tar file: {archive}')
+            raise SystemExit(f'{sys.argv[0]}: Truncated tar file: {path}')
 
-        with open(archive, 'rb') as ifile:
+        with path.open('rb') as ifile:
             ifile.seek(size - 1024)
             if ifile.read(1024) != 1024*b'\0':
                 raise SystemExit(
-                    f'{sys.argv[0]}: Missing tar file EOF records: {archive}'
+                    f'{sys.argv[0]}: Missing tar file EOF records: {path}'
                 )
 
     @classmethod
@@ -162,7 +158,7 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())
-        cls._check_tar(archive + '.part')
+        cls._check_tar(Path(f'{archive}.part'))
         try:
             shutil.move(archive+'.part', archive)
         except OSError as exception:

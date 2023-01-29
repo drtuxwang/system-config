@@ -1,7 +1,7 @@
 apps:
   archive_unpacker:
     command:
-    - un7z
+    - unz
     view_flag: -v
   audio_editor:
     command:
@@ -37,44 +37,9 @@ apps:
     command:
     - xedit
     daemon: true
-  unace:
+  video_player:
     command:
-    - unace
-    view_flag: -v
-  unbz2:
-    command:
-    - unbz2
-  undeb:
-    command:
-    - undeb
-    view_flag: -v
-  undmg:
-    command:
-    - undmg
-    view_flag: -v
-  ungpg:
-    command:
-    - ungpg
-  ungz:
-    command:
-    - ungz
-  unrpm:
-    command:
-    - unrpm
-    view_flag: -v
-  unsqlite:
-    command:
-    - unsqlite
-  untar:
-    command:
-    - untar
-    view_flag: -v
-  unxz:
-    command:
-    - unxz
-  unzst:
-    command:
-    - unzst
+    - play
   web_browser:
     command:
     - firefox
@@ -83,37 +48,44 @@ bindings:
     open: archive_unpacker
     view: archive_unpacker
   .ace:
-    open: unace
-    view: unace
+    open: archive_unpacker
+    view: archive_unpacker
+  .avi:
+    open: video_player
+  .bmp:
+    open: image_editor
+    view: image_viewer
   .bz2:
-    open: unbz2
+    open: archive_unpacker
+    view: archive_unpacker
   .csv:
     open: doc_editor
-    view: doc_editor
   .deb:
-    open: undeb
-    view: undeb
+    open: archive_unpacker
+    view: archive_unpacker
   .dmg:
-    open: undmg
-    view: undmg
+    open: archive_unpacker
+    view: archive_unpacker
   .doc:
     open: doc_editor
-    view: doc_editor
   .docx:
     open: doc_editor
-    view: doc_editor
+  .flv:
+    open: video_player
   .gif:
     open: image_editor
     view: image_viewer
   .gpg:
-    open: ungpg
+    open: archive_unpacker
+    view: archive_unpacker
   .gz:
-    open: ungz
+    open: archive_unpacker
+    view: archive_unpacker
   .htm:
-    open: web_browser
+    open: text_editor
     view: web_browser
   .html:
-    open: web_browser
+    open: text_editor
     view: web_browser
   .iso:
     open: archive_unpacker
@@ -129,28 +101,32 @@ bindings:
     view: image_viewer
   .json:
     open: text_editor
-    view: text_editor
+  .lzma:
+    open: archive_unpacker
+    view: archive_unpacker
   .mp3:
     open: audio_editor
     view: audio_player
+  .mp4:
+    open: video_player
+  .mpegts:
+    open: video_player
   .odf:
     open: doc_editor
-    view: doc_editor
   .odg:
     open: doc_editor
-    view: doc_editor
   .odp:
     open: doc_editor
-    view: doc_editor
   .ods:
     open: doc_editor
-    view: doc_editor
   .odt:
     open: doc_editor
-    view: doc_editor
   .ogg:
     open: audio_editor
     view: audio_player
+  .pcx:
+    open: image_editor
+    view: image_viewer
   .pdf:
     open: pdf_annotator
     view: pdf_viewer
@@ -159,91 +135,87 @@ bindings:
     view: image_viewer
   .ppt:
     open: doc_editor
-    view: doc_editor
   .pptx:
     open: doc_editor
-    view: doc_editor
   .rar:
     open: archive_unpacker
     view: archive_unpacker
   .rpm:
-    open: unrpm
-    view: unrpm
+    open: archive_unpacker
+    view: archive_unpacker
   .run:
     open: archive_unpacker
     view: archive_unpacker
   .sqlite:
-    open: unsqlite
+    open: archive_unpacker
+    view: archive_unpacker
+  .svg:
+    open: image_editor
+    view: image_viewer
   .t7z:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
   .tar:
-    open: untar
-    view: untar
-  .tar.7z:
-    open: untar
-    view: untar
-  .tar.bz2:
-    open: untar
-    view: untar
-  .tar.gz:
-    open: untar
-    view: untar
-  .tar.lzma:
-    open: untar
-    view: untar
-  .tar.xz:
-    open: untar
-    view: untar
-  .tar.zst:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
   .tbz:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
   .tgz:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
+  .tif:
+    open: image_editor
+    view: image_viewer
+  .tiff:
+    open: image_editor
+    view: image_viewer
   .tlz:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
   .txt:
     open: text_editor
-    view: text_editor
   .txz:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
   .tzs:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
   .tzst:
-    open: untar
-    view: untar
+    open: archive_unpacker
+    view: archive_unpacker
   .wav:
     open: audio_editor
     view: audio_player
+  .webm:
+    open: video_player
+  .webp:
+    open: image_editor
+    view: image_viewer
+  .wsdl:
+    open: doc_editor
   .wpd:
     open: doc_editor
-    view: doc_editor
   .xhtml:
-    open: web_browser
+    open: text_editor
     view: web_browser
   .xls:
     open: doc_editor
-    view: doc_editor
   .xlsx:
     open: doc_editor
-    view: doc_editor
   .xoj:
     open: pdf_annotator
-    view: pdf_annotator
   .xz:
-    open: unxz
+    open: archive_unpacker
+    view: archive_unpacker
   .yaml:
     open: text_editor
-    view: text_editor
   .zst:
-    open: unzst
+    open: archive_unpacker
+    view: archive_unpacker
+  .zstd:
+    open: archive_unpacker
+    view: archive_unpacker
   .zip:
     open: archive_unpacker
     view: archive_unpacker
@@ -264,6 +236,7 @@ parameters:
   - .avi
   - .flv
   - .mp4
+  - .mpegts
   - .webm
   user_agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
   web_mail: https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com

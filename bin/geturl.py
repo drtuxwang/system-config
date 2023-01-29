@@ -4,7 +4,6 @@ Multi-threaded download accelerator.
 """
 
 import argparse
-import glob
 import os
 import shutil
 import signal
@@ -113,15 +112,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _get_local(directory: str, files_local: List[str]) -> None:
@@ -184,11 +180,7 @@ class Main:
                     '-Z'
                 ])
                 try:
-                    with open(
-                        url,
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
+                    with Path(url).open(errors='replace') as ifile:
                         for line in ifile:
                             line = line.strip().split('  #')[0]
                             if line and not line.startswith('#'):

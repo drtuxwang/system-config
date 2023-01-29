@@ -7,7 +7,6 @@ ssh-keygen -t rsa -b 4096 -f id_rsa
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -83,21 +82,18 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _check(self, options: Options) -> None:
         config = []
         path = Path(self._sshdir, 'config')
         try:
-            with path.open(encoding='utf-8', errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     config.append(line.strip())
         except OSError:
@@ -112,11 +108,7 @@ class Main:
                     config.extend(['', f'Host {rhost}', f'User {ruser}'])
                     path_new = Path(f'{path}.part')
                     try:
-                        with path_new.open(
-                            'w',
-                            encoding='utf-8',
-                            newline='\n',
-                        ) as ofile:
+                        with path_new.open('w') as ofile:
                             for line in config:
                                 print(line, file=ofile)
                     except OSError as exception:
@@ -157,7 +149,7 @@ class Main:
         pubkeys: List[str] = []
         if path.is_file():
             try:
-                with path.open(encoding='utf-8', errors='replace') as ifile:
+                with path.open(errors='replace') as ifile:
                     pubkeys = []
                     for line in ifile:
                         pubkeys.append(line.strip())
@@ -169,11 +161,7 @@ class Main:
         path_new = Path(f'{path}.part')
         if pubkey not in pubkeys:
             try:
-                with path_new.open(
-                    'w',
-                    encoding='utf-8',
-                    newline='\n',
-                ) as ofile:
+                with path_new.open('w') as ofile:
                     for line in pubkeys:
                         print(line, file=ofile)
                     print(pubkey, file=ofile)
@@ -233,17 +221,13 @@ class Main:
                 # When SSH_AUTH_SOCK agent is used
                 subtask_mod.Batch(ssh_add.get_cmdline()).run()
 
+        path = Path(self._sshdir, 'id_rsa.pub')
         try:
-            with Path(self._sshdir, 'id_rsa.pub').open(
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with path.open(errors='replace') as ifile:
                 pubkey = ifile.readline().strip()
         except OSError as exception:
             raise SystemExit(
-                f"{sys.argv[0]}: Cannot read "
-                f"\"{Path(self._sshdir, 'id_rsa.pub')}\" "
-                "public key file.",
+                f'{sys.argv[0]}: Cannot read "{path}" public key file.'
             ) from exception
 
         if pubkey:

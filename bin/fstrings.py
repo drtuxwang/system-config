@@ -4,10 +4,10 @@ Print the strings of printable characters in files.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import BinaryIO, List
 
 
@@ -68,19 +68,16 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _file(self, file: str) -> None:
         try:
-            with open(file, 'rb') as ifile:
+            with Path(file).open('rb') as ifile:
                 self._pipe(ifile)
         except OSError as exception:
             raise SystemExit(

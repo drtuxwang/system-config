@@ -4,7 +4,6 @@ Chop up a file into chunks.
 """
 
 import argparse
-import glob
 import os
 import signal
 import sys
@@ -95,15 +94,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     def _copy(self, ifile: BinaryIO, ofile: BinaryIO) -> None:
         chunks, lchunk = divmod(self._max_size, self._cache_size)
@@ -121,15 +117,15 @@ class Main:
         self._cache_size = 131072
         self._max_size = options.get_max_size()
 
+        path = Path(options.get_file())
         try:
-            with open(options.get_file(), 'rb') as ifile:
+            with path.open('rb') as ifile:
                 for part in range(int(
-                    Path(options.get_file()).stat().st_size /
-                    options.get_max_size() + 1
+                    path.stat().st_size / options.get_max_size() + 1
                 )):
                     try:
-                        file = f'{options.get_file()}.{str(part + 1).zfill(3)}'
-                        with open(file, 'wb') as ofile:
+                        file = f'{path}.{str(part + 1).zfill(3)}'
+                        with Path(file).open('wb') as ofile:
                             print(f"{file}...")
                             self._copy(ifile, ofile)
                     except OSError as exception:
@@ -139,7 +135,7 @@ class Main:
                         ) from exception
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{options.get_file()}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
 
         return 0

@@ -4,11 +4,9 @@ Calculate checksum lines using imagehash, file size and file modification time.
 """
 
 import argparse
-import glob
 import itertools
 import logging
 import os
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -116,15 +114,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _get_checksum(line: str) -> Tuple[str, int, int, str]:
@@ -137,23 +132,19 @@ class Main:
             return '', -1, -1, ''
 
     @classmethod
-    def _read(cls, phashes_file: str) -> dict:
-        logger.info("Reading checksum file: %s", phashes_file)
-        if not Path(phashes_file).is_file():
+    def _read(cls, path: Path) -> dict:
+        logger.info("Reading checksum file: %s", path)
+        if not path.is_file():
             raise SystemExit(
-                f"{sys.argv[0]}: Cannot find checksum file: {phashes_file}",
+                f"{sys.argv[0]}: Cannot find checksum file: {path}",
             )
 
         images_phashes = {}
         try:
-            with open(
-                phashes_file,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
                     try:
-                        line = line.rstrip('\r\n')
+                        line = line.rstrip('\n')
                         checksum, size, mtime, file = cls._get_checksum(line)
                         if file:
                             images_phashes[(file, size, mtime)] = checksum
@@ -161,7 +152,7 @@ class Main:
                         pass
         except OSError as exception:
             raise SystemExit(
-                f"{sys.argv[0]}: Cannot read checksum file: {phashes_file}",
+                f"{sys.argv[0]}: Cannot read checksum file: {path}",
             ) from exception
         return images_phashes
 
@@ -235,16 +226,12 @@ class Main:
             raise SystemExit(1)
 
     @staticmethod
-    def _write(phashes_file: str, image_phashes: dict) -> None:
-        logger.info("Writing checksum file: %s", phashes_file)
+    def _write(path: Path, image_phashes: dict) -> None:
+        logger.info("Writing checksum file: %s", path)
 
+        path_new = Path(f'{path}.part')
         try:
-            with open(
-                phashes_file + '.part',
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            with path_new.open('w') as ofile:
                 for key, phash in image_phashes.items():
                     file, file_size, file_time = key
                     print(
@@ -256,14 +243,13 @@ class Main:
                     )
         except OSError as exception:
             raise SystemExit(
-                f"{sys.argv[0]}: Cannot create checksum file: "
-                f"{phashes_file}.part",
+                f"{sys.argv[0]}: Cannot create checksum file: {path_new}"
             ) from exception
         try:
-            shutil.move(phashes_file + '.part', phashes_file)
+            path_new.replace(path)
         except OSError as exception:
             raise SystemExit(
-                f"{sys.argv[0]}: Cannot create checksum file: {phashes_file}",
+                f"{sys.argv[0]}: Cannot create checksum file: {path}",
             ) from exception
 
     def run(self) -> int:
@@ -276,7 +262,7 @@ class Main:
 
         update_file = options.get_update_file()
         if update_file:
-            image_phashes = self._read(update_file)
+            image_phashes = self._read(Path(update_file))
         old_keys = set(image_phashes)
 
         image_phashes = self._update(
@@ -289,7 +275,7 @@ class Main:
         new_phashes = {image_phashes[x] for x in new_keys}
         self._check(image_phashes, new_phashes)
         if new_keys:
-            self._write(update_file, image_phashes)
+            self._write(Path(update_file), image_phashes)
 
         return 0
 

@@ -39,8 +39,8 @@ the years.
  * bin/python3.7
  * bin/python3.8
  * bin/python3.9
- * bin/python3.9.bat
  * bin/python3.10
+ * bin/python3.10.bat
  * bin/python3.11
  * bin/2to3                 Python 3.x script wrappers
  * bin/2to3.bat
@@ -846,6 +846,10 @@ the years.
  * bin/zhspeak              Zhong Hua Speak, Chinese TTS software
  * bin/zhspeak.py
  * bin/zhspeak.tcl
+ * bin/z                    Make a compressed archive using suitable tool.
+ * bin/z.py
+ * bin/zcat                 Concatenate compressed files and print on the standard output
+ * bin/zcat.py
  * bin/zip                  Make a compressed archive in ZIP format.
  * bin/zip.py
  * bin/zoom                 Wrapper for "zoom" command

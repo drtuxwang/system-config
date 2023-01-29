@@ -4,7 +4,6 @@ Calculate checksum using SHA512, file size and file modification time.
 """
 
 import argparse
-import glob
 import hashlib
 import os
 import signal
@@ -124,15 +123,12 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
 
     @staticmethod
     def _md5sum(path: Path) -> str:
@@ -210,11 +206,7 @@ class Main:
                 if options.get_create_flag():
                     fsum_path = Path(f'{path}.fsum')
                     try:
-                        with fsum_path.open(
-                            'w',
-                            encoding='utf-8',
-                            newline='\n',
-                        ) as ofile:
+                        with fsum_path.open('w') as ofile:
                             print(
                                 f"{checksum}/"
                                 f"{file_stat.get_size():010d}/"
@@ -252,12 +244,9 @@ class Main:
             found.append(str(fsum_path))
             directory = fsum_path.parent
             try:
-                with fsum_path.open(
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
+                with fsum_path.open(errors='replace') as ifile:
                     for line in ifile:
-                        line = line.rstrip('\r\n')
+                        line = line.rstrip('\n')
                         checksum, size, mtime, file = self._get_checksum(line)
                         file = f'{directory}/{file}'
                         found.append(file)
@@ -337,10 +326,10 @@ class Main:
 
         directory_path = cache_path.parent
         try:
-            with cache_path.open(encoding='utf-8', errors='replace',) as ifile:
+            with cache_path.open(errors='replace') as ifile:
                 for line in ifile:
                     try:
-                        line = line.rstrip('\r\n')
+                        line = line.rstrip('\n')
                         checksum, size, mtime, file = self._get_checksum(line)
                         path = Path(directory_path, file)
                         file = str(path).replace('/.../../', '/')

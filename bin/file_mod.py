@@ -2,7 +2,7 @@
 """
 Python file handling utility module
 
-Copyright GPL v2: 2006-2022 By Dr Colin Kong
+Copyright GPL v2: 2006-2023 By Dr Colin Kong
 """
 
 import getpass
@@ -11,8 +11,8 @@ import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.6.0'
-VERSION = 20221218
+RELEASE = '2.6.1'
+VERSION = 20230122
 
 
 class FileStat:
@@ -191,7 +191,7 @@ class FileUtil:
         """
         is_match = re.compile(pattern)
         try:
-            with open(file, 'rb') as ifile:
+            with Path(file).open('rb') as ifile:
                 string = ''
                 while True:
                     data = ifile.read(4096)

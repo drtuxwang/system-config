@@ -4,7 +4,6 @@ Make a compressed archive in 7Z format.
 """
 
 import argparse
-import glob
 import os
 import shutil
 import signal
@@ -160,7 +159,7 @@ class Main:
             ofile.write(chunk)
 
     @classmethod
-    def _make_exe(cls, archiver: command_mod.Command, archive: str) -> None:
+    def _make_exe(cls, archiver: command_mod.Command, path: Path) -> None:
         command = command_mod.Command(
             '7z.sfx',
             platform='windows-x86',
@@ -173,38 +172,37 @@ class Main:
                 platform='windows-x86',
                 errors='ignore'
             )
-        sfx = command.get_file()
-        if not Path(sfx).is_file():
+        sfx_path = Path(command.get_file())
+        if not sfx_path.is_file():
             archiver = command_mod.Command(
                 archiver.get_file(), args=sys.argv[1:], errors='ignore')
             if not archiver.is_found():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{sfx}" SFX file.',
+                    f'{sys.argv[0]}: Cannot find "{sfx_path}" SFX file.',
                 )
             subtask_mod.Exec(archiver.get_cmdline()).run()
 
         print("Adding SFX code")
-        archive_sfx = archive + '-sfx'
-        with open(archive_sfx, 'wb') as ofile:
+        path_new = Path(f'{path}-sfx')
+        with path_new.open('wb') as ofile:
             try:
-                with open(sfx, 'rb') as ifile:
+                with sfx_path.open('rb') as ifile:
                     cls._copy(ifile, ofile)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot read "{sfx}" SFX file.',
+                    f'{sys.argv[0]}: Cannot read "{sfx_path}" SFX file.',
                 ) from exception
-            with open(archive, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 cls._copy(ifile, ofile)
 
-        file_stat = file_mod.FileStat(archive)
-        os.utime(archive_sfx, (file_stat.get_time(), file_stat.get_time()))
+        file_stat = file_mod.FileStat(path)
+        os.utime(path_new, (file_stat.get_time(), file_stat.get_time()))
         try:
-            os.chmod(archive_sfx, 0o755)
-            shutil.move(archive_sfx, archive)
+            path_new.chmod(0o755)
+            path_new.replace(path)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot rename '
-                f'"{archive_sfx}" file to "{archive}".',
+                f'{sys.argv[0]}: Cannot rename "{path_new}" file to "{path}".',
             ) from exception
 
     @staticmethod
@@ -214,22 +212,19 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
+        if os.linesep != '\n':
+            def _open(file, *args, **kwargs):  # type: ignore
+                if 'newline' not in kwargs and args and 'b' not in args[0]:
+                    kwargs['newline'] = '\n'
+                return open(str(file), *args, **kwargs)
+            Path.open = _open  # type: ignore
+
+        os.umask(0o022)
 
     def run(self) -> int:
         """
         Start program
         """
-        os.umask(0o022)
-
         options = Options()
         archiver = options.get_archiver()
         archive = options.get_archive()
@@ -245,7 +240,7 @@ class Main:
             raise SystemExit(task.get_exitcode())
 
         if archive.endswith('.exe'):
-            self._make_exe(archiver, archive+'.part')
+            self._make_exe(archiver, Path(f'{archive}.part'))
 
         try:
             shutil.move(archive+'.part', archive)
