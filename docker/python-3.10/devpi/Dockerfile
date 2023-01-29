@@ -12,4 +12,5 @@ RUN python3 -m pip install \
 # Configure start
 ENV PYTHONDONTWRITEBYTECODE 1
 EXPOSE 8080
-ENTRYPOINT ["devpi-server", "--serverdir=/var/lib/devpi", "--secretfile=/var/lib/devpi/.secret", "--host=0.0.0.0", "--port=8080"]
+ENTRYPOINT ["devpi-server"]
+CMD ["--serverdir=/var/lib/devpi", "--secretfile=/var/lib/devpi/.secret", "--host=0.0.0.0", "--port=8080"]

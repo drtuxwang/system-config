@@ -1,10 +1,10 @@
 - name: Ensure "{{ home_directory }}" directory exists
   file:
-    path: "{{ home_directory }}/"
+    path: '{{ home_directory }}/'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "{{ home_mod }}"
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '{{ home_mod }}'
   tags:
   - user-home
 
@@ -14,17 +14,17 @@
   - bashrc
   - vimrc
   copy:
-    src: "{{ config_directory }}/{{ item }}"
-    dest: "{{ home_directory }}/.{{ item }}"
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0600"
+    src: '{{ config_directory }}/{{ item }}'
+    dest: '{{ home_directory }}/.{{ item }}'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0600'
   tags:
   - user-home
 
 - name: Check "{{ home_directory }}/.profile-opt" file stat
   stat:
-    path: "{{ home_directory }}/.profile-opt"
+    path: '{{ home_directory }}/.profile-opt'
   register: profile_opt
   tags:
   - user-home
@@ -32,11 +32,11 @@
 - name: Copy file to "{{ home_directory }}/.profile-opt"
   when: not profile_opt.stat.exists
   copy:
-    src: "{{ config_directory }}/profile-opt"
-    dest: "{{ home_directory }}/.profile-opt"
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0600"
+    src: '{{ config_directory }}/profile-opt'
+    dest: '{{ home_directory }}/.profile-opt'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0600'
   tags:
   - user-home
 
@@ -46,7 +46,7 @@
   - .kshrc
   - .viminfo
   file:
-    path: "{{ home_directory }}/{{ item }}"
+    path: '{{ home_directory }}/{{ item }}'
     state: absent
   tags:
   - user-home

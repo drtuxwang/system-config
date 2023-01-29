@@ -30,8 +30,8 @@ STABLE_IMAGES := \
 	drtuxwang/debian-docker:11-slim \
 	drtuxwang/debian-xfce:11-slim \
 	drtuxwang/nginx:1.18-alpine \
-	drtuxwang/python-dev:3.9-slim-bullseye \
-	drtuxwang/python-full:3.9-slim-bullseye \
+	drtuxwang/python-dev:3.10-slim-bullseye \
+	drtuxwang/python-full:3.10-slim-bullseye \
 	drtuxwang/scratch
 TEST_DIRS := \
 	python-3.10
@@ -117,6 +117,7 @@ pull-stable:         # Pull stable Docker images
 .PHONY: prune
 prune:               # Prune Docker images/containers
 	docker system df
+	@echo
 	df /var/lib/docker
 	docker system prune
 	@echo
@@ -127,6 +128,7 @@ prune:               # Prune Docker images/containers
 	docker ps
 	@echo
 	docker system df
+	@echo
 	df /var/lib/docker
 	@echo
 	docker network ls

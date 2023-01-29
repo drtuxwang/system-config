@@ -5,8 +5,8 @@ metrics:
   jmx:
     enabled: true
 podAnnotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/port: "5556"
+  prometheus.io/scrape: 'true'
+  prometheus.io/port: '5556'
 replicaCount: 2
 persistence:
   enabled: false
@@ -15,7 +15,7 @@ zookeeper:
   metrics:
     enabled: true
 ##  podAnnotations:
-##    prometheus.io/scrape: "true"
+##    prometheus.io/scrape: 'true'
 ##    prometheus.io/port: 9141
   replicaCount: 1
   persistence:

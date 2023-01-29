@@ -5,7 +5,7 @@ metadata:
     app: test-cronjob
   name: test-cronjob
 spec:
-  schedule: "*/1 * * * *"
+  schedule: */1 * * * *
   concurrencyPolicy: Replace
   failedJobsHistoryLimit: 1
   successfulJobsHistoryLimit: 2

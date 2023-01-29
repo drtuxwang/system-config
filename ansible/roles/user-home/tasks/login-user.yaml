@@ -1,27 +1,27 @@
 - name: Copy file to "{{ home_directory }}/.login"
   copy:
-    src: "{{ config_directory }}/login"
-    dest: "{{ home_directory }}/.login"
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0600"
+    src: '{{ config_directory }}/login'
+    dest: '{{ home_directory }}/.login'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0600'
   tags:
   - user-home
 
 - name: Ensure "{{ home_directory }}/.ssh" directory exists
   file:
-    path: "{{ home_directory }}/.ssh/"
+    path: '{{ home_directory }}/.ssh/'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0700"
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0700'
   tags:
   - user-home
   - ssh
 
 - name: Check "{{ home_directory }}/.ssh/config" file stat
   stat:
-    path: "{{ home_directory }}/.ssh/config"
+    path: '{{ home_directory }}/.ssh/config'
   register: ssh_config
   tags:
   - user-home
@@ -30,10 +30,10 @@
 - name: Copy file to "{{ home_directory }}/.ssh/config"
   when: not ssh_config.stat.exists
   copy:
-    src: "{{ config_directory }}/config"
-    dest: "{{ home_directory }}/.ssh/config"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ config_directory }}/config'
+    dest: '{{ home_directory }}/.ssh/config'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - ssh
@@ -42,9 +42,9 @@
   when: download_rate
   template:
     src: netnice.json
-    dest: "{{ home_directory }}/.config/"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    dest: '{{ home_directory }}/.config/'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - local-system
   - netnice

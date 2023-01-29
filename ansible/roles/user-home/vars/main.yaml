@@ -1,2 +1,2 @@
-home_directory: "/home/{{ user }}"
+home_directory: '/home/{{ user }}'
 home_mod: 0711

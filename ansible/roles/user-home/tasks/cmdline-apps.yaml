@@ -1,9 +1,9 @@
 - name: Ensure "{{ home_directory }}/.config/htop" directory exists
   file:
-    path: "{{ home_directory }}/.config/htop"
+    path: '{{ home_directory }}/.config/htop'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - htop
@@ -11,21 +11,21 @@
 - name: Template file to "{{ home_directory }}/.config/htop/htoprc"
   template:
     src: htoprc
-    dest: "{{ home_directory }}/.config/htop/"
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0644"
+    dest: '{{ home_directory }}/.config/htop/'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0644'
   tags:
   - user-home
   - htop
 
 - name: Copy file to "{{ home_directory }}/.tmux.conf"
   copy:
-    src: "{{ config_directory }}/tmux.conf"
-    dest: "{{ home_directory }}/.tmux.conf"
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0600"
+    src: '{{ config_directory }}/tmux.conf'
+    dest: '{{ home_directory }}/.tmux.conf'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0600'
   tags:
   - user-home
   - tmux

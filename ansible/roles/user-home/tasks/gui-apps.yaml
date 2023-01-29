@@ -1,37 +1,37 @@
 - name: Copy file to "{{ home_directory }}/.Xresources"
   copy:
-    src: "{{ config_directory }}/Xresources"
-    dest: "{{ home_directory }}/.Xresources"
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0600"
+    src: '{{ config_directory }}/Xresources'
+    dest: '{{ home_directory }}/.Xresources'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0600'
   tags:
   - user-home
 
 - name: Ensure "{{ home_directory }}/.config" directory exists
   file:
-    path: "{{ home_directory }}/.config"
+    path: '{{ home_directory }}/.config'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
-    mode: "0700"
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0700'
   tags:
   - user-home
   - autoexec
 
 - name: Copy file to "{{ home_directory }}/.config/autoexec.sh"
   copy:
-    src: "{{ config_directory }}/autoexec.sh"
-    dest: "{{ home_directory }}/.config/"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ config_directory }}/autoexec.sh'
+    dest: '{{ home_directory }}/.config/'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - autoexec
 
 - name: Check "{{ home_directory }}/.config/autoexec-opt.sh" file stat
   stat:
-    path: "{{ home_directory }}/.config/autoexec-opt.sh"
+    path: '{{ home_directory }}/.config/autoexec-opt.sh'
   register: autoexec_opt_sh
   tags:
   - user-home
@@ -40,51 +40,51 @@
 - name: Copy file to "{{ home_directory }}/.config/autoexec-opt.sh"
   when: not autoexec_opt_sh.stat.exists
   copy:
-    src: "{{ config_directory }}/autoexec-opt.sh"
-    dest: "{{ home_directory }}/.config/"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ config_directory }}/autoexec-opt.sh'
+    dest: '{{ home_directory }}/.config/'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - autoexec
 
 - name: Ensure "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml" directory exists
   file:
-    path: "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml"
+    path: '{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml'
     state: directory
     recurse: true
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - thunar
 
 - name: Copy file to "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
   copy:
-    src: "thunar.xml"
-    dest: "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: 'thunar.xml'
+    dest: '{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - thunar
 
 - name: Copy file to "{{ home_directory }}/.config/mimeapps.list"
   copy:
-    src: "{{ config_directory }}/mimeapps.list"
-    dest: "{{ home_directory }}/.config/"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ config_directory }}/mimeapps.list'
+    dest: '{{ home_directory }}/.config/'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - mimeapps
 
 - name: Ensure "{{ home_directory }}/.local/share/applications" directory exists
   file:
-    path: "{{ home_directory }}/.local/share/applications"
+    path: '{{ home_directory }}/.local/share/applications'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - mimeapps
@@ -93,20 +93,20 @@
   with_fileglob:
   - "{{ config_directory }}/userapp-*.desktop"
   copy:
-    src: "{{ item }}"
-    dest: "{{ home_directory }}/.local/share/applications/"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ item }}'
+    dest: '{{ home_directory }}/.local/share/applications/'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - mimeapps
 
 - name: Ensure "{{ home_directory }}/.config/geeqie/applications" directory exists
   file:
-    path: "{{ home_directory }}/.config/geeqie/applications"
+    path: '{{ home_directory }}/.config/geeqie/applications'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - geeqie
@@ -116,10 +116,10 @@
   - accels
   - geeqierc.xml
   copy:
-    src: "{{ item }}"
-    dest: "{{ home_directory }}/.config/geeqie/{{ item }}"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ item }}'
+    dest: '{{ home_directory }}/.config/geeqie/{{ item }}'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - geeqie
@@ -132,20 +132,20 @@
   - rotate-270.desktop
   - rotate-90.desktop
   copy:
-    src: "{{ item }}"
-    dest: "{{ home_directory }}/.config/geeqie/applications/{{ item }}"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ item }}'
+    dest: '{{ home_directory }}/.config/geeqie/applications/{{ item }}'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - geeqie
 
 - name: Ensure "{{ home_directory }}/.config/vlc" directory exists
   file:
-    path: "{{ home_directory }}/.config/vlc"
+    path: '{{ home_directory }}/.config/vlc'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - vlc
@@ -153,29 +153,29 @@
 - name: Copy file to "{{ home_directory }}/.config/vlc/vlcrc"
   copy:
     src: vlcrc
-    dest: "{{ home_directory }}/.config/vlc"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    dest: '{{ home_directory }}/.config/vlc'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - vlc
 
 - name: Ensure "{{ home_directory }}/.config/xfce4/terminal" directory exists
   file:
-    path: "{{ home_directory }}/.config/xfce4/terminal"
+    path: '{{ home_directory }}/.config/xfce4/terminal'
     state: directory
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - terminal
 
 - name: Copy file to "{{ home_directory }}/.config/xfce4/terminal/terminalrc"
   copy:
-    src: "{{ config_directory }}/terminalrc"
-    dest: "{{ home_directory }}/.config/xfce4/terminal"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    src: '{{ config_directory }}/terminalrc'
+    dest: '{{ home_directory }}/.config/xfce4/terminal'
+    owner: '{{ user }}'
+    group: '{{ group }}'
   tags:
   - user-home
   - terminal
@@ -184,7 +184,7 @@
   when: user == "owner"
   cron:
     name: Update "{{ home_directory }}/software/web-data/pages" web pages
-    user: "{{ user }}"
+    user: '{{ user }}'
     special_time: reboot
     job: sleep 300 && $HOME/software/scripts/pull-web
   tags:

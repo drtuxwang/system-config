@@ -1,15 +1,15 @@
 - name: Ensure "/tmp/{{ ansible_user }}/.cache/rpmdb" directory exists
   file:
-    path: "/tmp/{{ ansible_user }}/.cache/rpmdb"
+    path: '/tmp/{{ ansible_user }}/.cache/rpmdb'
     state: directory
-    mode: "0700"
+    mode: '0700'
   tags:
   - ansible_user
   - rpmdb
 
 - name: Check "{{ home }}/{{ ansible_user }}/.rpmdb" directory/link stat
   stat:
-    path: "{{ home }}/{{ ansible_user }}/.rpmdb"
+    path: '{{ home }}/{{ ansible_user }}/.rpmdb'
   register: rpmdb
   tags:
   - ansible_user
@@ -18,7 +18,7 @@
 - name: Remove "{{ home }}/{{ ansible_user }}/.rpmdb" directory
   when: rpmdb.stat.exists and not rpmdb.stat.islnk
   file:
-    path: "{{ home }}/{{ ansible_user }}/.rpmdb"
+    path: '{{ home }}/{{ ansible_user }}/.rpmdb'
     state: absent
   tags:
   - ansible_user
@@ -27,8 +27,8 @@
 - name: Ensure "{{ home }}/{{ ansible_user }}/.rpmdb" link to "/tmp/{{ ansible_user }}/.cache/rpmdb"
   when: not ansible_check_mode
   file:
-    src: "/tmp/{{ ansible_user }}/.cache/rpmdb"
-    dest: "{{ home }}/{{ ansible_user }}/.rpmdb"
+    src: '/tmp/{{ ansible_user }}/.cache/rpmdb'
+    dest: '{{ home }}/{{ ansible_user }}/.rpmdb'
     state: link
   tags:
   - ansible_user
