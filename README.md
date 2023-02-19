@@ -954,13 +954,17 @@ the years.
  * ansible/roles/user-home/templates/netnice.json
  * ansible/roles/user-home/vars/main.yaml
  * appimage/Makefile
- * appimage/bin/build-appimage.sh
- * appimage/bash/Makefile                Bash 5.1.4 (Debian 11)
- * appimage/bash/appimage.yaml
- * appimage/vlc/Makefile                 VLC 3.0.16 (Debian 11)
- * appimage/vlc/appimage.yaml
- * appimage/wesnoth/Makefile             Wesnoth 1.14.15 (Debian 11))
- * appimage/wesnoth/appimage.yaml
+ * appimage/bin/build-appimage.sh        Wrapper for "appimage-builder" command
+ * appimage/bin/gpg                      Disable GPG signing
+ * appimage/bin/appimage/bin/zsyncmake   Disable ".zsync" creation
+ * appimage/0ad-0.0.26/AppImageBuilder.yaml
+ * appimage/0ad-0.0.26/Makefile
+ * appimage/bash-5.1.4/AppImageBuilder.yaml
+ * appimage/bash-5.1.4/Makefile          Bash 5.1.4 (Debian 11)
+ * appimage/wesnoth-1.14.15/AppImageBuilder.yaml
+ * appimage/wesnoth-1.14.15/Makefile     Wesnoth 1.14.15 (Debian 11))
+ * appimage/wesnoth-1.16.8/AppImageBuilder.yaml
+ * appimage/wesnoth-1.16.8/Makefile      Wesnoth 1.16.8 (Debian 11 backports)
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
  * cloudformation/1pxy/submit.sh

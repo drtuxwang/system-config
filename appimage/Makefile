@@ -1,7 +1,8 @@
 BUILD_DIRS := \
-	bash \
-	vlc \
-	wesnoth
+	0ad-0.0.26 \
+	bash-5.1.4 \
+	wesnoth-1.14.15 \
+	wesnoth-1.16.8
 
 
 .PHONY: default

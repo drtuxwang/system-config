@@ -7,7 +7,7 @@ status:              # Status of AppImage
 
 .PHONY: build
 build:               # Build Docker images
-	../bin/build-appimage.sh appimage.yaml
+	../bin/build-appimage.sh AppImageBuilder.yaml
 
 .PHONY: test
 test:                # Run tests
@@ -18,7 +18,7 @@ test:                # Run tests
 
 .PHONY: clean
 clean:               # Remove temporary build files
-	rm -rf AppDir appimage-builder-cache *.AppImage
+	rm -rf AppDir appimage-build *.AppImage *.zsync
 
 .PHONY: help
 help:                # Show Makefile options

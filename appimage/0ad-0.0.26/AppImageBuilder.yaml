@@ -1,0 +1,220 @@
+version: 1
+
+script:
+  - rm -rf ./AppDir || true
+
+AppDir:
+  path: AppDir
+
+  app_info:
+    id: 0ad
+    icon: 0ad
+    name: 0AD
+    version: 0.0.26
+    exec: usr/games/pyrogenesis
+    exec_args: $@
+
+  apt:
+    sources:
+    - sourceline: deb https://deb.debian.org/debian bullseye main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bullseye-updates main contrib non-free
+    - sourceline: deb https://security.debian.org bullseye-security main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bullseye-backports main contrib non-free
+    allow_unauthenticated: true
+    arch: amd64
+    include:
+    - -t bullseye-backports 0ad
+    - 0ad-data
+    - 0ad-data-common
+    - libboost-filesystem1.74.0
+    - libc6
+    - libenet7
+    - libfmt7
+    - libgloox18
+    - libicu67
+    - libminiupnpc17
+    - libstdc++6
+    exclude:
+    - adwaita-icon-theme
+    - dbus-user-session
+    - dbus
+    - dconf-gsettings-backend
+    - dconf-service
+    - dmsetup
+    - fonts-dejavu-core
+    - fonts-freefont-ttf
+    - fonts-texgyre
+    - gcc-10-base
+    - glib-networking-common
+    - glib-networking-services
+    - glib-networking
+    - gsettings-desktop-schemas
+    - gtk-update-icon-cache
+    - hicolor-icon-theme
+    - libacl1
+    - libapparmor1
+    - libargon2-1
+    - libasound2-data
+    - libasound2
+    - libasyncns0
+    - libatk-bridge2.0-0
+    - libatk1.0-0
+    - libatk1.0-data
+    - libatspi2.0-0
+    - libaudit-common
+    - libaudit1
+    - libavahi-client3
+    - libavahi-common-data
+    - libavahi-common3
+    - libblkid1
+    - libbrotli1
+    - libbsd0
+    - libcairo-gobject2
+    - libcairo2
+    - libcap-ng0
+    - libcap2
+    - libcolord2
+    - libcom-err2
+    - libcrypt1
+    - libcryptsetup12
+    - libcups2
+    - libcurl3-gnutls
+    - libdatrie1
+    - libdb5.3
+    - libdbus-1-3
+    - libdconf1
+    - libdeflate0
+    - libdevmapper1.02.1
+    - libepoxy0
+    - libexpat1
+    - libfdisk1
+    - libffi7
+    - libflac8
+    - libfontconfig1
+    - libfreetype6
+    - libfribidi0
+    - libgcc-s1
+    - libgcrypt20
+    - libgdk-pixbuf-2.0-0
+    - libgdk-pixbuf-xlib-2.0-0
+    - libgdk-pixbuf2.0-0
+    - libgdk-pixbuf2.0-common
+    - libglib2.0-0
+    - libgmp10
+    - libgnutls30
+    - libgpg-error0
+    - libgraphite2-3
+    - libgssapi-krb5-2
+    - libgtk-3-0
+    - libgtk-3-common
+    - libharfbuzz0b
+    - libhogweed6
+    - libice6
+    - libidn11
+    - libidn2-0
+    - libip4tc2
+    - libjbig0
+    - libjpeg62-turbo
+    - libjson-c5
+    - libjson-glib-1.0-0
+    - libjson-glib-1.0-common
+    - libk5crypto3
+    - libkeyutils1
+    - libkmod2
+    - libkrb5-3
+    - libkrb5support0
+    - liblcms2-2
+    - libldap-2.4-2
+    - liblz4-1
+    - liblzma5
+    - libmd0
+    - libmount1
+    - libnettle8
+    - libnghttp2-14
+    - libnotify4
+    - libnsl2
+    - libogg0
+    - libopenal-data
+    - libopenal1
+    - libopus0
+    - libp11-kit0
+    - libpam-systemd
+    - libpam0g
+    - libpango-1.0-0
+    - libpangocairo-1.0-0
+    - libpangoft2-1.0-0
+    - libpcre2-8-0
+    - libpcre3
+    - libpixman-1-0
+    - libpng16-16
+    - libproxy1v5
+    - libpsl5
+    - libpulse0
+    - librest-0.7-0
+    - librtmp1
+    - libsasl2-2
+    - libsasl2-modules-db
+    - libsdl2-2.0-0
+    - libseccomp2
+    - libselinux1
+    - libsm6
+    - libsndfile1
+    - libsndio7.0
+    - libsodium23
+    - libsoup-gnome2.4-1
+    - libsoup2.4-1
+    - libsqlite3-0
+    - libssh2-1
+    - libssl1.1
+    - libsystemd-shared
+    - libsystemd0
+    - libtasn1-6
+    - libthai-data
+    - libthai0
+    - libtiff5
+    - libtirpc-common
+    - libtirpc3
+    - libudev1
+    - libunistring2
+    - libuuid1
+    - libvorbis0a
+    - libvorbisenc2
+    - libvorbisfile3
+    - libwebp6
+    - libwrap0
+    - libwxbase3.0-0v5
+    - libwxgtk3.0-gtk3-0v5
+    - libxcomposite1
+    - libxcursor1
+    - libxdamage1
+    - libxext6
+    - libxfixes3
+    - libxi6
+    - libxinerama1
+    - libxkbcommon0
+    - libxml2
+    - libxrandr2
+    - libxrender1
+    - libxss1
+    - libxxf86vm1
+    - libzstd1
+    - systemd
+    - xkb-data
+    - zlib1g
+
+  files:
+    exclude:
+    - usr/share/bug
+    - usr/share/doc
+    - usr/share/doc-base
+    - usr/share/locale
+    - usr/share/man
+
+  runtime:
+    path_mappings:
+    - /usr/share/games/0ad:$APPDIR/usr/share/games/0ad
+
+AppImage:
+  arch: x86_64
+  sign-key: None
+  update-information: None

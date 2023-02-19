@@ -1,0 +1,168 @@
+version: 1
+
+script:
+  - rm -rf ./AppDir || true
+
+AppDir:
+  path: ./AppDir
+
+  app_info:
+    id: wesnoth
+    icon: wesnoth-icon
+    name: wesnoth
+    version: 1.14.15
+    exec: usr/games/wesnoth-1.14
+    exec_args: $@
+
+  apt:
+    sources:
+    - sourceline: deb https://deb.debian.org/debian bullseye main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bullseye-updates main contrib non-free
+    - sourceline: deb https://security.debian.org bullseye-security main contrib non-free
+    allow_unauthenticated: true
+    arch: amd64
+    include:
+    - wesnoth-1.14
+    - wesnoth-1.14-aoi
+    - wesnoth-1.14-core
+    - wesnoth-1.14-data
+    - wesnoth-1.14-did
+    - wesnoth-1.14-dm
+    - wesnoth-1.14-dw
+    - wesnoth-1.14-ei
+    - wesnoth-1.14-httt
+    - wesnoth-1.14-l
+    - wesnoth-1.14-low
+    - wesnoth-1.14-music
+    - wesnoth-1.14-nr
+    - wesnoth-1.14-sof
+    - wesnoth-1.14-sota
+    - wesnoth-1.14-sotbe
+    - wesnoth-1.14-thot
+    - wesnoth-1.14-trow
+    - wesnoth-1.14-tsg
+    - wesnoth-1.14-ttb
+    - wesnoth-1.14-utbs
+    - fonts-dejavu-core
+    - fonts-dejavu-extra
+    - fonts-droid-fallback
+    - fonts-lato
+    - libboost-filesystem1.74.0
+    - libboost-iostreams1.74.0
+    - libboost-locale1.74.0
+    - libboost-program-options1.74.0
+    - libboost-random1.74.0
+    - libboost-thread1.74.0
+    - libc6
+    - libfluidsynth2
+    - libicu67
+    - libinstpatch-1.0-2
+    - libmodplug1
+    - libopusfile0
+    - libreadline8
+    - libsdl2-2.0-0
+    - libsdl2-image-2.0-0
+    - libsdl2-mixer-2.0-0
+    - libstdc++6
+    exclude:
+    - fonts-adf-oldania
+    - gcc-10-base
+    - libasound2-data
+    - libasound2
+    - libasyncns0
+    - libblkid1
+    - libboost-regex1.74.0
+    - libbrotli1
+    - libbz2-1.0
+    - libcairo2
+    - libcom-err2
+    - libcrypt1
+    - libdatrie1
+    - libdbus-1-3
+    - libdeflate0
+    - libexpat1
+    - libffi7
+    - libflac8
+    - libfontconfig1
+    - libfreetype6
+    - libfribidi0
+    - libgcc-s1
+    - libgcrypt20
+    - libglib2.0-0
+    - libgpg-error0
+    - libgraphite2-3
+    - libgssapi-krb5-2
+    - libharfbuzz0b
+    - libjack-jackd2-0
+    - libjbig0
+    - libjpeg62-turbo
+    - libk5crypto3
+    - libkeyutils1
+    - libkrb5-3
+    - libkrb5support0
+    - liblz4-1
+    - liblzma5
+    - libmount1
+    - libmpg123-0
+    - libnsl2
+    - libogg0
+    - libopus0
+    - libpango-1.0-0
+    - libpangocairo-1.0-0
+    - libpangoft2-1.0-0
+    - libpcre2-8-0
+    - libpcre3
+    - libpixman-1-0
+    - libpng16-16
+    - libpulse0
+    - libsamplerate0
+    - libsdl2-ttf-2.0-0
+    - libselinux1
+    - libsndfile1
+    - libssl1.1
+    - libsystemd0
+    - libthai-data
+    - libthai0
+    - libtiff5
+    - libtinfo6
+    - libtirpc-common
+    - libtirpc3
+    - libuuid1
+    - libvorbis0a
+    - libvorbisenc2
+    - libvorbisfile3
+    - libwebp6
+    - libwrap0
+    - libxcursor1
+    - libxext6
+    - libxfixes3
+    - libxi6
+    - libxinerama1
+    - libxkbcommon0
+    - libxrandr2
+    - libxrender1
+    - libxss1
+    - libxxf86vm1
+    - libzstd1
+    - readline-common
+    - timgm6mb-soundfont
+    - xkb-data
+    - zlib1g
+
+  files:
+    exclude:
+    - usr/share/bug
+    - usr/share/doc
+    - usr/share/doc-base
+    - usr/share/games/wesnoth/*/locale
+    - usr/share/locale
+    - usr/share/man
+
+  runtime:
+    path_mappings:
+    - /usr/share/games/wesnoth/1.14:$APPDIR/usr/share/games/wesnoth/1.14
+
+AppImage:
+  arch: x86_64
+  sign-key: None
+  update-information: None

@@ -7,24 +7,28 @@ AppDir:
   path: ./AppDir
 
   app_info:
-    exec: bin/bash
-    exec_args: $@
-    icon: utilities-terminal
     id: org.gnu.bash
+    icon: utilities-terminal
     name: bash
     version: 5.1.4
+    exec: bin/bash
+    exec_args: $@
 
   apt:
-    allow_unauthenticated: true
-    arch: amd64
-    exclude:
-    - dpkg
-    include:
-    - bash
     sources:
     - sourceline: deb https://deb.debian.org/debian bullseye main contrib non-free
     - sourceline: deb https://deb.debian.org/debian bullseye-updates main contrib non-free
     - sourceline: deb https://security.debian.org bullseye-security main contrib non-free
+    allow_unauthenticated: true
+    arch: amd64
+    include:
+    - bash
+    exclude:
+    - dpkg
+    - gcc-10-base
+    - libcrypt1
+    - libgcc-s1
+    - libtinfo6
 
   files:
     exclude:

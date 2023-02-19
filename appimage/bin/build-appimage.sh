@@ -21,5 +21,5 @@ then
 fi
 
 
-export PATH=/"usr/lib/x86_64-linux-gnu/glib-2.0:$PATH"
+export PATH="${0%/*}:/usr/lib/x86_64-linux-gnu/glib-2.0:$PATH"
 appimage-builder --recipe "$1" --skip-test
