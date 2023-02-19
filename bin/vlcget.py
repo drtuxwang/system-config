@@ -117,7 +117,14 @@ class Main:
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())
 
-        path_new.replace(path)
+        mp4 = command_mod.Command('mp4', errors='stop')
+        mp4.set_args([path.with_suffix('.mp4'), path_new])
+        task = subtask_mod.Task(mp4.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(task.get_exitcode())
+
+        path_new.unlink()
 
         return 0
 

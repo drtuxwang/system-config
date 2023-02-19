@@ -2,6 +2,7 @@ ansible-core==2.11.7
 ansible                      # ==4.10.0 (last compatible version)
 astroid                      # ==2.11.7 (last compatible version)
 asttokens==None
+bleach                       # ==4.1.0 (last compatible version)
 cached-property==1.5.2
 charset-normalizer==2.0.0
 click                        # ==8.0.4 (last compatible version)
@@ -16,10 +17,12 @@ importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
 inflect                      # ==5.3.0 (last compatible version)
 ipdb==None
 ipython==None
+isort                        # ==5.10.1 (last compatible version)
 jaraco.classes==None
 jedi==None
 Jinja2                       # ==3.0.3 (last compatible version)
 keyring                      # ==23.4.1 (last compatible version)
+lazy-object-proxy            # ==1.7.1 (last compatible version)
 MarkupSafe==2.0.1
 matplotlib-inline==None
 mccabe==0.6.1
@@ -37,6 +40,7 @@ pyflakes==2.3.1
 pylint==2.13.9
 pymongo==3.13.0
 PyWavelets==1.1.1
+readme-renderer              # ==34.0 (last compatible version)
 requests                     # ==2.27.1 (last compatible version)
 resolvelib==0.5.5
 ruamel.yaml.clib==0.2.7      #   (required by ruamel.yaml for 3.6)
@@ -48,6 +52,7 @@ traitlets==None
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.6)
 typing-extensions            # ==4.1.1 (last compatible version)
 typing_extensions==None      #   (requires hyphen instead of underscore)
+websocket-client             # ==1.3.1 (last compatible version)
 websockets==9.1
 wheel                        # ==0.37.1 (last compatible version)
 yt-dlp                       # ==2022.7.18 (last compatible version)

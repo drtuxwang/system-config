@@ -45,6 +45,7 @@ the years.
  * bin/2to3                 Python 3.x script wrappers
  * bin/2to3.bat
  * bin/ansible
+ * bin/ansible-venv
  * bin/ansible-playbook
  * bin/ansible-playbook-venv
  * bin/ansible-vault
@@ -395,6 +396,8 @@ the years.
  * bin/gnomine.py           (can pick using old gnomines name)
  * bin/go                   Go wrapper (golang)
  * bin/go.py
+ * bin/gparted              Wrapper for "gparted" command
+ * bin/gparted.py
  * bin/gpg                  Make an encrypted archive in gpg (pgp compatible) format.
  * bin/gpg.py
  * bin/gqview               Wrapper for "geeqie" command
@@ -761,6 +764,8 @@ the years.
  * bin/vim.py
  * bin/view                 View files using hardwired application mapping
  * bin/view.py
+ * bin/virtualbox           Wrapper for "virtualbox" command
+ * bin/virtualbox.py
  * bin/vlc                  Sandbox for "vlc" launcher
  * bin/vlc.bat
  * bin/vlc.py

@@ -105,7 +105,9 @@ class Options:
             raise SystemExit(0)
 
         self._hdparm = command_mod.CommandFile(
-            '/sbin/hdparm', args=['-E', str(self._speed), self._device])
+            '/sbin/hdparm',
+            args=['-E', self._speed, self._device],
+        )
         print("Setting CD/DVD drive speed to ", self._speed, "X", sep="")
 
 

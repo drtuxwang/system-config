@@ -88,7 +88,7 @@ class Main:
         for path in [Path(x) for x in options.get_files()]:
             if path.is_file():
                 task = subtask_mod.Task(
-                    command.get_cmdline() + [f'{path}.7z', str(path)],
+                    command.get_cmdline() + [f'{path}.7z', path],
                 )
                 task.run()
                 if task.get_exitcode():

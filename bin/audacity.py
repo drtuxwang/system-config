@@ -62,10 +62,9 @@ class Main:
         Start program
         """
         audacity = network_mod.Sandbox('audacity', errors='stop')
-        audacity.set_args(sys.argv[1:])
 
         if Path(f'{audacity.get_file()}.py').is_file():
-            subtask_mod.Exec(audacity.get_cmdline()).run()
+            subtask_mod.Exec(audacity.get_cmdline() + sys.argv[1:]).run()
 
         # "os.getcwd()" returns realpath instead
         work_dir = Path(os.environ['PWD'])
@@ -82,21 +81,24 @@ class Main:
             Path(Path.home(), '.audacity-data'),
             work_dir,
         ]
-        if len(sys.argv) >= 2:
-            if Path(sys.argv[1]).is_dir():
-                configs.append(Path(sys.argv[1]).resolve())
-            elif Path(sys.argv[1]).is_file():
-                configs.append(Path(sys.argv[1]).resolve().parent)
-            if sys.argv[1] == '-net':
-                audacity.set_args(sys.argv[2:])
+
+        for arg in sys.argv[1:]:
+            path = Path(arg).resolve()
+            if arg == '-net':
                 configs.append('net')
+            elif path.is_dir():
+                audacity.append_arg(path)
+                configs.append(path)
+            elif path.is_file():
+                audacity.append_arg(path)
+                configs.append(path.parent)
+            else:
+                audacity.append_arg(arg)
+
         audacity.sandbox(configs)
 
         pattern = (
-            '^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
-            '^ALSA lib |alsa.c|^Cannot connect to server socket|'
-            '^jack server|Debug: |^JackShmReadWrite|^[01]|^-1|^Cannot connect|'
-            ': no version info'
+            '^$|: (Gdk|GdkPixbuf|GLib-GObject)-|[.]so|: invalid (image|bitmap)'
         )
         self._config()
 

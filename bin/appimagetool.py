@@ -48,7 +48,6 @@ class Main:
         name = Path(sys.argv[0]).stem
 
         appimagetool = network_mod.Sandbox(name, errors='stop')
-        appimagetool.set_args(sys.argv[1:])
 
         if not Path(f'{appimagetool.get_file()}.py').is_file():
             work_dir = Path(os.environ['PWD'])
@@ -64,6 +63,19 @@ class Main:
             if len(sys.argv) >= 2 and sys.argv[1] == '-net':
                 appimagetool.set_args(sys.argv[2:])
                 configs.append('net')
+
+            for arg in sys.argv[1:]:
+                path = Path(arg).resolve()
+                if arg == '-net':
+                    configs.append('net')
+                elif path.is_dir():
+                    appimagetool.append_arg(path)
+                    configs.append(path)
+                elif path.is_file():
+                    appimagetool.append_arg(path)
+                    configs.append(path.parent)
+                else:
+                    appimagetool.append_arg(arg)
 
             appimagetool.sandbox(configs)
 

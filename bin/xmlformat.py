@@ -104,7 +104,7 @@ class Main:
                 path_new.write_bytes(xml_doc.toprettyxml(
                     indent='  ',
                     newl='\n',
-                ))
+                ).encode())
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{path_new}" file.',

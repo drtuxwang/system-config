@@ -465,10 +465,10 @@ menu_system:
 - button:
     name: vbox
     color: '#ffcc00'
-    label: VirtualBox
-    run: exec VirtualBox &
+    label: virtualbox
+    run: exec virtualbox &
   checks:
-  - VirtualBox
+  - virtualbox
 - button:
     name: logout
     color: '#ffff00'

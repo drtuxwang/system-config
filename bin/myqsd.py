@@ -16,7 +16,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.8.7'
+RELEASE = '2.8.8'
 
 
 class Options:
@@ -130,12 +130,11 @@ class Lock:
                     int(ifile.readline().strip())
                 except (OSError, ValueError) as exception:
                     raise SystemExit(0) from exception
-                else:
-                    if not task_mod.Tasks.factory().haspid(os.getpid()):
-                        raise SystemExit(
-                            f"{sys.argv[0]}: "
-                            "Cannot obtain MyQS scheduler lock file.",
-                        )
+                if not task_mod.Tasks.factory().haspid(os.getpid()):
+                    raise SystemExit(
+                        f"{sys.argv[0]}: "
+                        "Cannot obtain MyQS scheduler lock file.",
+                    )
         except OSError:
             return
 
@@ -305,7 +304,7 @@ class Main:
         print("Starting MyQS batch job scheduler...")
         myqsd = command_mod.CommandFile(
             __file__[:-3],
-            args=['-daemon', str(self._slots)]
+            args=['-daemon', self._slots]
         )
         subtask_mod.Daemon(myqsd.get_cmdline()).run()
 

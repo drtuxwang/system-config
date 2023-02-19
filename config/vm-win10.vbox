@@ -12,7 +12,7 @@
     </ExtraData>
     <Hardware>
       <CPU count="2">
-        <PAE enabled="true"/>
+        <PAE enabled="false"/>
         <LongMode enabled="true"/>
         <X2APIC enabled="true"/>
         <HardwareVirtExLargePages enabled="false"/>

@@ -241,7 +241,8 @@ class Main:
                     f'received from "{task.get_file()}".',
                 )
         cdrdao.set_args(
-            ['write', '--device', self._device, '--speed', str(self._speed)])
+            ['write', '--device', self._device, '--speed', self._speed]
+        )
         if Path(self._image).with_suffix('.toc').is_file():
             cdrdao.extend_args([self._image[:-4]+'.toc'])
         else:

@@ -128,7 +128,7 @@ class Main:
             if ext in images_extensions:
                 print(f'Converting "{path}" to "{path.stem}.txt"...')
                 task = subtask_mod.Task(
-                    convert.get_cmdline() + [str(path), str(tmp_path)])
+                    convert.get_cmdline() + [path, tmp_path])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(

@@ -155,10 +155,13 @@ class Main:
                     not par_path.is_file() or
                     file_time != int(par_path.stat().st_mtime)
                 ):
-                    tmp_path = Path(directory_path, '....par2')
+                    par0_path = Path(directory_path, '....par2')
+                    par1_path = Path(directory_path, '....vol0+1.par2')
+                    if par1_path.exists():
+                        par1_path.unlink()
                     size = path.stat().st_size // 400 * 4 + 4
                     task = subtask_mod.Task(
-                        cmdline + ['-s'+str(size), str(tmp_path), str(path)]
+                        cmdline + [f'-s{size}', par0_path, path]
                     )
                     cls._create_3dot_directory(fpar_path)
                     task.run(pattern='^$', replace=(
@@ -166,11 +169,9 @@ class Main:
                         f'Opening: {directory_path}/',
                     ))
                     if task.get_exitcode() == 0:
-                        cls._delete_file(tmp_path)
+                        par0_path.unlink()
                         try:
-                            Path(directory_path, '....vol0+1.par2').replace(
-                                par_path
-                            )
+                            par1_path.replace(par_path)
                             os.utime(par_path, (file_time, file_time))
                         except OSError:
                             pass

@@ -15,8 +15,8 @@ from typing import Any, List, Tuple, Union
 
 import command_mod
 
-RELEASE = '3.4.1'
-VERSION = 20230124
+RELEASE = '3.4.2'
+VERSION = 20230216
 
 
 class NetNice(command_mod.Command):
@@ -148,10 +148,10 @@ class Sandbox(command_mod.Command):
     def _config_access(
         self,
         bwrap: command_mod.Command,
-        configs: List[str],
+        configs: list,
     ) -> List[str]:
 
-        cmdline = bwrap.get_cmdline()
+        cmdline: list = bwrap.get_cmdline()
 
         if '/' not in configs:
             # Disable all write access
@@ -203,16 +203,14 @@ class Sandbox(command_mod.Command):
             # Application directory
             path = Path(self.get_file()).parent
             if not str(path).startswith(allow_reads):
-                cmdline.extend(
-                   ['--ro-bind-try', str(path.resolve), str(directory)],
-                )
+                cmdline.extend(['--ro-bind-try', path.resolve(), path])
                 self._show(
                     Sandbox.YELLOW,
                     f"Enable application access {path}:ro",
                 )
 
         # Enable access rights
-        for config in configs:
+        for config in [str(x) for x in configs]:
             realpath, mount, mode = self._parse_config(config)
             if mode == 'read/write':
                 if not Path(realpath).exists():
@@ -247,9 +245,7 @@ class Sandbox(command_mod.Command):
                     f"Enable read access {config}",
                 )
 
-        cmdline.extend(
-            ['--setenv', '_SANDBOX_PARENT', str(os.getpid()), '--'],
-        )
+        cmdline.extend(['--setenv', '_SANDBOX_PARENT', os.getpid(), '--'])
 
         return cmdline
 
@@ -282,7 +278,7 @@ class Sandbox(command_mod.Command):
                 "(using nonet group & iptables)",
             )
 
-        cmdline = self._config_access(bwrap, [str(x) for x in configs])
+        cmdline = self._config_access(bwrap, configs)
 
         if not network:
             command = command_mod.Command('sg', args=['nonet'], errors=errors)

@@ -267,6 +267,7 @@ class Options:
             '"dom.push.serverURL", ""',
             '"dom.serviceWorkers.enabled", false',
             '"extensions.blocklist.enabled", false',
+            '"extensions.unifiedExtensions.enabled", false',
             '"geo.wifi.uri", ""',
             '"full-screen-api.approval-required", false',
             '"geo.enabled", false',

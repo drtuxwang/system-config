@@ -121,7 +121,7 @@ prune:               # Prune Docker images/containers
 	df /var/lib/docker
 	docker system prune
 	@echo
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}"
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
 	@echo
 	docker volume ls
 	@echo

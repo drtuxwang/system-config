@@ -98,7 +98,7 @@ class Main:
         options = Options()
         path = Path(options.get_archive())
 
-        name = path.name
+        name = path.name.replace('-new', '')
         if name.endswith(('.tar.7z', '.t7z')):
             command = command_mod.Command('t7z', errors='stop')
         elif name.endswith(('.tar.xz', '.txz')):
@@ -109,10 +109,10 @@ class Main:
             command = command_mod.Command('tzs', errors='stop')
         elif name.endswith(('.tar.bz2', '.tbz')):
             command = command_mod.Command('tbz', errors='stop')
-        elif name.endswith(('.tar.g2', '.tgz')):
+        elif name.endswith(('.tar.gz', '.tgz')):
             command = command_mod.Command('tgz', errors='stop')
-        elif path.suffix in ('.7z', '.tar', '.zip'):
-            command = command_mod.Command(path.suffix[1:4], errors='stop')
+        elif name.endswith(('.7z', '.tar', '.zip')):
+            command = command_mod.Command(name.rsplit('.')[-1], errors='stop')
         else:
             raise SystemExit(
                 f"{sys.argv[0]}: Unable to make unsupported archive format:"

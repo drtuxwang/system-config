@@ -286,7 +286,7 @@ class Main:
 
         images_extensions = config_mod.Config().get('image_extensions')
 
-        args = [
+        args: list = [
             f'-sOutputFile={options.get_archive()}',
             '-c',
             '3000000',
@@ -305,7 +305,7 @@ class Main:
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
             ext = path.suffix.lower()
             if ext == '.pdf':
-                args.extend(['-f', str(path)])
+                args.extend(['-f', path])
             else:
                 self._tmpfile = f'{tmp_path}{len(self._tempfiles) + 1}'
                 if ext in images_extensions:

@@ -1,19 +1,19 @@
 ansible-core==2.14.1         # Ansible IT automation system core
 ansible==7.1.0               # Ansible IT automation system plugins
-appimage-builder==1.0.3      # Generate portable appimages
+appimage-builder==1.1.0      # Generate portable appimages
 appnope==0.1.3               #   (required by ipython)
 args==0.1.0                  #   (required by clint)
 arrow==1.1.1                 #   (required by jinja2-time)
-astroid==2.12.13             #   (required by pylint)
+astroid==2.14.1              #   (required by pylint)
 asttokens==1.1.15            #   (required by stack-data)
 backcall==0.2.0              #   (required by ipython)
 bcrypt==3.2.2                #   (required by paramiko)
 beautifulsoup4==4.10.0       # HTML/XML parser/emitter
 binaryornot==0.4.4           #   (required by cookiecutter)
-bleach==4.1.0                #   (required by readme-renderer)
+bleach==5.0.1                #   (required by readme-renderer)
 Brotli==1.0.9                #   (required by yt-dlp)
 bson==0.5.10                 # BSON parser/emitter
-build==0.8.0                 #   (required by check-manifest)
+build==0.9.0                 #   (required by check-manifest)
 cassandra-driver==3.25.0     #   (required by cqlsh)
 certifi==2022.12.7           #   (required by requests)
 cffi==1.15.1                 #   (required by cryptography)
@@ -36,14 +36,14 @@ devpi-common==3.6.0          #   (required by devpi-client)
 dicttoxml==1.7.16            # Convert Python dict to XML
 dill==0.3.6                  #   (required by pylint)
 distlib==0.3.6               #   (required by humpty/virtualenv)
-dnspython==2.1.0             # DNS client
+dnspython==2.2.1             # DNS client
 docker==5.0.3                #   (required by appimage-builder)
 docutils==0.18.1             #   (required by readme-renderer)
 dropbox==11.35.0             # Official Dropbox client
 EditorConfig==0.12.3         #   (required by jsbeautifier)
 emrichen==0.2.3              #   (required by appimage-builder)
 executing==1.1.1             #   (required by stack-data)
-filelock==3.7.1              #   (required by virtualenv)
+filelock==3.8.2              #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 flake8==6.0.0                # Python modular source code checker
 future==0.18.3               #   (required by Glances)
@@ -55,13 +55,13 @@ gTTS==2.2.4                  # Google Text-to-Speech
 humpty==0.2.1                # Convert whl to egg
 idna==3.3                    #   (required by requests)
 ImageHash==4.3.1             # Image hashing library
-importlib-metadata==4.13.0   #   (required by twine)
+importlib-metadata==5.2.0    #   (required by twine)
 inflect==5.6.2               #   (required by nexus3-cli)
 ipdb==0.13.10                # Interactive Python debugger
-ipython==8.6.0               #   (required by ipdb)
-isort==5.10.1                #   (required by pylint)
+ipython==8.10.0              #   (required by ipdb)
+isort==5.11.5                #   (required by pylint)
 jaraco.classes==3.2.3        #   (required by keyring)
-jedi==0.18.1                 #   (required by ipython)
+jedi==0.18.2                 #   (required by ipython)
 jeepney==0.7.1               #   (required by keyring)
 jinja2-time==0.2.0           #   (required by cookiecutter)
 Jinja2==3.1.2                # Stand-alone template engine
@@ -69,7 +69,7 @@ jsbeautifier==1.13.13        # JavaScript unobfuscator/beautifier
 jsonpath-rw==1.4.0           #   (required by emrichen)
 jsonpickle==2.2.0            # Serializing any arbitrary object into JSON
 keyring==23.12.1             #   (required by twine)
-lazy-object-proxy==1.7.1     #   (required by astroid)
+lazy-object-proxy==1.8.0     #   (required by astroid)
 lazy==1.4                    #   (required by devpi-client)
 lief==0.12.3                 #   (required by appimage-builder)
 lockfile==0.12.2             # File locking
@@ -80,12 +80,12 @@ mccabe==0.7.0                #   (required by flake8/pylint)
 more-itertools==8.14.0       #   (required by jaraco-classes)
 motor==3.1.1                 # Mongo async client
 mutagen==1.45.1              #   (required by yt-dlp)
-mypy-extensions==0.4.3       #   (required by mypy)
-mypy==0.991                  # Python type checker
+mypy-extensions==1.0.0       #   (required by mypy)
+mypy==1.0.0                  # Python type checker
 nexus3-cli==4.1.8            # Sonatype Nexus client
 ntplib==0.4.0                # NTP client
 numpy==1.23.5                # Array computing
-packaging==21.1              #   (required by ansible-core/appimage-builder/glances)
+packaging==21.3              #   (required by ansible-core/appimage-builder/glances)
 paramiko==2.11.1             # SSH client
 parso==0.8.3                 #   (required by jedi)
 pep517==0.13.0               #   (required by build)
@@ -108,10 +108,10 @@ pyaml==21.8.3                #   (required by emrichen)
 pybktree==1.1                # BK-tree for querying of close matches
 pycodestyle==2.10.0          # Python style guide checker
 pycparser==2.21              #   (required by cffi)
-pycryptodomex==3.15.0        #   (required by yt-dlp)
+pycryptodomex==3.16.0        #   (required by yt-dlp)
 pyflakes==3.0.1              #   (required by flake8)
-Pygments==2.12.0             #   (required by ipython/readme-renderer)
-pylint==2.15.9               # Python code static checker
+Pygments==2.13.0             #   (required by ipython/readme-renderer)
+pylint==2.16.1               # Python code static checker
 pymongo==4.2.0               # MongoDB client
 PyNaCl==1.4.0                #   (required by paramiko)
 pyOpenSSL==22.1.0            # OpenSSL interface
@@ -123,7 +123,7 @@ PyWavelets==1.3.0            #   (required by numpy)
 PyYAML==6.0                  # YAML parser/emitter
 pyzstd==0.15.3               # ZSTD compression/decompression
 questionary==1.10.0          #   (required by appimage-builder)
-readme-renderer              #   (required by twine)
+readme-renderer==37.3              #   (required by twine)
 requests-toolbelt==0.9.1     #   (required by twine)
 requests==2.28.1             # Web client
 resolvelib==0.8.1            #   (required by ansible-core)
@@ -134,8 +134,8 @@ schema==0.6.8                #   (required by appimage-builder)
 scipy==1.9.3                 #   (required by ImageHash)
 SecretStorage==3.3.3         #   (required by keyring)
 semver==2.12.0               #   (required by nexus3-cli)
-sentry-sdk==1.11.1           # Sentry SDK
-setuptools==65.6.3           # Python package manager
+sentry-sdk==1.14.0           # Sentry SDK
+setuptools==66.1.1           # Python package manager
 six==1.16.0                  # Python 2 and 3 compatibility utilities
 smmap==4.0.0                 #   (required by gitdb)
 soupsieve==2.2.1             #   (required by beautifulsoup4)
@@ -147,20 +147,20 @@ toml==0.10.2                 #   (required by ipdb)
 tomli==2.0.1                 #   (required by devpi-client, mypy)
 tomlkit==0.11.5              #   (required by pylint)
 tornado==5.1.1               # Web server framework
-tox==3.27.1                  #   (required by devpi-client)
+tox==3.27.1                  #   (< 4 required by devpi-client)
 tqdm==4.63.2                 #   (required by twine)
-traitlets==5.7.1             #   (required by ipython)
+traitlets==5.8.1             #   (required by ipython)
 twine==3.8.0                 #   (required by nexus3-cli)
 typing_extensions==4.4.0     #   (required by mypy)
-urllib3==1.26.12             #   (required by appimage-builder/requests/sentry-sdk)
-virtualenv==20.16.7          # Python Virtual Environments
+urllib3==1.26.13             #   (required by appimage-builder/requests/sentry-sdk)
+virtualenv==20.17.1          # Python Virtual Environments
 wcwidth==0.2.5               #   (required by prompt-toolkit)
 webencodings==0.5.1          #   (required by bleach)
-websocket-client==0.59.0     #   (required by docker)
+websocket-client==1.4.2      #   (required by docker)
 websockets==10.3             #   (required by yt-dlp)
 wheel==0.38.4                # Python wheel packaging
 wrapt==1.14.1                #   (required by astroid)
 xdis==6.0.5                  # Python disassembler
 xmltodict==0.12.0            # Convert XML to Python dict
-yt-dlp==2022.11.11           # Video downloader
-zipp==3.10.0                 #   (required by importlib-metadata)
+yt-dlp==2023.1.6             # Video downloader
+zipp==3.12.1                 #   (required by importlib-metadata)

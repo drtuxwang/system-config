@@ -316,7 +316,8 @@ class BacklightXrandr(Backlight):
         """
         for screen in self._screens:
             self._command.set_args(
-                ['--output', screen, '--brightness', str(brightness)])
+                ['--output', screen, '--brightness', brightness]
+            )
             subtask_mod.Task(self._command.get_cmdline()).run()
 
     def detect(self) -> bool:

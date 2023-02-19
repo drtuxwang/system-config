@@ -51,13 +51,15 @@ class Options:
                 pass
         path = Path(configdir, 'geeqierc.xml')
         try:
-            with path.open('rb') as ifile:
-                data = ifile.read()
-            if b'hidden = "true"' in data:
-                data = data.replace(b'hidden = "true"', b'hidden = "false"')
+            data = path.read_text(errors='replace')
+            data_new = data.replace('hidden = "true"', 'hidden = "false"')
+            data_new = data_new.replace(
+                'show_marks = "true"',
+                'show_marks = "false"',
+            )
+            if data_new != data:
                 path_new = Path(f'{path}-new')
-                with path_new.open('wb') as ofile:
-                    ofile.write(data)
+                path_new.write_text(data_new)
                 path_new.replace(path)
         except OSError:
             pass

@@ -136,12 +136,13 @@ class Main:
 
     @classmethod
     def _unpack(cls, path: Path) -> None:
+        cmdline: list
         if path.suffix == '.xz':
-            cmdline = cls._get_cmdline('unxz') + [str(path)]
+            cmdline = cls._get_cmdline('unxz') + [path]
         elif path.suffix == '.bz2':
-            cmdline = cls._get_cmdline('bzip2') + ['-d', str(path)]
+            cmdline = cls._get_cmdline('bzip2') + ['-d', path]
         elif path.suffix == '.gz':
-            cmdline = cls._get_cmdline('gzip') + ['-d', str(path)]
+            cmdline = cls._get_cmdline('gzip') + ['-d', path]
         else:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot unpack "{path}" package file.',
@@ -187,7 +188,7 @@ class Main:
             archive_path = Path(self.tmpdir, Path(url).name)
             self._remove()
             task = subtask_mod.Task(
-                wget.get_cmdline() + ['-O', str(archive_path), url]
+                wget.get_cmdline() + ['-O', archive_path, url]
             )
             for _ in range(3):
                 task.run()

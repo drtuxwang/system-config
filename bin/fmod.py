@@ -202,7 +202,10 @@ class Main:
             file_time = file_stat.get_time()
             if file_time != file_mod.FileStat(path).get_time():
                 print(f"<utime>: {path}/")
-                os.utime(path, (file_time, file_time))
+                try:
+                    os.utime(path, (file_time, file_time))
+                except OSError:
+                    print(f"Permission denied: {path}{os.sep}")
 
     def _setmod_file(self, path: Path) -> None:
         try:

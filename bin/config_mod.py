@@ -28,8 +28,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.1.1'
-VERSION = 20230122
+RELEASE = '2.2.0'
+VERSION = 20230212
 
 
 class Data:
@@ -51,7 +51,7 @@ class Data:
     def __init__(self, file: Union[str, Path] = None) -> None:
         self._blocks: List[dict] = [{}]
         if file:
-            self.read(Path(file))
+            self.read(file)
 
     def get(self) -> Generator[dict, None, None]:
         """
@@ -132,19 +132,21 @@ class Data:
         return blocks
 
     @classmethod
-    def _decode_xml(cls, data: dict) -> Any:
+    def _decode_xml(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+
         mytype = data.get('@type')
-
         if data.get('#text'):
-            if mytype == 'str':
-                return data.get('#text')
             if mytype == 'float':
-                return float(data.get('#text'))
-            if mytype == 'int':
-                return int(data.get('#text'))
-            if mytype == 'bool':
-                return bool(data.get('#text'))
-
+                item = float(data.get('#text'))
+            elif mytype == 'int':
+                item = int(data.get('#text'))
+            elif mytype == 'bool':
+                item = bool(data.get('#text'))
+            else:
+                item = data.get('#text')
+            return item
         if mytype == 'list':
             items = [y for x, y in data.items() if x != '@type'][0]
             return [cls._decode_xml(x) for x in items]
@@ -178,15 +180,22 @@ class Data:
 
         return blocks
 
-    def read(self, path: Path, check: bool = False) -> None:
+    def read(
+        self,
+        file: Union[str, Path],
+        config: str = None,
+        check: bool = False,
+    ) -> None:
         """
         Read or check configuration file.
         """
         ifile: Union[TextIO, BinaryIO]
 
-        config = self.TYPES.get(path.suffix)
+        path = Path(file)
         if not config:
-            raise WriteConfigError(f'Cannot handle reading "{path}" file.')
+            config = self.TYPES.get(path.suffix)
+        if not config:
+            raise ReadConfigError(f'Cannot handle reading "{path}" file.')
 
         try:
             if config == 'XML':
@@ -203,7 +212,7 @@ class Data:
                 elif config == 'YAML':
                     blocks = self._decode_yaml(data)
                 else:
-                    raise WriteConfigError(
+                    raise ReadConfigError(
                         f'Cannot handle reading "{path}" file.',
                     )
         except OSError as exception:
@@ -278,13 +287,20 @@ class Data:
         with path.open('wb') as ofile:
             ofile.write(bson.encode(block))  # pylint: disable=no-member
 
-    def write(self, path: Path, compact: bool = False) -> None:
+    def write(
+        self,
+        file: Union[str, Path],
+        compact: bool = False,
+        config: str = None,
+    ) -> None:
         """
         Write configuration file
         """
+        path = Path(file)
         tmp_path = Path(f'{path}.part{os.getpid()}')
 
-        config = self.TYPES.get(path.suffix)
+        if not config:
+            config = self.TYPES.get(path.suffix)
         if not config:
             raise WriteConfigError(f'Cannot handle writing "{path}" file.')
 

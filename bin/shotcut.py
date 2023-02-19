@@ -46,9 +46,8 @@ class Main:
         Start program
         """
         shotcut = network_mod.Sandbox('shotcut', errors='stop')
-        shotcut.set_args(sys.argv[1:])
         if Path(f'{shotcut.get_file()}.py').is_file():
-            subtask_mod.Exec(shotcut.get_cmdline()).run()
+            subtask_mod.Exec(shotcut.get_cmdline() + sys.argv[1:]).run()
 
         home = str(Path.home())
         home_videos = Path(Path.home(), '.config/Meltytech/Videos')
@@ -68,14 +67,20 @@ class Main:
                 os.chdir(desktop)
                 work_dir = str(desktop)
         configs.append(work_dir)
-        if len(sys.argv) >= 2:
-            if Path(sys.argv[1]).is_dir():
-                configs.append(Path(sys.argv[1]).resolve())
-            elif Path(sys.argv[1]).is_file():
-                configs.append(Path(sys.argv[1]).resolve().parent)
-            if sys.argv[1] == '-net':
-                shotcut.set_args(sys.argv[2:])
+
+        for arg in sys.argv[1:]:
+            path = Path(arg).resolve()
+            if arg == '-net':
                 configs.append('net')
+            elif path.is_dir():
+                shotcut.append_arg(path)
+                configs.append(path)
+            elif path.is_file():
+                shotcut.append_arg(path)
+                configs.append(path.parent)
+            else:
+                shotcut.append_arg(arg)
+
         shotcut.sandbox(configs)
 
         subtask_mod.Daemon(shotcut.get_cmdline()).run()

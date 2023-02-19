@@ -72,11 +72,7 @@ class Main:
         """
         Start program
         """
-        command = network_mod.Sandbox(
-            'atril',
-            args=sys.argv[1:],
-            errors='ignore'
-        )
+        command = network_mod.Sandbox('atril', errors='ignore')
         if not command.is_found():
             command = network_mod.Sandbox(
                 'evince',
@@ -96,8 +92,20 @@ class Main:
             Path(Path.home(), '.config/ibus'),
             work_path,
         ] + glob.glob('/tmp/dbus*')
-        if len(sys.argv) > 1:
-            configs.append(Path(sys.argv[1]).resolve().parent)
+
+        for arg in sys.argv[1:]:
+            path = Path(arg).resolve()
+            if arg == '-net':
+                configs.append('net')
+            elif path.is_dir():
+                command.append_arg(path)
+                configs.append(path)
+            elif path.is_file():
+                command.append_arg(path)
+                configs.append(path.parent)
+            else:
+                command.append_arg(arg)
+
         command.sandbox(configs)
 
         pattern = (

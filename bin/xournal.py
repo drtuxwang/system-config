@@ -46,7 +46,6 @@ class Main:
         Start program
         """
         xournal = network_mod.Sandbox('xournalpp', errors='stop')
-        xournal.set_args(sys.argv[1:])
 
         work_dir = Path.cwd()  # "os.getcwd()" returns realpath instead
         home = str(Path.home())
@@ -62,14 +61,20 @@ class Main:
             Path(home, '.config/xournalpp'),
             work_dir,
         ]
-        if len(sys.argv) >= 2:
-            if Path(sys.argv[1]).is_dir():
-                configs.append(Path(sys.argv[1]).resolve())
-            elif Path(sys.argv[1]).is_file():
-                configs.append(Path(sys.argv[1]).resolve().parent)
-            if sys.argv[1] == '-net':
-                xournal.set_args(sys.argv[2:])
+
+        for arg in sys.argv[1:]:
+            path = Path(arg).resolve()
+            if arg == '-net':
                 configs.append('net')
+            elif path.is_dir():
+                xournal.append_arg(path)
+                configs.append(path)
+            elif path.is_file():
+                xournal.append_arg(path)
+                configs.append(path.parent)
+            else:
+                xournal.append_arg(arg)
+
         xournal.sandbox(configs)
 
         pattern = (
