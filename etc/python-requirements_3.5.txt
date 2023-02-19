@@ -16,7 +16,7 @@ check-manifest==0.44
 click                        # ==7.1.2 (last compatible version)
 cookiecutter                 # ==1.7.3 (last compatible version)
 cqlsh==None
-cryptography                 # ==3.2.1 required by paramiko)
+cryptography                 # ==3.2.1 (last compatible version)
 cx-Oracle==7.3.0
 dicttoxml==None
 dill==None
