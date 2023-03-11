@@ -1085,8 +1085,8 @@ the years.
  * docker/i386-debian-11/bash/Makefile   i386/debian:11-slim based BASH login
  * docker/i386-debian-11/dev/Dockerfile
  * docker/i386-debian-11/dev/Makefile    i386/debian:11-slim based GCC dev shell
- * docker/golang-1.17/Dockerfile
- * docker/golang-1.17/Makefile           golang:1.17-alpine based compiler app
+ * docker/golang-1.19/Dockerfile
+ * docker/golang-1.19/Makefile           golang:1.19-alpine based compiler app
  * docker/httpd-2.4/Dockerfile
  * docker/httpd-2.4/Makefile             httpd:2.4-alpine (Apache) based web server
  * docker/httpd-2.4/files/httpd.conf
@@ -1162,8 +1162,6 @@ the years.
  * helm/bin/helm-save.sh                 Save Helm release docker images
  * helm/cassandra/Makefile               Helm Chart: bitnami/cassandra 9.7.7 (app-3.11.13)
  * helm/cassandra/values.yaml
- * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.14.1 (app-0.12.0)
- * helm/chartmuseum/values.yaml
  * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 8.4.5 (app-3.4.19)
  * helm/etcd/values.yaml
  * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 8.1.1 (app-8.5.9)
@@ -1173,8 +1171,6 @@ the years.
  * helm/kafka/Makefile                   Helm Chart: bitnami/19.1.5 (app-2.8.1)
  * helm/kafka/connect-test.sh
  * helm/kafka/values.yaml
- * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 3.35.0 (app-0.48.1)
- * helm/ingress-controller/values.yaml
  * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 12.1.31 (app-4.4.15)
  * helm/mongodb/values.yaml
  * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 5.2.2 (app-3.27.0)

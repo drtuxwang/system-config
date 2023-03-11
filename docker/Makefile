@@ -18,7 +18,7 @@ BUILD_DIRS := \
 	centos-7 \
 	\
 	busybox-1.33 \
-	golang-1.18 \
+	golang-1.19 \
 	httpd-2.4 \
 	nginx-1.18 \
 	python-3.10 \
@@ -42,7 +42,7 @@ default: build status # Default
 
 .PHONY: status
 status:              # Status of Docker images
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^$(IMAGES):" | sort
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGES):" | sort
 	docker system df
 
 .PHONY: new
@@ -104,7 +104,7 @@ push-stable:         # Tag and push stable Docker images
 		echo "docker push $${IMAGE%:*}:stable"; \
 		docker push $${IMAGE%:*}:stable; \
 	done
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 
 .PHONY: pull
 pull-stable:         # Pull stable Docker images
@@ -112,7 +112,7 @@ pull-stable:         # Pull stable Docker images
 		docker pull $$IMAGE ; \
 		docker pull $${IMAGE%:*}:stable ; \
 	done
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 
 .PHONY: prune
 prune:               # Prune Docker images/containers

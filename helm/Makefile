@@ -1,22 +1,21 @@
 BUILD_DIRS := \
 	cassandra \
-	chartmuseum \
 	etcd \
 	grafana \
-	ingress-controller \
 	jenkins \
 	kafka \
 	mongodb \
 	nexus \
 	nginx \
-	ops-server \
 	oracle-xe \
 	postgresql \
 	prometheus \
 	pushgateway \
 	rabbitmq \
+	test-box \
 	test-server \
 	xfce-server
+
 
 ifeq ($(shell helm version | grep -c v3), 1)
 	HELM_INIT :=
@@ -53,7 +52,7 @@ update:              # Update Helm chart repository
 .PHONY: version
 version:             # Helm chart versions
 	@for DIR in $(BUILD_DIRS); do \
-		echo "($$DIR)  `make --no-print-directory --directory $$DIR list | grep '<.*>'`"; \
+		make --no-print-directory --directory $$DIR list | sed -e "s/^/$$DIR: /"; \
 	done
 
 .PHONY: images

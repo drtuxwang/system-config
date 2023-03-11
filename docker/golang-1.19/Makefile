@@ -1,7 +1,7 @@
-BASE_IMAGE := golang:1.18-alpine
-IMAGE := drtuxwang/golang:1.18-alpine
-NAME := golang-118-bash
-HOSTNAME := golang-118-bash
+BASE_IMAGE := golang:1.19-alpine
+IMAGE := drtuxwang/golang:1.19-alpine
+NAME := golang-119-bash
+HOSTNAME := golang-119-bash
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -24,7 +24,7 @@ default: build status # Default
 
 .PHONY: status
 status:              # Status of Docker image
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | \
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | \
 		grep -E "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
 
 .PHONY: pull

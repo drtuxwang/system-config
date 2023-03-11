@@ -1,9 +1,0 @@
-nodeSelector:
-  kubernetes.io/os: linux
-  ##kubernetes.io/hostname: ryzen.local
-
-controller:
-  image:
-    digest:
-  service:
-    type: ClusterIP
