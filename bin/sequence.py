@@ -116,9 +116,11 @@ class Main:
         """
         options = Options()
 
-        for number, comma in zip(options.get_numbers(), options.get_commas()):
-            print(number, comma, sep='', end='')
-        print()
+        line = ''.join([
+            f'{x}{y}'
+            for x, y in zip(options.get_numbers(), options.get_commas())
+        ])
+        print(f"{line.rstrip(', ')}.")
 
         return 0
 

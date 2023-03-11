@@ -110,11 +110,22 @@ class Main:
             except config_mod.ReadConfigError as exception:
                 raise SystemExit(f"{path}: {exception}") from exception
             bson_path = path.with_suffix('.bson')
-            print(f'Converting "{path}" to "{bson_path}"...')
             try:
-                data.write(bson_path)
-            except config_mod.WriteConfigError as exception:
-                raise SystemExit(f"{path}: {exception}") from exception
+                old_bson = bson_path.read_bytes()
+            except (config_mod.ConfigError, OSError):
+                old_bson = None
+            new_bson = data.encode(config='BSON')
+            if new_bson != old_bson:
+                if path == bson_path:
+                    print(f'Formatting "{path}" to "{bson_path}"...')
+                else:
+                    print(f'Converting "{path}" to "{bson_path}"...')
+                try:
+                    bson_path.write_bytes(new_bson)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot create "{bson_path}" file.'
+                    ) from exception
 
     @classmethod
     def run(cls) -> int:

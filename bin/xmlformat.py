@@ -86,36 +86,36 @@ class Main:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{path}" file.',
                 )
-            print(f'Re-formatting "{path}" XML file...')
 
-            lines = []
             try:
-                with path.open(errors='replace') as ifile:
-                    for line in ifile:
-                        lines.append(line.strip())
+                old_xml = path.read_bytes()
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot read "{path}" file.',
                 ) from exception
-            xml_doc = xml.dom.minidom.parseString(''.join(lines))
 
-            path_new = Path(f'{path}.part')
-            try:
-                path_new.write_bytes(xml_doc.toprettyxml(
-                    indent='  ',
-                    newl='\n',
-                ).encode())
-            except OSError as exception:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{path_new}" file.',
-                ) from exception
-            try:
-                path_new.replace(path)
-            except OSError as exception:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot rename '
-                    f'"{path_new}" file to "{path}".',
-                ) from exception
+            xml_doc = xml.dom.minidom.parseString(old_xml)
+            new_xml = '\n'.join([
+                x
+                for x in xml_doc.toprettyxml(indent='  ').split('\n')
+                if x.strip()
+            ]).encode() + b'\n'
+            if new_xml != old_xml:
+                print(f'Formatting "{path}" XML file...')
+                path_new = Path(f'{path}.part')
+                try:
+                    path_new.write_bytes(new_xml)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot create "{path_new}" file.',
+                    ) from exception
+                try:
+                    path_new.replace(path)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot rename '
+                        f'"{path_new}" file to "{path}".',
+                    ) from exception
 
         return 0
 

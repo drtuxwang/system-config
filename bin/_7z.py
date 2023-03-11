@@ -91,7 +91,7 @@ class Options:
         """
         Parse arguments
         """
-        for name in ('7zzs', '7zz'):
+        for name in ('7zz', '7zzs'):
             self._archiver = command_mod.Command(name, errors='ignore')
             if self._archiver.is_found():
                 break

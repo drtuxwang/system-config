@@ -83,35 +83,36 @@ class Main:
 
     @classmethod
     def _reformat(cls, path: Path) -> None:
-        lines = []
         try:
-            with path.open(errors='replace') as ifile:
-                for line in ifile:
-                    lines.append(line.strip())
+            old_xhtml = path.read_bytes()
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
-        soup = bs4.BeautifulSoup(
-            '\n'.join(lines).replace('&', '&amp;'),
-            'html.parser'
-        )
-        html_text = cls._indent.sub(r'\1\1', soup.prettify())
 
-        path_new = Path(f'{path}.part')
-        try:
-            with path_new.open('w') as ofile:
-                print(html_text.replace('&amp;', '&'), file=ofile)
-        except OSError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{path_new}" file.',
-            ) from exception
-        try:
-            path_new.replace(path)
-        except OSError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot rename "{path_new}" file to "{path}".',
-            ) from exception
+        soup = bs4.BeautifulSoup(
+            old_xhtml.replace(b'&', b'&amp;'),
+            'html.parser',
+        )
+        new_xhtml = cls._indent.sub(
+            r'\1\1', soup.prettify(),
+        ).replace('&amp;', '&').encode()
+        if new_xhtml != old_xhtml:
+            print(f'Formatting "{path}" XHTML file...')
+            path_new = Path(f'{path}.part')
+            try:
+                path_new.write_bytes(new_xhtml)
+            except OSError as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot create "{path_new}" file.',
+                ) from exception
+            try:
+                path_new.replace(path)
+            except OSError as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: '
+                    f'Cannot rename "{path_new}" file to "{path}".',
+                ) from exception
 
     @classmethod
     def run(cls) -> bool:
@@ -126,8 +127,6 @@ class Main:
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
             if path.suffix in ('.htm', '.html', '.xhtml'):
-                print(f'Re-formatting "{path}" XHTML file...')
-
                 task = subtask_mod.Batch(
                     cls._xmllint.get_cmdline() + [str(path)]
                 )

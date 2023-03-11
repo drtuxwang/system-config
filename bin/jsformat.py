@@ -87,33 +87,33 @@ class Main:
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
-            print(f'Re-formatting "{path}" XML file...')
 
-            lines = []
             try:
-                with path.open(errors='replace') as ifile:
-                    for line in ifile:
-                        lines.append(line.strip())
+                old_js = path.read_bytes()
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot read "{path}" file.',
                 ) from exception
 
-            path_new = Path(f'{path}.part')
-            try:
-                with path_new.open('w') as ofile:
-                    print(jsbeautifier.beautify(''.join(lines)), file=ofile)
-            except OSError as exception:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{path_new}" file.',
-                ) from exception
-            try:
-                path_new.replace(path)
-            except OSError as exception:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot rename '
-                    f'"{path_new}" file to "{path}".',
-                ) from exception
+            new_js = jsbeautifier.beautify(
+                old_js.decode(errors='replace')
+            ).encode() + b'\n'
+            if new_js != old_js:
+                print(f'Formatting "{path}" Javascript file...')
+                path_new = Path(f'{path}.part')
+                try:
+                    path_new.write_bytes(new_js)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot create "{path_new}" file.',
+                    ) from exception
+                try:
+                    path_new.replace(path)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot rename '
+                        f'"{path_new}" file to "{path}".',
+                    ) from exception
 
         return 0
 

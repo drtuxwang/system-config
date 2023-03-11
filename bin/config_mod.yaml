@@ -192,9 +192,9 @@ bindings:
   .webp:
     open: image_editor
     view: image_viewer
-  .wsdl:
-    open: doc_editor
   .wpd:
+    open: doc_editor
+  .wsdl:
     open: doc_editor
   .xhtml:
     open: text_editor
@@ -210,13 +210,13 @@ bindings:
     view: archive_unpacker
   .yaml:
     open: text_editor
+  .zip:
+    open: archive_unpacker
+    view: archive_unpacker
   .zst:
     open: archive_unpacker
     view: archive_unpacker
   .zstd:
-    open: archive_unpacker
-    view: archive_unpacker
-  .zip:
     open: archive_unpacker
     view: archive_unpacker
 parameters:
@@ -232,13 +232,13 @@ parameters:
   - .tif
   - .tiff
   - .webp
+  user_agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
   video_extensions:
   - .avi
   - .flv
   - .mp4
   - .mpegts
   - .webm
-  user_agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
   web_mail: https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com
   web_uri:
   - ftp

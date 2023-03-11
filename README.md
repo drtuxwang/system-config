@@ -57,16 +57,18 @@ the years.
  * bin/cookiecutter
  * bin/cookiecutter.bat
  * bin/cqlsh
+ * bin/cqlsh-venv
  * bin/cython
  * bin/cython.bat
  * bin/cythonize
  * bin/cythonize.bat
  * bin/devpi
+ * bin/devpi-venv
  * bin/devpi.bat
  * bin/django-admin
  * bin/django-admin.bat
  * bin/docker-compose
- * bin/docker-compose.bat
+ * bin/docker-compose-venv
  * bin/flask
  * bin/flask.bat
  * bin/glances
@@ -90,6 +92,7 @@ the years.
  * bin/mypy
  * bin/mypy.bat
  * bin/nexus3
+ * bin/nexus3-venv
  * bin/pep8
  * bin/pep8.bat
  * bin/pip
@@ -100,6 +103,7 @@ the years.
  * bin/pycodestyle
  * bin/pycodestyle.bat
  * bin/pydisasm
+ * bin/pydisasm-venv
  * bin/pydoc
  * bin/pydoc3
  * bin/pydoc3.bat
@@ -392,6 +396,8 @@ the years.
  * bin/git_lfs_.py
  * bin/git-time             git original author time plugin
  * bin/git_time_.py
+ * bin/scalar
+ * bin/scalar.py
  * bin/gnomine              Wrapper for "gnome-mines" command
  * bin/gnomine.py           (can pick using old gnomines name)
  * bin/go                   Go wrapper (golang)
@@ -405,6 +411,8 @@ the years.
  * bin/graph                Generate multiple graph files with X/Y plots (uses gnuplot)
  * bin/gqview.bat
  * bin/graph.py
+ * bin/grpcurl              Wrapper for "grpcurl" command
+ * bin/grpcurl.py
  * bin/gz                   Compress a file in GZIP format
  * bin/gz.py
  * bin/halt                 Fast shutdown using "/proc/sysrq-trigger"
@@ -541,8 +549,6 @@ the years.
  * bin/pcunix.bat           Start PCUNIX on Windows
  * bin/pdf                  Create PDF file from text/images/postscript/PDF files
  * bin/pdf.py
- * bin/pget                 Picture downloader for Instagram website
- * bin/pget.py
  * bin/pidgin               Wrapper for "pidgin" command
  * bin/pidgin.bat
  * bin/pidgin.py

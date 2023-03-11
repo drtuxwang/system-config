@@ -110,11 +110,22 @@ class Main:
             except config_mod.ReadConfigError as exception:
                 raise SystemExit(f"{path}: {exception}") from exception
             yaml_path = path.with_suffix('.yaml')
-            print(f'Converting "{path}" to "{yaml_path}"...')
             try:
-                data.write(yaml_path)
-            except config_mod.WriteConfigError as exception:
-                raise SystemExit(f"{path}: {exception}") from exception
+                old_yaml = yaml_path.read_bytes()
+            except (config_mod.ConfigError, OSError):
+                old_yaml = None
+            new_yaml = data.encode(config='YAML')
+            if new_yaml != old_yaml:
+                if path == yaml_path:
+                    print(f'Formatting "{path}" to "{yaml_path}"...')
+                else:
+                    print(f'Converting "{path}" to "{yaml_path}"...')
+                try:
+                    yaml_path.write_bytes(new_yaml)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot create "{yaml_path}" file.'
+                    ) from exception
 
     @classmethod
     def run(cls) -> int:

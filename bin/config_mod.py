@@ -13,23 +13,15 @@ import re
 import xml
 import xml.dom.minidom
 from pathlib import Path
-from typing import (
-    Any,
-    BinaryIO,
-    Generator,
-    List,
-    TextIO,
-    Tuple,
-    Union,
-)
+from typing import Any, Generator, List, Tuple, Union
 
 import bson  # type: ignore
 import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.2.0'
-VERSION = 20230212
+RELEASE = '2.3.0'
+VERSION = 20230303
 
 
 class Data:
@@ -88,12 +80,10 @@ class Data:
                 continue
             lines.append(re.sub(':.*{{.*:.*}}.*', ': 0', line))
         data_new = '\n'.join(lines)
-
         data_new = re.sub('{{[^}]*}}: *{{[^}]*}}', '_: 0', data_new)
         data_new = re.sub(':  *{{[^}]*}}', ': 0', data_new)
         data_new = re.sub('{{[^}]*}}', lambda m: ' '*len(m.group()), data_new)
         data_new = re.sub('{%[^}]*}', '', data_new)
-
         return data_new
 
     @staticmethod
@@ -104,7 +94,9 @@ class Data:
         return re.sub('}[ \\n]*{', '}}{{', text).split('}{')
 
     @classmethod
-    def _decode_json(cls, data: str) -> List[dict]:
+    def _decode_json(cls, data: str, check: bool = False) -> List[dict]:
+        if check:
+            data = cls._unjinja(data)
         try:
             blocks = [json.loads(block) for block in cls._split_jsons(data)]
         except json.decoder.JSONDecodeError as exception:
@@ -119,7 +111,9 @@ class Data:
         return re.split('\n--', text)
 
     @classmethod
-    def _decode_yaml(cls, data: str) -> List[dict]:
+    def _decode_yaml(cls, data: str, check: bool = False) -> List[dict]:
+        if check:
+            data = cls._unjinja(data)
         try:
             blocks = [
                 yaml.safe_load(block) for block in cls._split_yamls(data)
@@ -132,10 +126,9 @@ class Data:
         return blocks
 
     @classmethod
-    def _decode_xml(cls, data: Any) -> Any:
+    def _parse_xml(cls, data: Any) -> Any:
         if not isinstance(data, dict):
             return data
-
         mytype = data.get('@type')
         if data.get('#text'):
             if mytype == 'float':
@@ -149,35 +142,58 @@ class Data:
             return item
         if mytype == 'list':
             items = [y for x, y in data.items() if x != '@type'][0]
-            return [cls._decode_xml(x) for x in items]
-
-        return {k: cls._decode_xml(v) for k, v in data.items() if k != '@type'}
+            if isinstance(items, list):
+                return [cls._parse_xml(x) for x in items]
+            return [cls._parse_xml(items)]
+        if mytype == 'dict':
+            data.update({
+                x.pop('@name', 'key'): cls._parse_xml(x)
+                for x in data.pop('key', [])
+            })
+        return {k: cls._parse_xml(v) for k, v in data.items() if k != '@type'}
 
     @classmethod
-    def _read_xml(cls, path: Path) -> dict:
+    def _decode_xml(cls, data: str) -> List[dict]:
         try:
-            with path.open('rb') as ifile:
-                block = xmltodict.parse(ifile.read(), dict_constructor=dict)
+            block = xmltodict.parse(data, dict_constructor=dict)
         except xml.parsers.expat.ExpatError as exception:
             raise ReadConfigError(exception) from exception
         block = (
-            cls._decode_xml(block['root'])
+            cls._parse_xml(block['root'])
             if block.get('root')
-            else cls._decode_xml(block)
+            else cls._parse_xml(block)
         )
-
-        return block
+        return [block]
 
     @staticmethod
-    def _read_bson(path: Path) -> List[dict]:
+    def _decode_bson(bdata: bytes) -> List[dict]:
         try:
-            with path.open('rb') as ifile:
-                blocks = [bson.decode(  # pylint: disable=no-member
-                    ifile.read(),
-                )]
+            blocks = [bson.decode(bdata)]
         except IndexError as exception:
             raise ReadConfigError(exception) from exception
+        return blocks
 
+    def decode(
+        self,
+        config: str,
+        data: bytes,
+        check: bool = False,
+    ) -> List[dict]:
+        """
+        Decode data and return dict.
+        """
+        if config == 'BSON':
+            blocks = self._decode_bson(data)
+        elif config == 'JSON':
+            blocks = self._decode_json(data.decode(errors='replace'), check)
+        elif config == 'XML':
+            blocks = self._decode_xml(data.decode(errors='replace'))
+        elif config == 'YAML':
+            blocks = self._decode_yaml(data.decode(errors='replace'), check)
+        else:
+            raise ConfigError(
+                f'Cannot handle decoding "{config}" format.',
+            )
         return blocks
 
     def read(
@@ -189,8 +205,6 @@ class Data:
         """
         Read or check configuration file.
         """
-        ifile: Union[TextIO, BinaryIO]
-
         path = Path(file)
         if not config:
             config = self.TYPES.get(path.suffix)
@@ -198,41 +212,23 @@ class Data:
             raise ReadConfigError(f'Cannot handle reading "{path}" file.')
 
         try:
-            if config == 'XML':
-                blocks = [self._read_xml(path)]
-            elif config == 'BSON':
-                blocks = self._read_bson(path)
-            else:
-                with path.open(errors='replace') as ifile:
-                    data = ifile.read()
-                if check:
-                    data = self._unjinja(data)
-                if config == 'JSON':
-                    blocks = self._decode_json(data)
-                elif config == 'YAML':
-                    blocks = self._decode_yaml(data)
-                else:
-                    raise ReadConfigError(
-                        f'Cannot handle reading "{path}" file.',
-                    )
+            data = Path(file).read_bytes()
         except OSError as exception:
             raise ReadConfigError(
                 f'Cannot read "{path}" {config} file.',
             ) from exception
+        blocks = self.decode(config, data)
         if not check:
             self._blocks = blocks
 
     @staticmethod
-    def _write_json(path: Path, blocks: List[dict], compact: bool) -> None:
-        with path.open('w', newline='\n') as ofile:
-            for block in blocks:
-                indent = 0 if compact else 4
-                print(json.dumps(
-                    block,
-                    ensure_ascii=False,
-                    indent=indent,
-                    sort_keys=True,
-                ), file=ofile)
+    def _encode_json(blocks: List[dict], compact: bool) -> bytes:
+        indent = 0 if compact else 4
+        data = '\n'.join([
+            json.dumps(x, ensure_ascii=False, indent=indent, sort_keys=True)
+            for x in blocks
+        ])
+        return data.encode()
 
     @staticmethod
     def _reformat_yaml(text: str) -> str:
@@ -256,36 +252,60 @@ class Data:
                 block = ''
 
             lines.append(line)
-
         return '\n'.join(lines)
 
     @classmethod
-    def _write_yaml(cls, path: Path, blocks: List[dict]) -> None:
-        yaml_data = [
+    def _encode_yaml(cls, blocks: List[dict]) -> bytes:
+        data = '--\n'.join([
             cls._reformat_yaml(yaml.dump(x, allow_unicode=True, indent=2))
             for x in blocks
-        ]
-        with path.open('w', newline='\n') as ofile:
-            print('--\n'.join(yaml_data), end='', file=ofile)
+        ])
+        return data.encode()
 
     @staticmethod
-    def _write_xml(path: Path, block: dict, compact: bool) -> None:
-        with path.open('w', newline='\n') as ofile:
-            root = len(block) > 1
-            data = dicttoxml.dicttoxml(block, root=root)
-            if not compact:
-                xml_doc = xml.dom.minidom.parseString(data)
-                data = xml_doc.toprettyxml(
-                    indent='  ',
-                    newl='\n',
-                    encoding='utf-8',
-                )
-                print(data.decode(), file=ofile)
+    def _encode_xml(block: dict, compact: bool) -> bytes:
+        root = len(block) > 1
+        data = dicttoxml.dicttoxml(block, root=root)
+        if not compact:
+            xml_doc = xml.dom.minidom.parseString(data)
+            data = xml_doc.toprettyxml(
+                indent='  ',
+                newl='\n',
+                encoding='utf-8',
+            )
+        return data
 
     @staticmethod
-    def _write_bson(path: Path, block: dict) -> None:
-        with path.open('wb') as ofile:
-            ofile.write(bson.encode(block))  # pylint: disable=no-member
+    def _encode_bson(block: dict) -> bytes:
+        data = bson.encode(block)  # pylint: disable=no-member
+        return data
+
+    def encode(
+        self,
+        config: str,
+        blocks: List[dict] = None,
+        compact: bool = False,
+    ) -> bytes:
+        """
+        Encode data blocks and return str.
+        """
+        if not blocks:
+            blocks = self._blocks
+        if config == 'JSON':
+            data = self._encode_json(blocks, compact)
+        elif config in 'YAML':
+            data = self._encode_yaml(blocks)
+        elif len(blocks) > 1:
+            raise WriteConfigError(
+                f'Cannot handle multi-encoded {config} data.',
+            )
+        elif config in ('XML'):
+            data = self._encode_xml(blocks[0], compact)
+        elif config == 'BSON':
+            data = self._encode_bson(blocks[0])
+        else:
+            raise ConfigError(f'Cannot handle encoding "{config}" data.')
+        return data
 
     def write(
         self,
@@ -304,21 +324,9 @@ class Data:
         if not config:
             raise WriteConfigError(f'Cannot handle writing "{path}" file.')
 
+        data = self.encode(config, self._blocks, compact)
         try:
-            if config == 'JSON':
-                self._write_json(tmp_path, self._blocks, compact)
-            elif config in 'YAML':
-                self._write_yaml(tmp_path, self._blocks)
-            elif len(self._blocks) > 1:
-                raise WriteConfigError(
-                    f'Cannot handle multi-writes to "{path}" {config} file.',
-                )
-            elif config in ('XML'):
-                self._write_xml(tmp_path, self._blocks[0], compact)
-            elif config == 'BSON':
-                self._write_bson(tmp_path, self._blocks[0])
-            else:
-                raise WriteConfigError(f'Cannot handle writing "{path}" file.')
+            tmp_path.write_bytes(data)
         except OSError as exception:
             raise WriteConfigError(
                 f'Cannot create "{tmp_path}" {config} file.',

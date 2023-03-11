@@ -342,10 +342,7 @@ class Options:
         """
         Parse arguments
         """
-        self._firefox = command_mod.Command(
-            Path(args[0]).name.replace('.py', ''),
-            errors='stop',
-        )
+        self._firefox = command_mod.Command(Path(args[0]).stem, errors='stop')
         updates = os.access(self._firefox.get_file(), os.W_OK)
 
         while len(args) > 1:

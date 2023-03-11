@@ -132,7 +132,7 @@ class Main:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{path}" PDF file.',
                 )
-            prefix = path.name.rsplit('.', 1)[0]
+            prefix = path.stem
             print(f'Unpacking "{prefix}-page*.jpg" file...')
             file = '/dev/null' if view_flag else f'{prefix}-page%02d.jpg'
             task = subtask_mod.Task(command.get_cmdline() + [

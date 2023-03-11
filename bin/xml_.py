@@ -132,11 +132,19 @@ class Main:
             except config_mod.ReadConfigError as exception:
                 raise SystemExit(f"{path}: {exception}") from exception
             xml_path = path.with_suffix('.xml')
-            print(f'Converting "{path}" to "{xml_path}"...')
             try:
-                data.write(xml_path, compact)
-            except config_mod.WriteConfigError as exception:
-                raise SystemExit(f"{path}: {exception}") from exception
+                old_xml = xml_path.read_bytes()
+            except (config_mod.ConfigError, OSError):
+                old_xml = None
+            new_xml = data.encode(config='XML', compact=compact)
+            if new_xml != old_xml:
+                print(f'Converting "{path}" to "{xml_path}"...')
+                try:
+                    xml_path.write_bytes(new_xml)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot create "{xml_path}" file.'
+                    ) from exception
 
         if html_paths:
             command = command_mod.Command('htmlformat', errors='stop')

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox for "wesnoth" launcher
+Wrapper for "grpcurl" command
 """
 
 import os
@@ -8,8 +8,10 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
+import command_mod
 import subtask_mod
+
+VERBOSE_SIZE = 134217728
 
 
 class Main:
@@ -40,36 +42,20 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    @staticmethod
-    def run() -> None:
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
-        name = Path(sys.argv[0]).stem
+        command = command_mod.Command('grpcurl', errors='stop')
+        if len(sys.argv) == 2 and ':' in sys.argv[1]:
+            command.set_args(['--plaintext', sys.argv[1], 'describe'])
+        else:
+            command.set_args(sys.argv[1:])
 
-        wesnoth = network_mod.Sandbox(name, errors='stop')
-        wesnoth.set_args(sys.argv[1:])
+        subtask_mod.Exec(command.get_cmdline()).run()
 
-        if not Path(f'{wesnoth.get_file()}.py').is_file():
-            # Maps $HOME/.config/wesnoth => $HOME/.config
-            config_directory = Path(Path.home(), '.config')
-            wesnoth_directory = Path(config_directory, 'wesnoth')
-            if not wesnoth_directory.is_dir():
-                wesnoth_directory.mkdir(parents=True)
-
-            configs = [
-                '/dev/dri',
-                '/dev/shm',
-                f'/run/user/{os.getuid()}/pulse',
-                f'{wesnoth_directory}:{config_directory}',
-            ]
-            if len(sys.argv) >= 2 and sys.argv[1] == '-net':
-                wesnoth.set_args(sys.argv[2:])
-                configs.append('net')
-            wesnoth.sandbox(configs)
-
-        pattern = 'deprecation:'
-        subtask_mod.Task(wesnoth.get_cmdline()).run(pattern=pattern)
+        return 0
 
 
 if __name__ == '__main__':

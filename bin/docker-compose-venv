@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# awscli still requires ancient insecure PyYAML (>=6 still not supported)
+# docker-compose still requires ancient insecure PyYAML
 #
 
-PYTHON="python3.10"
-PACKAGE="awscli==1.26.5"
-DEPENDS="PyYAML==5.4.1"
+PYTHON="python3.9"                # >= 3.10 still not supported
+PACKAGE="docker-compose==1.28.6"
+DEPENDS="PyYAML==5.4.1"           # >=6 still not supported
 
 create_virtualenv() {
     umask 022

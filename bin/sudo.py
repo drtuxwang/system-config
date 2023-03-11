@@ -47,7 +47,7 @@ class Main:
         """
         Start program
         """
-        name = Path(sys.argv[0]).name.split('.')[0]
+        name = Path(sys.argv[0]).stem
 
         command = command_mod.Command('sudo', errors='stop')
         if '-p' not in sys.argv:

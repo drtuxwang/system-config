@@ -177,6 +177,11 @@ exec_python() {
         PYLD_MAIN=`basename "$0"`
         PYLD_FLAGS=
     fi
+    if [ "`echo \",$PYTHONVENVS,\" | grep \",$PYLD_MAIN,\"`" -a -x "$0-venv" ]
+    then
+        unset PYTHONVENVS
+        exec "$0-venv" "$@"
+    fi
 
     if [ "$OSTYPE" = "cygwin" ]
     then

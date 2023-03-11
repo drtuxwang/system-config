@@ -127,13 +127,20 @@ class Main:
                 data.read(path)
             except config_mod.ReadConfigError as exception:
                 raise SystemExit(f"{path}: {exception}") from exception
-
             json_path = path.with_suffix('.json')
-            print(f'Converting "{path}" to "{json_path}"...')
             try:
-                data.write(json_path, compact)
-            except config_mod.WriteConfigError as exception:
-                raise SystemExit(f"{path}: {exception}") from exception
+                old_json = json_path.read_bytes()
+            except (config_mod.ConfigError, OSError):
+                old_json = None
+            new_json = data.encode(config='JSON', compact=compact)
+            if new_json != old_json:
+                print(f'Converting "{path}" to "{json_path}"...')
+                try:
+                    json_path.write_bytes(new_json)
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot create "{json_path}" file.'
+                    ) from exception
 
         if json_paths:
             command = command_mod.Command('jsonformat', errors='stop')

@@ -49,7 +49,11 @@ class Main:
         command = network_mod.Sandbox("0ad", errors='stop')
         command.set_args(sys.argv[1:])
         if not Path(f'{command.get_file()}.py').is_file():
-            configs = ['/dev/dri', Path(Path.home(), '.config/0ad')]
+            configs = [
+                '/dev/dri',
+                f'/run/user/{os.getuid()}/pulse',
+                Path(Path.home(), '.config/0ad'),
+            ]
             if len(sys.argv) >= 2 and sys.argv[1] == '-net':
                 command.set_args(sys.argv[2:])
                 configs.append('net')

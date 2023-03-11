@@ -62,7 +62,7 @@ class Options:
             return [
                 x
                 for x in args
-                if '?stp=dst-jpg' in x and 'cache_key=' in x
+                if '?stp=' in x and 'cache_key=' in x
             ]
         return args
 
@@ -90,18 +90,22 @@ class Options:
         outputs = []
         for arg in cls._select_urls(args):
             if '.m3u8' in arg:
-                nargs.extend(['mget', arg, ';'])
-            elif 'www.instagram.com/p/' in arg:
-                nargs.extend(['pget', arg, ';'])
+                nargs.extend(['mget', arg])
             elif 'www.youtube.com/watch?' in arg:
-                nargs.extend(['vget', arg, ';'])
+                nargs.extend(['vget', arg])
             elif 'azvprv.com/' in arg:
-                nargs.extend(['vlcget', arg, ';'])
+                nargs.extend(['vlcget', arg])
             else:
                 output = cls._get_output(arg)
-                if not Path(output).is_file():
+                if Path(output).is_file():
+                    nargs.extend([
+                        'echo',
+                        f'\033[1;33mOutput file exists: {output}\033[0m',
+                    ])
+                else:
                     outputs.append(output)
-                    nargs.extend(['wget', '-O', output, arg, ';'])
+                    nargs.extend(['wget', '-O', output, arg])
+            nargs.append(';')
         if outputs:
             nargs.extend(['fls', '-t'] + outputs + [';'])
         nargs.extend(['sleep', SLEEP])

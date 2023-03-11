@@ -77,7 +77,8 @@ check_packages() {
             fi
         elif [ "$MODE" = "uninstall" ]
         then
-            echo y | $UNINSTALL $PACKAGE
+            echo y | $UNINSTALL $PACKAGE 2>&1 | grep -v "'root' user"
+            echo -e "${esc}[33mUninstalled!${esc}[0m"
         else
             echo $PACKAGE | awk '{printf("%-27s  # Requirement not found\n", $1)}'
         fi
@@ -117,9 +118,9 @@ check_packages() {
 
 install_packages() {
     MODE=${1:-}
-    case $PYTHON_VERSION in
+    case $VERSION in
     2.[67]|3.[3456])
-        GETPIP="https://bootstrap.pypa.io/pip/$PYTHON_VERSION/get-pip.py"
+        GETPIP="https://bootstrap.pypa.io/pip/$VERSION/get-pip.py"
         ;;
     *)
         GETPIP="https://bootstrap.pypa.io/pip/get-pip.py"
@@ -151,6 +152,17 @@ install_packages() {
         [ ${PIPESTATUS[0]} = 0 ] || continue
         echo -e "${esc}[33minstalled!${esc}[0m"
     done
+
+    if [ -w "$PY_EXE" ]
+    then
+        IFS=$'\n'
+        for FILE in $(grep "^#!/.*[/ ]python" ${PY_EXE%/*}/* 2> /dev/null | grep -v ":#!/usr/bin/env python$VERSION" | sed -e "s@:#!/.*@@")
+        do
+            echo "$FILE: #!/usr/bin/env python$VERSION"
+            sed -i "s@^#!/.*[/ ]python.*@#!/usr/bin/env python$VERSION@" "$FILE"
+        done
+        unset IFS
+    fi
 }
 
 
@@ -160,6 +172,7 @@ INSTALL="$PYTHON -m pip install --no-python-version-warning --disable-pip-versio
 UNINSTALL="$PYTHON -m pip uninstall --no-python-version-warning --disable-pip-version-check"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || INSTALL="$INSTALL --user"
 
+VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
 PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
 PY_INC=$($PY_EXE-config --includes 2> /dev/null)  # "Python.h" etc
 if [ "$(uname)" = Darwin ]
@@ -170,19 +183,19 @@ then
 else
     export CFLAGS="$PY_INC ${CFLAGS:-}"
 fi
+echo -e "${esc}[33mChecking \"$PY_EXE\"...${esc}[0m"
 
 declare -A requirements
-PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
 if [ "$REQUIREMENT" ]
 then
     read_requirements "$REQUIREMENT"
 else
     read_requirements "${0%/*}/python-requirements.txt"
-    read_requirements "${0%/*}/python-requirements_${PYTHON_VERSION}.txt"
+    read_requirements "${0%/*}/python-requirements_$VERSION.txt"
     case $(uname) in
     Darwin)
         read_requirements "${0%/*}/python-requirements_mac.txt"
-        read_requirements "${0%/*}/python-requirements_${PYTHON_VERSION}mac.txt"
+        read_requirements "${0%/*}/python-requirements_$VERSION}mac.txt"
         ;;
     esac
 fi

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# awscli still requires ancient insecure PyYAML (>=6 still not supported)
+# devpi requires insecure py (1.11.0 last version and seems abandoned)
 #
 
 PYTHON="python3.10"
-PACKAGE="awscli==1.26.5"
-DEPENDS="PyYAML==5.4.1"
+PACKAGE="devpi-client==5.2.3"
+DEPENDS="devpi-common==3.6.0"
 
 create_virtualenv() {
     umask 022

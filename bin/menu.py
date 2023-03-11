@@ -104,8 +104,9 @@ class Menu:
         if not checks:
             return True
 
+        path = Path(sys.argv[0]).resolve().parents[1]
         for check in checks:
-            if Path(check).is_file():
+            if Path(check).is_file() or Path(path, check).is_file():
                 return True
             for directory in os.environ.get('PATH', '').split(os.pathsep):
                 if list(Path(directory).parent.glob(f'*/*/{check}')):
