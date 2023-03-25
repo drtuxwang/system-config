@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# glances virtualenv (system monitoring tool)
+#
+
+PYTHON="python3.10"
+PACKAGE="glances==3.2.6.4"
+DEPENDS=
+POSTINST=
+
+source "${0%/*}/virtualenv.bash"
+exec "${0##*/}" "$@"

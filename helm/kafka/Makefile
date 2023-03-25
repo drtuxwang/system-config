@@ -120,7 +120,8 @@ install: repo-add    # Install Helm release
 
 .PHONY: connect
 connect:             # Connect to endpoint
-	@if [ "$(EXTERNAL_IP)" ]; then \
+	@if [ "$(EXTERNAL_IP)" ]; \
+	then \
 		./test-connect.sh $(NAME)-server-0 \
 			$(EXTERNAL_IP):`kubectl get svc kafka-server-0-external | awk 'NR==2 {print $$5}' | sed -e "s/.*://;s#/.*##"`; \
 	else \

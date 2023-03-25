@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Wrapper for "wine cmd"
 #
 
-case `uname` in
+case $(uname) in
 *NT*)
     "$COMSPEC" "$@"
     ;;

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# poetry virtualenv (Python packaging and dependency management tool)
+#
+
+PYTHON="python3.10"
+PACKAGE="poetry==1.2.2"
+DEPENDS="poetry-core==1.3.2 poetry-plugin-export==1.2.0"
+POSTINST=
+
+source "${0%/*}/virtualenv.bash"
+exec "${0##*/}" "$@"

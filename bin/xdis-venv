@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# xdis virtualenv (for disassembling Python bytecode)
+#
+
+PYTHON="python3.10"    # >= 3.11 still not supported
+PACKAGE="xdis==6.0.5"
+DEPENDS=""
+POSTINST=
+
+source "${0%/*}/virtualenv.bash"
+exec "${0##*/}" "$@"

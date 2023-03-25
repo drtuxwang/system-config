@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# dropbox virtualenv
+#
+
+PYTHON="python3.10"
+PACKAGE="dropbox==11.35.0"
+DEPENDS=
+POSTINST=
+
+source "${0%/*}/virtualenv.bash"
+exec "${0##*/}" "$@"

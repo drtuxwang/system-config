@@ -153,6 +153,9 @@ install_packages() {
         echo -e "${esc}[33minstalled!${esc}[0m"
     done
 
+    PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
+    find "$PYTHON_DIR/lib"/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+
     if [ -w "$PY_EXE" ]
     then
         IFS=$'\n'

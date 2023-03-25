@@ -125,7 +125,8 @@ forward:             # Forward traffic to endpoint
 connect:             # Connect to endpoint
 	@echo "username: admin"
 	@echo "password: admin123"
-	@if [ "$(EXTERNAL_IP)" ]; then \
+	@if [ "$(EXTERNAL_IP)" ]; \
+	then \
 		../../kubernetes/bin/kube-connect.sh http://${HOSTNAME}; \
 	else \
 		../../kubernetes/bin/kube-connect.sh http://$(NAMESPACE)/service/${NAME}:8080; \

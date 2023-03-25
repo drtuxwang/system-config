@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/env/bin bash
 #
 # Python loader for starting system/non system Python or Python tools/modules
 #
@@ -7,7 +7,7 @@
 # Function to redirect Python dot files/directories to temp cache
 #
 temp_dotfiles() {
-    MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    MYUNAME=$(id -un)
     mkdir -p /tmp/$MYUNAME/.cache
     chmod 700 /tmp/$MYUNAME
     if [ "$HOME" -a ! -h $HOME/.python_history ]
@@ -16,7 +16,7 @@ temp_dotfiles() {
          ln -s /tmp/$MYUNAME/.cache/python_history $HOME/.python_history 2> /dev/null
     fi
 
-    case "`basename \"$0\"` $@ " in
+    case "${0##*/} $@ " in
     ansible|ansible[\ -]*)
         mkdir -p /tmp/$MYUNAME/.cache/ansible
         if [ ! -h $HOME/.ansible ]
@@ -33,89 +33,74 @@ temp_dotfiles() {
 # Function to locate Python command
 #
 locate_python() {
+    if [ "$VIRTUAL_ENV" -a -x "$VIRTUAL_ENV/bin/$PYLD_EXE" ]
+    then
+        echo "$VIRTUAL_ENV/bin/$PYLD_EXE"
+        return
+    fi
+
     case $0 in
     /*)
-        LOCAL=`dirname \`dirname "$0"\``
+        LOCAL=${0%/*/*}
         ;;
     ?*)
-        LOCAL="`pwd`/`dirname $0`/.."
+        LOCAL="$(pwd)/${0%/*}/.."
         ;;
     esac
 
-    LOCATE=`ls -1t $LOCAL/*/bin/$PYLD_EXE 2> /dev/null | head -1`
+    LOCATE=$(ls -1t $LOCAL/*/bin/$PYLD_EXE 2> /dev/null | head -1)
     if [ "$LOCATE" ]
     then  # Create "$LOCAL/*/bin/python3" wrapper script to pick system Python
         echo "$LOCATE"
         return
     fi
 
-    case `uname` in
+    case $(uname) in
     Darwin)
-        case `uname -m` in
+        case $(uname -m) in
         i386|x86_64)
-            if [ "`/usr/sbin/sysctl -a | grep \"hw.cpu64bit_capable: 1$\"`" ]
+            if [ "$(/usr/sbin/sysctl -a | grep "hw.cpu64bit_capable: 1$")" ]
             then
-                LOCATE=`ls -1t $LOCAL/*/macos64_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
+                LOCATE=$(ls -1t $LOCAL/*/macos64_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1)
             fi
         esac
         ;;
     Linux)
-        GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
-        GLIBC_VER=`strings "$GLIBC" 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`
-        case `uname -m` in
+        GLIBC=$(ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}')
+        GLIBC_VER=$(strings "$GLIBC" 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}')
+        case $(uname -m) in
         x86_64)
-            LOCATE=`(ls -1t $LOCAL/*/linux64_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1`
+            LOCATE=$((ls -1t $LOCAL/*/linux64_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         i*86)
-            LOCATE=`(ls -1t $LOCAL/*/linux_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1`
+            LOCATE=$((ls -1t $LOCAL/*/linux_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         ppc*)
-            LOCATE=`(ls -1t $LOCAL/*/linux_*-power*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYLD_EXE) 2> /dev/null | head -1`
+            LOCATE=$((ls -1t $LOCAL/*/linux_*-power*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         sparc*)
-            LOCATE=`(ls -1t $LOCAL/*/linux_*-sparc*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYLD_EXE) 2> /dev/null | head -1`
+            LOCATE=$((ls -1t $LOCAL/*/linux_*-sparc*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         esac
         if [ ! "$LOCATE" ]
         then
-            case `uname -m` in
+            case $(uname -m) in
             ia64|x86_64)
-                LOCATE=`ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
+                LOCATE=$(ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1)
                 ;;
             esac
         fi
-        ;;
-    SunOS)
-        case `uname -m` in
-        i86pc)
-            if [ -d /lib/amd64 ]
-            then
-                LOCATE=`ls -1t $LOCAL/*/sunos64_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
-            fi
-            if [ ! "$LOCATE" ]
-            then
-                LOCATE=`ls -1t $LOCAL/*/sunos_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
-            fi
-            ;;
-        *)
-            LOCATE=`ls -1t $LOCAL/*/sunos64_*-sparc*/bin/$PYLD_EXE 2> /dev/null | head -1`
-            if [ ! "$LOCATE" ]
-            then
-                LOCATE=`ls -1t $LOCAL/*/sunos_*-sparc*/bin/$PYLD_EXE 2> /dev/null | head -1`
-            fi
-            ;;
-        esac
         ;;
     *NT*)
         export PYTHONUTF8=1  # Python 3.7+ UTF-8 files
         PYLD_EXE="$PYLD_EXE.exe"
         if  [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
         then
-            LOCATE=`ls -1t $LOCAL/*/windows64_*-x86*/$PYLD_EXE 2> /dev/null | head -1`
+            LOCATE=$(ls -1t $LOCAL/*/windows64_*-x86*/$PYLD_EXE 2> /dev/null | head -1)
         fi
         if [ ! "$LOCATE" ]
         then
-            LOCATE=`ls -1t $LOCAL/*/windows_*-x86*/$PYLD_EXE 2> /dev/null | head -1`
+            LOCATE=$(ls -1t $LOCAL/*/windows_*-x86*/$PYLD_EXE 2> /dev/null | head -1)
         fi
         ;;
     esac
@@ -128,11 +113,11 @@ locate_python() {
 # Function to return location of program
 #
 which() {
-    PATH=`echo ":$PATH:" | sed -e "s@:\`dirname \"$0\"\`:@:@"`
+    PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@")
 
-    for CDIR in `echo $PATH | sed -e "s/ /%20/g;s/:/ /g"`
+    for CDIR in $(echo $PATH | sed -e "s/ /%20/g;s/:/ /g")
     do
-        CMD=`echo "$CDIR/$1" | sed -e "s/%20/ /g"`
+        CMD=$(echo "$CDIR/$1" | sed -e "s/%20/ /g")
         if [ -x "$CMD" -a ! -d "$CMD" ]
         then
             echo "$CMD" | sed -e "s@//*@/@g"; return
@@ -147,7 +132,7 @@ which() {
 locate_python_tool() {
     for TOOL in $HOME/.local/bin/$2 /usr/local/bin/$2 $1/$2 $1/Tools/scripts/$2 $1/Scripts/$2.exe
     do
-        if [ -f "$TOOL.py" -a `basename "$TOOL.py"` != "pip3.py" ]  # pip3.py is broken
+        if [ -f "$TOOL.py" -a "${TOOL##*/}.py" != "pip3.py" ]  # pip3.py is broken
         then
             echo "$TOOL.py"
             return
@@ -165,22 +150,22 @@ locate_python_tool() {
 # Execute Python or Python tool
 #
 exec_python() {
-    PYLD_BIN=`dirname "$0"`
+    PYLD_BIN=${0%/*}
     if [ ! "$PYLD_EXE" ]
     then
         PYLD_EXE=python3
     fi
     if [ "$PYLD_MAIN" ]
     then
-        PYLD_FLAGS="-pyldname="`basename "$0"`
+        PYLD_FLAGS="-pyldname=${0##*/}"
     else
-        PYLD_MAIN=`basename "$0"`
+        PYLD_MAIN="${0##*/}"
         PYLD_FLAGS=
     fi
-    if [ "`echo \",$PYTHONVENVS,\" | grep \",$PYLD_MAIN,\"`" -a -x "$0-venv" ]
+    if [ "$PYTHON_VENVS" -a "$(echo "$PYLD_MAIN" | grep -E "^(${PYTHON_VENVS//[, ]/|})")" -a ! "$VIRTUAL_ENV" ]
     then
-        unset PYTHONVENVS
-        exec "$0-venv" "$@"
+        [ -x "$0-venv" ] && source "$0-venv" "$@" && exit 1
+        [ -x "$PYLD_BIN/${PYLD_MAIN%-*}-venv" ] && source "$PYLD_BIN/${PYLD_MAIN%-*}-venv" "$@" && exit 1
     fi
 
     if [ "$OSTYPE" = "cygwin" ]
@@ -190,9 +175,9 @@ exec_python() {
         do
             if [ -f "$1" ]
             then
-                ARG=`cygpath -w "$1" 2> /dev/null | sed -e "s/%/%25/g;s/ /%20/g"`
+                ARG=$(cygpath -w "$1" 2> /dev/null | sed -e "s/%/%25/g;s/ /%20/g")
             else
-                ARG=`echo "$1" | sed -e "s/%/%25/g;s/ /%20/g"`
+                ARG=$(echo "$1" | sed -e "s/%/%25/g;s/ /%20/g")
             fi
             if [ "$ARGS" ]
             then
@@ -205,17 +190,17 @@ exec_python() {
         done
         for ARG in $ARGS
         do
-            set -- "$@" "`echo \"$ARG\" | sed -e 's/%20/ /g;s/%25/%/g'`"
+            set -- "$@" "$(echo "$ARG" | sed -e 's/%20/ /g;s/%25/%/g')"
         done
     fi
 
-    PYTHON=`locate_python "$@"`
+    PYTHON=$(locate_python "$@")
     if [ ! "$PYTHON" ]
     then
-        PYTHON=`which $PYLD_EXE`
+        PYTHON=$(which $PYLD_EXE)
         if [ ! "$PYTHON" ]
         then
-            echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
+            echo "***ERROR*** Cannot find required \"${0##*/}\" software." 1>&2
             exit 1
         fi
     fi
@@ -234,8 +219,8 @@ exec_python() {
 
     if [ "$PYLD_EXE" != "$PYLD_MAIN" ]
     then
-        PYLD_BIN=`dirname "$PYTHON"`
-        TOOL=`locate_python_tool "$PYLD_BIN" "$PYLD_MAIN"`
+        PYLD_BIN=${PYTHON%/*}
+        TOOL=$(locate_python_tool "$PYLD_BIN" "$PYLD_MAIN")
         if [ "$TOOL" ]
         then
             case "$TOOL" in
@@ -243,18 +228,18 @@ exec_python() {
                 exec $PYTHON $TOOL "$@"
                 ;;
             esac
-            if [ "`head -1 \"$TOOL\" | grep '#!.*python'`" ]
+            if [ "$(head -1 "$TOOL" | grep '#!.*python')" ]
             then
                 exec $PYTHON $TOOL "$@"
             fi
             exec $TOOL "$@"
         fi
     fi
-    if [ ! "`which \"$PYLD_MAIN\"`" ]
+    if [ ! "$(which "$PYLD_MAIN")" ]
     then
         echo "***ERROR*** Cannot find required \"$PYLD_MAIN\" software." 1>&2
     fi
-    exec `which "$PYLD_MAIN"` "$@"
+    exec $(which "$PYLD_MAIN") "$@"
 }
 
 temp_dotfiles "$@"

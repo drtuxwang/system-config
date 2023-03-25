@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-if [ "`grep --version 2>&1 | grep "GNU grep"`" ]
+if [ "$(grep --version 2>&1 | grep "GNU grep")" ]
 then
     exec grep -E "$@"
 else
-    PATH=`echo ":$PATH" | sed -e "s@:${0%/*}:@:@"`
+    PATH=$(echo ":$PATH" | sed -e "s@:${0%/*}:@:@")
     exec egrep "$@"
 fi

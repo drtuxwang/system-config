@@ -55,7 +55,7 @@ then
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`whoami 2> /dev/null`
-    [ ! "$MYUNAME" ] && export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    [ ! "$MYUNAME" ] && export MYUNAME=`id -un`
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
         __fcd()
@@ -70,6 +70,10 @@ then
         __kube_ps1()
         {
            [ -f "$KUBECONFIG" ] && echo " ${KUBECONFIG##*/}"
+        }
+        __venv_ps1()
+        {
+           [ "$VIRTUAL_ENV" ] && echo " ${VIRTUAL_ENV##*/}"
         }
         __kubeconfig() {
             ls -1 $HOME/.kube/*.yaml 2> /dev/null | sed -e "s@.*/@  Kubeconfig: @"
@@ -89,7 +93,7 @@ then
         fi
         alias kubeconfig=__kubeconfig
         MYSHELL="${0/-/}"
-        PS1='\[\033[01;32m\][\t] \[\033[01;34m\]`pwd`\[\033[01;31m\]`__git_ps1``__kube_ps1`\n\[\033[01;32m\]'$MYUNAME'@'$MYHNAME'\[\033[00m\] $ '
+        PS1='\[\033[01;32m\][\t] \[\033[01;34m\]`pwd`\[\033[01;31m\]`__git_ps1``__kube_ps1``__venv_ps1`\n\[\033[01;32m\]'$MYUNAME'@'$MYHNAME'\[\033[00m\] $ '
 
         # VM/Container detection
         case `uname` in
@@ -262,7 +266,7 @@ then
     export LESSHISTFILE=/dev/null
     export PYTHONDONTWRITEBYTECODE=1
 
-    # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    # Save/load default path settings
     if [ ! "$BASE_PATH" ]
     then
         if [ ! "$LM_LICENSE_FILE" ]
@@ -281,10 +285,10 @@ then
         then
             export MANPATH=
         fi
-        export BASE_PATH=$PATH
-        export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-        export BASE_PYTHONPATH=$MANPATH
-        export BASE_MANPATH=$MANPATH
+        export BASE_PATH="$PATH"
+        export BASE_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+        export BASE_PYTHONPATH="$PYTHONPATH"
+        export BASE_MANPATH="$MANPATH"
     else
         case `uname` in
         *NT*)
@@ -293,10 +297,10 @@ then
             export MANPATH=`/bin/cygpath --unix --path "$BASE_MANPATH"`
             ;;
         *)
-            export PATH=$BASE_PATH
-            export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
-            export PYTHONPATH=$BASE_PYTHONPATH
-            export MANPATH=$BASE_MANPATH
+            export PATH="$BASE_PATH"
+            export LD_LIBRARY_PATH="$BASE_LD_LIBRARY_PATH"
+            export PYTHONPATH="$BASE_PYTHONPATH"
+            export MANPATH="$BASE_MANPATH"
             ;;
         esac
     fi
@@ -398,6 +402,10 @@ then
         ;;
     esac
     export PATH="$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
+    if [ "$VIRTUAL_ENV" ]
+    then
+        export PATH="$VIRTUAL_ENV/bin:$PATH"
+    fi
 
     # Change to $HOME/Desktop
     if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]

@@ -1,36 +1,3 @@
 #!/usr/bin/env bash
-#
-# devpi requires insecure py (1.11.0 last version and seems abandoned)
-#
 
-PYTHON="python3.10"
-PACKAGE="devpi-client==5.2.3"
-DEPENDS="devpi-common==3.6.0"
-
-create_virtualenv() {
-    umask 022
-    if [ ! -d "$VENV" ]
-    then
-        $PYTHON -m virtualenv $VENV || exit 1
-        [ -h "$VENV/bin/$PYTHON" ] && (rm -f "$VENV/bin/"python*; ln -sf $PYTHON_DIR/bin/$PYTHON $VENV/bin/$PYTHON)
-    fi
-
-    $VENV/bin/$PYTHON -m pip install $PACKAGE $DEPENDS || exit 1
-    IFS=$'\n'
-    for FILE in $(grep "^#!/.*/python" "$VENV/bin"/* 2> /dev/null | grep -v ":#!/usr/bin/env " | sed -e "s@:#!/.*@@")
-    do
-        echo "$FILE: #!/usr/bin/env $PYTHON"
-        sed -i "s@^#!/.*@#!/usr/bin/env $PYTHON@" "$FILE"
-    done
-    unset IFS
-}
-
-# Setup Virtual Environment
-PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | $PYTHON)
-VENV="$PYTHON_DIR-venv/${PACKAGE%==*}"
-[ -d "$VENV" ] || [ -w "${VENV%/*/*}" ] || VENV="$TMP/$($PYTHON --version 2>&1 | sed -e "s/ /-/g")-${PACKAGE/==/-}"
-[ "$($VENV/bin/$PYTHON -m pip freeze 2> /dev/null | grep $PACKAGE)" ] || create_virtualenv
-
-MYNAME=${0##*/}
-export PATH="$VENV/bin:$PATH"
-exec $VENV/bin/$PYTHON $VENV/bin/${MYNAME%-*} "$@"
+source "${0%/*}/devpi-client-venv"

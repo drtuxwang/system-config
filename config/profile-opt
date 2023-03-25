@@ -9,7 +9,7 @@ then
     # All traffic to VPN
     ##export VPN_ALL_TRAFFIC=1
 
-    # Select Python virtualenvs
-    export PYTHONVENVS="ansible,ansible-playbook,ansible-vault,aws,cqlsh-venv,devpi,docker-compose,nexus3,pydisasm"
-    ##export PYTHONVENVS27="ansible,ansible-playbook,ansible-vault"
+    # Python virtualenv activation regex
+    [ ! "$VIRTUAL_ENV" ] && export PYTHON_VENVS=".*"
+    ## export ANSIBLE_PYTHON=python2.7
 fi

@@ -62,7 +62,7 @@
   - software-bin
 
 - name: Synchronize "/opt/software/bin" directory
-  synchronize:
+  ansible.posix.synchronize:
     src: '{{ bin_directory }}/'
     dest: /opt/software/bin/
     owner: no

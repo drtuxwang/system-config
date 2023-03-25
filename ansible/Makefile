@@ -16,10 +16,12 @@ run: play            # Run Ansible
 
 .PHONY: test
 test:                # Dryrun Ansible changes
+	@bin/ssh-keys.sh $(HOST)
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff --check
 
 .PHONY: play
 play:                # Apply Ansible changes
+	@bin/ssh-keys.sh $(HOST)
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff
 
 .PHONY: tags

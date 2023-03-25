@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 PYLD_MAIN="vim"
-. `dirname "$0"`/pyld.sh
+source "${0%/*}/pyld.bash"

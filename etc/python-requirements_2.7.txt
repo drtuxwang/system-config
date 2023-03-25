@@ -1,4 +1,3 @@
-appimage-builder==None
 arrow==0.17.0
 astroid==1.6.6
 asttokens==None
@@ -6,7 +5,6 @@ backports-abc==0.5           #   (required by tornado for 2.7)
 backports.functools-lru-cache==1.6.4  #   (required by pylint for 2.7)
 bcrypt==3.1.7
 beautifulsoup4               # ==4.9.3 (last compatible version)
-Brotli==None
 certifi                      # ==2021.10.8 (last compatible version)
 cffi==1.15.1
 charset-normalizer==None
@@ -20,8 +18,6 @@ decorator==4.4.2
 dicttoxml==None
 dill==None
 dnspython==None
-docker==None
-emrichen==None
 enum34==1.1.10               #   (required by astroid for 2.7)
 executing==None
 filelock==3.2.1
@@ -33,7 +29,6 @@ gitdb==None
 GitPython                    # ==2.1.15 (last compatible version)
 gTTS==None
 idna                         # ==2.10 (last compatible version)
-ImageHash==None
 importlib-metadata==2.1.1    #   (required by virtualenv for 2.7)
 importlib-resources==3.3.1   #   (required by virtualenv for 2.7)
 ipaddress==1.0.23            #   (required by cryptography for 2.7)
@@ -43,21 +38,18 @@ isort==4.3.21
 jedi==None
 Jinja2                       # ==2.11.3 (last compatible version)
 lazy-object-proxy==1.6.0
-lief==None
 Markdown==3.1.1
 MarkupSafe==1.1.1
 matplotlib-inline==None
 mccabe                       # ==0.6.1 (last compatible version)
 motor==2.1.0
-mutagen==None
 mypy-extensions==None
 mypy==None
-numpy                        # ==1.16.6 (last compatible version)
 packaging                    # ==20.9 (last compatible version)
 parso==None
 pathlib2==2.3.6              #   (required by virtualenv for 2.7)
-Pillow==None
 pip                          # ==20.2.4 (last compatible version)
+pipdeptree                   # ==2.2.1 (last compatible version)
 platformdirs==2.0.2
 poyo==0.5.0                  #   (required by cookiecutter for 2.7)
 prompt-toolkit==None
@@ -70,16 +62,11 @@ pylint==1.9.5
 pymongo                      # ==3.13.0 (last compatible version)
 pyOpenSSL==21.0.0
 pyparsing==2.2.2             # New version incompatible
-python-gnupg==None
-PyWavelets==1.0.3
 PyYAML                       # ==5.4.1 (last compatible version)
 pyzstd==None
 questionary==None
 requests==2.27.1
-roam==None
-ruamel.yaml==None
 scandir==1.10.0              #   (required by pathlib2 for 2.7)
-scipy==None
 setuptools                   # ==44.1.1 (last compatible version)
 singledispatch==3.7.0        #   (required by astroid for 2.7)
 smmap2==3.0.1                #   (required by gitdb2 for 2.7)
@@ -92,9 +79,6 @@ traitlets==None
 typing==3.10.0.0
 typing_extensions==None
 virtualenv                   # ==20.15.1 (last compatible version)
-websocket-client==None
-websockets==None
 wheel                        # ==0.37.1 (last compatible version)
 whichcraft==0.6.1            #   (required by cookiecutter for 2.7)
-yt-dlp==None
 zipp==1.2.0                  #   (required by importlib-metadata/pep517 for 2.7)

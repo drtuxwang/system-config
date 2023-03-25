@@ -45,15 +45,16 @@ the years.
  * bin/2to3                 Python 3.x script wrappers
  * bin/2to3.bat
  * bin/ansible
- * bin/ansible-venv
+ * bin/ansible-galaxy
+ * bin/ansible-inventory
  * bin/ansible-playbook
- * bin/ansible-playbook-venv
  * bin/ansible-vault
- * bin/ansible-vault-venv
+ * bin/ansible-venv
  * bin/appimage-builder
+ * bin/appimage-builder-venv
  * bin/aws
  * bin/aws-venv
- * bin/aws.bat
+ * bin/awscli-venv
  * bin/cookiecutter
  * bin/cookiecutter.bat
  * bin/cqlsh
@@ -63,8 +64,9 @@ the years.
  * bin/cythonize
  * bin/cythonize.bat
  * bin/devpi
- * bin/devpi-venv
  * bin/devpi.bat
+ * bin/devpi-venv
+ * bin/devpi-client-venv
  * bin/django-admin
  * bin/django-admin.bat
  * bin/docker-compose
@@ -72,27 +74,24 @@ the years.
  * bin/flask
  * bin/flask.bat
  * bin/glances
+ * bin/glances-venv
  * bin/gtts-cli
+ * bin/imagehash-venv
  * bin/ipdb3
  * bin/ipdb3.bat
  * bin/ipython
  * bin/ipython.bat
  * bin/ipython3
  * bin/ipython3.bat
- * bin/jenkins-jobs
- * bin/jenkins-jobs.bat
  * bin/markdown
  * bin/markdown.py
  * bin/markdown_py
  * bin/markdown_py.bat
- * bin/mid3iconv
- * bin/mid3iconv.bat
- * bin/mid3v2
- * bin/mid3v2.bat
  * bin/mypy
  * bin/mypy.bat
  * bin/nexus3
  * bin/nexus3-venv
+ * bin/nexus3-cli-venv
  * bin/pep8
  * bin/pep8.bat
  * bin/pip
@@ -100,6 +99,7 @@ the years.
  * bin/pip3
  * bin/pip3.bat
  * bin/poetry
+ * bin/poetry-venv
  * bin/pycodestyle
  * bin/pycodestyle.bat
  * bin/pydisasm
@@ -111,16 +111,12 @@ the years.
  * bin/pyflakes.bat
  * bin/pylint
  * bin/pylint.bat
- * bin/pytest
- * bin/pytest.bat
- * bin/tox
- * bin/tox.bat
- * bin/uncompyle6
- * bin/uncompyle6.bat
  * bin/virtualenv
  * bin/virtualenv.bat
  * bin/yt-dlp
  * bin/yt-dlp.bat
+ * bin/yt-dlp-venv
+ * bin/xdis-venv
  * bin/0ad                  Sandbox for "0ad" launcher
  * bin/_0ad.py
  * bin/7z                   Make a compressed archive in 7z format
@@ -172,8 +168,6 @@ the years.
  * bin/chkxml.bat
  * bin/chkxml.py
  * bin/chrome               Wrapper for "google-chrome" command
- * bin/chrome-proxy
- * bin/chrome-proxy.bat
  * bin/chrome.bat
  * bin/chrome.py
  * bin/chromium             Wrapper for "chromium" command
@@ -220,9 +214,6 @@ the years.
  * bin/etl.py
  * bin/evince               Sandbox for "atril/evince" launcher
  * bin/evince.py
- * bin/extfbfl              Extract Facebook friends list from saved HTML file
- * bin/extfbfl.bat
- * bin/extfbfl.py
  * bin/extjs                Extracts Javascript from a HTML file
  * bin/extjs.bat
  * bin/extjs.py
@@ -240,8 +231,8 @@ the years.
  * bin/fcount               Count number of lines and maximum columns used in file
  * bin/fcount.bat
  * bin/fcount.py
- * bin/fcp                  Copy files and directories
- * bin/fcp.bat              (Preserving time stamps)
+ * bin/fcp                  Copy files and directories (preserving time stamps)
+ * bin/fcp.bat
  * bin/fcp.py
  * bin/fcpall               Copy a file to multiple target files
  * bin/fcpall.bat
@@ -259,8 +250,8 @@ the years.
  * bin/ffile                Determine file type
  * bin/ffile.bat
  * bin/ffile.py
- * bin/ffind                Find file or directory
- * bin/ffind.bat            (uses regular expression)
+ * bin/ffind                Find file or directory (uses regular expression)
+ * bin/ffind.bat
  * bin/ffind.py
  * bin/ffind0               Find zero sized files
  * bin/ffind0.bat
@@ -409,6 +400,7 @@ the years.
  * bin/gqview               Wrapper for "geeqie" command
  * bin/gqview.py
  * bin/graph                Generate multiple graph files with X/Y plots (uses gnuplot)
+ * bin/gqview               Wrapper for "geeqie" command
  * bin/gqview.bat
  * bin/graph.py
  * bin/grpcurl              Wrapper for "grpcurl" command
@@ -569,14 +561,16 @@ the years.
  * bin/pop.py
  * bin/psame                Show picture files with same finger print
  * bin/psame.bat
+ * bin/psame-venv
  * bin/psame.py
  * bin/psum                 Calculate checksum using imagehash, file size and file modification time
  * bin/psum.bat
+ * bin/psum-venv
  * bin/psum.py
  * bin/pyc                  Compile Python source file to PYC file
  * bin/pyc.bat
  * bin/pyc.py
- * bin/pyld.sh              Python loading module for sh/ksh/bash wrapper scripts
+ * bin/pyld.bash            Python loading module for sh/ksh/bash wrapper scripts
  * bin/pyld.py              Load Python main program as module (must have Main class)
  * bin/pyld_gen.py          Wrapper for generic command
  * bin/test_pyld.py         Unit testing suite for "pyld.py"
@@ -880,7 +874,6 @@ the years.
  * config/adblock.txt                    Adblock filter list
  * config/autoexec.sh                    Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
  * config/autoexec-opt.sh                Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
- * config/com.googlecode.iterm2.plist    Copy to "$HOME/Library/Preference" for iTerm2 on Mac
  * config/config                         Copy to "$HOME/.ssh/config"
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
  * config/iptables.conf                  IPTABLES setup script
@@ -919,6 +912,7 @@ the years.
  * ansible/Makefile
  * ansible/ansible.cfg                   Ansible local hosts playbook
  * ansible/bin/show-tags.sh
+ * ansible/bin/ssh-keys.sh
  * ansible/inventory/group_vars/all
  * ansible/inventory/group_vars/local_hosts
  * ansible/inventory/group_vars/local_nodes

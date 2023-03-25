@@ -74,7 +74,7 @@ class Main:
                         ])
                         print(vboxmanage.args2cmd(vboxmanage.get_cmdline()))
                         subtask_mod.Task(vboxmanage.get_cmdline()).run()
-                except KeyError:
+                except (AttributeError, KeyError):
                     pass
 
     @classmethod

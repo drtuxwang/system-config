@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 from typing import List
 
+# pylint: disable=import-error
 import dropbox  # type: ignore
 import requests  # type: ignore
 import stone.backends.python_rsrc.stone_validators  # type: ignore

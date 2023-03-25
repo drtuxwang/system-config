@@ -125,7 +125,8 @@ forward:             # Forward traffic to endpoint
 
 .PHONY: connect
 connect:             # Connect to endpoint
-	@if [ "$(EXTERNAL_IP)" ]; then \
+	@if [ "$(EXTERNAL_IP)" ]; \
+	then \
 		../../kubernetes/bin/kube-connect.sh mongodb://${HOSTNAME}:27017; \
 	else \
 		../../kubernetes/bin/kube-connect.sh mongodb://$(NAMESPACE)/service/${NAME}:27017; \

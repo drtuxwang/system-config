@@ -127,7 +127,8 @@ forward:             # Forward traffic to endpoint
 
 .PHONY: connect
 connect:             # Connect to endpoint
-	@if [ "$(EXTERNAL_IP)" ]; then \
+	@if [ "$(EXTERNAL_IP)" ]; \
+	then \
 		../../kubernetes/bin/kube-connect.sh http://${HOSTNAME}; \
 	else \
 		../../kubernetes/bin/kube-connect.sh http://$(NAMESPACE)/service/${NAME}; \

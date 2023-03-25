@@ -2,7 +2,7 @@
 
 VERSION="3.6"
 
-case `uname` in
+case $(uname) in
 Darwin)
     export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include $CPPFLAGS"
     export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib $LDFLAGS"
@@ -29,24 +29,28 @@ Darwin)
 esac
 
 umask 022
-./configure --prefix="`pwd`/install"
+./configure --prefix="$PWD/install"
 make
 make install
 
-if [ -d install/bin ]; then
-    for FILE in `cd install/bin; ls -1 | grep -v "*.py\$"`; do
-        if [ "`grep \"^#!/.*/python$VERSION\" \"install/bin/$FILE\"`" ]; then
-            PYFILE=`echo "$FILE.py" | sed -e "s/-$VERSION//" -e "s/[.][1-9][0-9]*m*//"`
+if [ -d install/bin ]
+then
+    for FILE in $(cd install/bin; ls -1 | grep -v "*.py$")
+    do
+        if [ "$(grep "^#!/.*/python$VERSION" "install/bin/$FILE")" ]
+        then
+            PYFILE=$(echo "$FILE.py" | sed -e "s/-$VERSION//" -e "s/[.][1-9][0-9]*m*//")
             sed -e "1s@^#.*@#!/usr/bin/env python$VERSION@" "install/bin/$FILE" > "install/bin/$PYFILE"
             rm -f "install/bin/$FILE"
-            echo "#!/bin/sh
-MYDIR=\`dirname \"\$0\"\`
+            echo "#!/usr/bin/env bash
+MYDIR=\${0%/*}
 exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FILE"
             chmod 755 "install/bin/$FILE"
         fi
     done
 
-    if [ -x "install/bin/python${VERSION}m" ]; then
+    if [ -x "install/bin/python${VERSION}m" ]
+    then
         ln -sf "python$VERSION" "install/bin/python${VERSION}m"
         mv "install/bin/python${VERSION}m-config" "install/bin/python${VERSION}-config"
         ln -s "python${VERSION}-config" "install/bin/python${VERSION}m-config"
@@ -60,21 +64,22 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
         unset IFS
     fi
 
-    sed -e "s/^prefix_build=.*/prefix_build=\`dirname \"\\\\\`dirname \\\\\"\$0\\\\\"\\\\\`\"\`/" -e \
-           "s@\".*/install/lib@\"\$prefix_build/lib@" "install/bin/python$VERSION-config" > "install/bin/python$VERSION-config-new"
+    sed -e "s/^prefix_build=.*/prefix_build=\${0%/*/*}/" -e "s@\".*/install/lib@\"\$prefix_build/lib@" \
+        "install/bin/python$VERSION-config" > "install/bin/python$VERSION-config-new"
     mv "install/bin/python$VERSION-config-new" "install/bin/python$VERSION-config"
     chmod 755 "install/bin/python$VERSION-config"
-
-    # Fix for porting on Ubuntu and running on RHEL
-    if [ "`uname`" = Linux ]; then
-        sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
-    fi
 
     # Fix readonly permission on some libraries
     chmod -R u+w install
 
+    # Fix for porting on Ubuntu and running on RHEL
+    [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
+
     # Fix pip
     install/bin/python$VERSION -m pip install --upgrade pip==20.2.4
+
+    # Remove tests
+    find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
 
     rm install/bin/python3
 fi

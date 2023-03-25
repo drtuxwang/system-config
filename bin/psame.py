@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 from typing import List, Set
 
+# pylint: disable=import-error
 import imagehash  # type: ignore
 import PIL  # type: ignore
 import pybktree  # type: ignore

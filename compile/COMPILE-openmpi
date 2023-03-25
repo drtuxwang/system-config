@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-if [ "`basename \"$0\"`" = COMPILE32 ]; then
+if [ "${0##*/}" = COMPILE32 ]
+then
     CC="gcc"; CFLAGS="-fPIC -m32"; export CC CFLAGS
     CXX="g++"; CXXFLAGS="-fPIC -m32"; export CXX CXXFLAGS
     FC="gfortran"; FFLAGS="-fPIC -m32 -fno-second-underscore"; export FC FFLAGS
@@ -11,7 +12,7 @@ else
 fi
 
 umask 022
-./configure --prefix="`pwd`/install"
+./configure --prefix="$PWD/install"
 make
 make install
 

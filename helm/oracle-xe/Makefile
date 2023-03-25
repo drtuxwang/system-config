@@ -109,7 +109,8 @@ forward:             # Forward traffic to endpoint
 .PHONY: connect
 connect:             # Connect to endpoint
 	@echo "\n*** Connecting to Oracle XE database ***"
-	@if [ "$(EXTERNAL_IP)" ]; then \
+	@if [ "$(EXTERNAL_IP)" ]; \
+	then \
 		../../kubernetes/bin/kube-connect.sh oradb://${HOSTNAME}:1521; \
 	else \
 		../../kubernetes/bin/kube-connect.sh oradb://$(NAMESPACE)/service/${NAME}-box:1521; \

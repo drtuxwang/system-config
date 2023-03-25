@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 PYLD_EXE="python"
-. `dirname "$0"`/pyld.sh
+source "${0%/*}/pyld.bash"

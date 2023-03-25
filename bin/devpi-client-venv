@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# devpi-client virtualenv
+#
+
+PYTHON="python3.10"
+PACKAGE="devpi-client==5.2.3"
+DEPENDS="devpi-common==3.6.0"  # Requires insecure py (1.11.0 last version and seems abandoned)
+POSTINST=
+
+source "${0%/*}/virtualenv.bash"
+exec "${0##*/}" "$@"

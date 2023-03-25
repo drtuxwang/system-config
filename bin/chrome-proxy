@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec `dirname $0`/chrome --proxy-server=socks5://localhost:3128 "$@"

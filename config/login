@@ -44,7 +44,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     setenv MYUNAME `whoami |& grep -v "not found"`
     if ( "$MYUNAME" == "" ) then
-        setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+        setenv MYUNAME `id -un`
     endif
     if ( $?tcsh ) then
         setenv MYSHELL "TCSH"
@@ -127,7 +127,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     setenv PYTHONDONTWRITEBYTECODE 1
     set history=256
 
-    # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    # Save/load default path settings
     if ( ! $?BASE_PATH ) then
         if ( ! $?MANPATH ) then
             setenv MANPATH :
@@ -138,15 +138,15 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         if ( ! $?LD_LIBRARY_PATH ) then
             setenv LD_LIBRARY_PATH :
         endif
-        setenv BASE_PATH $PATH
-        setenv BASE_LD_LIBRARY_PATH $LD_LIBRARY_PATH
-        setenv BASE_PYTHONPATH $PYTHONPATH
-        setenv BASE_MANPATH $MANPATH
+        setenv BASE_PATH "$PATH"
+        setenv BASE_LD_LIBRARY_"PATH $LD_LIBRARY_PATH"
+        setenv BASE_PYTHONPATH "$PYTHONPATH"
+        setenv BASE_MANPATH "$MANPATH"
     else
-        setenv PATH $BASE_PATH
-        setenv LD_LIBRARY_PATH $BASE_LD_LIBRARY_PATH
-        setenv PYTHONPATH $BASE_PYTHONPATH
-        setenv MANPATH $BASE_MANPATH
+        setenv PATH "$BASE_PATH"
+        setenv LD_LIBRARY_PATH "$BASE_LD_LIBRARY_PATH"
+        setenv PYTHONPATH "$BASE_PYTHONPATH"
+        setenv MANPATH "$BASE_MANPATH"
     endif
     if ( "$MYUNAME" == root && "`echo :${PATH}: | grep :/sbin:`" == "") then
     then
@@ -223,6 +223,10 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         breaksw
     endsw
     setenv PATH "$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
+    if ( $?VIRTUAL_ENV ) then
+    then
+        setenv PATH "$VIRTUAL_ENV/bin:$PATH"
+    endif
 
     # Change to $HOME/Desktop
     if ( "$PWD" == "$HOME" || "$PWD" == "/" ) then

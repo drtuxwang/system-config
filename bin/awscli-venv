@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# awscli virtualenv
+#
+
+PYTHON="python3.10"
+PACKAGE="awscli==1.26.5"
+DEPENDS="PyYAML==5.4.1"  # >=6 still not supported
+POSTINST=
+
+source "${0%/*}/virtualenv.bash"
+exec "${0##*/}" "$@"

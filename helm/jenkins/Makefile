@@ -125,7 +125,8 @@ forward:             # Forward traffic to endpoint
 connect:             # Connect to endpoint
 	@kubectl --namespace=$(NAMESPACE) get secret $(NAME) -o jsonpath="{.data.jenkins-password}" | \
 		base64 -d | awk '{printf("Username: user\nPassword: %s\n", $$1)}'
-	@if [ "$(EXTERNAL_IP)" ]; then \
+	@if [ "$(EXTERNAL_IP)" ]; \
+	then \
 		../../kubernetes/bin/kube-connect.sh http://${HOSTNAME}; \
 	else \
 		../../kubernetes/bin/kube-connect.sh http://$(NAMESPACE)/service/${NAME}:80; \

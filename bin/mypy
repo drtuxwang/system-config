@@ -1,5 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-MYPY_CACHE_DIR=/dev/null
-export MYPY_CACHE_DIR
-. `dirname "$0"`/pyld.sh
+export MYPY_CACHE_DIR=/dev/null
+source "${0%/*}/pyld.bash"

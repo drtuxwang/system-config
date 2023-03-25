@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-case `uname` in
+case $(uname) in
 Darwin)
     export CPPFLAGS="-I/usr/local/opt/libxml2/include $CPPFLAGS"
     export LDFLAGS="-L/usr/local/opt/libxml2/lib $LDFALGS"

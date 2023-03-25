@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# nexus3-cli virtualenv (Sonatype Nexus client)
+#
+
+PYTHON="python3.10"
+PACKAGE="nexus3-cli==4.1.8"
+DEPENDS=""
+POSTINST=
+
+source "${0%/*}/virtualenv.bash"
+exec "${0##*/}" "$@"

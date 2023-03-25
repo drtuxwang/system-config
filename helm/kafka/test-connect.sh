@@ -10,7 +10,7 @@ echo "Sending message (JMX_PORT=$2)..."
 echo "kubectl exec -i $1 -- bash"
 kubectl exec -i $1 -- bash << EOF
 JMX_PORT= kafka-console-producer.sh --broker-list $2 --topic test
-`date`: testing
+$(date): testing
 tom
 dick
 harry
