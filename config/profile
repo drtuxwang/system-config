@@ -58,22 +58,18 @@ then
     [ ! "$MYUNAME" ] && export MYUNAME=`id -un`
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
-        __fcd()
-        {
+        __fcd() {
             cd $(realpath "$1" 2> /dev/null)
         }
-        __git_ps1()
-        {
-           local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-           [ "$branch" ] && echo " ($branch)"
+        __git_ps1() {
+            local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+            [ "$branch" ] && echo " ($branch)"
         }
-        __kube_ps1()
-        {
-           [ -f "$KUBECONFIG" ] && echo " ${KUBECONFIG##*/}"
+        __kube_ps1() {
+            [ -f "$KUBECONFIG" ] && echo " ${KUBECONFIG##*/}"
         }
-        __venv_ps1()
-        {
-           [ "$VIRTUAL_ENV" ] && echo " ${VIRTUAL_ENV##*/}"
+        __venv_ps1() {
+            [ "$VIRTUAL_ENV" ] && echo " ${VIRTUAL_ENV##*/}"
         }
         __kubeconfig() {
             ls -1 $HOME/.kube/*.yaml 2> /dev/null | sed -e "s@.*/@  Kubeconfig: @"
@@ -86,6 +82,32 @@ then
                 echo "KUBECONFIG=$KUBECONFIG"
             fi
         }
+        __ssh_keys() {
+            for _host in $*
+            do
+                for _key in $(ssh -G "$_host" 2> /dev/null | awk '/^identityfile / {print $2}' | sed -e "s@\~@$HOME@")
+                do
+                    if [ -f "$_key" ]
+                    then
+                        _id=$(awk '{print $3}' "$_key.pub" 2> /dev/null)
+                        if [ ! "$(ssh-add -l 2> /dev/null | grep -E " ($_key|$_id) ")" -a "$SSH_AUTH_SOCK" ]
+                        then
+                            echo -e "\033[33mSSH key for $_host: ssh-add $_key\033[0m"
+                            ssh-add $_key
+                        fi
+                        break
+                    fi
+               done
+           done
+        }
+        __ssh() {
+           [ $# = 1 ] && __ssh_keys "$1"
+           \ssh "$@"; return $?
+        }
+        __xterm() {
+           __ssh_keys "$@"
+           \xterm "$@"; return $?
+        }
         alias fcd=__fcd
         if [ ! "$KUBECONFIG" ]
         then
@@ -94,6 +116,8 @@ then
         alias kubeconfig=__kubeconfig
         MYSHELL="${0/-/}"
         PS1='\[\033[01;32m\][\t] \[\033[01;34m\]`pwd`\[\033[01;31m\]`__git_ps1``__kube_ps1``__venv_ps1`\n\[\033[01;32m\]'$MYUNAME'@'$MYHNAME'\[\033[00m\] $ '
+        alias ssh=__ssh
+        alias xterm=__xterm
 
         # VM/Container detection
         case `uname` in

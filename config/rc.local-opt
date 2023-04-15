@@ -1,20 +1,27 @@
 #!/usr/bin/env bash
 
+mount_disk() {
+    for TRY in 2 4 8 16 32 64 128
+    do
+        sleep $TRY
+        mount -t ext4 -o noatime,errors=remount-ro,commit=60 "$1" "$2"
+        [ "$(ls "$2")" ] && break
+        # Rescan USB for storage devices
+        for SCAN in $(grep usb-storage /sys/class/scsi_host/host*/proc_name | sed -e "s@/proc_name.*@/scan@"); do
+            echo - - - > $SCAN
+        done
+    done
+}
+
+
 # No Network Manager
 ##dhclient $(ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}') &
 
-sleep 10
-
-# Rescan USB for storage devices
-##for SCAN in $(grep usb-storage /sys/class/scsi_host/host*/proc_name | sed -e "s@/proc_name.*@/scan@"); do
-##    echo - - - > $SCAN
-##done
-
 # Mount removable disks
-##mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2
+##mount_disk UUID=<uuid-from-blkid> /mnt/data2 &
 
 # Setup /shared
-##sudo -u owner mkdir -p /tmp/.shared && mount -o bind /tmp/.shared /shared
+##mount -t tmpfs -o noatime tmpfs /shared &
 ##mount -t vboxsf -o uid=owner,gid=users Shared /shared &
 
 # Setup tmpfs for Docker tmp files

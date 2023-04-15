@@ -17,36 +17,48 @@
     mode: '0700'
   tags:
   - user-home
-  - autoexec
+  - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autoexec.sh"
+- name: Copy file to "{{ home_directory }}/.config/autostart.bash"
   copy:
-    src: '{{ config_directory }}/autoexec.sh'
+    src: '{{ config_directory }}/autostart.bash'
     dest: '{{ home_directory }}/.config/'
     owner: '{{ user }}'
     group: '{{ group }}'
+    mode: '0700'
   tags:
   - user-home
-  - autoexec
+  - autostart
 
-- name: Check "{{ home_directory }}/.config/autoexec-opt.sh" file stat
+- name: Check "{{ home_directory }}/.config/autostart-opt.bash" file stat
   stat:
-    path: '{{ home_directory }}/.config/autoexec-opt.sh'
-  register: autoexec_opt_sh
+    path: '{{ home_directory }}/.config/autostart-opt.bash'
+  register: autostart_opt_bash
   tags:
   - user-home
-  - autoexec
+  - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autoexec-opt.sh"
-  when: not autoexec_opt_sh.stat.exists
+- name: Copy file to "{{ home_directory }}/.config/autostart-opt.bash"
+  when: not autostart_opt_bash.stat.exists
   copy:
-    src: '{{ config_directory }}/autoexec-opt.sh'
+    src: '{{ config_directory }}/autostart-opt.bash'
     dest: '{{ home_directory }}/.config/'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0700'
+  tags:
+  - user-home
+  - autostart
+
+- name: Copy file to "{{ home_directory }}/.config/autostart/autostart.desktop"
+  copy:
+    src: '{{ config_directory }}/autostart.desktop'
+    dest: '{{ home_directory }}/.config/autostart/'
     owner: '{{ user }}'
     group: '{{ group }}'
   tags:
   - user-home
-  - autoexec
+  - autostart
 
 - name: Ensure "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml" directory exists
   file:

@@ -70,12 +70,12 @@ check-python:        # Check Python code
 .PHONY: check-packages
 check-packages:      # Check packages
 	@echo "\n*** Running \"${PYTHON}\" package requirement checks ***"
-	etc/python-packages.sh -c ${PYTHON}
+	etc/python-packages.bash -c ${PYTHON}
 
 .PHONY: install
 install:             # Install Python packages
 	@echo "\n*** Installing Python 3 requirements ***"
-	etc/python-packages.sh -i ${PYTHON}
+	etc/python-packages.bash -i ${PYTHON}
 
 .PHONY: gc
 gc:                  # Run git garbage collection

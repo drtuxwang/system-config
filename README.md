@@ -872,8 +872,9 @@ the years.
  * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
  * config/accels                         Copy to "$HOME/.config/geeqie" for keyboard shortcuts
  * config/adblock.txt                    Adblock filter list
- * config/autoexec.sh                    Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
- * config/autoexec-opt.sh                Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
+ * config/autostart.bash                 Copy to "$HOME/.config/autostart.bash" & add to desktop auto startup
+ * config/autostart-opt.bash             Copy to "$HOME/.config/autostart-opt.bash" for optional settings
+ * config/autostart.desktop              Copy to "$HOME/.config/autostart/autostart.desktop" for XFCE autostart
  * config/config                         Copy to "$HOME/.ssh/config"
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
  * config/iptables.conf                  IPTABLES setup script
@@ -894,10 +895,10 @@ the years.
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
  * config/winsetup.bat                   Configure Windows VirtualBox VMs
- * config/winsetup.sh
+ * config/winsetup.bash
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * etc/python-minimum-requirements.txt   Minimum requirements requrid by "*_mod.py" modules.
- * etc/python-packages.sh                Install/check Python packages requirements
+ * etc/python-packages.bash              Install/check Python packages requirements
  * etc/python-requirements.txt           Default requirements file for Python
  * etc/python-requirements_2.7.txt       Additional requirements for Python 2.7
  * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
@@ -905,19 +906,19 @@ the years.
  * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
  * etc/python-requirements_3.8.txt       Additional requirements for Python 3.8
  * etc/python-requirements_3.9.txt       Additional requirements for Python 3.9
+ * etc/python-requirements_3.10mac.txt   Additional requirements for Python 3.10 on Mac
  * etc/python-requirements_3.11.txt      Additional requirements for Python 3.11
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
  * ansible/Makefile
  * ansible/ansible.cfg                   Ansible local hosts playbook
- * ansible/bin/show-tags.sh
- * ansible/bin/ssh-keys.sh
+ * ansible/bin/show-tags.bash
+ * ansible/bin/ssh-keys.bash
  * ansible/inventory/group_vars/all
  * ansible/inventory/group_vars/local_hosts
  * ansible/inventory/group_vars/local_nodes
  * ansible/inventory/group_vars/local_vmhosts
- * ansible/inventory/host_vars/debian10.local
  * ansible/inventory/host_vars/debian11.local
  * ansible/inventory/host_vars/debianmac.local
  * ansible/inventory/host_vars/hotdog.local
@@ -959,7 +960,7 @@ the years.
  * ansible/roles/user-home/templates/netnice.json
  * ansible/roles/user-home/vars/main.yaml
  * appimage/Makefile
- * appimage/bin/build-appimage.sh        Wrapper for "appimage-builder" command
+ * appimage/bin/build-appimage.bash      Wrapper for "appimage-builder" command
  * appimage/bin/gpg                      Disable GPG signing
  * appimage/bin/appimage/bin/zsyncmake   Disable ".zsync" creation
  * appimage/0ad-0.0.26/AppImageBuilder.yaml
@@ -994,12 +995,12 @@ the years.
  * compile/COMPILE-zstd                  Zstandard compile script
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
- * cloudformation/1pxy/submit.sh
+ * cloudformation/1pxy/submit.bash
  * cloudformation/multi-stacks/Makefile  CloudFormation: multi-stacks example
  * cloudformation/multi-stacks/main_stack.json
  * cloudformation/multi-stacks/pxy_stack.json
  * cloudformation/multi-stacks/sg_stack.json
- * cloudformation/multi-stacks/submit.sh
+ * cloudformation/multi-stacks/submit.bash
  * cookiecutter/Makefile                 Makefile for building examples
  * cookiecutter/docker/cookiecutter.json
  * cookiecutter/docker/{{cookiecutter.project_name}}/Dockerfile

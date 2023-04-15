@@ -33,7 +33,7 @@ pull:                # Pull Docker base image
 
 .PHONY: save
 save:                # Save Docker base image as tar file
-	../bin/docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save.bash $(BASE_IMAGE)
 
 .PHONY: build
 build:               # Build Docker images

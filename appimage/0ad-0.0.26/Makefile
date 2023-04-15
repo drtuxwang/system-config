@@ -7,7 +7,7 @@ status:              # Status of AppImage
 
 .PHONY: build
 build:               # Build Docker images
-	../bin/build-appimage.sh AppImageBuilder.yaml
+	../bin/build-appimage.bash AppImageBuilder.yaml
 
 .PHONY: test
 test:                # Run tests

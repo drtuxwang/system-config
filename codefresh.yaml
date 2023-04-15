@@ -46,7 +46,7 @@ steps:
         entry_point: /bin/sh
         commands:
         - cd docker/python-3.10/dev && ../../bin/create-root-tar.sh bash bin vim
-        - cd docker/python-3.10/dev && ../../bin/python-packages.sh
+        - cd docker/python-3.10/dev && ../../bin/python-packages.bash
 
   docker_base_builds:
     title: Package Docker base images

@@ -132,8 +132,12 @@ pipeline {
     }
 
     post {
+        failure {
+            echo "Cleanup Git locks..."
+            sh """find \$(find -type d -name .git) -name '*.lock' -exec rm -v {} +"""
+        }
         always {
-            sh "echo \"Pipeline cleanup...\" ||:"
+            echo "Pipeline cleanup..."
             sh """
                 date +"Pipeline finish time: %Y-%m-%d-%H:%M:%S"
                 echo "Pipeline elapsed time: \$((\$(date +%s) - ${start_time})) seconds"

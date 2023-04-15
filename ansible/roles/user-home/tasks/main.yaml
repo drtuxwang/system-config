@@ -72,7 +72,7 @@
   include_tasks: gui-apps.yaml
   tags:
   - user-home
-  - autoexec
+  - autostart
   - mimeapps
   - geeqie
   - terminal

@@ -4,3 +4,4 @@ export HISTSIZE=256
 export HISTTIMEFORMAT=
 export LESSHISTFILE=/dev/null
 export PYTHONDONTWRITEBYTECODE=1
+export PATH="/opt/software/bin:$PATH"

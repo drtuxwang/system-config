@@ -16,17 +16,17 @@ run: play            # Run Ansible
 
 .PHONY: test
 test:                # Dryrun Ansible changes
-	@bin/ssh-keys.sh $(HOST)
+	@bin/ssh-keys.bash $(HOST)
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff --check
 
 .PHONY: play
 play:                # Apply Ansible changes
-	@bin/ssh-keys.sh $(HOST)
+	@bin/ssh-keys.bash $(HOST)
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff
 
 .PHONY: tags
 tags:                # Show Ansible tags
-	@bin/show-tags.sh
+	@bin/show-tags.bash
 
 .PHONY: help
 help:                # Show Makefile options

@@ -39,14 +39,13 @@ PYTHON=${1-}
 REQUIREMENT=${2-}
 [[ ! /$PYTHON =~ /python[1-9]* ]] && help
 
-esc=$'\033'
 export PYTHONPATH=
 
 
 read_requirements() {
     if [ -f "$1" ]
     then
-        echo -e "${esc}[34mProcessing \"$1\"...${esc}[0m"
+        echo -e "\033[34mProcessing \"$1\"...\033[0m"
         for PACKAGE in $(sed -e "s/ *# ==/==/;s/#.*//;s/ .*//" "$1")
         do
             NAME=${PACKAGE%==*}
@@ -78,7 +77,7 @@ check_packages() {
         elif [ "$MODE" = "uninstall" ]
         then
             echo y | $UNINSTALL $PACKAGE 2>&1 | grep -v "'root' user"
-            echo -e "${esc}[33mUninstalled!${esc}[0m"
+            echo -e "\033[33mUninstalled!\033[0m"
         else
             echo $PACKAGE | awk '{printf("%-27s  # Requirement not found\n", $1)}'
         fi
@@ -112,7 +111,7 @@ check_packages() {
     $PYTHON -m pip check 2>&1 | grep -Ev "DEPRECATION:|No broken requirements"
     [ ${PIPESTATUS[0]} = 0 ] || ERROR=1
 
-    [ "$ERROR" ] && echo -e "${esc}[31mERROR!${esc}[0m" && exit 1
+    [ "$ERROR" ] && echo -e "\033[31mERROR!\033[0m" && exit 1
 }
 
 
@@ -131,7 +130,7 @@ install_packages() {
         echo "curl --location --progress-bar $GETPIP | $PYTHON"
         curl --location --progress-bar $GETPIP | $PYTHON 2>&1 | grep -v "'root' user"
         [ ${PIPESTATUS[0]} = 0 ] || exit 1
-        echo -e "${esc}[33mInstalled!${esc}[0m"
+        echo -e "\033[33mInstalled!\033[0m"
     fi
 
     PACKAGES=$(check_packages | grep -v "not found" | awk '/ # Requirement / {print $NF}')
@@ -140,7 +139,7 @@ install_packages() {
         echo "$INSTALL $PACKAGE"
         $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"
         [ ${PIPESTATUS[0]} = 0 ] || exit 1
-        echo -e "${esc}[33mInstalled!${esc}[0m"
+        echo -e "\033[33mInstalled!\033[0m"
     done
     [ "$MODE" = "piponly" ] && return
 
@@ -150,7 +149,7 @@ install_packages() {
         echo "$INSTALL $PACKAGE"
         $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"
         [ ${PIPESTATUS[0]} = 0 ] || continue
-        echo -e "${esc}[33minstalled!${esc}[0m"
+        echo -e "\033[33minstalled!\033[0m"
     done
 
     PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
@@ -186,7 +185,7 @@ then
 else
     export CFLAGS="$PY_INC ${CFLAGS:-}"
 fi
-echo -e "${esc}[33mChecking \"$PY_EXE\"...${esc}[0m"
+echo -e "\033[33mChecking \"$PY_EXE\"...\033[0m"
 
 declare -A requirements
 if [ "$REQUIREMENT" ]
@@ -198,11 +197,11 @@ else
     case $(uname) in
     Darwin)
         read_requirements "${0%/*}/python-requirements_mac.txt"
-        read_requirements "${0%/*}/python-requirements_$VERSION}mac.txt"
+        read_requirements "${0%/*}/python-requirements_${VERSION}mac.txt"
         ;;
     esac
 fi
 
 [ "$MODE" = install ] && install_packages "$MODE" && install_packages "$MODE"  # Retry
 [ "$MODE" != piponly ] && check_packages
-echo -e "${esc}[33mOK!${esc}[0m"
+echo -e "\033[33mOK!\033[0m"
