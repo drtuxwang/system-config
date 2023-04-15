@@ -971,23 +971,19 @@ the years.
  * appimage/wesnoth-1.14.15/Makefile     Wesnoth 1.14.15 (Debian 11))
  * appimage/wesnoth-1.16.8/AppImageBuilder.yaml
  * appimage/wesnoth-1.16.8/Makefile      Wesnoth 1.16.8 (Debian 11 backports)
- * compile/COMPILE-7zip                  7zip compile script
- * compile/COMPILE-aria2                 Aria2 compile script
- * compile/COMPILE-git                   Git compile script
- * compile/COMPILE-openmpi               Open MPI compile script
- * compile/COMPILE-par2                  Par2cmdline compile script
- * compile/COMPILE-python2.7             Python 2.7 compile script
- * compile/COMPILE-python3.1             Python 3.1 compile script
- * compile/COMPILE-python3.2             Python 3.2 compile script
- * compile/COMPILE-python3.3             Python 3.3 compile script
- * compile/COMPILE-python3.4             Python 3.4 compile script
- * compile/COMPILE-python3.5             Python 3.5 compile script
- * compile/COMPILE-python3.6             Python 3.6 compile script
- * compile/COMPILE-python3.7             Python 3.7 compile script
- * compile/COMPILE-python3.8             Python 3.8 compile script
- * compile/COMPILE-python3.9             Python 3.9 compile script
- * compile/COMPILE-python3.10            Python 3.10 compile script
- * compile/COMPILE-python3.11            Python 3.11 compile script
+ * compile/COMPILE-7zip.bash             7zip compile script
+ * compile/COMPILE-aria2.bash            Aria2 compile script
+ * compile/COMPILE-git.bash              Git compile script
+ * compile/COMPILE-openmpi.bash          Open MPI compile script
+ * compile/COMPILE-par2.bash             Par2cmdline compile script
+ * compile/COMPILE-python-2.7.bash       Python 2.7 compile script
+ * compile/COMPILE-python-3.5.bash       Python 3.5 compile script
+ * compile/COMPILE-python-3.6.bash       Python 3.6 compile script
+ * compile/COMPILE-python-3.7.bash       Python 3.7 compile script
+ * compile/COMPILE-python-3.8.bash       Python 3.8 compile script
+ * compile/COMPILE-python-3.9.bash       Python 3.9 compile script
+ * compile/COMPILE-python-3.10.bash      Python 3.10 compile script
+ * compile/COMPILE-python-3.11.bash      Python 3.11 compile script
  * compile/COMPILE-tinyproxy             TinyProxy compile script
  * compile/COMPILE-tmux                  TMUX compile script
  * compile/COMPILE-unrar                 UnRar compile script
