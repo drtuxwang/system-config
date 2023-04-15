@@ -2,7 +2,7 @@ NAME := kafka
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := kafka
-CHART_VERSION := 20.0.6
+CHART_VERSION := 21.3.1
 APP_VERSION := 2.8.1
 IMAGE_TAG := 2.8.1-debian-10-r99
 NAMESPACE ?= default
@@ -74,12 +74,11 @@ repo-add:            # Add Helm repository
 .PHONY: list
 list:                # List Helm chart versions
 	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
-		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
-		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
+		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d'
 
 .PHONY: version
 version: list        # Show Helm chart and app version
-	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: fetch
 fetch: repo-add clean # Fetch Helm chart
@@ -99,7 +98,7 @@ pull:                # Pull Docker images
 
 .PHONY: save
 save:                # Save Docker images as tar file
-	../bin/helm-save.sh \
+	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -122,10 +121,10 @@ install: repo-add    # Install Helm release
 connect:             # Connect to endpoint
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		./test-connect.sh $(NAME)-server-0 \
+		./test-connect.bash $(NAME)-server-0 \
 			$(EXTERNAL_IP):`kubectl get svc kafka-server-0-external | awk 'NR==2 {print $$5}' | sed -e "s/.*://;s#/.*##"`; \
 	else \
-		./test-connect.sh $(NAME)-server-0 \
+		./test-connect.bash $(NAME)-server-0 \
 			127.0.0.1:`kubectl get svc kafka-server-0-external | awk 'NR==2 {print $$5}' | cut -f1 -d:`; \
 	fi
 

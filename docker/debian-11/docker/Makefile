@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/debian:11-slim
 DOCKER_REPO=https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64
-DOCKER_DEB=docker-ce-cli_23.0.1-1~debian.11~bullseye_amd64.deb
+DOCKER_DEB=docker-ce-cli_23.0.3-1~debian.11~bullseye_amd64.deb
 IMAGE := drtuxwang/debian-docker:11-slim
 NAME := debian11-docker
 HOSTNAME := debian11-docker
@@ -33,7 +33,7 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.sh bash bin vim
+	../../bin/create-rootfs.bash bash bin vim
 	docker build \
 		$(DOCKER_BUILD_FLAGS) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \

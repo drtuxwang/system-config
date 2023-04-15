@@ -20,11 +20,11 @@ pull:                # Pull Docker base image
 
 .PHONY: pull-save
 pull-save:           # pull Docker base image and save as tar file if changed
-	../bin/docker-pull-save.sh $(BASE_IMAGE)
+	../bin/docker-pull-save.bash $(BASE_IMAGE)
 
 .PHONY: save
 save:                # Save Docker base image as tar file
-	../bin/docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save.bash $(BASE_IMAGE)
 
 .PHONY: build
 build:               # Build Docker images

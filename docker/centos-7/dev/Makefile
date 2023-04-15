@@ -29,7 +29,7 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.sh bash bin-sysinfo python3.6 vim
+	../../bin/create-rootfs.bash bash bin-sysinfo python3.6 vim
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 

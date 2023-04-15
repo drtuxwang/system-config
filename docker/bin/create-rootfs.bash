@@ -47,7 +47,7 @@ do
     python*)
         mkdir -p rootfs/etc
         VERSION=${1#python}
-        for FILE in python-packages.sh python-requirements.txt python-requirements_$VERSION.txt
+        for FILE in python-packages.bash python-requirements.txt python-requirements_$VERSION.txt
         do
             [ ! -f "$TOPDIR/etc/$FILE" ] && continue
             echo "Creating \"rootfs/etc/$FILE\"..."

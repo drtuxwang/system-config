@@ -2,7 +2,7 @@ NAME := etcd
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := etcd
-CHART_VERSION := 8.5.11
+CHART_VERSION := 8.7.7
 APP_VERSION := 3.4.24
 IMAGE_TAG := 3.4.24-debian-11-r0
 NAMESPACE ?= infra
@@ -66,12 +66,11 @@ repo-add:            # Add Helm repository
 .PHONY: list
 list:                # List Helm chart versions
 	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
-		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
-		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
+		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d'
 
 .PHONY: version
 version: list        # Show Helm chart and app version
-	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: fetch
 fetch: repo-add clean # Fetch Helm chart
@@ -91,7 +90,7 @@ pull:                # Pull Docker images
 
 .PHONY: save
 save:                # Save Docker images as tar file
-	../bin/helm-save.sh \
+	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \

@@ -2,7 +2,7 @@ NAME := grafana
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := grafana
-CHART_VERSION := 8.2.26
+CHART_VERSION := 8.2.32
 APP_VERSION := 8.5.10
 IMAGE_TAG := 8.5.10-debian-11-r3
 NAMESPACE ?= infra
@@ -73,12 +73,11 @@ repo-add:            # Add Helm repository
 .PHONY: list
 list:                # List Helm chart versions
 	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
-		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
-		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
+		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d'
 
 .PHONY: version
 version: list        # Show Helm chart and app version
-	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: fetch
 fetch: repo-add clean # Fetch Helm chart
@@ -98,7 +97,7 @@ pull:                # Pull Docker images
 
 .PHONY: save
 save:                # Save Docker images as tar file
-	../bin/helm-save.sh \
+	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -127,9 +126,9 @@ connect:             # Connect to endpoint
 		base64 -d | awk '{printf("Username: admin\nPassword: %s\n", $$1)}'
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.sh http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.sh http://$(NAMESPACE)/service/${NAME}:3000; \
+		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}:3000; \
 	fi
 
 .PHONY: uninstall

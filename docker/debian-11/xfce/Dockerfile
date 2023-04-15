@@ -88,7 +88,7 @@ RUN \
     useradd --shell /bin/bash --gid ${GROUP} ${USER}
 
 COPY --from=builder /rootfs /
-RUN /etc/python-packages.sh -pip /usr/bin/python3 && \
+RUN /etc/python-packages.bash -pip /usr/bin/python3 && \
     chown -R ${USER}:${GROUP} /home/${USER}
 
 # Configure start

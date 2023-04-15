@@ -2,7 +2,9 @@ NAME := nexus
 CHART_REPO := oteemo
 CHART_URL := https://oteemo.github.io/charts
 CHART_NAME := sonatype-nexus
-CHART_VERSION := 5.2.2
+CHART_VERSION := 5.3.5
+APP_VERSION := 3.27.0
+IMAGE_TAG := 3.27.0
 NAMESPACE ?= infra
 HOSTNAME ?= nexus.kube.local
 TLS_SECRET ?= kube-local-tls
@@ -31,7 +33,7 @@ HELM_INSTALL := helm upgrade --install --wait
 
 EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
 ifndef INGRESS_ENABLED
-	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -Eq "^ingress|traefik" && echo true || echo false)
 endif
 HELM_FLAGS := \
 	--namespace=$(NAMESPACE) \
@@ -73,12 +75,11 @@ repo-add:            # Add Helm repository
 .PHONY: list
 list:                # List Helm chart versions
 	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
-		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
-		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
+		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d'
 
 .PHONY: version
 version: list        # Show Helm chart and app version
-	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: fetch
 fetch: repo-add clean # Fetch Helm chart
@@ -98,7 +99,7 @@ pull:                # Pull Docker images
 
 .PHONY: save
 save:                # Save Docker images as tar file
-	../bin/helm-save.sh \
+	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -127,9 +128,9 @@ connect:             # Connect to endpoint
 	@echo "password: admin123"
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.sh http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.sh http://$(NAMESPACE)/service/${NAME}:8080; \
+		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}:8080; \
 	fi
 
 .PHONY: uninstall

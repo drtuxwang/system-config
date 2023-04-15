@@ -29,7 +29,7 @@ RUN \
     apt-get clean
 
 COPY rootfs/ /
-RUN /etc/python-packages.sh -pip /usr/bin/python3
+RUN /etc/python-packages.bash -pip /usr/bin/python3
 
 # Configure start
 ENV HOME=/root

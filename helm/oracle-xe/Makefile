@@ -62,14 +62,14 @@ status-kube:         # Show Kube workload status
 
 .PHONY: list
 list:                # List Helm chart versions
-	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
-	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("<%s>   ", $$2)}'
+	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_REPO)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: version
 version: list        # Show Helm chart and app version
-	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: images
 images:              # Show Docker images
@@ -83,7 +83,7 @@ pull:                # Pull Docker images
 
 .PHONY: save
 save:                # Save Docker images as tar file
-	../bin/helm-save.sh \
+	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -111,9 +111,9 @@ connect:             # Connect to endpoint
 	@echo "\n*** Connecting to Oracle XE database ***"
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.sh oradb://${HOSTNAME}:1521; \
+		../../kubernetes/bin/kube-connect.ba oradb://${HOSTNAME}:1521; \
 	else \
-		../../kubernetes/bin/kube-connect.sh oradb://$(NAMESPACE)/service/${NAME}-box:1521; \
+		../../kubernetes/bin/kube-connect.ba oradb://$(NAMESPACE)/service/${NAME}-box:1521; \
 	fi
 
 .PHONY: uninstall

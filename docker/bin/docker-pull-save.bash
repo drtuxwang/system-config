@@ -20,6 +20,6 @@ do
     CREATED=$(docker inspect "$IMAGE" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
     if [ "$CREATED_OLD" != "$CREATED" ]
     then
-        $(dirname "$0")/docker-save.sh "$IMAGE"
+        $(dirname "$0")/docker-save.bash "$IMAGE"
     fi
 done

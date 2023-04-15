@@ -58,14 +58,14 @@ status-kube:         # Show Kube workload status
 
 .PHONY: list
 list:                # List Helm chart versions
-	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
-	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("<%s>   ", $$2)}'
+	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_REPO)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: version
 version: list        # Show Helm chart and app version
-	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: images
 images:              # Show Docker images
@@ -96,7 +96,7 @@ forward:             # Forward traffic to endpoint
 
 .PHONY: connect
 connect:             # Connect to endpoint
-	@../../kubernetes/bin/kube-connect.sh svnc://$(NAMESPACE)/service/${NAME}-box:22
+	@../../kubernetes/bin/kube-connect.ba svnc://$(NAMESPACE)/service/${NAME}-box:22
 
 .PHONY: uninstall
 uninstall:           # Uninstall Helm release

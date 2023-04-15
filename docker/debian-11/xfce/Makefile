@@ -31,7 +31,7 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.sh bash bin init python3.9 sudo tmux vim xfce
+	../../bin/create-rootfs.bash bash bin init python3.9 sudo tmux vim xfce
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 

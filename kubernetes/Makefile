@@ -19,7 +19,7 @@ status:              # Show Kubernetes status
 
 .PHONY: save
 save:                # Save Docker images used by Kubernetes
-	./bin/kube-save.sh
+	./bin/kube-save.bash
 	ls -l *.tar*
 
 .PHONY: clean

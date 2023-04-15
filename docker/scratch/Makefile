@@ -44,7 +44,7 @@ save:                # Save Docker base image as tar file
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../bin/create-rootfs.sh bash tmux vim
+	../bin/create-rootfs.bash bash tmux vim
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
 	rm -rf rootfs
 

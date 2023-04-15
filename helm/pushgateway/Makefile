@@ -2,7 +2,7 @@ NAME := pushgateway
 CHART_REPO := prometheus-community
 CHART_URL := https://prometheus-community.github.io/helm-charts
 CHART_NAME := prometheus-pushgateway
-CHART_VERSION := 1.16.1
+CHART_VERSION := 1.21.1
 APP_VERSION := 1.3.1
 IMAGE_TAG := v1.3.1
 NAMESPACE ?= infra
@@ -75,12 +75,11 @@ repo-add:            # Add Helm repository
 .PHONY: list
 list:                # List Helm chart versions
 	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
-		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
-		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
+		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d'
 
 .PHONY: version
 version: list        # Show Helm chart and app version
-	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
+	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: fetch
 fetch: repo-add clean # Fetch Helm chart
@@ -100,7 +99,7 @@ pull:                # Pull Docker images
 
 .PHONY: save
 save:                # Save Docker images as tar file
-	../bin/helm-save.sh \
+	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -127,9 +126,9 @@ forward:             # Forward traffic to endpoint
 connect:             # Connect to endpoint
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.sh http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.sh http://$(NAMESPACE)/service/${NAME}:9091; \
+		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}:9091; \
 	fi
 
 .PHONY: uninstall

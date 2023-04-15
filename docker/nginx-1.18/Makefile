@@ -35,16 +35,16 @@ pull:                # Pull Docker base image
 
 .PHONY: pull-save
 pull-save:           # Pull Docker base image and save as tar file if changed
-	../bin/docker-pull-save.sh $(BASE_IMAGE)
+	../bin/docker-pull-save.bash $(BASE_IMAGE)
 
 .PHONY: save
 save:                # Save Docker base image as tar file
-	../bin/docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save.bash $(BASE_IMAGE)
 
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../bin/create-rootfs.sh bash bash2ash bin-sysinfo
+	../bin/create-rootfs.bash bash bash2ash bin-sysinfo
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 

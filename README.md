@@ -1006,10 +1006,10 @@ the years.
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * docker/Makefile                       Makefile for building all images
  * docker/bin/bash2ash
- * docker/bin/create-rootfs.sh
- * docker/bin/docker-load.sh             Load docker images
- * docker/bin/docker-pull-save.sh        Pull Docker images and save to tar.xz archives
- * docker/bin/docker-save.sh             Save Docker images to tar.xz archives
+ * docker/bin/create-rootfs.bash
+ * docker/bin/docker-load.bash           Load docker images
+ * docker/bin/docker-pull-save.bash      Pull Docker images and save to tar.xz archives
+ * docker/bin/docker-save.bash           Save Docker images to tar.xz archives
  * docker/almalinux-8/Dockerfile
  * docker/almalinux-8/Makefile           almalinux:8 based linux
  * docker/almalinux-8/bash/Dockerfile
@@ -1124,8 +1124,8 @@ the years.
  * docker/ubuntu-22.04/dev/Makefile
  * docker/ubuntu-22.04/dev/Dockerfile    ubuntu:22.04 based GCC dev shell
  * kubernetes/Makefile
- * kubernetes/bin/kube-connect.sh        Connect to Kubernetes ingress/service port
- * kubernetes/bin/kube-save.sh           Save Kubernetes control plane docker images
+ * kubernetes/bin/kube-connect.bash      Connect to Kubernetes ingress/service port
+ * kubernetes/bin/kube-save.bash         Save Kubernetes control plane docker images
  * kubernetes/monitor-host/Makefile      Kubernetes: host monitoring (drtuxwang/debian-bash:stable)
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
  * kubernetes/nginx-proxy-fwd/Makefile   NGINX http/https proxy forwarding example
@@ -1153,23 +1153,23 @@ the years.
  * kubernetes/test-storage/server-pv.yaml
  * kubernetes/test-storage/server-statefulset.yaml
  * helm/Makefile
- * helm/bin/helm-save.sh                 Save Helm release docker images
- * helm/cassandra/Makefile               Helm Chart: bitnami/cassandra 9.7.7 (app-3.11.13)
+ * helm/bin/helm-save.bash               Save Helm release docker images
+ * helm/cassandra/Makefile               Helm Chart: bitnami/cassandra 10.0.5 (app-3.11.13)
  * helm/cassandra/values.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 8.4.5 (app-3.4.19)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 8.7.7 (app-3.4.24)
  * helm/etcd/values.yaml
- * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 8.1.1 (app-8.5.9)
+ * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 8.2.32 (app-8.5.10)
  * helm/grafana/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 10.3.1 (app-2.319.3)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 11.0.17 (app-2.375.3)
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: bitnami/19.1.5 (app-2.8.1)
- * helm/kafka/connect-test.sh
+ * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 21.3.1 (app-2.8.1)
+ * helm/kafka/test-connect.bash
  * helm/kafka/values.yaml
- * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 12.1.31 (app-4.4.15)
+ * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 13.8.3 (app-4.4.15)
  * helm/mongodb/values.yaml
- * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 5.2.2 (app-3.27.0)
+ * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 5.3.5 (app-3.27.0)
  * helm/nexus/values.yaml
- * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 13.1.8 (app-1.18.0)
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 13.2.31 (app-1.18.0)
  * helm/nginx/values.yaml
  * helm/ops-server/ops-server/templates/box-deployment.yaml
  * helm/ops-server/values.yaml
@@ -1180,13 +1180,13 @@ the years.
  * helm/oracle-xe/oracle-xe/templates/box-service.yaml
  * helm/oracle-xe/oracle-xe/templates/box-statefulset.yaml
  * helm/oracle-xe/values.yaml
- * helm/postgresql/Makefile              Helm Chart: bitnami/postgresql 11.9.13 (app-11.18.0)
+ * helm/postgresql/Makefile              Helm Chart: bitnami/postgresql 12.1.15 (app-11.18.0)
  * helm/postgresql/values.yaml
- * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 15.5.3 (app-2.31.1)
+ * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 19.7.2 (app-2.37.6)
  * helm/prometheus/values.yaml
- * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.16.1 (app-1.3.1)
+ * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.21.1 (app-1.3.1)
  * helm/pushgateway/values.yaml
- * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 9.1.4 (app-3.8.35)
+ * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 11.11.1 (app-3.8.35)
  * helm/rabbitmq/values.yaml
  * helm/test-box/Makefile                Helm Chart: drtuxwang/test-box (drtuxwang/debian-bash:stable)
  * helm/test-box/drtuxwang/test-box/Chart.yaml
