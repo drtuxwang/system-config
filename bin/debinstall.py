@@ -15,9 +15,9 @@ import sys
 from pathlib import Path
 from typing import List, TextIO
 
-import packaging.version  # type: ignore
 import pyzstd
 
+import command_mod
 import logging_mod
 
 logger = logging.getLogger(__name__)
@@ -38,20 +38,13 @@ class Package:
     installed: bool = False
     checked: bool = False
 
-    @staticmethod
-    def _get_loose_version(version: str) -> packaging.version.LegacyVersion:
-        """
-        Return LegacyVersion object
-        """
-        return packaging.version.LegacyVersion(version.replace('+', '.x'))
-
     def is_newer(self, package: 'Package') -> bool:
         """
         Return True if version newer than package.
         """
         if (
-            self._get_loose_version(self.version) >
-            self._get_loose_version(package.version)
+            command_mod.LooseVersion(self.version) >
+            command_mod.LooseVersion(package.version)
         ):
             return True
         return False
@@ -252,7 +245,8 @@ class Main:
                     self._packages[name].url,
                 )
             else:
-                file = self._local(distro, self._packages[name].url)
+                pool = distro.replace('dist', 'pool')
+                file = self._local(pool, self._packages[name].url)
                 logger.warning("%s%s", indent, file)
                 print(f"{indent}{file}", file=ofile)
             for i in self._packages[name].depends:
@@ -312,8 +306,8 @@ class Main:
             os.remove(path)
 
     @staticmethod
-    def _local(distro: str, url: str) -> str:
-        path = Path(distro, Path(url).name)
+    def _local(pool: str, url: str) -> str:
+        path = Path(pool, Path(url).name)
         if path.is_file():
             return f'file://{path.resolve()}'
         return url

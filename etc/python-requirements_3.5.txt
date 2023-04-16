@@ -2,6 +2,7 @@ arrow==0.17.0
 astroid==2.4.2
 asttokens==None
 bcrypt==3.1.7
+beautifulsoup4               # ==4.10.0 (last compatible version)
 cached-property==None
 certifi                      # ==2021.10.8 (last compatible version)
 charset-normalizer==None
@@ -17,6 +18,7 @@ filelock==3.2.1
 flake8==3.9.2
 gitdb==4.0.7
 GitPython                    # ==3.1.17 (last compatible version)
+gTTS                         # ==2.2.4 (last compatible version)
 idna==2.10
 importlib-metadata==2.1.1    #   (required by virtualenv for 3.5)
 importlib-resources==3.2.1   #   (required by virtualenv for 3.5)
@@ -27,13 +29,11 @@ jedi==None
 Jinja2==2.11.3
 lazy-object-proxy==1.4.3
 lockfile==None
-Markdown==3.2.2
 MarkupSafe==1.1.1
 matplotlib-inline==None
 mccabe                       # ==0.6.1 (last compatible version)
 motor                        # ==2.5.1 (last compatible version)
 mypy==None
-packaging                    # ==20.9 (last compatible version)
 parso==None
 pip                          # ==20.2.4 (last compatible version)
 pipdeptree                   # ==2.2.1 (last compatible version)
@@ -49,11 +49,12 @@ pymongo                      # ==3.13.0 (last compatible version)
 pyOpenSSL==None
 python-slugify==4.0.1
 PyYAML                       # ==5.3.1 (last compatible version)
-questionary==None
+pyzstd                       # ==0.15.3 (last compatible version)
 requests==2.25.1
 setuptools                   # ==50.3.2 (last compatible version)
 soupsieve==2.1
 stack-data==None
+toml==0.10.2                 #   (required by pylint for 3.5)
 tomli==None
 tomlkit==0.7.2
 traitlets==None

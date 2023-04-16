@@ -11,7 +11,7 @@ import signal
 import sys
 import time
 from pathlib import Path
-from typing import List
+from typing import Any, List
 
 import file_mod
 import logging_mod
@@ -126,6 +126,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @staticmethod
     def _automount(directory: str, wait: int) -> None:
@@ -203,10 +207,10 @@ class Main:
                         ) from exception
 
     def _mirror_link(self, source_path: Path, target_path: Path) -> None:
-        source_link = source_path.readlink()
+        source_link = source_path.readlink()  # type: ignore
 
         if target_path.is_symlink():
-            target_link = target_path.readlink()
+            target_link = target_path.readlink()  # type: ignore
             if target_link == source_link:
                 return
             target_path.unlink()

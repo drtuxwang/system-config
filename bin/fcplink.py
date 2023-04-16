@@ -9,7 +9,7 @@ import shutil
 import signal
 import sys
 from pathlib import Path
-from typing import List
+from typing import Any, List
 
 
 class Options:
@@ -75,6 +75,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @staticmethod
     def _copy(path: Path, target_path: Path) -> None:
@@ -106,7 +110,10 @@ class Main:
                     print(f"Copy file: {path} -> {target_path}")
                     self._copy(path, target_path)
                 elif not target_path.is_dir():
-                    print(f"Null link: { path} -> {path.readlink()}")
+                    print(
+                        f"Null link: {path} -> "  # type: ignore
+                        f"{path.readlink()}"  # pylint: disable=no-member
+                    )
             elif not path.exists():
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 

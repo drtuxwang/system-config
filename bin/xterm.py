@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for GNOME/KDE/XFCE/Invisible terminal session
+Wrapper for X-terminal window
 
 Use '-i' for invisible terminal
 """

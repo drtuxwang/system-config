@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 
-VERSION="3.5"
+VERSION="2.7"
 
 case $(uname) in
 Darwin)
+    export CPPFLAGS="-I/usr/local/opt/bzip2/include $CPPFLAGS"
+    export LDFLAGS="-L/usr/local/opt/bzip2/lib $LDFLAGS"
+
+    export CPPFLAGS="-I/usr/local/opt/ncurses/include $CPPFLAGS"
+    export LDFLAGS="-L/usr/local/opt/ncurses/lib $LDFLAGS"
+
     export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include $CPPFLAGS"
     export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib $LDFLAGS"
     export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+    export CPPFLAGS="-I/usr/local/opt/readline/include $CPPFLAGS"
+    export LDFLAGS="-L/usr/local/opt/readline/lib $LDFLAGS"
 
     export CPPFLAGS="-I/usr/local/opt/sqlite/include $CPPFLAGS"
     export LDFLAGS="-L/usr/local/opt/sqlite/lib $LDFLAGS"
@@ -20,16 +29,16 @@ Darwin)
 *)
     if [[ ${0%/*} =~ ^COMPILE32 ]]
     then
-        CPPFLAGS="-m32"
-        CFLAGS="-m32"
-        LDFLAGS="-m32";
-        export CPPFLAGS CFLAGS LDFLAGS
+        export CPPFLAGS="-m32"
+        export CFLAGS="-m32"
+        export LDFLAGS="-m32"
     fi
     ;;
 esac
 
 umask 022
-./configure --prefix="$PWD/install"
+# Check UCS4: sys.maxunicode = 1114111
+./configure --prefix="$PWD/install" --enable-unicode=ucs4
 make
 make install
 
@@ -76,12 +85,14 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
 
     # Fix pip
-    install/bin/python$VERSION -m pip install --upgrade pip==20.2.4
+    install/bin/python -m ensurepip
+    install/bin/python -m pip install --upgrade pip==20.2.4
 
     # Remove tests
-    find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+    find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf
 
-    rm install/bin/python3
+    ln -s python$VERSION install/bin/python
+    ln -s python$VERSION install/bin/python2
 fi
 
-ls -ld install/* install/bin/*
+ls -ld install/* install/bin/* install/lib/python*/site-packages/*info/METADATA 2> /dev/null

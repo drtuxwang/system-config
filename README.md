@@ -5,7 +5,7 @@ were started Bourne shell scripts started during my University days and continuo
 the years.
 
 ---
-<pre>
+```
  * Jenkinsfile              Jenkins pipeline configuration file
  * codefresh.yaml           Codefresh pipeline configuration file
  * Makefile                 Makefile for testing
@@ -30,10 +30,6 @@ the years.
  * bin/python2.7.bat
  * bin/python3
  * bin/python3.bat
- * bin/python3.1
- * bin/python3.2
- * bin/python3.3
- * bin/python3.4
  * bin/python3.5
  * bin/python3.6
  * bin/python3.7
@@ -69,10 +65,13 @@ the years.
  * bin/devpi-client-venv
  * bin/django-admin
  * bin/django-admin.bat
+ * bin/django-admin-venv
+ * bin/django-venv
  * bin/docker-compose
  * bin/docker-compose-venv
  * bin/flask
  * bin/flask.bat
+ * bin/flask-venv
  * bin/glances
  * bin/glances-venv
  * bin/gtts-cli
@@ -83,17 +82,14 @@ the years.
  * bin/ipython.bat
  * bin/ipython3
  * bin/ipython3.bat
- * bin/markdown
- * bin/markdown.py
- * bin/markdown_py
- * bin/markdown_py.bat
+ * bin/jinja2
+ * bin/markdown2
+ * bin/markdown2.bat
  * bin/mypy
  * bin/mypy.bat
  * bin/nexus3
  * bin/nexus3-venv
  * bin/nexus3-cli-venv
- * bin/pep8
- * bin/pep8.bat
  * bin/pip
  * bin/pip.bat
  * bin/pip3
@@ -458,8 +454,9 @@ the years.
  * bin/kubeseal             Wrapper for "kubeseal" command
  * bin/lsblk                Wrapper for "lsblk" command (sensible defaults)
  * bin/lsblk.py
- * bin/markdown             Markdown wrapper (for markdown_py)
+ * bin/markdown             Convert Markdown files to valid XHTML
  * bin/markdown.bat
+ * bin/markdown.py
  * bin/md5                  Calculate MD5 checksums of files
  * bin/md5.bat
  * bin/md5.py
@@ -625,7 +622,6 @@ the years.
  * bin/ssync                Securely synchronize file system using SSH protocol
  * bin/ssync.py             (uses rsync)
  * bin/sudo                 Wrapper for "sudo" command
- * bin/ssudo
  * bin/sudo.bat
  * bin/sudo.py
  * bin/sumount              Unmount file system securely mounted with SSH protocol
@@ -834,7 +830,7 @@ the years.
  * bin/xsnapshot.py
  * bin/xsudo                Run sudo command in new terminal session
  * bin/xsudo.py
- * bin/xterm                Start GNOME/KDE/XFCE/Invisible terminal session
+ * bin/xterm                Wrapper for "xterm" command
  * bin/xterm.py
  * bin/xvolume              Desktop audio volume utility (uses pacmd)
  * bin/xvolume.py
@@ -920,6 +916,7 @@ the years.
  * ansible/inventory/group_vars/local_nodes
  * ansible/inventory/group_vars/local_vmhosts
  * ansible/inventory/host_vars/debian11.local
+ * ansible/inventory/host_vars/debian12.local
  * ansible/inventory/host_vars/debianmac.local
  * ansible/inventory/host_vars/hotdog.local
  * ansible/inventory/host_vars/koko.local
@@ -1233,4 +1230,4 @@ the years.
  * wipe/COMPILE
  * wipe/Makefile
  * wipe/wipe.c
-</pre>
+```

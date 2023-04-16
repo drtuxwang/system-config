@@ -44,7 +44,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Convert BSON/JSON/XML/YAML to YAML file.",
+            description="Convert BSON/JSON/XML/YAML to XML file.",
         )
 
         parser.add_argument(

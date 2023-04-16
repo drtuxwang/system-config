@@ -4,7 +4,7 @@
 #
 
 PYTHON="python3.10"
-PACKAGE="cqlsh==6.1.0"
+PACKAGE="cqlsh==6.1.2"
 DEPENDS=
 POSTINST=
 

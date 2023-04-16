@@ -32,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.5.2'
-VERSION = 20230122
+RELEASE = '6.5.3'
+VERSION = 20230416
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -203,7 +203,7 @@ class Detect:
             ) as response:
                 if response.getcode() == 200:
                     address = response.read().decode(errors='replace')
-        except urllib.error.URLError:
+        except (urllib.error.URLError, TimeoutError):
             pass
         self._ip_address(address, 'Net IPvx Public')
 
@@ -894,7 +894,9 @@ class LinuxSystem(PosixSystem):
     def _detect_cd_sys_scsi(cls) -> None:  # New kernels
         for path in sorted(Path('/sys/block').glob('sr*/device')):
             try:
-                identity = path.readlink().name  # pylint: disable=no-member
+                # pylint: disable=no-member
+                identity = path.readlink().name  # type: ignore
+                # pylint: enable=no-member
             except OSError:
                 continue
             try:
@@ -1303,7 +1305,9 @@ class LinuxSystem(PosixSystem):
                 event = line.split('event')[-1].split()[0]
                 info[f'/dev/input/event{event}'] = model
         devices = [
-            Path('/dev/input', x.readlink().name)  # pylint: disable=no-member
+            # pylint: disable=no-member
+            Path('/dev/input', x.readlink().name)  # type: ignore
+            # pylint: enable=no-member
             for x in Path('/dev/input/by-path').glob('*')
             if 'event' in str(x)
         ]
@@ -2371,15 +2375,18 @@ class Software:
     SOFTWARE_TOOLS = [
         (['bash', '--version'], ' version ', '.*version |[( ].*', ''),
         (['clamscan', '--version'], 'ClamAV ', '.*ClamAV |/.*', 'ClamAV'),
-        (['convert', '--version'],
-            ' ImageMagick ', '.*ImageMagick | .*', 'ImageMagick',),
+        (['convert', '--version'], ' ImageMagick ',
+            '.*ImageMagick | .*', 'ImageMagick',),
         (['curl', '--version'], '^curl ', 'curl | .*', ''),
         (['dockerd', '--version'], ' version ', '.*version |,.*', 'Docker'),
-        (['ffmpeg', '-version'],
-            '^ffmpeg version ', '.*version | .*', 'FFmpeg'),
-        (['gcc', '--version'], '^gcc ', '.* ', 'GCC'),
-        (['g++', '--version'], '^g\\+\\+ ', '.* ', 'GCC'),
-        (['gfortran', '--version'], '^GNU Fortran ', '.* ', 'GCC'),
+        (['ffmpeg', '-version'], '^ffmpeg version ',
+            '.*version | .*', 'FFmpeg'),
+        (['gcc', '--version'], '^gcc ',
+            r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
+        (['g++', '--version'], '^g\\+\\+ ',
+            r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
+        (['gfortran', '--version'], '^GNU Fortran ',
+            r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
         (['git', '--version'], 'version ', '.*version ', ''),
         (['git-lfs', '--version'], 'git-lfs/', 'git-lfs/| .*', ''),
         (['go', 'version'], r'version go\d', '.*version go| .*', 'Golang'),
@@ -2463,6 +2470,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @staticmethod
     def run() -> int:

@@ -80,7 +80,7 @@ class Options:
         elif self._args.root:
             sudo_user = 'root'
 
-        # -axHAXDv --append-verify --progress --delete-after
+        # -axHAXDv --progress --delete-after
         args = ['--archive']  # -rlptgoD
         if sudo_user:
             if getpass.getuser() != 'root':
@@ -106,7 +106,6 @@ class Options:
             '--hard-links',
             '--acls',
             '--xattrs',
-            '--append-verify',
         ])
         if self._args.remove_flag:
             args.append('--delete-after')

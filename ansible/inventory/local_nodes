@@ -24,5 +24,7 @@ debian8.local          ansible_user=admin
 debian9.local          ansible_user=admin
 debian9-32.local       ansible_user=admin
 debian10.local         ansible_user=admin
+debian10-32.local      ansible_user=admin
 debian11.local         ansible_user=admin
+debian12.local         ansible_user=admin
 debianmac.local        ansible_user=admin

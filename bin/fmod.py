@@ -9,7 +9,7 @@ import re
 import signal
 import sys
 from pathlib import Path
-from typing import List
+from typing import Any, List
 
 import file_mod
 
@@ -163,6 +163,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @staticmethod
     def _chmod(path: Path, mod: int) -> None:
@@ -178,7 +182,7 @@ class Main:
         file_time = file_stat.get_time()
 
         if file_time != link_stat.get_time():
-            print(f"<utime>: {path} -> {path.readlink()}")
+            print(f"<utime>: {path} -> {path.readlink()}")  # type: ignore
             try:
                 os.utime(path, (file_time, file_time), follow_symlinks=False)
             except NotImplementedError:
@@ -263,12 +267,12 @@ class Main:
             re.IGNORECASE
         )
         self._is_not_exe_ext = re.compile(
-            '[.](7z|[acfo]|ace|asr|avi|bak|bmp|bz2|cfg|cpp|crt|css|dat|deb|'
-            'diz|doc|docx|f77|f90|gif|gm|gz|h|hlp|htm|html|ico|ini|installed|'
-            'ism|iso|jar|java|jpg|jpeg|js|json|key|lic|lib|list|log|mov|'
-            'mp[34g]|mpeg|o|obj|od[fgst]|ogg|opt|pk.|pdf|png|ppt|pptx|rar|reg|'
-            'rpm|swf|tar|txt|url|wav|wsdl|xhtml|xls|xlsx|xml|xs[dl]|xvid|yaml|'
-            'yml|zip)$',
+            '[.](7z|[acfo]|ace|asr|avi|bak|bmp|bz2|ce?rt|cfg|cpp|css|dat|deb|'
+            'diz|doc|docx|egg|f77|f90|gif|gm|gz|h|hlp|htm|html|ico|ini|'
+            'installed|ism|iso|jar|java|jpe?g|js|json|key|lic|lib|list|log|'
+            'mov|mp[34g]|mpeg|o|obj|od[fgst]|ogg|opt|pk|pdf|png|ppt|pptx|rar|'
+            'reg|rpm|swf|tar([.].*)?|txt|url|wav|whl|wsdl|xhtml|xls|xlsx|xml|'
+            'xs[dl]|xvid|ya?ml|zip)$',
             re.IGNORECASE
         )
 

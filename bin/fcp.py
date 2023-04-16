@@ -10,7 +10,7 @@ import signal
 import sys
 import time
 from pathlib import Path
-from typing import List
+from typing import Any, List
 
 import file_mod
 
@@ -90,6 +90,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @staticmethod
     def _automount(directory: str, wait: int) -> None:
@@ -102,10 +106,10 @@ class Main:
     @staticmethod
     def _copy_link(path1: Path, path2: Path) -> None:
         print(f'Creating "{path2}" link...')
-        source_link = path1.readlink()
+        source_link = path1.readlink()  # type: ignore
 
         if path2.is_symlink():
-            target_link = path2.readlink()
+            target_link = path2.readlink()  # type: ignore
             if target_link == source_link:
                 return
         elif path2.is_file():

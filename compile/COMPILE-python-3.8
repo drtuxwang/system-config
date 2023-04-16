@@ -20,10 +20,9 @@ Darwin)
 *)
     if [[ ${0%/*} =~ ^COMPILE32 ]]
     then
-        CPPFLAGS="-m32"
-        CFLAGS="-m32"
-        LDFLAGS="-m32";
-        export CPPFLAGS CFLAGS LDFLAGS
+        export CPPFLAGS="-m32"
+        export CFLAGS="-m32"
+        export LDFLAGS="-m32"
     fi
     ;;
 esac
@@ -79,7 +78,7 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     install/bin/python$VERSION -m pip install --upgrade pip==22.3.1
 
     # Remove tests
-    find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+    find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf
 
     rm install/bin/python3
 fi

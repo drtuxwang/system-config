@@ -14,7 +14,7 @@ import shutil
 import signal
 import sys
 from pathlib import Path
-from typing import List
+from typing import Any, List
 
 import command_mod
 import file_mod
@@ -199,7 +199,9 @@ class Options:
         path = Path(Path.home(), self._get_profiles_dir(), 'SingletonLock')
         try:
             pid = int(str(
-                path.readlink()  # pylint: disable=no-member
+                # pylint: disable=no-member
+                path.readlink()  # type: ignore
+                # pylint: enable=no-member
             ).split('-')[1])
             task_mod.Tasks.factory().killpids([pid])
         except (IndexError, OSError):
@@ -309,6 +311,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @staticmethod
     def run() -> int:

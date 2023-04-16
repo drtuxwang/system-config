@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Run ssudo command in new terminal session
+Run sudo command in new terminal session
 """
 
 import signal
@@ -56,20 +56,20 @@ class Main:
             '-ut',
             '+sb'
         ])
-        ssudo = command_mod.Command('ssudo', errors='stop')
+        sudo = command_mod.Command('sudo', errors='stop')
 
         if len(sys.argv) > 1:
             xterm.extend_args([
                 '-T',
-                f'ssudo {xterm.args2cmd(sys.argv[1:])}',
+                f'sudo {xterm.args2cmd(sys.argv[1:])}',
                 '-e',
             ])
-            ssudo.set_args(sys.argv[1:])
+            sudo.set_args(sys.argv[1:])
         else:
-            xterm.extend_args(['-T', 'ssudo su', '-e'])
-            ssudo.set_args(['su', '-'])
+            xterm.extend_args(['-T', 'sudo su', '-e'])
+            sudo.set_args(['su', '-'])
 
-        subtask_mod.Exec(xterm.get_cmdline() + ssudo.get_cmdline()).run()
+        subtask_mod.Exec(xterm.get_cmdline() + sudo.get_cmdline()).run()
 
         return 0
 

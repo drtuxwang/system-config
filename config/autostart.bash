@@ -71,7 +71,7 @@ export QT_AUTO_SCREEN_SCALE_FACTOR=0
 # Setup IBus input
 if [ -x /usr/bin/ibus-daemon ]
 then
-    ibus-daemon --daemonize --replace
+    ibus-daemon --daemonize --xim --replace
     export GTK_IM_MODULE=ibus
     export QT_IM_MODULE=ibus
     export XMODIFIERS=@im=ibus
@@ -99,4 +99,4 @@ numlockx off
 [ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
 
 # Optional setup
-[ -f $HOME/.config/autoexec-opt.sh ] && . $HOME/.config/autoexec-opt.sh
+[ -f $HOME/.config/autostart-opt.bash ] && . $HOME/.config/autostart-opt.bash

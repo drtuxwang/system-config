@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION="3.9"
+VERSION="3.7"
 
 case $(uname) in
 Darwin)
@@ -20,10 +20,9 @@ Darwin)
 *)
     if [[ ${0%/*} =~ ^COMPILE32 ]]
     then
-        CPPFLAGS="-m32"
-        CFLAGS="-m32"
-        LDFLAGS="-m32";
-        export CPPFLAGS CFLAGS LDFLAGS
+        export CPPFLAGS="-m32"
+        export CFLAGS="-m32"
+        export LDFLAGS="-m32"
     fi
     ;;
 esac
@@ -76,10 +75,10 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
 
     # Fix pip
-    install/bin/python$VERSION -m pip install --upgrade pip==22.3.1
+    install/bin/python$VERSION -m pip install --upgrade pip==20.3.4
 
     # Remove tests
-    find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+    find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf
 
     rm install/bin/python3
 fi

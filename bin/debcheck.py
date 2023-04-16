@@ -23,11 +23,11 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_distributions(self) -> List[str]:
+    def get_pools(self) -> List[str]:
         """
-        Return list of distributions directories.
+        Return list of pool directories.
         """
-        return self._args.distributions
+        return self._args.pools
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -36,10 +36,10 @@ class Options:
         )
 
         parser.add_argument(
-            'distributions',
+            'pools',
             nargs='+',
             metavar='directory',
-            help="Distribution directory.",
+            help="Pool directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -76,9 +76,9 @@ class Main:
             sys.exit(exception)  # type: ignore
 
     @staticmethod
-    def _check_files(distribution: str) -> dict:
+    def _check_files(pool: str) -> dict:
         try:
-            paths = sorted(Path(distribution).glob('*.deb'))
+            paths = sorted(Path(pool).glob('*.deb'))
         except OSError:
             return None
         packages: dict = {}
@@ -209,8 +209,9 @@ class Main:
         """
         options = Options()
 
-        for distribution in options.get_distributions():
-            packages_files = self._check_files(distribution)
+        for pool in options.get_pools():
+            packages_files = self._check_files(pool)
+            distribution = f'{Path(pool).resolve()}'.replace('pool', 'dist')
             if packages_files and Path(f'{distribution}.debs').is_file():
                 packages_allow = self._read_distribution_allow(
                     f'{distribution}.debs:allow'

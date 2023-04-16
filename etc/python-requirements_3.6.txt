@@ -9,6 +9,7 @@ executing==None
 filelock==3.4.1
 flake8==3.9.2
 GitPython                    # ==3.1.20 (last compatible version)
+gTTS                         # ==2.2.4 (last compatible version)
 importlib-metadata==4.8.3
 importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
 ipdb==None

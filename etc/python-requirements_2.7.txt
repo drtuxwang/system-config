@@ -23,6 +23,7 @@ executing==None
 filelock==3.2.1
 flake8==3.9.2
 functools32==3.2.3.post2     #   (required by flake8 for 2.7)
+future==0.18.3               #   (required by legacy code)
 futures==3.3.0               #   (required by tornado for 2.7)
 gitdb2==2.0.6                #   (required by GitPython for 2.7)
 gitdb==None
@@ -38,14 +39,13 @@ isort==4.3.21
 jedi==None
 Jinja2                       # ==2.11.3 (last compatible version)
 lazy-object-proxy==1.6.0
-Markdown==3.1.1
+markdown2==None
 MarkupSafe==1.1.1
 matplotlib-inline==None
 mccabe                       # ==0.6.1 (last compatible version)
 motor==2.1.0
 mypy-extensions==None
 mypy==None
-packaging                    # ==20.9 (last compatible version)
 parso==None
 pathlib2==2.3.6              #   (required by virtualenv for 2.7)
 pip                          # ==20.2.4 (last compatible version)
@@ -61,10 +61,9 @@ Pygments==None
 pylint==1.9.5
 pymongo                      # ==3.13.0 (last compatible version)
 pyOpenSSL==21.0.0
-pyparsing==2.2.2             # New version incompatible
+pyparsing                    # ==2.2.2 (last compatible required by legacy code)
 PyYAML                       # ==5.4.1 (last compatible version)
 pyzstd==None
-questionary==None
 requests==2.27.1
 scandir==1.10.0              #   (required by pathlib2 for 2.7)
 setuptools                   # ==44.1.1 (last compatible version)

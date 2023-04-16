@@ -4,8 +4,8 @@
 #
 # 1996-2022 By Dr Colin Kong
 #
-VERSION=20221106
-RELEASE="2.6.47-2"
+VERSION=20230408
+RELEASE="2.6.47-3"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -557,14 +557,14 @@ detect() {
         then
             WINDIR=`echo "/$WINDIR" | sed -e "s@:\\\\\\@/@"`
         fi
-        HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH" $WINDIR/system32/systeminfo 2> /dev/null`
+        HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH"; systeminfo 2> /dev/null`
         MYWINDOW=`echo "$HARDWARES" | grep "^OS Name:" | sed -e "s/^.*: *//" -e "s/(R)//g" -e "s/Microsoft //" -e "s/ $//"`
         SP=`echo "$HARDWARES" | grep "^OS Version:.*Service Pack" | sed -e "s/.*Service Pack //" | awk '{printf(" SP%s\n",$1)}'`
         if [ "$MYWINDOW" ]
         then
             MYOSNAME="$MYWINDOW$SP"
         fi
-        MYOSKERNAL="NT "`echo "$HARDWARES" | grep "^OS Version:" | awk '{print $3}'`
+        MYOSKERNEL="NT "`echo "$HARDWARES" | grep "^OS Version:" | awk '{print $3}'`
         ;;
 
     OSF1)

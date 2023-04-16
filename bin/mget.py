@@ -12,7 +12,7 @@ import signal
 import sys
 import time
 from pathlib import Path
-from typing import BinaryIO, List
+from typing import Any, BinaryIO, List
 
 import command_mod
 import subtask_mod
@@ -221,9 +221,9 @@ class VideoDownloader:
                         f"{sys.argv[0]}: Cannot read file: {path}",
                     ) from exception
 
-        mp4_file = Path(f'{self._m3u8_file}-full.mp4')
-        if mp4_file.is_file():
-            mp4_file.unlink()
+        mp4_path = Path(f'{self._m3u8_file}-full.mp4')
+        if mp4_path.is_file():
+            mp4_path.unlink()
         ffmpeg = command_mod.Command('ffmpeg', errors='stop')
         ffmpeg.set_args([
             '-i',
@@ -232,7 +232,7 @@ class VideoDownloader:
             'copy',
             '-vcodec',
             'copy',
-            str(mp4_file),
+            mp4_path,
         ])
         task = subtask_mod.Task(ffmpeg.get_cmdline())
         task.run()
@@ -240,9 +240,9 @@ class VideoDownloader:
             raise SystemExit(1)
 
         source_time = int(self._m3u8_file.stat().st_mtime)
-        os.utime(mp4_file, (source_time, source_time))
-        shutil.move(mp4_file, self._output)
-        shutil.move(self._directory_path, f'{self._output}.full')
+        os.utime(mp4_path, (source_time, source_time))
+        mp4_path.replace(self._output)
+        Path(self._directory_path).replace(f'{self._output}.full')
         print(f"{self._output}: generated from {len(chunk_files)} chunks!")
         shutil.rmtree(f'{self._output}.full')
 
@@ -274,6 +274,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @staticmethod
     def run() -> int:

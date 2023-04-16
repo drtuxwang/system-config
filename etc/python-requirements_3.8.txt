@@ -1,2 +1,1 @@
-importlib-metadata==5.2.0    #   (required by Markdown for for 3.8)
 zipp==3.14.0                 #   (required by importlib-metadata for 3.8)

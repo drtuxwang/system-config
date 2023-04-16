@@ -101,7 +101,7 @@ class Main:
     """
     Main class
     """
-    _xmllint = command_mod.Command('xmllint', errors='stop')
+    _xmllint = command_mod.Command('xmllint', args=['--noout'], errors='stop')
 
     def __init__(self) -> None:
         try:
@@ -133,7 +133,6 @@ class Main:
         """
         options = Options()
 
-        errors = False
         handler = XmlDataHandler(options.get_view_flag())
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
@@ -143,12 +142,14 @@ class Main:
 
             print(f'Checking "{path}" XML file...')
             task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [path])
-            task.run()
-            if task.has_error():
-                for line in task.get_error():
-                    print(line, file=sys.stderr)
-                errors = True
-                continue
+            task.run(pattern=": parser warning : Unsupported version '1.1'")
+            errors = [
+                x
+                for x in task.get_error()
+                if ': parser warning : Unsupported' not in x
+            ]
+            for line in errors:
+                print(line, file=sys.stderr)
 
             try:
                 with path.open(errors='replace') as ifile:
@@ -166,7 +167,7 @@ class Main:
                     f'{sys.argv[0]}: Invalid "{path}" XML file.',
                 ) from exception
 
-        return errors
+        return bool(errors)
 
 
 if __name__ == '__main__':

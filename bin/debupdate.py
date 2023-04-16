@@ -15,9 +15,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import packaging.version  # type: ignore
 import pyzstd
 
+import command_mod
 import logging_mod
 
 logger = logging.getLogger(__name__)
@@ -36,20 +36,13 @@ class Package:
     depends: List[str] = dataclasses.field(default_factory=list)
     url: str = ''
 
-    @staticmethod
-    def _get_loose_version(version: str) -> packaging.version.LegacyVersion:
-        """
-        Return LegacyVersion object
-        """
-        return packaging.version.LegacyVersion(version.replace('+', '.x'))
-
     def is_newer(self, package: 'Package') -> bool:
         """
         Return True if version newer than package.
         """
         if (
-            self._get_loose_version(self.version) >
-            self._get_loose_version(package.version)
+            command_mod.LooseVersion(self.version) >
+            command_mod.LooseVersion(package.version)
         ):
             return True
         return False
@@ -233,16 +226,14 @@ class Main:
         url_path = Path(
             f"{Path(distro).name}{str(path).rsplit('.debs', 1)[-1]}.url"
         )
+        pool = distro.replace('dist', 'pool')
         try:
             with url_path.open('w') as ofile:
                 for name, version in sorted(versions.items()):
                     if name in self._packages:
                         new_version = self._packages[name].version
                         if new_version != version:
-                            file = self._local(
-                                distro,
-                                self._packages[name].url,
-                            )
+                            file = self._local(pool, self._packages[name].url)
                             logger.info(
                                 "Update: %s (%s => %s)",
                                 name,
@@ -257,7 +248,7 @@ class Main:
                             )):
                                 if dependency in self._packages:
                                     file = self._local(
-                                        distro,
+                                        pool,
                                         self._packages[dependency].url,
                                     )
                                     logger.warning("    %s", file)
@@ -284,8 +275,8 @@ class Main:
         return names
 
     @staticmethod
-    def _local(distro: str, url: str) -> str:
-        path = Path(distro, Path(url).name)
+    def _local(pool: str, url: str) -> str:
+        path = Path(pool, Path(url).name)
         if path.is_file():
             return f'file://{path.resolve()}'
         return url

@@ -4,11 +4,15 @@ Determine file type
 """
 
 import argparse
+import re
 import signal
 import sys
 from typing import List
 
 import magic  # type: ignore
+
+import command_mod
+import subtask_mod
 
 
 class Options:
@@ -49,6 +53,8 @@ class Main:
     """
     Main class
     """
+    _ffprobe = command_mod.Command('ffprobe', errors='ignore')
+    _isjunk = re.compile(r'( \[SAR[^,]*)?, \d* kb/s,.*')
 
     def __init__(self) -> None:
         try:
@@ -67,8 +73,30 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    @staticmethod
-    def run() -> int:
+    @classmethod
+    def _show(cls, file: str, info: str) -> None:
+        if 'MP4' in info and cls._ffprobe.is_found():
+            task = subtask_mod.Batch(cls._ffprobe.get_cmdline() + [file])
+            task.run(error2output=True)
+            for line in task.get_output():
+                try:
+                    if line.strip().startswith('Duration:'):
+                        duration = line.replace(',', '').split()[1]
+                        info += f', {duration}'
+                    elif line.strip().startswith('Stream #'):
+                        if ' Hz,' in line:
+                            freq = line.split(' Hz,')[0].split(', ')[-1]
+                            info += f', {freq} Hz'
+                        elif ' kb/s,' in line:
+                            size = cls._isjunk.sub('', line).split(', ')[-1]
+                            info += f', {size}'
+                except IndexError:
+                    pass
+
+        print(f"{file}: {info}")
+
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
@@ -76,7 +104,7 @@ class Main:
 
         with magic.Magic() as checker:
             for file in options.get_files():
-                print(f"{file}: {checker.id_filename(file)}")
+                cls._show(file, checker.id_filename(file))
 
         return 0
 

@@ -9,6 +9,7 @@ import shutil
 import signal
 import sys
 from pathlib import Path
+from typing import Any
 
 import command_mod
 import file_mod
@@ -43,6 +44,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     def _punkbuster(self) -> None:
         path = Path(Path.home(), '.etwolf', 'pb')
@@ -53,7 +58,9 @@ class Main:
                     shutil.rmtree(path)
                 except OSError:
                     return
-        elif path.readlink() != link_path:  # pylint: disable=no-member
+            # pylint: disable=no-member
+        elif path.readlink() != link_path:  # type: ignore
+            # pylint: enable=no-member
             path.unlink()
         if not path.is_symlink():
             try:
@@ -110,7 +117,8 @@ class Main:
 
         configs = [
             'net',
-            f"/run/user/{os.getuid()}/pulse{Path(Path.home(), '.etwolf')}",
+            f'/run/user/{os.getuid()}/pulse',
+            f"{Path(Path.home(), '.etwolf')}",
         ]
         self._command.sandbox(configs)
 

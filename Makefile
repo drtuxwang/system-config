@@ -62,7 +62,7 @@ check-python:        # Check Python code
 	${PYTHON} -m pycodestyle --max-line-length=79 bin/*.py
 	@make --no-print-directory check-python-lint
 	@case ${PYTHON} in \
-	python3|python3.9|python3.1?) \
+	python3|python3.[789]|python3.1?) \
 		make --no-print-directory check-python-types \
 		;; \
 	esac
@@ -91,8 +91,8 @@ gc:                  # Run git garbage collection
 
 .PHONY: doc
 doc:                 # View README.md as HTML in browser
-	$(PYTHON) -m markdown README.md > README.html
-	$(BROWSER) README.html
+	bin/markdown README.md
+	$(BROWSER) README.xhtml
 
 .PHONY: help
 help:                # Show Makefile options

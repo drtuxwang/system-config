@@ -7,11 +7,10 @@ import glob
 import logging
 import os
 import re
-import shutil
 import signal
 import sys
 from pathlib import Path
-from typing import List
+from typing import Any, List
 
 import command_mod
 import file_mod
@@ -52,6 +51,10 @@ class Main:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
+        if sys.version_info < (3, 9):
+            def _readlink(file: Any) -> Path:
+                return Path(os.readlink(file))
+            Path.readlink = _readlink  # type: ignore
 
     @classmethod
     def _checksum(cls) -> None:
@@ -205,7 +208,7 @@ class Main:
                         )
                         print(line, file=ofile)
                 os.utime(path_new, (time_new, time_new))
-                shutil.move(path_new, path)
+                path_new.replace(path)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{file}" file.',

@@ -55,7 +55,6 @@ class Main:
     """
     Main class
     """
-    _indent = re.compile(r'^(\s*)', re.MULTILINE)
     _xmllint = command_mod.Command('xmllint', errors='stop')
 
     def __init__(self) -> None:
@@ -81,6 +80,15 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
+    @staticmethod
+    def _sub(text: str) -> str:
+        subs = {'\xa0': '&#160;', '<': '&lt;', '>': '&gt;'}
+        issub = re.compile('|'.join(map(re.escape, subs)))
+        return issub.sub(
+            lambda x: subs[x.group(0)],
+            text.replace('&', '&amp;')
+        )
+
     @classmethod
     def _reformat(cls, path: Path) -> None:
         try:
@@ -90,13 +98,12 @@ class Main:
                 f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
 
-        soup = bs4.BeautifulSoup(
-            old_xhtml.replace(b'&', b'&amp;'),
-            'html.parser',
-        )
-        new_xhtml = cls._indent.sub(
-            r'\1\1', soup.prettify(),
-        ).replace('&amp;', '&').encode()
+        soup = bs4.BeautifulSoup(old_xhtml, 'html.parser')
+        new_xhtml = soup.prettify(formatter=bs4.formatter.HTMLFormatter(
+            entity_substitution=cls._sub,
+            indent=2,
+        )).encode()
+
         if new_xhtml != old_xhtml:
             print(f'Formatting "{path}" XHTML file...')
             path_new = Path(f'{path}.part')
@@ -127,9 +134,7 @@ class Main:
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
             if path.suffix in ('.htm', '.html', '.xhtml'):
-                task = subtask_mod.Batch(
-                    cls._xmllint.get_cmdline() + [str(path)]
-                )
+                task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [path])
                 task.run()
                 if task.has_error():
                     for line in task.get_error():

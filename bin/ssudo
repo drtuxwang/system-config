@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-PYLD_MAIN="sudo"
-source "${0%/*}/pyld.bash"
