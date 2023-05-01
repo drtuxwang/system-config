@@ -342,7 +342,17 @@ class Options:
         """
         Parse arguments
         """
-        self._firefox = command_mod.Command(Path(args[0]).stem, errors='stop')
+        pathextra = (
+            ['/Applications/Firefox.app/Contents/MacOS']
+            if command_mod.Platform.get_system() == 'macos'
+            else []
+        )
+        self._firefox = command_mod.Command(
+            Path(args[0]).stem,
+            pathextra=pathextra,
+            errors='stop',
+        )
+
         updates = os.access(self._firefox.get_file(), os.W_OK)
 
         while len(args) > 1:

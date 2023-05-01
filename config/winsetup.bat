@@ -22,8 +22,8 @@ if "%PROCESSOR_ARCHITEW6432%"=="AMD64" goto win64
 :install
 
 echo.
-echo Running "net use s: \\vboxsvr\shared"...
-net use s: \\vboxsvr\shared 2> nul
+echo Running "net use h: \\vboxsvr\shared"...
+net use h: \\vboxsvr\shared 2> nul
 
 c:\software\bin\busybox %~dp0\winsetup.bash
 

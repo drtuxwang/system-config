@@ -403,6 +403,10 @@ then
         fi
         . /usr/local/etc/bash_completion 2> /dev/null
         export BASH_SILENCE_DEPRECATION_WARNING=1  # Disable zsh warning
+        if [ ! "$DISPLAY" ]
+        then
+            export DISPLAY=:0  # XQuartz
+        fi
         ;;
 
     Linux|*NT*)

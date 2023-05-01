@@ -38,6 +38,12 @@ class Options:
         """
         return self._mirrors
 
+    def get_quiet_flag(self) -> bool:
+        """
+        Return quiet flag.
+        """
+        return self._args.quiet_flag
+
     def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
@@ -56,6 +62,12 @@ class Options:
             "into mirror directory.",
         )
 
+        parser.add_argument(
+            '-q',
+            dest='quiet_flag',
+            action='store_true',
+            help="Do not show missing file/directory warnings.",
+        )
         parser.add_argument(
             '-R',
             dest='recursive_flag',
@@ -364,7 +376,7 @@ class Main:
 
         if self._options.get_remove_flag():
             self._remove_old_files(path1, source_paths, target_paths)
-        else:
+        elif not self._options.get_quiet_flag():
             self._report_old_files(path1, source_paths, target_paths)
 
         self._mirror_directory_time(path1, path2)

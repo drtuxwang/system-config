@@ -1,3 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-source "${0%/*}/pyld.bash"
+MYDIR=`dirname "$0"`
+if [ -f "$MYDIR/sysinfo.py" ]
+then
+    export PYTHONDONTWRITEBYTECODE=1
+    exec "$MYDIR/python3" "$MYDIR/sysinfo.py" "$@"
+fi
+
+exec "$MYDIR/sysinfo.sh" "$@"

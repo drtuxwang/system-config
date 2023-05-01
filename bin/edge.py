@@ -221,9 +221,15 @@ class Options:
 
     @staticmethod
     def _locate() -> command_mod.Command:
-        commands = ['microsoft-edge']
-        for command in commands:
-            browser = command_mod.Command(command, errors='ignore')
+        browser = command_mod.Command('microsoft-edge', errors='ignore')
+        if browser.is_found():
+            return browser
+        if command_mod.Platform.get_system() == 'macos':
+            browser = command_mod.Command(
+                'Microsoft Edge',
+                pathextra=['/Applications/Microsoft Edge.app/Contents/MacOS/'],
+                errors='ignore'
+            )
             if browser.is_found():
                 return browser
         return command_mod.Command('edge', errors='stop')

@@ -15,8 +15,8 @@ from typing import Any, List, Tuple, Union
 
 import command_mod
 
-RELEASE = '3.4.2'
-VERSION = 20230216
+RELEASE = '3.4.3'
+VERSION = 20230423
 
 
 class NetNice(command_mod.Command):
@@ -210,7 +210,12 @@ class Sandbox(command_mod.Command):
                 )
 
         # Enable access rights
+        enabled = []
         for config in [str(x) for x in configs]:
+            if config in enabled:
+                continue
+            enabled.append(config)
+
             realpath, mount, mode = self._parse_config(config)
             if mode == 'read/write':
                 if not Path(realpath).exists():

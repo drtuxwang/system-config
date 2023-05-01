@@ -1,3 +1,1 @@
-usb_rescan: true
-
-data2_uuid: da1287e9-2ae7-43a0-8c19-dd844638089c
+data2_mount: -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=da1287e9-2ae7-43a0-8c19-dd844638089c /mnt/data2

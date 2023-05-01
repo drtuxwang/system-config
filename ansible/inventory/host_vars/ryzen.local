@@ -1,7 +1,6 @@
 docker_daemon: true
-usb_rescan: true
 vbox_host: true
 
 clamav_directory: /mnt/data1/var/lib/clamav
-data2_uuid: 91481fc7-c33c-4807-8a6c-ffc70c6dcbb9
+data2_mount: -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=91481fc7-c33c-4807-8a6c-ffc70c6dcbb9 /mnt/data2
 download_rate: 32000

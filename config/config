@@ -1,3 +1,21 @@
+# Escape Characters:
+#   <ENTER> ~ ? = Help
+#   <ENTER> ~ . = Disconnect
+
+# Host settings
+Host debian4.local
+  KexAlgorithms +diffie-hellman-group1-sha1
+Host *.local
+  User owner
+  ForwardX11 yes
+  StrictHostKeyChecking no
+  UserKnownHostsFile=/dev/null
+
+# User settings
+Match User admin
+  IdentityFile=~/.ssh/admin/id_rsa
+
+# Defaults
 Protocol 2
 ConnectTimeout 5
 ForwardAgent no
@@ -8,21 +26,3 @@ PubkeyAuthentication yes
 ServerAliveInterval 5
 ServerAliveCountMax 100
 UseRoaming no
-
-#Host hostname
-#User username
-#IdentityFile=~/.ssh/id_rsa-xxx
-
-#Host *.local
-#User owner
-#StrictHostKeyChecking no
-#UserKnownHostsFile=/dev/null
-
-#Host localhost *.local
-#User admin
-#IdentityFile=~/.ssh/id_rsa-admin
-#StrictHostKeyChecking no
-#UserKnownHostsFile=/dev/null
-
-#Host debian4.local
-#KexAlgorithms +diffie-hellman-group1-sha1

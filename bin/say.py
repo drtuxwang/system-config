@@ -170,14 +170,22 @@ class Main:
             print(f"Elapsed time (s): {elapsed_time:5.3f}")
 
         tmpfile = options.get_tmpfile()
-        ffplay = command_mod.Command('ffplay', errors='stop')
-        ffplay.extend_args(['-nodisp', '-autoexit', tmpfile])
+        player = command_mod.Command('vlc', errors='stop')
+        player.set_args([
+            '--intf',
+            'dummy',
+            '--quiet',
+            '--no-repeat',
+            '--no-loop',
+            '--play-and-exit',
+            tmpfile
+        ])
 
         for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(args)).split('.'):
             if phrase.strip():
                 tts = gtts.gTTS(phrase)
                 tts.save(tmpfile)
-                subtask_mod.Batch(ffplay.get_cmdline()).run()
+                subtask_mod.Batch(player.get_cmdline()).run()
         try:
             Path(tmpfile).unlink()
         except FileNotFoundError:

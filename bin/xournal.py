@@ -8,6 +8,7 @@ import signal
 import sys
 from pathlib import Path
 
+import command_mod
 import network_mod
 import subtask_mod
 
@@ -45,7 +46,16 @@ class Main:
         """
         Start program
         """
-        xournal = network_mod.Sandbox('xournalpp', errors='stop')
+        pathextra = (
+            ['/Applications/Xournal++.app/Contents/MacOS']
+            if command_mod.Platform.get_system() == 'macos'
+            else []
+        )
+        xournal = network_mod.Sandbox(
+            'xournalpp',
+            pathextra=pathextra,
+            errors='stop',
+        )
 
         work_dir = Path.cwd()  # "os.getcwd()" returns realpath instead
         home = str(Path.home())

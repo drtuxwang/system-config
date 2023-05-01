@@ -48,7 +48,7 @@ mypy-extensions==None
 mypy==None
 parso==None
 pathlib2==2.3.6              #   (required by virtualenv for 2.7)
-pip                          # ==20.2.4 (last compatible version)
+pip                          # ==20.3.4 (last compatible version)
 pipdeptree                   # ==2.2.1 (last compatible version)
 platformdirs==2.0.2
 poyo==0.5.0                  #   (required by cookiecutter for 2.7)

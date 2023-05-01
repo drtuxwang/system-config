@@ -4,9 +4,9 @@ mount_disk() {
     for TRY in 2 4 8 16 32 64 128
     do
         sleep $TRY
-        mount -t ext4 -o noatime,errors=remount-ro,commit=60 "$1" "$2"
-        [ "$(ls "$2")" ] && break
-        # Rescan USB for storage devices
+        mount "$@"
+        [ "$(ls "${!#}")" ] && break
+        # Rescan for removable storage devices
         for SCAN in $(grep usb-storage /sys/class/scsi_host/host*/proc_name | sed -e "s@/proc_name.*@/scan@"); do
             echo - - - > $SCAN
         done
@@ -21,34 +21,27 @@ dhclient $(ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}') &
 ##dhclient $(ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}') &
 {% endif %}
 
-# Mount removable disks
-{% if data2_uuid %}
-mount_disk UUID={{ data2_uuid }} /mnt/data2 &
-{% else %}
-##mount_disk UUID=<uuid-from-blkid> /mnt/data2 &
-{% endif %}
-
-# Setup /shared
-{% if vbox_shared %}
-##mount -t tmpfs -o noatime tmpfs /shared &
-mount -t vboxsf -o uid=owner,gid=users Shared /shared &
-{% else %}
+# Setup mounts
 mount -t tmpfs -o noatime tmpfs /shared &
-##mount -t vboxsf -o uid=owner,gid=users Shared /shared &
-{% endif %}
-
-# Setup tmpfs for Docker tmp files
-{% if docker_daemon %}
-mkdir -p -m 700 /tmp/.docker && mount -o bind /tmp/.docker /var/lib/docker/tmp
+{% if data2_mount %}
+mount_disk {{ data2_mount }} &
 {% else %}
-##mkdir -p -m 700 /tmp/.docker && mount -o bind /tmp/.docker /var/lib/docker/tmp
+##mount_disk -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2 &
 {% endif %}
-
-# Setup /var/lib/clamav
+{% if vbox_shared %}
+mount -t vboxsf -o uid=owner,gid=users Shared /mnt/host &
+{% else %}
+##mount -t vboxsf -o uid=owner,gid=users Shared /mnt/host &
+{% endif %}
 {% if clamav_directory is defined %}
 mount -o bind {{ clamav_directory }} /var/lib/clamav
 {% else %}
 ##mount -o bind /mnt/data1/var/lib/clamav /var/lib/clamav
+{% endif %}
+{% if docker_daemon %}
+mkdir -p -m 700 /tmp/.docker && mount -o bind /tmp/.docker /var/lib/docker/tmp
+{% else %}
+##mkdir -p -m 700 /tmp/.docker && mount -o bind /tmp/.docker /var/lib/docker/tmp
 {% endif %}
 
 # Setup ZRAM swap (zramctl)

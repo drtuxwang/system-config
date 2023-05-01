@@ -34,7 +34,6 @@
   - sudoers
 
 - name: Copy file to "/etc/network/if-pre-up.d/iptables"
-  when: sudo_commands
   copy:
     src: iptables
     dest: /etc/network/if-pre-up.d/iptables
@@ -69,6 +68,15 @@
     group: no
     delete: yes
     rsync_path: sudo rsync
+  tags:
+  - local-system
+  - software-bin
+
+- name: Copy file to "/usr/local/sbin/halt"
+  file:
+    src: /opt/software/bin/halt
+    dest: /usr/local/sbin/halt
+    state: link
   tags:
   - local-system
   - software-bin

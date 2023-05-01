@@ -150,6 +150,7 @@ locate_python_tool() {
 # Execute Python or Python tool
 #
 exec_python() {
+    export PYTHONDONTWRITEBYTECODE=1
     PYLD_BIN=${0%/*}
     if [ ! "$PYLD_EXE" ]
     then

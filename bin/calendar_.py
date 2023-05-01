@@ -189,7 +189,7 @@ class Main:
             print(
                 f" {last_month[index]}  "
                 f"{current_month[index]}  "
-                f"{next_month[index]}"
+                f"{next_month[index]}".rstrip()
             )
 
     @classmethod

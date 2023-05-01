@@ -35,7 +35,16 @@ class Options:
         """
         Parse arguments
         """
-        self._gimp = command_mod.Command('gimp', errors='stop')
+        pathextra = (
+            ['/Applications/GIMP-2.10.app/Contents/MacOS']
+            if command_mod.Platform.get_system() == 'macos'
+            else []
+        )
+        self._gimp = command_mod.Command(
+            'gimp',
+            pathextra=pathextra,
+            errors='stop',
+        )
         self._gimp.set_args(['--no-splash'] + args[1:])
         self._pattern = (
             '^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
@@ -44,7 +53,10 @@ class Options:
             ': LibGimpBase-WARNING |^Traceback |: undefined symbol:|'
             ' XMP metadata:|: No XMP packet found|: GEGL-gegl-operation.c|'
             ': using babl for|gimp_pickable_contiguous_region_by_seed:|'
-            'librsvg-WARNING|Plug-in| deprecated '
+            'librsvg-WARNING|Plug-in| deprecated |GIMP is started|'
+            'machine-id: |GIMP-Message: |- /Applications/|'
+            'gimp_check_updates_callback: |GLib-GObject-CRITICAL |'
+            'GIMP-Error: |Please create the folder'
         )
 
 

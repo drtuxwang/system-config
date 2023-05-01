@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 """
-Create PDF from text/images/postscript/PDF files.
+Create PDF from text/images/postscript/PDF/ODF files.
 """
 
 import argparse
 import os
-import re
 import signal
 import sys
-import textwrap
-import time
 from pathlib import Path
 from typing import List
 
@@ -27,12 +24,6 @@ class Options:
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
-
-    def get_chars(self) -> int:
-        """
-        Return characters per line.
-        """
-        return self._args.chars[0]
 
     def get_archive(self) -> str:
         """
@@ -53,13 +44,6 @@ class Options:
         )
 
         parser.add_argument(
-            '-chars',
-            nargs=1,
-            type=int,
-            default=[100],
-            help="Select characters per line.",
-        )
-        parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
@@ -74,12 +58,6 @@ class Options:
         Parse arguments
         """
         self._parse_args(args[1:])
-
-        if self._args.chars[0] < 0:
-            raise SystemExit(
-                f"{sys.argv[0]}: You must specific a positive integer for "
-                "characters per line.",
-            )
 
         if self._args.files[0].endswith('.pdf'):
             self._archive = self._args.files[0]
@@ -212,58 +190,60 @@ class Main:
                         print(line, file=ofile)
             path_new.replace(path)
 
-    def _text(self, options: Options, path: Path) -> str:
-        if 'LANG' in os.environ:
-            del os.environ['LANG']  # Avoids locale problems
-        if 'a2ps' not in self._cache:
-            self._cache['a2ps'] = command_mod.Command('a2ps', errors='stop')
-            self._cache['a2ps'].set_args([
-                '--media=a4',
-                '--columns=1',
-                '--header=',
-                '--left-footer=',
-                '--footer=',
-                '--right-footer=',
-                '--output=-',
-                '--highlight-level=none',
-                '--quiet'
-            ])
-        a2ps = self._cache['a2ps']
-        chars = options.get_chars()
+    def _soffice(self, path: Path) -> str:
+        path_tmp = Path(self._tmpfile).parent
+        if 'soffice' not in self._cache:
+            self._cache['soffice'] = command_mod.Command(
+                'soffice',
+                args=[
+                    '--headless',
+                    '--convert-to',
+                    'pdf',
+                    '-outdir',
+                    path_tmp,
+                ],
+                errors='stop',
+            )
+        soffice = self._cache['soffice']
 
-        a2ps.extend_args([
-            '--portrait',
-            f'--chars-per-line={chars}',
-            f"--left-title={time.strftime('%Y-%m-%d-%H:%M:%S')}",
-            f'--center-title={path.name}'
-        ])
-
-        is_not_printable = re.compile('[\000-\037\200-\277]')
-        try:
-            with path.open('rb') as ifile:
-                stdin = []
-                for bline in ifile:
-                    line = is_not_printable.sub(
-                        ' ',
-                        bline.decode(errors='replace').rstrip('\r\n\004')
-                    )
-                    lines = textwrap.wrap(line, chars)
-                    if not lines:
-                        stdin.append('')
-                    else:
-                        stdin.extend(lines)
-        except OSError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{path}" text file.',
-            ) from exception
-        task = subtask_mod.Batch(a2ps.get_cmdline())
-        task.run(stdin=stdin, file=self._tmpfile)
+        task = subtask_mod.Batch(soffice.get_cmdline() + [path.name])
+        task.run()
         if task.get_exitcode():
             raise SystemExit(
                 f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                 f'received from "{task.get_file()}".',
             )
-        return f'text file "{path}" with {chars} columns'
+        Path(path_tmp, path.name).with_suffix('.pdf').replace(self._tmpfile)
+        return f'LibreOffice file "{path}"'
+
+    def _paps(self, path: Path) -> str:
+        if 'papss' not in self._cache:
+            self._cache['paps'] = command_mod.Command('paps', errors='stop')
+            self._cache['paps'].set_args([
+                '--paper=A4',
+                '--header',
+                '--left-margin=36',
+                '--right-margin=36',
+                '--font=Monospace 8.670',
+            ])
+            self._cache['ps2pdf'] = command_mod.Command(
+                'ps2pdf',
+                args=['-'],
+                errors='stop',
+            )
+        paps = self._cache['paps']
+        ps2pdf = self._cache['ps2pdf']
+
+        task = subtask_mod.Batch(
+            paps.get_cmdline() + [path, '|'] + ps2pdf.get_cmdline()
+        )
+        task.run(file=self._tmpfile)
+        if task.get_exitcode():
+            raise SystemExit(
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
+            )
+        return f'UTF-8 text file "{path}" with 100 columns'
 
     def run(self) -> int:
         """
@@ -313,8 +293,10 @@ class Main:
                     self._tempfiles.append(self._tmpfile + '.jpg')
                 elif ext in ('ps', 'eps'):
                     self._postscript(path)
+                elif ext == '.odt':
+                    self._soffice(path)
                 else:
-                    self._text(options, path)
+                    self._paps(path)
                 self._tempfiles.append(self._tmpfile)
                 args.extend(['-f', self._tmpfile])
             if not options.get_archive():

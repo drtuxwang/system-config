@@ -1,5 +1,3 @@
-usb_rescan: true
-
 clamav_directory: /mnt/data1/var/lib/clamav
-data2_uuid: d208fbda-e79e-4bb3-9444-0430c882c7ca
+data2_mount: -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=d208fbda-e79e-4bb3-9444-0430c882c7ca /mnt/data2
 download_rate: 32000
