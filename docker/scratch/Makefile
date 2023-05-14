@@ -2,11 +2,11 @@ BASE_IMAGE := scratch
 IMAGE := drtuxwang/scratch:latest
 NAME := scratch-bash
 HOSTNAME := scratch-bash
-DOCKER_BUILD_FLAGS ?=
-DOCKER_RUN_FLAGS ?=
-DOCKER_RUN_COMMAND ?=
-
-DOCKER_RUN_FLAGS := \
+DOCKER_BUILD := docker buildx build
+ifeq ($(shell docker --help | grep -c buildx), 0)
+	DOCKER_BUILD= := docker build
+endif
+DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
 	--tty \
@@ -20,8 +20,7 @@ DOCKER_RUN_FLAGS := \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
 	--name $(NAME) \
-	--hostname $(shell uname -n)-$(HOSTNAME) \
-	$(DOCKER_RUN_FLAGS)
+	--hostname $(shell uname -n)-$(HOSTNAME)
 
 
 .PHONY: default
@@ -45,13 +44,13 @@ save:                # Save Docker base image as tar file
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash tmux vim
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
+	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:             # Check versions

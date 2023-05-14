@@ -3,11 +3,11 @@ IMAGE := drtuxwang/debian-xfce:11-slim
 NAME := debian11-xfce
 HOSTNAME := debian11-xfce
 LOCALPORT ?= 2222
-DOCKER_BUILD_FLAGS ?=
-DOCKER_RUN_FLAGS ?=
-DOCKER_RUN_COMMAND ?=
-
-DOCKER_RUN_FLAGS := \
+DOCKER_BUILD := docker buildx build
+ifeq ($(shell docker --help | grep -c buildx), 0)
+	DOCKER_BUILD= := docker build
+endif
+DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
 	--tty \
@@ -17,8 +17,7 @@ DOCKER_RUN_FLAGS := \
 	--memory-reservation=50m \
 	--publish $(LOCALPORT):22 \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
-	$(DOCKER_RUN_FLAGS)
+	--hostname $(HOSTNAME)
 
 
 .PHONY: default
@@ -32,13 +31,13 @@ status:              # Status of Docker images
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../../bin/create-rootfs.bash bash bin init python3.9 sudo tmux vim xfce
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:             # Check versions

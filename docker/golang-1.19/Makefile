@@ -2,11 +2,11 @@ BASE_IMAGE := golang:1.19-alpine
 IMAGE := drtuxwang/golang:1.19-alpine
 NAME := golang-119-bash
 HOSTNAME := golang-119-bash
-DOCKER_BUILD_FLAGS ?=
-DOCKER_RUN_FLAGS ?=
-DOCKER_RUN_COMMAND ?=
-
-DOCKER_RUN_FLAGS := \
+DOCKER_BUILD := docker buildx build
+ifeq ($(shell docker --help | grep -c buildx), 0)
+	DOCKER_BUILD= := docker build
+endif
+DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
 	--tty \
@@ -15,8 +15,7 @@ DOCKER_RUN_FLAGS := \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
-	$(DOCKER_RUN_FLAGS)
+	--hostname $(HOSTNAME)
 
 
 .PHONY: default
@@ -44,17 +43,17 @@ save:                # Save Docker base image as tar file
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash bin vim
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:             # Check versions
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) go version 2> /dev/null | \
+	@$(DOCKER_RUN) $(IMAGE) go version 2> /dev/null | \
 		sed -e "s@.*go@$(shell pwd): Golang @"
 
 .PHONY: rmi

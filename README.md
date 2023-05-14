@@ -1016,24 +1016,24 @@ the years.
  * docker/almalinux-9/bash/Makefile      almalinux:9 based BASH login
  * docker/almalinux-9/dev/Dockerfile
  * docker/almalinux-9/dev/Makefile       alamlinux:9 based GCC dev shell
- * docker/alpine-3.15/Dockerfile
- * docker/alpine-3.15/Makefile           alpine:3.15 based linux
- * docker/alpine-3.15/bash/Dockerfile
- * docker/alpine-3.15/bash/Makefile      alpine:3.15 based BASH login
- * docker/alpine-3.15/dev/Dockerfile
- * docker/alpine-3.15/dev/Makefile       alpine:3.15 based GCC dev shell
  * docker/alpine-3.16/Makefile
  * docker/alpine-3.16/Dockerfile         alpine:3.16 based linux
  * docker/alpine-3.16/bash/Makefile
  * docker/alpine-3.16/bash/Dockerfile    alpine:3.16 based BASH login
  * docker/alpine-3.16/dev/Makefile
  * docker/alpine-3.16/dev/Dockerfile     alpine:3.16 based GCC dev shell
- * docker/i386-alpine-3.16/Makefile
- * docker/i386-alpine-3.16/Dockerfile    i386/alpine:3.16 based linux
- * docker/i386-alpine-3.16/bash/Makefile
- * docker/i386-alpine-3.16/bash/Dockerfile  i386/alpine:3.16 based BASH login
- * docker/i386-alpine-3.16/dev/Makefile
- * docker/i386-alpine-3.16/dev/Dockerfile  i386/alpine:3.16 based GCC dev shell
+ * docker/alpine-3.17/Dockerfile
+ * docker/alpine-3.17/Makefile           alpine:3.17 based linux
+ * docker/alpine-3.17/bash/Dockerfile
+ * docker/alpine-3.17/bash/Makefile      alpine:3.17 based BASH login
+ * docker/alpine-3.17/dev/Dockerfile
+ * docker/alpine-3.17/dev/Makefile       alpine:3.17 based GCC dev shell
+ * docker/i386-alpine-3.17/Makefile
+ * docker/i386-alpine-3.17/Dockerfile    i386/alpine:3.17 based linux
+ * docker/i386-alpine-3.17/bash/Makefile
+ * docker/i386-alpine-3.17/bash/Dockerfile  i386/alpine:3.17 based BASH login
+ * docker/i386-alpine-3.17/dev/Makefile
+ * docker/i386-alpine-3.17/dev/Dockerfile  i386/alpine:3.17 based GCC dev shell
  * docker/busybox-1.32/Dockerfile
  * docker/busybox-1.32/Makefile          busybox:1.33 based linux
  * docker/busybox-1.32/bash/Dockerfile
@@ -1044,13 +1044,7 @@ the years.
  * docker/centos-7/bash/Makefile         centos:7 based BASH login
  * docker/centos-7/dev/Dockerfile
  * docker/centos-7/dev/Makefile          centos:7 based GCC dev shell
- * docker/debian-9/Dockerfile
- * docker/debian-9/Makefile              debian:9-slim based linux
- * docker/debian-9/bash/Dockerfile
- * docker/debian-9/bash/Makefile         debian:9-slim based BASH login
- * docker/debian-9/dev/Dockerfile
- * docker/debian-9/dev/Makefile          debian:9-slim based GCC dev shell
- * docker/debian-10Dockerfile
+ * docker/debian-10/Dockerfile
  * docker/debian-10/Makefile             debian:10-slim based linux
  * docker/debian-10/bash/Dockerfile
  * docker/debian-10/bash/Makefile        debian:10-slim based BASH login

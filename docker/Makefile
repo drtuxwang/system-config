@@ -1,14 +1,13 @@
 IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
+	alpine-3.17 \
+	i386-alpine-3.17 \
 	alpine-3.16 \
-	i386-alpine-3.16 \
-	alpine-3.15 \
 	\
 	debian-11 \
 	i386-debian-11 \
 	debian-10 \
-	debian-9 \
 	ubuntu-22.04 \
 	ubuntu-20.04 \
 	ubuntu-18.04 \

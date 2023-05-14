@@ -3,10 +3,11 @@ IMAGE := drtuxwang/httpd:2.4-alpine
 NAME := httpd-proxy
 HOSTNAME := httpd-proxy
 LOCALPORT ?= 8080
-DOCKER_BUILD_FLAGS ?=
-DOCKER_RUN_FLAGS ?=
-
-DOCKER_RUN_FLAGS := \
+DOCKER_BUILD := docker buildx build
+ifeq ($(shell docker --help | grep -c buildx), 0)
+	DOCKER_BUILD= := docker build
+endif
+DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
 	--tty \
@@ -16,8 +17,7 @@ DOCKER_RUN_FLAGS := \
 	--memory-reservation=50m \
 	--publish $(LOCALPORT):80 \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
-	$(DOCKER_RUN_FLAGS)
+	--hostname $(HOSTNAME)
 
 
 .PHONY: default
@@ -45,17 +45,17 @@ save:                # Save Docker base image as tar file
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash bash2ash bin-sysinfo
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:             # Check versions
-	@docker run $(DOCKER_RUN_FLAGS) --entrypoint /usr/local/apache2/bin/httpd $(IMAGE) -version 2>&1 | \
+	@$(DOCKER_RUN) --entrypoint /usr/local/apache2/bin/httpd $(IMAGE) -version 2>&1 | \
 		grep "^Server version: Apache/" | sed -e "s@.*/@$(shell pwd): Apache @;s/ (.*//"
 
 .PHONY: rmi

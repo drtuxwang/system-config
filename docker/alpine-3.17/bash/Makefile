@@ -1,22 +1,21 @@
-BASE_IMAGE := drtuxwang/alpine:3.15
-IMAGE := drtuxwang/alpine-dev:3.15
-NAME := alpine315-dev
-HOSTNAME := alpine315-dev
-DOCKER_BUILD_FLAGS ?=
-DOCKER_RUN_FLAGS ?=
-DOCKER_RUN_COMMAND ?=
-
-DOCKER_RUN_FLAGS := \
+BASE_IMAGE := drtuxwang/alpine:3.17
+IMAGE := drtuxwang/alpine-bash:3.17
+NAME := alpine317-bash
+HOSTNAME := alpine317-bash
+DOCKER_BUILD := docker buildx build
+ifeq ($(shell docker --help | grep -c buildx), 0)
+	DOCKER_BUILD= := docker build
+endif
+DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
-	$(DOCKER_RUN_FLAGS)
+	--hostname $(HOSTNAME)
 
 
 .PHONY: default
@@ -29,19 +28,19 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.bash bash bin python3.9 vim
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	../../bin/create-rootfs.bash bash bin vim
+	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:             # Check versions
-	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run --rm $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
+		sed -e "s@^@$(shell pwd): Alpine Linux @"
 
 .PHONY: rmi
 rmi:                 # Remove Docker images

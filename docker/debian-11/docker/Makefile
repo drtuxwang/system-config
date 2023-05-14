@@ -1,14 +1,14 @@
 BASE_IMAGE := drtuxwang/debian:11-slim
 DOCKER_REPO=https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64
-DOCKER_DEB=docker-ce-cli_23.0.3-1~debian.11~bullseye_amd64.deb
+DOCKER_DEB=docker-ce-cli_23.0.6-1~debian.11~bullseye_amd64.deb
 IMAGE := drtuxwang/debian-docker:11-slim
 NAME := debian11-docker
 HOSTNAME := debian11-docker
-DOCKER_BUILD_FLAGS ?=
-DOCKER_RUN_FLAGS ?=
-DOCKER_RUN_COMMAND ?=
-
-DOCKER_RUN_FLAGS := \
+DOCKER_BUILD := docker buildx build
+ifeq ($(shell docker --help | grep -c buildx), 0)
+	DOCKER_BUILD= := docker build
+endif
+DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
 	--tty \
@@ -19,8 +19,7 @@ DOCKER_RUN_FLAGS := \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--privileged=true \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
-	$(DOCKER_RUN_FLAGS)
+	--hostname $(HOSTNAME)
 
 
 .PHONY: default
@@ -34,7 +33,7 @@ status:              # Status of Docker images
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../../bin/create-rootfs.bash bash bin vim
-	docker build \
+	$(DOCKER_BUILD) \
 		$(DOCKER_BUILD_FLAGS) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--build-arg DOCKER_REPO=$(DOCKER_REPO) \
@@ -45,7 +44,7 @@ build:               # Build Docker images
 .PHONY: run
 run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:             # Check versions

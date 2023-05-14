@@ -1,6 +1,9 @@
 BASE_IMAGE := python:3.10-slim-bullseye
 IMAGE := drtuxwang/python:3.10-slim-bullseye
-DOCKER_BUILD_FLAGS ?=
+DOCKER_BUILD := docker buildx build
+ifeq ($(shell docker --help | grep -c buildx), 0)
+	DOCKER_BUILD= := docker build
+endif
 
 BUILD_DIRS := bash dev devpi full
 
@@ -29,7 +32,7 @@ save:                # Save Docker base image as tar file
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR build || exit 1; \
 	done
