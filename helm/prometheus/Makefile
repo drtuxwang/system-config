@@ -2,7 +2,7 @@ NAME := prometheus
 CHART_REPO := prometheus-community
 CHART_URL := https://prometheus-community.github.io/helm-charts
 CHART_NAME := prometheus
-CHART_VERSION := 19.7.2
+CHART_VERSION := 21.1.2
 APP_VERSION := 2.37.6
 IMAGE_TAG := v2.37.6
 NAMESPACE ?= infra
@@ -134,9 +134,9 @@ forward:             # Forward traffic to endpoint
 connect:             # Connect to endpoint
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.bash http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}-server; \
+		../../kubernetes/bin/kube-connect.bash http://$(NAMESPACE)/service/${NAME}-server; \
 	fi
 
 .PHONY: uninstall

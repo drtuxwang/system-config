@@ -2,7 +2,7 @@ NAME := mongodb
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := mongodb
-CHART_VERSION := 13.8.3
+CHART_VERSION := 13.9.4
 APP_VERSION := 4.4.15
 IMAGE_TAG := 4.4.15-debian-10-r8
 NAMESPACE ?= infra
@@ -126,9 +126,9 @@ forward:             # Forward traffic to endpoint
 connect:             # Connect to endpoint
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba mongodb://${HOSTNAME}:27017; \
+		../../kubernetes/bin/kube-connect.bash mongodb://${HOSTNAME}:27017; \
 	else \
-		../../kubernetes/bin/kube-connect.ba mongodb://$(NAMESPACE)/service/${NAME}:27017; \
+		../../kubernetes/bin/kube-connect.bash mongodb://$(NAMESPACE)/service/${NAME}:27017; \
 	fi
 
 .PHONY: uninstall

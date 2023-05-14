@@ -2,7 +2,7 @@ NAME := cassandra
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := cassandra
-CHART_VERSION := 10.0.5
+CHART_VERSION := 10.1.3
 APP_VERSION := 3.11.13
 IMAGE_TAG := 3.11.13-debian-11-r3
 NAMESPACE ?= infra
@@ -118,7 +118,7 @@ forward:             # Forward traffic to endpoint
 
 .PHONY: connect
 connect:             # Connect to endpoint
-	@CASSANDRA_SECRET=cassandra ../../kubernetes/bin/kube-connect.ba cql://$(NAMESPACE)/service/${NAME}:9042
+	@CASSANDRA_SECRET=cassandra ../../kubernetes/bin/kube-connect.bash cql://$(NAMESPACE)/service/${NAME}:9042
 
 .PHONY: uninstall
 uninstall:           # Uninstall Helm release

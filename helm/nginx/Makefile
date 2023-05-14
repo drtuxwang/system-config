@@ -2,7 +2,7 @@ NAME := nginx
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := nginx
-CHART_VERSION := 13.2.31
+CHART_VERSION := 13.2.34
 APP_VERSION := 1.18.0
 IMAGE_TAG := 1.18.0-debian-10-r363
 NAMESPACE ?= default
@@ -128,9 +128,9 @@ forward:             # Forward traffic to endpoint
 connect:             # Connect to endpoint
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.bash http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}; \
+		../../kubernetes/bin/kube-connect.bash http://$(NAMESPACE)/service/${NAME}; \
 	fi
 
 .PHONY: uninstall

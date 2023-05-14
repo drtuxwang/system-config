@@ -126,9 +126,9 @@ connect:             # Connect to endpoint
 		base64 -d | awk '{printf("Username: user\nPassword: %s\n", $$1)}'
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.bash http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}:80; \
+		../../kubernetes/bin/kube-connect.bash http://$(NAMESPACE)/service/${NAME}:80; \
 	fi
 
 .PHONY: uninstall

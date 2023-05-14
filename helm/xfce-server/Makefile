@@ -96,7 +96,7 @@ forward:             # Forward traffic to endpoint
 
 .PHONY: connect
 connect:             # Connect to endpoint
-	@../../kubernetes/bin/kube-connect.ba svnc://$(NAMESPACE)/service/${NAME}-box:22
+	@../../kubernetes/bin/kube-connect.bash svnc://$(NAMESPACE)/service/${NAME}-box:22
 
 .PHONY: uninstall
 uninstall:           # Uninstall Helm release

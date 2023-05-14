@@ -2,7 +2,7 @@ NAME := nexus
 CHART_REPO := oteemo
 CHART_URL := https://oteemo.github.io/charts
 CHART_NAME := sonatype-nexus
-CHART_VERSION := 5.3.5
+CHART_VERSION := 5.4.1
 APP_VERSION := 3.27.0
 IMAGE_TAG := 3.27.0
 NAMESPACE ?= infra
@@ -128,9 +128,9 @@ connect:             # Connect to endpoint
 	@echo "password: admin123"
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.bash http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}:8080; \
+		../../kubernetes/bin/kube-connect.bash http://$(NAMESPACE)/service/${NAME}:8080; \
 	fi
 
 .PHONY: uninstall

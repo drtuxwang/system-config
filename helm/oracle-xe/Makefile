@@ -111,9 +111,9 @@ connect:             # Connect to endpoint
 	@echo "\n*** Connecting to Oracle XE database ***"
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba oradb://${HOSTNAME}:1521; \
+		../../kubernetes/bin/kube-connect.bash oradb://${HOSTNAME}:1521; \
 	else \
-		../../kubernetes/bin/kube-connect.ba oradb://$(NAMESPACE)/service/${NAME}-box:1521; \
+		../../kubernetes/bin/kube-connect.bash oradb://$(NAMESPACE)/service/${NAME}-box:1521; \
 	fi
 
 .PHONY: uninstall

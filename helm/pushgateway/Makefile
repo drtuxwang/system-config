@@ -126,9 +126,9 @@ forward:             # Forward traffic to endpoint
 connect:             # Connect to endpoint
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.bash http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}:9091; \
+		../../kubernetes/bin/kube-connect.bash http://$(NAMESPACE)/service/${NAME}:9091; \
 	fi
 
 .PHONY: uninstall

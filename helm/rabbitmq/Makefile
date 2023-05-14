@@ -2,7 +2,7 @@ NAME := rabbitmq
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := rabbitmq
-CHART_VERSION := 11.11.1
+CHART_VERSION := 11.13.0
 APP_VERSION := 3.8.35
 IMAGE_TAG := 3.8.35-debian-11-r5
 NAMESPACE ?= default
@@ -135,9 +135,9 @@ connect:             # Connect to endpoint
 		base64 -d | awk '{printf("Username: user\nPassword: %s\n", $$1)}'
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
-		../../kubernetes/bin/kube-connect.ba http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.bash http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect.ba http://$(NAMESPACE)/service/${NAME}:15672; \
+		../../kubernetes/bin/kube-connect.bash http://$(NAMESPACE)/service/${NAME}:15672; \
 	fi
 
 .PHONY: uninstall
