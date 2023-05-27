@@ -71,12 +71,3 @@
   tags:
   - local-system
   - software-bin
-
-- name: Copy file to "/usr/local/sbin/halt"
-  file:
-    src: /opt/software/bin/halt
-    dest: /usr/local/sbin/halt
-    state: link
-  tags:
-  - local-system
-  - software-bin

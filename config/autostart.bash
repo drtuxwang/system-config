@@ -3,24 +3,14 @@
 # Optional input environment
 ARG=${1:-}
 
-export MYUNAME=$(whoami 2> /dev/null)
-[ ! "$MYUNAME" ] && MYUNAME=$(id -un)
-
 # Fix logging
-[ "$ARG" != "-start" ] && exec $0 -start > $TMP/.cache/autoexec.log 2>&1
+[ "$ARG" != "-start" ] && mkdir -p /tmp/$(id -un) && exec $0 -start > /tmp/$(id -un)/.autostart.log 2>&1
 
-# Protect files
-chmod 711 $HOME
-ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
-    grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
+# Setup bash
+export TERM=xterm
+source $HOME/.profile
 
 # Use /tmp (tmpfs) for cache
-export TMPDIR=/tmp/$MYUNAME
-export TMP=/tmp/$MYUNAME
-mkdir -p $TMP/.cache
-rm -f $(find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
-    grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //")
-[ ! -h $HOME/.cache ] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
 [ ! -h $HOME/.local/share/gvfs-metadata ] && \
     rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
 [ ! -h $HOME/.fontconfig ] && rm -rf $HOME/.fontconfig &&  ln -s $TMP/.cache $HOME/.fontconfig
@@ -41,21 +31,6 @@ rm -f $(find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
 
 # Wipe Trash
 rm -rf $HOME/.local/share/Trash/* &
-
-# Save default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-if [ ! "$BASE_PATH" ]
-then
-    export BASE_PATH=$PATH
-    export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-    export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
-    export BASE_PYTHONPATH=$PYTHONPATH
-    export BASE_MANPATH=$MANPATH
-    export PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"
-fi
-
-# Setup SSH agent
-export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
-[ ! "$SSH_AUTH_SOCK" ] && eval $(ssh-agent)
 
 # Setup display
 for HOST in "" $(xhost | grep "^INET:")
