@@ -20,8 +20,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.3.0'
-VERSION = 20230303
+RELEASE = '2.3.1'
+VERSION = 20230506
 
 
 class Data:
@@ -223,7 +223,7 @@ class Data:
 
     @staticmethod
     def _encode_json(blocks: List[dict], compact: bool) -> bytes:
-        indent = 0 if compact else 4
+        indent = None if compact else 4
         data = '\n'.join([
             json.dumps(x, ensure_ascii=False, indent=indent, sort_keys=True)
             for x in blocks

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox for "xournalpp" launcher
+Wrapper for "xournalpp" launcher
 """
 
 import os
@@ -9,7 +9,6 @@ import sys
 from pathlib import Path
 
 import command_mod
-import network_mod
 import subtask_mod
 
 
@@ -51,41 +50,12 @@ class Main:
             if command_mod.Platform.get_system() == 'macos'
             else []
         )
-        xournal = network_mod.Sandbox(
+        xournal = command_mod.Command(
             'xournalpp',
             pathextra=pathextra,
+            args=sys.argv[1:],
             errors='stop',
         )
-
-        work_dir = Path.cwd()  # "os.getcwd()" returns realpath instead
-        home = str(Path.home())
-        if work_dir == home:
-            desktop = Path(work_dir, 'Desktop')
-            if desktop.is_dir():
-                os.chdir(desktop)
-                work_dir = desktop
-
-        configs = [
-            f'/run/user/{os.getuid()}/pulse',
-            Path(home, '.config/ibus'),
-            Path(home, '.config/xournalpp'),
-            work_dir,
-        ]
-
-        for arg in sys.argv[1:]:
-            path = Path(arg).resolve()
-            if arg == '-net':
-                configs.append('net')
-            elif path.is_dir():
-                xournal.append_arg(path)
-                configs.append(path)
-            elif path.is_file():
-                xournal.append_arg(path)
-                configs.append(path.parent)
-            else:
-                xournal.append_arg(arg)
-
-        xournal.sandbox(configs)
 
         pattern = (
             '^$|: Gtk-WARNING|: dbind-WARNING|^ALSA|^[jJ]ack|^Cannot connect|'

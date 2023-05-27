@@ -47,32 +47,30 @@ class Main:
         """
         Start program
         """
-        name = Path(sys.argv[0]).stem
-
-        command = command_mod.Command('sudo', errors='stop')
+        sudo = command_mod.Command('sudo', errors='stop')
         if '-p' not in sys.argv:
             hostname = socket.gethostname().split('.')[0].lower()
             username = getpass.getuser()
-            command.set_args([
-                '-p',
-                f'[{name}] password for {username}@{hostname}: ',
-            ])
-        if sys.argv[1:] == ['su']:  # Workaround hanging
-            command.extend_args(['-s'])
-        else:
-            command.extend_args(sys.argv[1:])
+            sudo.set_args(
+                ['-p', f'[sudo] password for {username}@{hostname}: ']
+            )
+        if len(sys.argv) > 1:
+            if sys.argv[1:] == ['su']:  # Workaround hanging
+                sys.argv[1] = '-s'
+            elif not sys.argv[1].startswith('-'):
+                command = command_mod.Command(sys.argv[1], errors='ignore')
+                if command.is_found():
+                    sys.argv[1] = command.get_file()
+            sudo.extend_args(sys.argv[1:])
 
-        if name == 'name':
-            subtask_mod.Exec(command.get_cmdline()).run()
-
-        # Remove sudo credentials after execution
-        task = subtask_mod.Task(command.get_cmdline())
+        # Run and remove sudo credentials
+        task = subtask_mod.Task(sudo.get_cmdline())
         try:
             task.run()
         except subtask_mod.ExecutableCallError:
             pass
-        command.set_args(['-k'])
-        subtask_mod.Task(command.get_cmdline()).run()
+        sudo.set_args(['-k'])
+        subtask_mod.Task(sudo.get_cmdline()).run()
 
         return task.get_exitcode()
 

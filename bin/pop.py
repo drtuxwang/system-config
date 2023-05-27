@@ -143,7 +143,7 @@ class Main:
             subtask_mod.Background(bell.get_cmdline()).run()
 
         pop = command_mod.Command('notify-send', errors='stop')
-        pop.set_args(['--expire-time=30', '--'] + args)
+        pop.set_args(['--expire-time', '10000', '--'] + args)
         task = subtask_mod.Task(pop.get_cmdline())
         task.run()
         if task.get_exitcode():

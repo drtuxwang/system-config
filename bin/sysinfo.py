@@ -32,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.5.3'
-VERSION = 20230416
+RELEASE = '6.5.4'
+VERSION = 20230520
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -2393,7 +2393,7 @@ class Software:
         (['gpg', '--version'], r'GnuPG\) ', r'.*\)', 'GnuPG'),
         (['java', '--version'], '^openjdk ', 'openjdk | .*', 'OpenJDK'),
         (['javac', '--version'], '^javac ', 'javac | .*', ''),
-        (['kubectl', 'version'], 'Client', '.*GitVersion:"v|".*', ''),
+        (['kubectl', 'version'], 'Client', '.*:.v|".*', ''),
         (['helm', 'version'], 'Client', '.*SemVer:"v|".*', ''),
         (['htop', '-v'], '^htop ', 'htop | .*', ''),
         (['make', '--version'], 'GNU Make', '.*Make ', 'GNU Make'),

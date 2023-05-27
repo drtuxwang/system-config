@@ -4,7 +4,7 @@ set -u
 
 IMAGE="drtuxwang/scratch:stable"
 
-DOCKER_RUN_FLAGS="
+DOCKER_RUN="docker run
     --rm \
     --interactive \
     --tty \
@@ -21,4 +21,4 @@ DOCKER_RUN_FLAGS="
     --workdir=$PWD
 "
 
-docker run $DOCKER_RUN_FLAGS $IMAGE "$@"
+$DOCKER_RUN $IMAGE "$@"

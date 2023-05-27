@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Break reminder timer.
+Count down timer.
 """
 
 import argparse
@@ -32,14 +32,8 @@ class Options:
         """
         return self._pop
 
-    def get_time(self) -> int:
-        """
-        Return time limit.
-        """
-        return self._args.time[0]
-
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description="Break reminder timer.")
+        parser = argparse.ArgumentParser(description="Count down timer.")
 
         parser.add_argument(
             '-g',
@@ -47,20 +41,8 @@ class Options:
             action='store_true',
             help="Start GUI.",
         )
-        parser.add_argument(
-            'time',
-            nargs=1,
-            type=int,
-            help="Time between breaks in minutes.",
-        )
 
         self._args = parser.parse_args(args)
-
-        if self._args.time[0] < 1:
-            raise SystemExit(
-                f"{sys.argv[0]}: You must specific a positive integer for "
-                "break time.",
-            )
 
     def parse(self, args: List[str]) -> None:
         """
@@ -116,12 +98,12 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _alert(self) -> None:
-        if self._alarm < 601:
+        if self._alarm < 61:
             sys.stdout.write("\033]11;#ff8888\007")
             sys.stdout.flush()
             subtask_mod.Batch(self._bell.get_cmdline()).run()
             self._options.get_pop().set_args(
-                [time.strftime('%H:%M') + ': break time reminder']
+                [time.strftime('%H:%M') + ': Count down reminder']
             )
             subtask_mod.Batch(self._options.get_pop().get_cmdline()).run()
         self._alarm += 60  # One minute reminder
@@ -132,24 +114,27 @@ class Main:
         """
         self._options = Options()
         self._bell = command_mod.Command('bell', errors='stop')
-        self._limit = self._options.get_time() * 60
         self._alarm = None
 
         while True:
             try:
                 sys.stdout.write("\033]11;#ffffdd\007")
+                try:
+                    count_down = int(input("Time(s): "))
+                except ValueError:
+                    continue
                 elapsed = 0
                 self._alarm = 0
                 start = int(time.time())
 
                 while True:
-                    if elapsed >= self._limit + self._alarm:
+                    if elapsed >= count_down + self._alarm:
                         self._alert()
                     time.sleep(1)
                     elapsed = int(time.time()) - start
                     sys.stdout.write(
                         f" \r {time.strftime('%H:%M')} "
-                        f"{self._limit - elapsed}",
+                        f"{count_down - elapsed}",
                     )
                     sys.stdout.flush()
             except KeyboardInterrupt:

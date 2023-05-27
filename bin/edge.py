@@ -91,7 +91,8 @@ class Options:
                 except OSError:
                     pass
         ispattern = re.compile(
-            r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*'
+            '^(lastDownload|lastSuccess|lastCheck|expires|'
+            r'softExpiration)=\d*|CBCM is not enabled|Uncaught SecurityError:'
         )
         for path in config_path.glob('File System/*/p/00/*'):
             path_new = Path(f'{path}.part')

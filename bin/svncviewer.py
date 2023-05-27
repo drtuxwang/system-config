@@ -97,20 +97,13 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        try:
-            remote_host, remote_port = self._args.server[0].split(':')
-        except ValueError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: You must specific a '
-                'single ":" in VNC server location.',
-            ) from exception
-
+        remote_host, remote_port = (self._args.server[0]+':1').split(':')[:2]
         try:
             if int(remote_port) < 101:
                 remote_port = str(int(remote_port) + 5900)
         except ValueError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: You must specific a positive integer '
+                f'{sys.argv[0]}: You must specify a positive integer '
                 'for port number.',
             ) from exception
 

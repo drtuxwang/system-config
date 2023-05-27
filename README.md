@@ -176,6 +176,8 @@ the years.
  * bin/clam.py
  * bin/cluster              Run command on a subnet in parallel
  * bin/cluster.py
+ * bin/countdown            Count down timer
+ * bin/countdown.py
  * bin/deb                  Debian package management tools
  * bin/deb.py               (support offline repository searching and update checks
  * bin/debcheck
@@ -403,7 +405,7 @@ the years.
  * bin/grpcurl.py
  * bin/gz                   Compress a file in GZIP format
  * bin/gz.py
- * bin/halt                 Fast shutdown using "/proc/sysrq-trigger"
+ * bin/halt                 Fast shutdown using "poweroff" and "/proc/sysrq-trigger"
  * bin/hardinfo             Wrapper for "hardinfo" command
  * bin/hardinfo.py
  * bin/hearts               Sandbox for "hearts" launcher
@@ -795,6 +797,8 @@ the years.
  * bin/wipe                 Wrapper for "wipe" C disk wiper command
  * bin/xcalc                Start GNOME/KDE/XFCE calculator
  * bin/xcalc.py
+ * bin/xclip                Wrapper for "xclip" command
+ * bin/xclip.py
  * bin/xdesktop             Start GNOME/KDE/XFCE file manager
  * bin/xdesktop.py
  * bin/xdiff                Graphical file comparison and merge tool
@@ -865,48 +869,6 @@ the years.
  * bin/mksrc.bat
  * bin/mktest.bat
  * bin/scd.bat
- * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
- * config/accels                         Copy to "$HOME/.config/geeqie" for keyboard shortcuts
- * config/adblock.txt                    Adblock filter list
- * config/autostart.bash                 Copy to "$HOME/.config/autostart.bash" & add to desktop auto startup
- * config/autostart-opt.bash             Copy to "$HOME/.config/autostart-opt.bash" for optional settings
- * config/autostart.desktop              Copy to "$HOME/.config/autostart/autostart.desktop" for XFCE autostart
- * config/config                         Copy to "$HOME/.ssh/config"
- * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
- * config/iptables.conf                  IPTABLES setup script
- * config/login                          Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
- * config/mimeapps.list                  Copy to "$HOME/.local/share/applications" for Mime definitions
- * config/minttyrc                       Copy to "$HOME/.minttyrc" for MSYS2 terminal
- * config/tmux.conf                      Copy to "$HOME/.tmux.conf" fro TMUX terminal
- * config/profile                        Copy to "$HOME/.profile" for ksh/ash/bash shells settings
- * config/profile-opt                    Copy to "$HOME/.profile-opt" for optional ksh/bash shells settings
- * config/rc.local                       Copy to "/etc/rc.local" for system startup commands
- * config/rc.local-opt                   Copy to "/etc/rc.local-opt" for optional system startup commands
- * config/terminalrc                     Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
- * config/vimrc                          Copy to "$HOME/.vimrc" for VIM defaults
- * config/vm-linux0.vbox                 VirtualBox Linux example
- * config/vm-win10.vbox                  VirtualBox Windows example
- * config/userapp-evince.desktop         Copy to "$HOME/.local/share/applications" for Evince/Atril
- * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for GQview/Geeqie
- * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
- * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
- * config/winsetup.bat                   Configure Windows VirtualBox VMs
- * config/winsetup.bash
- * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
- * etc/python-minimum-requirements.txt   Minimum requirements requrid by "*_mod.py" modules.
- * etc/python-packages.bash              Install/check Python packages requirements
- * etc/python-requirements.txt           Default requirements file for Python
- * etc/python-requirements_2.7.txt       Additional requirements for Python 2.7
- * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
- * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
- * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
- * etc/python-requirements_3.8.txt       Additional requirements for Python 3.8
- * etc/python-requirements_3.9.txt       Additional requirements for Python 3.9
- * etc/python-requirements_3.10mac.txt   Additional requirements for Python 3.10 on Mac
- * etc/python-requirements_3.11.txt      Additional requirements for Python 3.11
- * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
- * etc/setbin.bat                        Windows Command prompt initialization
- * etc/setbin.ps1                        Windows Power shell initialization
  * ansible/Makefile
  * ansible/ansible.cfg                   Ansible local hosts playbook
  * ansible/bin/show-tags.bash
@@ -986,6 +948,34 @@ the years.
  * compile/COMPILE-unrar                 UnRar compile script
  * compile/COMPILE-xz-utils              XZ-Utils compile script
  * compile/COMPILE-zstd                  Zstandard compile script
+ * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
+ * config/accels                         Copy to "$HOME/.config/geeqie" for keyboard shortcuts
+ * config/adblock.txt                    Adblock filter list
+ * config/autostart.bash                 Copy to "$HOME/.config/autostart.bash" & add to desktop auto startup
+ * config/autostart-opt.bash             Copy to "$HOME/.config/autostart-opt.bash" for optional settings
+ * config/autostart.desktop              Copy to "$HOME/.config/autostart/autostart.desktop" for XFCE autostart
+ * config/config                         Copy to "$HOME/.ssh/config"
+ * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
+ * config/iptables.conf                  IPTABLES setup script
+ * config/login                          Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
+ * config/mimeapps.list                  Copy to "$HOME/.local/share/applications" for Mime definitions
+ * config/minttyrc                       Copy to "$HOME/.minttyrc" for MSYS2 terminal
+ * config/tmux.conf                      Copy to "$HOME/.tmux.conf" fro TMUX terminal
+ * config/profile                        Copy to "$HOME/.profile" for ksh/ash/bash shells settings
+ * config/profile-opt                    Copy to "$HOME/.profile-opt" for optional ksh/bash shells settings
+ * config/rc.local                       Copy to "/etc/rc.local" for system startup commands
+ * config/rc.local-opt                   Copy to "/etc/rc.local-opt" for optional system startup commands
+ * config/terminalrc                     Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
+ * config/vimrc                          Copy to "$HOME/.vimrc" for VIM defaults
+ * config/vm-linux0.vbox                 VirtualBox Linux example
+ * config/vm-win10.vbox                  VirtualBox Windows example
+ * config/userapp-evince.desktop         Copy to "$HOME/.local/share/applications" for Evince/Atril
+ * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for GQview/Geeqie
+ * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
+ * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
+ * config/winsetup.bat                   Configure Windows VirtualBox VMs
+ * config/winsetup.bash
+ * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
  * cloudformation/1pxy/submit.bash
@@ -1111,6 +1101,20 @@ the years.
  * docker/ubuntu-22.04/bash/Dockerfile   ubuntu:22.04 based BASH login
  * docker/ubuntu-22.04/dev/Makefile
  * docker/ubuntu-22.04/dev/Dockerfile    ubuntu:22.04 based GCC dev shell
+ * etc/python-minimum-requirements.txt   Minimum requirements requrid by "*_mod.py" modules.
+ * etc/python-packages.bash              Install/check Python packages requirements
+ * etc/python-requirements.txt           Default requirements file for Python
+ * etc/python-requirements_2.7.txt       Additional requirements for Python 2.7
+ * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
+ * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
+ * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
+ * etc/python-requirements_3.8.txt       Additional requirements for Python 3.8
+ * etc/python-requirements_3.9.txt       Additional requirements for Python 3.9
+ * etc/python-requirements_3.10mac.txt   Additional requirements for Python 3.10 on Mac
+ * etc/python-requirements_3.11.txt      Additional requirements for Python 3.11
+ * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
+ * etc/setbin.bat                        Windows Command prompt initialization
+ * etc/setbin.ps1                        Windows Power shell initialization
  * kubernetes/Makefile
  * kubernetes/bin/kube-connect.bash      Connect to Kubernetes ingress/service port
  * kubernetes/bin/kube-save.bash         Save Kubernetes control plane docker images

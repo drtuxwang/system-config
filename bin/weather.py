@@ -111,14 +111,14 @@ class Main:
 
         if not quiet:
             print("Connecting...")
-        for _ in range(10):
+        for _ in range(60):
             task.run()
             if task.get_exitcode():
                 break
             weather = cls._parse('\n'.join(task.get_output()))
             if weather:
                 return weather
-            time.sleep(2)
+            time.sleep(10)
             if not quiet:
                 print("Retrying...")
 

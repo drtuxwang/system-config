@@ -4,16 +4,12 @@
 sleep 8
 
 # Sync all mounted filesystems
-echo s > /proc/sysrq-trigger
-sleep 0.25
+echo s > /proc/sysrq-trigger 2> /dev/null
+sleep 1
 
 # Unmount filesystems and remount in read-only mode
-echo u > /proc/sysrq-trigger
+echo u > /proc/sysrq-trigger 2> /dev/null
 sleep 0.25
 
-if [ "$0" = /sbin/reboot ]
-then  # Reboot the system
-    echo b > /proc/sysrq-trigger
-else  # Power off the system
-    echo o > /proc/sysrq-trigger
-fi
+# Power off the system
+echo o > /proc/sysrq-trigger 2> /dev/null

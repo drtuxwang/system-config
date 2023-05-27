@@ -247,11 +247,31 @@ class Main:
             vlc.append_arg('--noaudio')
 
         task = subtask_mod.Batch(vlc.get_cmdline())
-        task.run(
-            pattern="^$|Use 'cvlc'|may be inaccurate|"
-            ': Failed to resize display|: call to |: Locale not supported |'
-            'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
-            'Failed to open VDPAU backend ')
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(
+                f'{sys.argv[0]}: Error code '
+                f'{task.get_exitcode()} received from "{task.get_file()}".',
+            )
+
+    @staticmethod
+    def _ytplay(mode: str, file: str) -> None:
+        vlc = command_mod.Command(
+            'vlc',
+            args=['--no-repeat', '--no-loop'],
+            errors='stop',
+        )
+        if mode == 'audio':
+            vlc.append_arg('--novideo')
+        elif mode == 'video':
+            vlc.append_arg('--noaudio')
+
+        ytdlp = command_mod.Command('yt-dlp', errors='stop')
+        ytdlp.set_args(['--get-url', '--format=best', file])
+        task = subtask_mod.Batch(
+            ytdlp.get_cmdline() + ['|'] + vlc.get_cmdline() + ['-']
+        )
+        task.run()
         if task.get_exitcode():
             raise SystemExit(
                 f'{sys.argv[0]}: Error code '
@@ -271,7 +291,10 @@ class Main:
         else:
             if options.get_shuffle_flag():
                 random.shuffle(files)
-            self._play(mode, files)
+            if files[0].startswith('https://www.youtube.com/'):
+                self._ytplay(mode, files[0])
+            else:
+                self._play(mode, files)
 
         return 0
 

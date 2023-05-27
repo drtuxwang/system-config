@@ -109,25 +109,39 @@ class Main:
                 pass
 
     def _image(self, path: Path) -> str:
-        if 'convert' not in self._cache:
-            self._cache['convert'] = command_mod.Command(
-                'convert',
-                errors='stop'
-            )
-        convert = self._cache['convert']
+        for command in ('identify', 'convert'):
+            if command not in self._cache:
+                self._cache[command] = command_mod.Command(
+                    command,
+                    errors='stop'
+                )
 
-        task = subtask_mod.Batch(
-            convert.get_cmdline() + ['-verbose', path, '/dev/null'])
-        task.run(pattern=f'^{path} ', error2output=True)
+        # Get size
+        identify = self._cache['identify']
+        task = subtask_mod.Batch(identify.get_cmdline() + [path])
+        task.run(pattern=f'^{path} [^ ]+ \\d+x\\d+ ', error2output=True)
         if not task.has_output():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot read "{path}" image file.',
             )
-        xsize, ysize = task.get_output(
-            )[0].split('+')[0].split()[-1].split('x')
-        cmdline = convert.get_cmdline() + ['-page', 'a4']
-        if 'page' not in str(path):
+        size = task.get_output()[0].split()[2]
+        xsize, ysize = size.split('x')
+
+        convert = self._cache['convert']
+        cmdline = convert.get_cmdline() + [
+            '-strip',
+            '-page',
+            'a4',
+            '-density',
+            '72',
+        ]
+        if 'page' in path.name:
+            info = f'Page IMAGE file "{path}"'
+        elif size in ('2480x3508', '3508x2480', '1240x1754', '1754x1240'):
+            info = f'A4 IMAGE file "{path}"'  # A4 300/150dpi
+        else:
             cmdline.extend(['-border', '30', '-bordercolor', 'white'])
+            info = f'IMAGE file "{path}" with margin'
         if int(xsize) > int(ysize):
             cmdline.extend(['-rotate', '270'])
         cmdline.extend([path, f'pdf:{self._tmpfile}'])
@@ -139,7 +153,7 @@ class Main:
                 f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                 f'received from "{task.get_file()}".',
             )
-        return f'IMAGE file "{path}"'
+        return info
 
     def _postscript(self, path: Path) -> str:
         try:
@@ -273,7 +287,6 @@ class Main:
             'setvmthreshold',
         ]
         for path in [Path(x) for x in options.get_files()]:
-            print("Packing", path)
             if not options.get_archive():
                 args = [
                     f"-sOutputFile={path.with_suffix('.pdf')}",
@@ -285,22 +298,24 @@ class Main:
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
             ext = path.suffix.lower()
             if ext == '.pdf':
+                info = f'PDF file {path}'
                 args.extend(['-f', path])
             else:
                 self._tmpfile = f'{tmp_path}{len(self._tempfiles) + 1}'
                 if ext in images_extensions:
-                    self._image(path)
+                    info = self._image(path)
                     self._tempfiles.append(self._tmpfile + '.jpg')
                 elif ext in ('ps', 'eps'):
-                    self._postscript(path)
+                    info = self._postscript(path)
                 elif ext == '.odt':
-                    self._soffice(path)
+                    info = self._soffice(path)
                 else:
-                    self._paps(path)
+                    info = self._paps(path)
                 self._tempfiles.append(self._tmpfile)
                 args.extend(['-f', self._tmpfile])
             if not options.get_archive():
                 subtask_mod.Task(command.get_cmdline() + args).run()
+            print("Packing", info)
         if options.get_archive():
             subtask_mod.Task(command.get_cmdline() + args).run()
 

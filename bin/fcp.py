@@ -105,14 +105,11 @@ class Main:
 
     @staticmethod
     def _copy_link(path1: Path, path2: Path) -> None:
-        print(f'Creating "{path2}" link...')
         source_link = path1.readlink()  # type: ignore
-
         if path2.is_symlink():
-            target_link = path2.readlink()  # type: ignore
-            if target_link == source_link:
+            if source_link == path2.readlink():  # type: ignore
                 return
-        elif path2.is_file():
+        if path2.exists():
             try:
                 path2.unlink()
             except OSError as exception:
@@ -120,6 +117,7 @@ class Main:
                     f'{sys.argv[0]}: Cannot remove "{path2}" link.',
                 ) from exception
 
+        print(f'Creating "{path2}" link...')
         try:
             path2.symlink_to(source_link)
         except OSError as exception:
@@ -134,14 +132,15 @@ class Main:
             pass
 
     def _copy_directory(self, path1: Path, path2: Path) -> None:
-        print(f'Creating "{path2}" directory...')
         try:
             paths = sorted(path1.iterdir())
         except PermissionError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot open "{path1}" directory.',
             ) from exception
+
         if not path2.is_dir():
+            print(f'Creating "{path2}" directory...')
             try:
                 path2.mkdir(
                     mode=file_mod.FileStat(path1).get_mode(),
@@ -162,6 +161,15 @@ class Main:
 
     @staticmethod
     def _copy_file(path1: Path, path2: Path) -> None:
+        if path2.exists():
+            stat1 = path1.stat()
+            stat2 = path2.stat()
+            if (
+                stat1.st_size == stat2.st_size and
+                stat1.st_mtime == stat2.st_mtime
+            ):
+                return
+
         print(f'Creating "{path2}" file...')
         try:
             shutil.copy2(path1, path2)

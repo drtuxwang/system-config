@@ -113,7 +113,8 @@ class Main:
                 )
             print(f"{path}:")
             task = subtask_mod.Task(
-                dmg2img.get_cmdline() + [str(path), 'dmg2img.img'])
+                dmg2img.get_cmdline() + [path, 'dmg2img.img']
+            )
             task.run()
 
             task = subtask_mod.Task(unpacker.get_cmdline() + ['dmg2img.img'])

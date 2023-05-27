@@ -8,7 +8,7 @@ menu_main:
     name: desktop
     color: '#ffcc00'
     label: Desktop
-    run: exec xdesktop Desktop &
+    run: exec xdesktop &
 - button:
     name: browser
     color: '#ffff00'
@@ -477,13 +477,13 @@ menu_system:
 - button:
     name: reboot
     color: '#ffff00'
-    label: Restart
-    run: exec sudo /sbin/reboot &
+    label: Reboot
+    run: exec /sbin/reboot &
 - button:
-    name: shutdown
+    name: poweroff
     color: '#ffff00'
-    label: Shut Down
-    run: exec sudo /sbin/poweroff &
+    label: PowerOff
+    run: exec /sbin/poweroff &
 - button:
     name: close
     color: '#ff0000'
@@ -501,6 +501,11 @@ menu_utility:
     color: '#ffcc00'
     label: Calculator
     run: exec xcalc &
+- button:
+    name: countdown
+    color: '#ffcc00'
+    label: Count Down
+    run: exec countdown -g &
 - button:
     name: ibus
     color: '#ffcc00'

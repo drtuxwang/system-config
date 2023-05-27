@@ -130,10 +130,7 @@ class Main:
 
         errors = False
         for path in [Path(x) for x in options.get_files()]:
-            if not path.is_file():
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
-
-            if path.suffix in ('.htm', '.html', '.xhtml'):
+            if path.is_file() and path.suffix in ('.htm', '.html', '.xhtml'):
                 task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [path])
                 task.run()
                 if task.has_error():

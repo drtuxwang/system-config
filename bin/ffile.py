@@ -7,6 +7,7 @@ import argparse
 import re
 import signal
 import sys
+import unicodedata
 from typing import List
 
 import magic  # type: ignore
@@ -74,26 +75,30 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _show(cls, file: str, info: str) -> None:
+    def _show(cls, pad: int, file: str, info: str) -> None:
         if 'MP4' in info and cls._ffprobe.is_found():
             task = subtask_mod.Batch(cls._ffprobe.get_cmdline() + [file])
             task.run(error2output=True)
+            length = 0
+            size = '?x?'
+            freq = '?Hz'
             for line in task.get_output():
                 try:
                     if line.strip().startswith('Duration:'):
-                        duration = line.replace(',', '').split()[1]
-                        info += f', {duration}'
+                        hrs, mins, secs = (
+                            line.replace(',', '').split()[1].split(':')
+                        )
+                        length = int(int(hrs)*3600+int(mins)*60+float(secs))
                     elif line.strip().startswith('Stream #'):
-                        if ' Hz,' in line:
-                            freq = line.split(' Hz,')[0].split(', ')[-1]
-                            info += f', {freq} Hz'
-                        elif ' kb/s,' in line:
+                        if ' kb/s,' in line:
                             size = cls._isjunk.sub('', line).split(', ')[-1]
-                            info += f', {size}'
+                        elif ' Hz,' in line:
+                            freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
                 except IndexError:
                     pass
+            info = f'{length}s, {size}, {freq}Hz, {info}'
 
-        print(f"{file}: {info}")
+        print(f"{file}:{' '*pad} {info}")
 
     @classmethod
     def run(cls) -> int:
@@ -101,10 +106,17 @@ class Main:
         Start program
         """
         options = Options()
+        files = options.get_files()
 
+        cjk_widths = {
+            x: sum(1 + (unicodedata.east_asian_width(c) in "WF") for c in x)
+            for x in files
+        }
+        max_len = max(cjk_widths.values())
         with magic.Magic() as checker:
-            for file in options.get_files():
-                cls._show(file, checker.id_filename(file))
+            for file in files:
+                pad = max_len - cjk_widths[file]
+                cls._show(pad, file, checker.id_filename(file))
 
         return 0
 

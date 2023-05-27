@@ -168,8 +168,8 @@ class Main:
                             f'{ox_size}x{oy_size}',
                             '-resize',
                             f'{ox_size}x{oy_size}!',
-                            str(path),
-                            str(path),
+                            path,
+                            path,
                         ])
                         task = subtask_mod.Batch(self._convert.get_cmdline())
                         task.run()

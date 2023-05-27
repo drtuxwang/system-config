@@ -83,9 +83,7 @@ class Main:
 
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{path}" file.',
-                )
+                continue
 
             try:
                 old_xml = path.read_bytes()
