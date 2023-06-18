@@ -12,9 +12,9 @@ chardet==3.0.4               #   (required by binaryornot)
 charset-normalizer==2.1.1    #   (required by requests)
 click==8.1.3                 #   (required by cookiecutter/gtts/humpty)
 cookiecutter==2.1.1          # Creates projects from project templates
-cryptography==39.0.2         #   (required by paramiko/pyOpenSSL)
+cryptography==40.0.2         #   (required by paramiko/pyOpenSSL)
 cx-Oracle==8.3.0             # Oracle DB client
-Cython==0.29.34              # Cython compiler for writing C extensions
+Cython==0.29.35              # Cython compiler for writing C extensions
 decorator==5.1.1             #   (required by ipdb/ipython)
 dicttoxml==1.7.16            # Convert Python dict to XML
 dill==0.3.6                  #   (required by pylint)
@@ -22,12 +22,12 @@ distlib==0.3.6               #   (required by humpty/virtualenv)
 dnspython==2.2.1             # DNS client
 EditorConfig==0.12.3         #   (required by jsbeautifier)
 executing==1.1.1             #   (required by stack-data)
-filelock==3.10.7             #   (required by virtualenv)
+filelock==3.11.0             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 flake8==6.0.0                # Python modular source code checker
-gitdb==4.0.9                 #   (required by GitPython)
-GitPython==3.1.30            # Library to interact with Git repositories
-gTTS==2.3.1                  # Google Text-to-Speech
+gitdb==4.0.10                #   (required by GitPython)
+GitPython==3.1.31            # Library to interact with Git repositories
+gTTS==2.3.2                  # Google Text-to-Speech
 humpty==0.2.1                # Convert whl to egg
 idna==3.3                    #   (required by requests)
 ipdb==0.13.13                # Interactive Python debugger
@@ -42,10 +42,10 @@ jsonpickle==2.2.0            # Serializing any arbitrary object into JSON
 lazy-object-proxy==1.8.0     #   (required by astroid)
 lockfile==0.12.2             # File locking
 markdown2==2.4.8             # Convert Markdown to HTML
-MarkupSafe==2.1.2            #   (required by Jinja2)
-matplotlib-inline==0.1.5     #   (required by ipython)
+MarkupSafe==2.1.3            #   (required by Jinja2)
+matplotlib-inline==0.1.6     #   (required by ipython)
 mccabe==0.7.0                #   (required by flake8/pylint)
-motor==3.1.1                 # Mongo async client
+motor==3.1.2                 # Mongo async client
 mypy-extensions==1.0.0       #   (required by mypy)
 mypy==1.3.0                  # Python type checker
 ntplib==0.4.0                # NTP client
@@ -54,7 +54,7 @@ parso==0.8.3                 #   (required by jedi)
 pexpect==4.7.0               #   (required by ipython)
 pickleshare==0.7.5           #   (required by ipython)
 pip==23.1.2                  # Python package manager
-pipdeptree==2.7.1            # Python package dependency tree
+pipdeptree==2.8.0            # Python package dependency tree
 platformdirs==3.4.0          #   (required by pylint/virtualenv)
 prompt-toolkit==3.0.38       #   (required by ipython)
 ptyprocess==0.6.0            #   (required by pexpect)
@@ -79,12 +79,12 @@ soupsieve==2.3.2.post1       #   (required by beautifulsoup4)
 stack-data==0.5.1            #   (required by ipython)
 text-unidecode==1.3          #   (required by python-slugify)
 tomli==2.0.1                 #   (required by mypy)
-tomlkit==0.11.7              #   (required by pylint)
+tomlkit==0.11.8              #   (required by pylint)
 tornado==6.3.2               # Web server framework
 traitlets==5.8.1             #   (required by ipython)
-typing_extensions==4.6.1     #   (required by mypy)
+typing_extensions==4.6.3     #   (required by mypy)
 urllib3==1.26.16             #   (required by requests)
-virtualenv==20.21.1          # Python Virtual Environments
+virtualenv==20.22.0          # Python Virtual Environments
 wcwidth==0.2.6               #   (required by prompt-toolkit)
 wheel==0.40.0                # Python wheel packaging
 wrapt==1.14.1                #   (required by astroid)

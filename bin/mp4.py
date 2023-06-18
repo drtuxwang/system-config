@@ -7,7 +7,6 @@ import argparse
 import logging
 import os
 import re
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -566,16 +565,17 @@ class Encoder:
                     ['-ss', self._options.get_start_time()])
             if self._options.get_run_time():
                 self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
+            path_tmp = Path(f'{output_file}.part')
             self._ffmpeg.extend_args([
                 '-metadata',
                 'title=',
                 '-f',
                 'mp4',
                 '-y',
-                output_file+'.part',
+                path_tmp,
             ])
         self._run()
-        shutil.move(output_file+'.part', output_file)
+        path_tmp.replace(output_file)
         Media(self._options.get_file_new()).show()
 
     def _multi(self) -> None:

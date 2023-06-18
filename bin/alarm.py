@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-Count down timer.
+Alarm after delay or specific time.
 """
 
 import argparse
+import datetime
+import re
 import signal
 import sys
 import time
@@ -33,7 +35,9 @@ class Options:
         return self._pop
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description="Count down timer.")
+        parser = argparse.ArgumentParser(
+            description="Alarm after delay or specific time."
+        )
 
         parser.add_argument(
             '-g',
@@ -62,7 +66,7 @@ class Options:
                 '-cr',
                 '#880000',
                 '-geometry',
-                '15x4+120+20',
+                '18x4+120+20',
                 '-ut',
                 '+sb',
                 '-e',
@@ -108,6 +112,26 @@ class Main:
             subtask_mod.Batch(self._options.get_pop().get_cmdline()).run()
         self._alarm += 60  # One minute reminder
 
+    @staticmethod
+    def _get_countdown() -> int:
+        while True:
+            answer = input("Time (s or hh:mm):\n")
+            try:
+                return int(answer)
+            except ValueError:
+                if re.match(r'\d\d:\d\d$', answer):
+                    now = datetime.datetime.now()
+                    alarm = datetime.datetime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        int(answer[0:2]),
+                        int(answer[3:5]),
+                    )
+                    if alarm < now:
+                        alarm += datetime.timedelta(days=1)
+                    return (alarm - now).seconds
+
     def run(self) -> int:
         """
         Start program
@@ -119,22 +143,19 @@ class Main:
         while True:
             try:
                 sys.stdout.write("\033]11;#ffffdd\007")
-                try:
-                    count_down = int(input("Time(s): "))
-                except ValueError:
-                    continue
+                countdown = self._get_countdown()
                 elapsed = 0
                 self._alarm = 0
                 start = int(time.time())
 
                 while True:
-                    if elapsed >= count_down + self._alarm:
+                    if elapsed >= countdown + self._alarm:
                         self._alert()
                     time.sleep(1)
                     elapsed = int(time.time()) - start
                     sys.stdout.write(
                         f" \r {time.strftime('%H:%M')} "
-                        f"{count_down - elapsed}",
+                        f"{countdown - elapsed}",
                     )
                     sys.stdout.flush()
             except KeyboardInterrupt:

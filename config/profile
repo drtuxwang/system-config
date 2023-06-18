@@ -379,17 +379,14 @@ then
     fi
     unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
-    # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
-    for _dir in inst src test
+    # mk[0-9a-z], cd[0-9a-z], scd
+    for _dir in 0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p q r s t u v w x y z
     do
-        alias mk$_dir='cd "`realpath .`" && export cd'$_dir'="$PWD" && echo "cd'$_dir'=$PWD"'
+        alias mk$_dir='cd "$PWD" && export cd'$_dir'="$PWD" && echo "cd'$_dir'=$PWD"'
         alias cd$_dir='echo "cd \"$cd'$_dir'\"" && cd "$cd'$_dir'"'
-        if [ ! "$cdtest" ]
-        then
-            export cd$_dir="$PWD"
-        fi
     done
     unset _dir
+    alias scd='env | grep "^cd[0-9a-z]=." | sort'
 
     # Platform specific
     case `uname` in

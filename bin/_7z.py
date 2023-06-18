@@ -5,7 +5,6 @@ Make a compressed archive in 7Z format.
 
 import argparse
 import os
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -243,7 +242,7 @@ class Main:
             self._make_exe(archiver, Path(f'{archive}.part'))
 
         try:
-            shutil.move(archive+'.part', archive)
+            Path(f'{archive}.part').replace(archive)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}" archive file.',

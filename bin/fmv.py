@@ -5,6 +5,7 @@ Move or rename files.
 
 import argparse
 import os
+import shutil
 import signal
 import sys
 from pathlib import Path
@@ -68,6 +69,13 @@ class Options:
         """
         self._parse_args(args[1:])
 
+        target = self._args.target[0]
+        if target.endswith('/') and not Path(target).exists():
+            try:
+                Path(target).mkdir(parents=True)
+            except OSError:
+                pass
+
 
 class Main:
     """
@@ -130,10 +138,14 @@ class Main:
                     )
             try:
                 source_path.replace(target_path)
-            except OSError as exception:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot move "{source_path}" source file.',
-                ) from exception
+            except OSError:
+                try:  # retry for moving between devices
+                    shutil.move(str(source_path), target_path)  # < 3.9
+                except OSError as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot move '
+                        f'"{source_path}" source file.',
+                    ) from exception
 
     def _rename(self, source_path: Path, target_path: Path) -> None:
         if source_path.is_dir():
@@ -161,15 +173,19 @@ class Main:
             if not target_path.parent.exists():
                 target_path.parent.mkdir(parents=True)
             source_path.replace(target_path)
-        except OSError as exception:
-            if source_path.is_dir():
+        except OSError:
+            try:  # retry for moving between devices
+                shutil.move(str(source_path), target_path)  # < 3.9
+            except OSError as exception:
+                if source_path.is_dir():
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot rename '
+                        f'"{source_path}" source directory.',
+                    ) from exception
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot rename '
-                    f'"{source_path}" source directory.',
+                    f'"{source_path}" source file.',
                 ) from exception
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot rename "{source_path}" source file.',
-            ) from exception
 
     def run(self) -> int:
         """

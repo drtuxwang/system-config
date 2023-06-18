@@ -12,4 +12,8 @@ then
     # Python virtualenv activation regex
     [ ! "$VIRTUAL_ENV" ] && export PYTHON_VENVS=".*"
     ## export ANSIBLE_PYTHON=python2.7
+
+    # API key files
+    ##export ANSIBLE_KEY_FILE=
+    ##export DROPBOX_KEY_FILE=
 fi

@@ -184,15 +184,13 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     endif
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
-    # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
-    foreach _dir (inst src test)
-        alias mk$_dir 'cd "`realpath .`" && setenv cd'$_dir' "$PWD" && echo "cd'$_dir'=$PWD"'
-        alias cd$_dir 'echo "cd \"$cd'$_dir'\"" && cd "$cd'$_dir'"'
-        if ( ! $?cdtest ) then
-            setenv cd$_dir "$PWD"
-        endif
+    # mk[0-9a-z], cd[0-9a-z], scd
+    foreach _dir (0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p q r s t u v w x y z)
+        alias mk$_dir 'cd "$PWD" && setenv cd'$_dir' "$PWD" && echo "cd'$_dir'=$PWD"'
+        alias cd$_dir 'echo cd \"$cd'$_dir'\" && cd "$cd'$_dir'"'
     end
     unsetenv _dir
+    alias scd 'env | grep "^cd[0-9a-z]=." | sort'
 
     # Platform specific
     switch (`uname`)

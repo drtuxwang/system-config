@@ -5,7 +5,6 @@ Make a compressed archive in TAR.LZMA format.
 
 import argparse
 import os
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -131,7 +130,7 @@ class Main:
         try:
             if task.get_exitcode():
                 raise OSError
-            shutil.move(archive+'.part', archive)
+            Path(archive+'.part').replace(archive)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}" archive file.',

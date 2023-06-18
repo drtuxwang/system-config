@@ -157,6 +157,8 @@ class Main:
                 ):
                     par0_path = Path(directory_path, '....par2')
                     par1_path = Path(directory_path, '....vol0+1.par2')
+                    if par0_path.exists():
+                        par0_path.unlink()
                     if par1_path.exists():
                         par1_path.unlink()
                     size = path.stat().st_size // 400 * 4 + 4

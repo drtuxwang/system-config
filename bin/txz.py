@@ -5,7 +5,6 @@ Make a compressed archive in TAR.XZ format.
 
 import argparse
 import os
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -75,7 +74,7 @@ class Options:
         self._files = self._args.files if self._args.files else os.listdir()
 
         self._tar = command_mod.Command('tar', errors='stop')
-        self._tar.set_args(['cfv', self._archive+'.part'] + self._files)
+        self._tar.set_args(['cfv', f'{self._archive}.part'] + self._files)
         self._tar.extend_args([
             '--use-compress-program',
             'xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose',
@@ -132,7 +131,7 @@ class Main:
         try:
             if task.get_exitcode():
                 raise OSError
-            shutil.move(archive+'.part', archive)
+            Path(f'{archive}.part').replace(archive)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}" archive file.',

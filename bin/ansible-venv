@@ -11,7 +11,7 @@ then
     POSTINST=
 else
     PYTHON="python3.10"
-    PACKAGE="ansible-core==2.14.4"
+    PACKAGE="ansible-core==2.14.6"
     DEPENDS=
     POSTINST="install_collections"
 fi

@@ -56,7 +56,8 @@ class Options:
             'librsvg-WARNING|Plug-in| deprecated |GIMP is started|'
             'machine-id: |GIMP-Message: |- /Applications/|'
             'gimp_check_updates_callback: |GLib-GObject-CRITICAL |'
-            'GIMP-Error: |Please create the folder|GeglBuffer|using gegl copy'
+            'GIMP-Error: |Please create the folder|GeglBuffer|using gegl copy|'
+            'gegl_tile_cache_destroy:'
         )
 
 

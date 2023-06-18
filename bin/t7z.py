@@ -5,7 +5,6 @@ Make a compressed archive in TAR.7Z format.
 
 import argparse
 import os
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -124,6 +123,7 @@ class Main:
             tar.extend_args(['--xattrs', '--xattrs-include=*'])
 
         unpacker = command_mod.Command('7z', errors='stop')
+        path_tmp = Path(f'{archive}.part')
         unpacker.set_args([
             'a',
             '-m0=lzma2',
@@ -135,7 +135,7 @@ class Main:
             '-ms=on',
             '-si',
             '-y',
-            archive+'.part'
+            path_tmp,
         ])
         task = subtask_mod.Task(
             tar.get_cmdline() + ['|'] + unpacker.get_cmdline()
@@ -145,7 +145,7 @@ class Main:
         try:
             if task.get_exitcode():
                 raise OSError
-            shutil.move(archive+'.part', archive)
+            path_tmp.replace(archive)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}" archive file.',

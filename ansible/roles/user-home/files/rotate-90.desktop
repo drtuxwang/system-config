@@ -4,8 +4,8 @@ Type=Application
 Name=Losslessly rotate JPEG image clockwise
 
 # call the helper script
-TryExec=convert
-Exec=convert -rotate 90 %f %f
+TryExec=rotate
+Exec=rotate -r 90 %f
 
 # Desktop files that are usable only in Geeqie should be marked like this:
 Categories=X-Geeqie;

@@ -4,7 +4,6 @@ Wrapper for "wget" command
 """
 
 import os
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -65,7 +64,7 @@ class Options:
                 self._output = args[2]
                 if Path(args[2]).is_file():
                     raise SystemExit(f"Output file already exists: {args[2]}")
-                self._wget.extend_args([args[1], self._output + '.part'])
+                self._wget.extend_args([args[1], f'{self._output}.part'])
                 args = args[2:]
                 continue
             self._wget.append_arg(args[1])
@@ -117,14 +116,15 @@ class Main:
         if output:
             task = subtask_mod.Task(cmdline)
             task.run()
+            path_tmp = Path(f'{output}.part')
             if (
-                    task.get_exitcode() or
-                    not Path(f'{output}.part').is_file() or
-                    Path(f'{output}.part').stat().st_size == 0
+                task.get_exitcode() or
+                not path_tmp.is_file() or
+                path_tmp.stat().st_size == 0
             ):
                 raise SystemExit(task.get_exitcode())
             try:
-                shutil.move(output + '.part', output)
+                path_tmp.replace(output)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{output}" output file.',

@@ -81,6 +81,9 @@ bindings:
   .gz:
     open: archive_unpacker
     view: archive_unpacker
+  .heic:
+    open: image_editor
+    view: image_viewer
   .htm:
     open: text_editor
     view: web_browser
@@ -224,6 +227,7 @@ parameters:
   image_extensions:
   - .bmp
   - .gif
+  - .heic
   - .jpeg
   - .jpg
   - .pcx

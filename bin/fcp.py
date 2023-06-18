@@ -62,6 +62,13 @@ class Options:
         """
         self._parse_args(args[1:])
 
+        target = self._args.target[0]
+        if target.endswith('/') and not Path(target).exists():
+            try:
+                Path(target).mkdir(parents=True)
+            except OSError:
+                pass
+
 
 class Main:
     """

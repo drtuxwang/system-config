@@ -120,6 +120,8 @@ the years.
  * bin/_7z.py
  * bin/aftp                 Automatic connection to FTP server anonymously
  * bin/aftp.py
+ * bin/alarm                Alarm after delay or specific time
+ * bin/alarm.py
  * bin/aplay                Play MP3/OGG/WAV audio files in directory
  * bin/aplay.py             (uses vlc)
  * bin/appimagetoo          Sandbox for "appimagetool" launcher
@@ -131,7 +133,7 @@ the years.
  * bin/audacity.py
  * bin/avi                  Encode AVI video using avconv (libxvid/libmp3lame)
  * bin/avi.py
- * bin/battery              Linux battery status utility
+ * bin/battery              Monitor laptop battery
  * bin/battery.py
  * bin/bell                 Play bell.ogg sound
  * bin/bell.ogg             (uses cvlc or ogg123)
@@ -176,8 +178,6 @@ the years.
  * bin/clam.py
  * bin/cluster              Run command on a subnet in parallel
  * bin/cluster.py
- * bin/countdown            Count down timer
- * bin/countdown.py
  * bin/deb                  Debian package management tools
  * bin/deb.py               (support offline repository searching and update checks
  * bin/debcheck
@@ -198,6 +198,8 @@ the years.
  * bin/docker-sudo          Starts Docker sudo app
  * bin/dpkg                 Wrapper for "dpkg" command (force system Python)
  * bin/dpkg.py
+ * bin/dropbox              Dropbox file sharing client.
+ * bin/dropbox_.py
  * bin/eclipse              Wrapper for 'eclipse' command
  * bin/eclipse.py
  * bin/edge                 Wrapper for "microsoft-edge" command
@@ -306,9 +308,6 @@ the years.
  * bin/fsame                Show files with same MD5 checksums
  * bin/fsame.bat
  * bin/fsame.py
- * bin/fshare               File sharing utility (currently dropbox only)
- * bin/fshare.bat
- * bin/fshare.py
  * bin/fsort                Unicode sort lines of a file
  * bin/fsort.bat
  * bin/fsort.py
@@ -593,6 +592,8 @@ the years.
  * bin/rpm.py
  * bin/run                  Run a command immune to terminal hangups
  * bin/run.py
+ * bin/rotate               Rotate image file clockwise
+ * bin/rotate.py
  * bin/sandbox              Sandbox command/shell with read/write and network restrictions
  * bin/sandbox.py
  * bin/say                  Speak words using Google TTS engine

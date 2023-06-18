@@ -5,7 +5,6 @@ Make uncompressed archive in TAR format (GNU Tar version).
 
 import argparse
 import os
-import shutil
 import signal
 import sys
 from pathlib import Path
@@ -158,9 +157,10 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())
-        cls._check_tar(Path(f'{archive}.part'))
+        path_tmp = Path(f'{archive}.part')
+        cls._check_tar(path_tmp)
         try:
-            shutil.move(archive+'.part', archive)
+            path_tmp.replace(archive)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}" archive file.',

@@ -5,7 +5,6 @@ Make a compressed archive in TAR.BZ2 format.
 
 import argparse
 import os
-import shutil
 import signal
 import sys
 import tarfile
@@ -134,15 +133,16 @@ class Main:
         options = Options()
 
         archive = options.get_archive()
+        path_tmp = Path(f'{archive}.part')
         try:
-            with tarfile.open(archive+'.part', 'w:bz2') as ofile:
+            with tarfile.open(path_tmp, 'w:bz2') as ofile:
                 self._addfile(ofile, [Path(x) for x in options.get_files()])
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}.part" archive file.',
             ) from exception
         try:
-            shutil.move(archive+'.part', archive)
+            path_tmp.replace(archive)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}" archive file.',

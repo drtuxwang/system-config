@@ -7,7 +7,6 @@ import argparse
 import http
 import json
 import os
-import shutil
 import signal
 import socket
 import sys
@@ -239,10 +238,11 @@ class Main:
             ) from exception
         print()
 
-        os.utime(file+'.part', (mtime, mtime))
+        path_tmp = Path(f'{file}.part')
+        os.utime(path_tmp, (mtime, mtime))
         try:
-            shutil.move(file+'.part', file)
-            os.remove(file+'.part'+'.json')
+            path_tmp.replace(file)
+            Path(f'{path_tmp}+.json')
         except OSError:
             pass
 
