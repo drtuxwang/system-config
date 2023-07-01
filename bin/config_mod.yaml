@@ -104,6 +104,9 @@ bindings:
     view: image_viewer
   .json:
     open: text_editor
+  .jxl:
+    open: image_editor
+    view: image_viewer
   .lzma:
     open: archive_unpacker
     view: archive_unpacker
@@ -112,7 +115,11 @@ bindings:
     view: audio_player
   .mp4:
     open: video_player
+  .mpeg:
+    open: video_player
   .mpegts:
+    open: video_player
+  .mpg:
     open: video_player
   .odf:
     open: doc_editor
@@ -213,6 +220,8 @@ bindings:
     view: archive_unpacker
   .yaml:
     open: text_editor
+  .yml:
+    open: text_editor
   .zip:
     open: archive_unpacker
     view: archive_unpacker
@@ -230,6 +239,7 @@ parameters:
   - .heic
   - .jpeg
   - .jpg
+  - .jxl
   - .pcx
   - .png
   - .svg
@@ -241,7 +251,9 @@ parameters:
   - .avi
   - .flv
   - .mp4
+  - .mpeg
   - .mpegts
+  - .mpg
   - .webm
   web_mail: https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com
   web_uri:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Alarm after delay or specific time.
+Count down alarm after delay or specific time.
 """
 
 import argparse
@@ -36,7 +36,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Alarm after delay or specific time."
+            description="Count down alarm after delay or specific time."
         )
 
         parser.add_argument(
@@ -107,7 +107,7 @@ class Main:
             sys.stdout.flush()
             subtask_mod.Batch(self._bell.get_cmdline()).run()
             self._options.get_pop().set_args(
-                [time.strftime('%H:%M') + ': Count down reminder']
+                [time.strftime('%H:%M') + ': Alarm reminder']
             )
             subtask_mod.Batch(self._options.get_pop().get_cmdline()).run()
         self._alarm += 60  # One minute reminder

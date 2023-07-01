@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Start a simple Python HTTP server.
+Sandbox a simple Python HTTP server.
 """
 
 import argparse
@@ -13,6 +13,9 @@ import sys
 from pathlib import Path
 from typing import List
 
+import network_mod
+import subtask_mod
+
 
 class Options:
     """
@@ -22,6 +25,12 @@ class Options:
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
+
+    def get_run_flag(self) -> bool:
+        """
+        Return run flag.
+        """
+        return self._args.run_flag
 
     def get_directory(self) -> str:
         """
@@ -37,9 +46,15 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Start a simple Python HTTP server.",
+            description="Sandbox a simple Python HTTP server.",
         )
 
+        parser.add_argument(
+            '-run',
+            dest='run_flag',
+            action='store_true',
+            help="Run HTTPD with out creating sandbox.",
+        )
         parser.add_argument('directory', nargs=1, help="Directory to serve.")
         parser.add_argument(
             'port',
@@ -67,13 +82,6 @@ class Options:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "{directory}" directory.',
             )
-
-        try:
-            self._port = int(args[2])
-        except ValueError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Invalid port number "{args[2]}".',
-            ) from exception
 
 
 class MyTCPServer(socketserver.TCPServer):
@@ -115,11 +123,33 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def run() -> int:
+    def sandbox(options: Options) -> None:
+        """
+        Create sandbox
+        """
+        command = network_mod.SandboxFile(sys.executable, args=[
+            '-B',
+            __file__,
+            '-run',
+            options.get_directory(),
+            options.get_port(),
+        ])
+        configs = [
+            'net',
+            f'{Path(__file__).parent}:ro',
+            f"{os.environ['PWD']}:ro",
+        ]
+        command.sandbox(configs, errors='stop')
+        subtask_mod.Exec(command.get_cmdline()).run()
+
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
+        if not options.get_run_flag():
+            cls.sandbox(options)
 
         try:
             os.chdir(options.get_directory())

@@ -28,7 +28,7 @@ class Options:
         """
         Return directory.
         """
-        return self._args.directory[0]
+        return self._target
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -36,7 +36,7 @@ class Options:
         )
 
         parser.add_argument(
-            'directory',
+            'target',
             nargs=1,
             help="Directory to copy file.",
         )
@@ -48,6 +48,13 @@ class Options:
         Parse arguments
         """
         self._parse_args(args[1:])
+
+        self._target = os.path.expandvars(self._args.target[0])
+        if self._target.endswith('/') and not Path(self._target).exists():
+            try:
+                Path(self._target).mkdir(parents=True)
+            except OSError:
+                pass
 
 
 class Main:

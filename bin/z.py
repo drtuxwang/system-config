@@ -99,7 +99,9 @@ class Main:
         path = Path(options.get_archive())
 
         name = path.name.replace('-new', '')
-        if name.endswith(('.tar.7z', '.t7z')):
+        if name.endswith(('.7z', '.exe')) or path.is_dir():
+            command = command_mod.Command('7z', errors='stop')
+        elif name.endswith(('.tar.7z', '.t7z')):
             command = command_mod.Command('t7z', errors='stop')
         elif name.endswith(('.tar.xz', '.txz')):
             command = command_mod.Command('txz', errors='stop')
@@ -111,7 +113,7 @@ class Main:
             command = command_mod.Command('tbz', errors='stop')
         elif name.endswith(('.tar.gz', '.tgz')):
             command = command_mod.Command('tgz', errors='stop')
-        elif name.endswith(('.7z', '.tar', '.zip')):
+        elif name.endswith(('.tar', '.zip')):
             command = command_mod.Command(name.rsplit('.')[-1], errors='stop')
         else:
             raise SystemExit(

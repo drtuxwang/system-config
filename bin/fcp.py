@@ -34,7 +34,7 @@ class Options:
         """
         Return target file or directory.
         """
-        return self._args.target[0]
+        return self._target
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -62,10 +62,10 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        target = self._args.target[0]
-        if target.endswith('/') and not Path(target).exists():
+        self._target = os.path.expandvars(self._args.target[0])
+        if self._target.endswith('/') and not Path(self._target).exists():
             try:
-                Path(target).mkdir(parents=True)
+                Path(self._target).mkdir(parents=True)
             except OSError:
                 pass
 

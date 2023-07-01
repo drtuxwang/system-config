@@ -100,29 +100,31 @@ class Main:
             ) from exception
 
     @staticmethod
-    def _checkfile(
-        directory: str = os.curdir,
-    ) -> None:
+    def _checkfile(directory: str = os.curdir) -> None:
         """
-        Look for bad files like core dumps
+        Look for bad files like core dumps or empty directories
         (don't followlinks & onerror do nothing)
         """
         isbadfile = re.compile(r'^core([.]\d+)?$')
 
         error = False
         for root, _, files in os.walk(directory):
-            for file in files:
-                file_path = Path(root, file).resolve()
-                if isbadfile.search(file):
-                    print("Error: Found bad file:", file_path)
-                    error = True
-                try:
-                    if Path(file_path).stat().st_size == 0:
-                        print("Error: Found zero size file:", file_path)
+            if files:
+                for file in files:
+                    file_path = Path(root, file).resolve()
+                    if isbadfile.search(file):
+                        print(f"Error: Found bad file: {file_path}")
                         error = True
-                except OSError:
-                    print("Error: Found broken link:", file_path)
-                    error = True
+                    try:
+                        if Path(file_path).stat().st_size == 0:
+                            print(f"Error: Found zero size file: {file_path}")
+                            error = True
+                    except OSError:
+                        print(f"Error: Found broken link: {file_path}")
+                        error = True
+            elif not [x for x in Path(root).glob('*') if x.name != '...']:
+                print(f"Error: Found empty directory: {Path(root).resolve()}")
+                error = True
         if error:
             raise SystemExit(1)
 
@@ -164,7 +166,10 @@ class Main:
             file_stat = file_mod.FileStat(newest)
             file_time = file_stat.get_time()
             if file_time != file_mod.FileStat(directory_path).get_time():
-                os.utime(directory_path, (file_time, file_time))
+                try:
+                    os.utime(directory_path, (file_time, file_time))
+                except PermissionError:
+                    pass
 
     @classmethod
     def _write_fsums(cls, lines: List[str]) -> None:

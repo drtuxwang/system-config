@@ -14,6 +14,7 @@ set_vga() {
 ##set_vga VGA-0 1024 768 60 &
 ##set_vga VGA1 1440 900 60 &
 ##xreset DVI-I=1360x768
+##xreset Virtual1=1280x720
 ##xrandr --dpi 96
 
 # Fix audio (pactl list short sinks):

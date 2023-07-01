@@ -120,8 +120,6 @@ the years.
  * bin/_7z.py
  * bin/aftp                 Automatic connection to FTP server anonymously
  * bin/aftp.py
- * bin/alarm                Alarm after delay or specific time
- * bin/alarm.py
  * bin/aplay                Play MP3/OGG/WAV audio files in directory
  * bin/aplay.py             (uses vlc)
  * bin/appimagetoo          Sandbox for "appimagetool" launcher
@@ -178,6 +176,8 @@ the years.
  * bin/clam.py
  * bin/cluster              Run command on a subnet in parallel
  * bin/cluster.py
+ * bin/countdown            Count down alarm after delay or specific time
+ * bin/countdown.py
  * bin/deb                  Debian package management tools
  * bin/deb.py               (support offline repository searching and update checks
  * bin/debcheck
@@ -237,8 +237,6 @@ the years.
  * bin/fcpall               Copy a file to multiple target files
  * bin/fcpall.bat
  * bin/fcpall.py
- * bin/fcpclip              Copy file from clipboard location
- * bin/fcpclip.py
  * bin/fcplink              Replace symbolic link to files with copies
  * bin/fcplink.py
  * bin/fdiff                Show summary of differences between two directories recursively
@@ -414,7 +412,7 @@ the years.
  * bin/htmlformat           Re-format XHTML file.
  * bin/htmlformat.bat
  * bin/htmlformat.py
- * bin/httpd                Start a simple Python HTTP server
+ * bin/httpd                Sandbox a simple Python HTTP server
  * bin/httpd.bat
  * bin/httpd.py
  * bin/index                Produce "index.fsum" file and "..fsum" cache files
@@ -808,6 +806,8 @@ the years.
  * bin/xfreerdp.tcl         XFreeRDP TCL/TK panel
  * bin/xedit                Start GNOME/KDE/XFCE graphical editor
  * bin/xedit.py
+ * bin/xfcp                 Copy file from clipboard location
+ * bin/xfcp.py
  * bin/xlight               Desktop screen backlight utility
  * bin/xlight.py
  * bin/xlock                Start GNOME/KDE/XFCE screen lock

@@ -113,7 +113,7 @@ class Options:
         self._parse_args(args[1:])
 
         if self._args.files:
-            self._files = self._args.files
+            self._files = [os.path.expandvars(x) for x in self._args.files]
         else:
             self._files = sorted(os.listdir())
 

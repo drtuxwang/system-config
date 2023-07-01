@@ -90,11 +90,8 @@ class Options:
         """
         Parse arguments
         """
-        for name in ('7zz', '7zzs'):
-            self._archiver = command_mod.Command(name, errors='ignore')
-            if self._archiver.is_found():
-                break
-        else:
+        self._archiver = command_mod.Command('7zz', errors='ignore')
+        if not self._archiver.is_found():
             self._archiver = command_mod.Command('7z', errors='stop')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
@@ -122,11 +119,8 @@ class Options:
         if self._args.split:
             self._archiver.extend_args([f'-v{self._args.split[0]}b'])
 
-        self._archive = (
-            str(Path(f'{self._args.archive[0]}.7z').resolve())
-            if Path(self._args.archive[0]).is_dir()
-            else self._args.archive[0]
-        )
+        path = Path(self._args.archive[0])
+        self._archive = f'{path.resolve()}.7z' if path.is_dir() else str(path)
         self._archiver.append_arg(self._archive+'.part')
 
         if self._args.files:

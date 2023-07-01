@@ -37,7 +37,7 @@ class Options:
         """
         Return target file or directory.
         """
-        return self._args.target[0]
+        return self._target
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description="Move or rename files.")
@@ -69,10 +69,10 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        target = self._args.target[0]
-        if target.endswith('/') and not Path(target).exists():
+        self._target = os.path.expandvars(self._args.target[0])
+        if self._target.endswith('/') and not Path(self._target).exists():
             try:
-                Path(target).mkdir(parents=True)
+                Path(self._target).mkdir(parents=True)
             except OSError:
                 pass
 
@@ -112,19 +112,19 @@ class Main:
                 f'"{self._options.get_target()}" target directory.',
             )
         for source_path in [Path(x) for x in self._options.get_sources()]:
+            target_path = Path(
+                self._options.get_target(),
+                Path(source_path).name,
+            )
             if source_path.is_dir():
-                print(f'Moving "{source_path}" directory...')
+                print(f'Moving directory to "{target_path}"...')
             elif source_path.is_file():
-                print(f'Moving "{source_path}" file...')
+                print(f'Moving file to "{target_path}"...')
             else:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find '
                     f'"{source_path}" source file or directory.',
                 )
-            target_path = Path(
-                self._options.get_target(),
-                Path(source_path).name,
-            )
             if target_path.is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot safely overwrite '
@@ -149,9 +149,9 @@ class Main:
 
     def _rename(self, source_path: Path, target_path: Path) -> None:
         if source_path.is_dir():
-            print(f'Renaming "{source_path}" directory...')
+            print(f'Renaming directory to "{target_path}"...')
         elif source_path.is_file():
-            print(f'Renaming "{source_path}" file...')
+            print(f'Renaming file to "{target_path}"...')
         else:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '

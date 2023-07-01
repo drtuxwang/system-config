@@ -109,6 +109,7 @@ class Main:
     @staticmethod
     def _check_used(distribution: str) -> dict:
         packages = {}
+        pool = distribution.replace('dist', 'pool')
         try:
             path = Path(f'{distribution}.debs')
             with path.open(errors='replace') as ifile:
@@ -121,7 +122,7 @@ class Main:
                             f'"{path}" package ".debs" list file.',
                         ) from exception
                     packages[name] = Package(
-                        f'{distribution}/{name}_{version}_*.deb',
+                        f'{pool}/{name}_{version}_*.deb',
                         -1,
                         version,
                     )
@@ -141,7 +142,7 @@ class Main:
                         ) from exception
                     if name in packages:
                         if packages[name].file == str(
-                            Path(distribution, f'{name}_{version}_*.deb')
+                            Path(pool, f'{name}_{version}_*.deb')
                         ):
                             del packages[name]
         except OSError:

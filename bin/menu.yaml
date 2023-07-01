@@ -492,11 +492,6 @@ menu_system:
 
 menu_utility:
 - button:
-    name: alarm
-    color: '#ffcc00'
-    label: Alarm Clock
-    run: exec alarm -g &
-- button:
     name: breaktimer
     color: '#ffcc00'
     label: Break Timer
@@ -506,6 +501,11 @@ menu_utility:
     color: '#ffcc00'
     label: Calculator
     run: exec xcalc &
+- button:
+    name: countdown
+    color: '#ffcc00'
+    label: Count Down
+    run: exec countdown -g &
 - button:
     name: ibus
     color: '#ffcc00'

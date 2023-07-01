@@ -70,11 +70,15 @@ class Main:
         if not command.is_found():
             cmdline = GENERIC
             command = command_mod.Command(cmdline[0], errors='stop')
-
         command.set_args(cmdline[1:] + sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
 
-        return 0
+        pattern = (
+            '^$|dbind-WARNING|Gtk-WARNING|Gtk-CRITICAL|GLib-GObject-CRITICAL'
+        )
+        task = subtask_mod.Task(command.get_cmdline())
+        task.run(pattern=pattern)
+
+        return task.get_exitcode()
 
 
 if __name__ == '__main__':

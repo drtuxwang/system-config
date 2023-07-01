@@ -109,6 +109,6 @@ fi
 
 if [ "${0%/*}/../scripts/index-system" ]
 then
-    cd s:/
+    cd h:/
     ${0%/*}/../scripts/index-system
 fi
