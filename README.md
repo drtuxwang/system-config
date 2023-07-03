@@ -1149,7 +1149,7 @@ the years.
  * helm/bin/helm-save.bash               Save Helm release docker images
  * helm/cassandra/Makefile               Helm Chart: bitnami/cassandra 10.3.2 (app-3.11.13)
  * helm/cassandra/values.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 8.10.2 (app-3.4.24)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 8.12.0 (app-3.4.26)
  * helm/etcd/values.yaml
  * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 8.2.33 (app-8.5.10)
  * helm/grafana/values.yaml
@@ -1173,13 +1173,13 @@ the years.
  * helm/oracle-xe/oracle-xe/templates/box-service.yaml
  * helm/oracle-xe/oracle-xe/templates/box-statefulset.yaml
  * helm/oracle-xe/values.yaml
- * helm/postgresql/Makefile              Helm Chart: bitnami/postgresql 12.4.3 (app-11.18.0)
+ * helm/postgresql/Makefile              Helm Chart: bitnami/postgresql 12.5.9 (app-11.20.0)
  * helm/postgresql/values.yaml
- * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 22.4.1 (app-2.37.6)
+ * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 22.6.7 (app-2.37.8)
  * helm/prometheus/values.yaml
  * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 2.1.6 (app-1.3.1)
  * helm/pushgateway/values.yaml
- * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 11.14.5 (app-3.8.35)
+ * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 11.16.2 (app-3.8.35)
  * helm/rabbitmq/values.yaml
  * helm/test-box/Makefile                Helm Chart: drtuxwang/test-box (drtuxwang/debian-bash:stable)
  * helm/test-box/drtuxwang/test-box/Chart.yaml

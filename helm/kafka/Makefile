@@ -4,7 +4,7 @@ CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := kafka
 CHART_VERSION := 21.4.6
 APP_VERSION := 2.8.1
-IMAGE_TAG := 2.8.1-debian-10-r99
+IMAGE_TAG := 2.8.1-debian-11-r7
 NAMESPACE ?= default
 HOSTNAME ?= kafka.kube.local
 

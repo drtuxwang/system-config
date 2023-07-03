@@ -2,9 +2,9 @@ NAME := postgresql
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := postgresql
-CHART_VERSION := 12.4.3
-APP_VERSION := 11.18.0
-IMAGE_TAG := 11.18.0-debian-11-r20
+CHART_VERSION := 12.5.9
+APP_VERSION := 11.20.0
+IMAGE_TAG := 11.20.0-debian-11-r2
 NAMESPACE ?= infra
 LOCALPORT ?=
 
