@@ -62,7 +62,7 @@ pure-eval==0.2.2             #   (required by stack-data)
 pycodestyle==2.10.0          # Python style guide checker
 pycparser==2.21              #   (required by cffi)
 pyflakes==3.0.1              #   (required by flake8)
-Pygments==2.14.0             #   (required by ipython)
+Pygments==2.15.0             #   (required by ipython)
 pylint==2.17.4               # Python code static checker
 pymongo==4.2.0               # MongoDB client
 PyNaCl==1.4.0                #   (required by paramiko)
