@@ -23,6 +23,7 @@ AppDir:
     arch: amd64
     include:
     - bash
+    - libc6
     exclude:
     - dpkg
     - gcc-10-base

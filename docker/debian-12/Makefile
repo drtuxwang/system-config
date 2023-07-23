@@ -1,11 +1,11 @@
-BASE_IMAGE := python:3.10-slim-bookworm
-IMAGE := drtuxwang/python:3.10-slim-bookworm
+BASE_IMAGE := debian:12-slim
+IMAGE := drtuxwang/debian:12-slim
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
 endif
 
-BUILD_DIRS := bash dev devpi full
+BUILD_DIRS := bash docker dev xfce
 
 
 .PHONY: default
@@ -22,7 +22,7 @@ pull:                # Pull Docker base image
 	@make --no-print-directory status
 
 .PHONY: pull-save
-pull-save:           # pull Docker base image and save as tar file if changed
+pull-save:           # Pull Docker base image and save as tar file if changed
 	../bin/docker-pull-save.bash $(BASE_IMAGE)
 
 .PHONY: save
@@ -37,10 +37,6 @@ build:               # Build Docker images
 		make --no-print-directory --directory $$DIR build || exit 1; \
 	done
 
-.PHONY: test
-test:                # Run tests
-	make --no-print-directory --directory dev test
-
 .PHONY: run
 run:                 # Run Docker container
 	make --no-print-directory --directory bash run
@@ -48,7 +44,7 @@ run:                 # Run Docker container
 .PHONY: version
 version:             # Check versions
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR version || exit 1; \
+		make --no-print-directory --directory $$DIR version ||:; \
 	done
 
 .PHONY: rmi

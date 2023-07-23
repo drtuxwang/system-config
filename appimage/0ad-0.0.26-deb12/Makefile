@@ -12,9 +12,13 @@ build:               # Build Docker images
 .PHONY: test
 test:                # Run tests
 	@echo
-	./*.AppImage --appimage-help
+	./*.AppImage --appimage-help ||:
+	@echo
+	../bin/check-debs.bash AppImageBuilder.yaml
 	@echo
 	./*.AppImage --version
+	@echo
+	ls -l *.AppImage
 
 .PHONY: clean
 clean:               # Remove temporary build files

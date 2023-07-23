@@ -103,7 +103,7 @@ pipeline {
                             }
                             agent {
                                 docker {
-                                    image "${params.DOCKER_REG}/drtuxwang/python-full:${python_version}-slim-bullseye"
+                                    image "${params.DOCKER_REG}/drtuxwang/python-full:${python_version}-slim-bookworm"
                                     reuseNode true
                                     alwaysPull false
                                 }

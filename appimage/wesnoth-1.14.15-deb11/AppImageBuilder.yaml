@@ -54,6 +54,7 @@ AppDir:
     - libboost-random1.74.0
     - libboost-thread1.74.0
     - libc6
+    - libflac8
     - libfluidsynth2
     - libicu67
     - libinstpatch-1.0-2
@@ -63,7 +64,10 @@ AppDir:
     - libsdl2-2.0-0
     - libsdl2-image-2.0-0
     - libsdl2-mixer-2.0-0
+    - libssl1.1
     - libstdc++6
+    - libtiff5
+    - libwebp6
     exclude:
     - fonts-adf-oldania
     - gcc-10-base
@@ -82,7 +86,6 @@ AppDir:
     - libdeflate0
     - libexpat1
     - libffi7
-    - libflac8
     - libfontconfig1
     - libfreetype6
     - libfribidi0
@@ -119,11 +122,9 @@ AppDir:
     - libsdl2-ttf-2.0-0
     - libselinux1
     - libsndfile1
-    - libssl1.1
     - libsystemd0
     - libthai-data
     - libthai0
-    - libtiff5
     - libtinfo6
     - libtirpc-common
     - libtirpc3
@@ -131,7 +132,6 @@ AppDir:
     - libvorbis0a
     - libvorbisenc2
     - libvorbisfile3
-    - libwebp6
     - libwrap0
     - libxcursor1
     - libxext6

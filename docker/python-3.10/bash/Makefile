@@ -1,5 +1,5 @@
-BASE_IMAGE := drtuxwang/python:3.10-slim-bullseye
-IMAGE := drtuxwang/python-bash:3.10-slim-bullseye
+BASE_IMAGE := drtuxwang/python:3.10-slim-bookworm
+IMAGE := drtuxwang/python-bash:3.10-slim-bookworm
 NAME := python310-bash
 HOSTNAME := python310-bash
 DOCKER_BUILD := docker buildx build

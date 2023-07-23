@@ -16,39 +16,44 @@ AppDir:
 
   apt:
     sources:
-    - sourceline: deb https://deb.debian.org/debian bullseye main contrib non-free
-    - sourceline: deb https://deb.debian.org/debian bullseye-updates main contrib non-free
-    - sourceline: deb https://security.debian.org bullseye-security main contrib non-free
-    - sourceline: deb https://deb.debian.org/debian bullseye-backports main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bookworm main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bookworm-updates main contrib non-free
+    - sourceline: deb https://security.debian.org bookworm-security main contrib non-free
     allow_unauthenticated: true
     arch: amd64
     include:
-    - -t bullseye-backports 0ad
+    - 0ad
     - 0ad-data
     - 0ad-data-common
     - libboost-filesystem1.74.0
     - libc6
     - libenet7
-    - libfmt7
+    - libfmt9
     - libgloox18
-    - libicu67
+    - libicu72
+    - libidn12
     - libminiupnpc17
     - libstdc++6
     exclude:
     - adwaita-icon-theme
+    - at-spi2-common
+    - avahi-daemon
+    - dbus-bin
+    - dbus-daemon
+    - dbus-session-bus-common
+    - dbus-system-bus-common
     - dbus-user-session
     - dbus
     - dconf-gsettings-backend
     - dconf-service
     - dmsetup
+    - fdisk
+    - fontconfig-config
+    - fontconfig
     - fonts-dejavu-core
     - fonts-freefont-ttf
     - fonts-texgyre
-    - gcc-10-base
-    - glib-networking-common
-    - glib-networking-services
-    - glib-networking
-    - gsettings-desktop-schemas
+    - gcc-12-base
     - gtk-update-icon-cache
     - hicolor-icon-theme
     - libacl1
@@ -59,19 +64,20 @@ AppDir:
     - libasyncns0
     - libatk-bridge2.0-0
     - libatk1.0-0
-    - libatk1.0-data
     - libatspi2.0-0
     - libaudit-common
     - libaudit1
     - libavahi-client3
     - libavahi-common-data
     - libavahi-common3
+    - libavahi-core7
     - libblkid1
     - libbrotli1
     - libbsd0
     - libcairo-gobject2
     - libcairo2
     - libcap-ng0
+    - libcap2-bin
     - libcap2
     - libcolord2
     - libcom-err2
@@ -79,25 +85,24 @@ AppDir:
     - libcryptsetup12
     - libcups2
     - libcurl3-gnutls
-    - libdatrie1
+    - libdaemon0
     - libdb5.3
     - libdbus-1-3
     - libdconf1
+    - libdecor-0-0
     - libdeflate0
     - libdevmapper1.02.1
     - libepoxy0
     - libexpat1
     - libfdisk1
-    - libffi7
-    - libflac8
+    - libffi8
+    - libflac12
     - libfontconfig1
     - libfreetype6
     - libfribidi0
     - libgcc-s1
     - libgcrypt20
     - libgdk-pixbuf-2.0-0
-    - libgdk-pixbuf-xlib-2.0-0
-    - libgdk-pixbuf2.0-0
     - libgdk-pixbuf2.0-common
     - libglib2.0-0
     - libgmp10
@@ -110,96 +115,84 @@ AppDir:
     - libharfbuzz0b
     - libhogweed6
     - libice6
-    - libidn11
     - libidn2-0
     - libip4tc2
     - libjbig0
     - libjpeg62-turbo
     - libjson-c5
-    - libjson-glib-1.0-0
-    - libjson-glib-1.0-common
     - libk5crypto3
     - libkeyutils1
     - libkmod2
     - libkrb5-3
     - libkrb5support0
     - liblcms2-2
-    - libldap-2.4-2
+    - libldap-2.5-0
+    - liblerc4
     - liblz4-1
     - liblzma5
     - libmd0
     - libmount1
+    - libmp3lame0
+    - libmpg123-0
+    - libncursesw6
     - libnettle8
     - libnghttp2-14
     - libnotify4
-    - libnsl2
     - libogg0
     - libopenal-data
     - libopenal1
     - libopus0
     - libp11-kit0
+    - libpam-modules-bin
+    - libpam-modules
+    - libpam-runtime
     - libpam-systemd
     - libpam0g
     - libpango-1.0-0
     - libpangocairo-1.0-0
     - libpangoft2-1.0-0
+    - libpcre2-32-0
     - libpcre2-8-0
-    - libpcre3
     - libpixman-1-0
     - libpng16-16
-    - libproxy1v5
+    - libproc2-0
     - libpsl5
     - libpulse0
-    - librest-0.7-0
+    - libreadline8
     - librtmp1
+    - libsamplerate0
     - libsasl2-2
     - libsasl2-modules-db
     - libsdl2-2.0-0
     - libseccomp2
     - libselinux1
     - libsm6
+    - libsmartcols1
     - libsndfile1
     - libsndio7.0
     - libsodium23
-    - libsoup-gnome2.4-1
-    - libsoup2.4-1
-    - libsqlite3-0
     - libssh2-1
-    - libssl1.1
+    - libssl3
     - libsystemd-shared
     - libsystemd0
     - libtasn1-6
     - libthai-data
     - libthai0
-    - libtiff5
-    - libtirpc-common
-    - libtirpc3
+    - libtiff6
+    - libtinfo6
     - libudev1
     - libunistring2
     - libuuid1
     - libvorbis0a
     - libvorbisenc2
     - libvorbisfile3
-    - libwebp6
-    - libwrap0
-    - libwxbase3.0-0v5
-    - libwxgtk3.0-gtk3-0v5
-    - libxcomposite1
-    - libxcursor1
-    - libxdamage1
+    - libwebp7
+    - libwxbase3.2-1
+    - libwxgtk-gl3.2-1
+    - libwxgtk3.2-1
     - libxext6
-    - libxfixes3
-    - libxi6
-    - libxinerama1
-    - libxkbcommon0
     - libxml2
-    - libxrandr2
-    - libxrender1
-    - libxss1
-    - libxxf86vm1
-    - libzstd1
-    - systemd
-    - xkb-data
+    - libxtst6
     - zlib1g
 
   files:

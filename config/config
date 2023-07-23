@@ -4,7 +4,14 @@
 
 # Host settings
 Host debian4.local
+  HostKeyAlgorithms +ssh-rsa
+  PubkeyAcceptedKeyTypes +ssh-rsa
   KexAlgorithms +diffie-hellman-group1-sha1
+Host debian5.local debian6.local
+  HostKeyAlgorithms +ssh-rsa
+  PubkeyAcceptedKeyTypes +ssh-rsa
+Host debian7.local debian8.local
+  PubkeyAcceptedKeyTypes +ssh-rsa
 Host *.local
   User owner
   ForwardX11 yes

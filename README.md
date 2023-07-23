@@ -921,16 +921,25 @@ the years.
  * ansible/roles/user-home/vars/main.yaml
  * appimage/Makefile
  * appimage/bin/build-appimage.bash      Wrapper for "appimage-builder" command
+ * appimage/bin/check-debs.bash          Check debs files are defined
  * appimage/bin/gpg                      Disable GPG signing
  * appimage/bin/appimage/bin/zsyncmake   Disable ".zsync" creation
- * appimage/0ad-0.0.26/AppImageBuilder.yaml
- * appimage/0ad-0.0.26/Makefile
- * appimage/bash-5.1.4/AppImageBuilder.yaml
- * appimage/bash-5.1.4/Makefile          Bash 5.1.4 (Debian 11)
- * appimage/wesnoth-1.14.15/AppImageBuilder.yaml
- * appimage/wesnoth-1.14.15/Makefile     Wesnoth 1.14.15 (Debian 11))
- * appimage/wesnoth-1.16.8/AppImageBuilder.yaml
- * appimage/wesnoth-1.16.8/Makefile      Wesnoth 1.16.8 (Debian 11 backports)
+ * appimage/0ad-0.0.26-deb11/AppImageBuilder.yaml
+ * appimage/0ad-0.0.26-deb11/Makefile    0AD 0.0.26 (Debian 11 backports)
+ * appimage/0ad-0.0.26-deb12/AppImageBuilder.yaml
+ * appimage/0ad-0.0.26-deb12/Makefile    0AD 0.0.26 (Debian 12)
+ * appimage/bash-5.1.4-deb11/AppImageBuilder.yaml
+ * appimage/bash-5.1.4-deb11/Makefile    Bash 5.1.4 (Debian 11)
+ * appimage/bash-5.2.15-deb12/AppImageBuilder.yaml
+ * appimage/bash-5.2.15-deb12/Makefile   Bash 5.2.15 (Debian 12)
+ * appimage/vlc-3.0.18-deb12/AppImageBuilder.yaml
+ * appimage/vlc-3.0.18-deb12/Makefile    VLC 3.0.18 (Debian 12)
+ * appimage/wesnoth-1.14.15-deb11/AppImageBuilder.yaml
+ * appimage/wesnoth-1.14.15-deb11/Makefile  Wesnoth 1.14.15 (Debian 11))
+ * appimage/wesnoth-1.16.8-deb11/AppImageBuilder.yaml
+ * appimage/wesnoth-1.16.8-deb11/Makefile   Wesnoth 1.16.8 (Debian 11 backports)
+ * appimage/wesnoth-1.16.9-deb12/AppImageBuilder.yaml
+ * appimage/wesnoth-1.16.9-deb12/Makefile   Wesnoth 1.16.9 (Debian 12)
  * compile/COMPILE-7zip.bash             7zip compile script
  * compile/COMPILE-aria2.bash            Aria2 compile script
  * compile/COMPILE-git.bash              Git compile script
@@ -1045,6 +1054,8 @@ the years.
  * docker/debian-11/Makefile             debian:11-slim based linux
  * docker/debian-11/bash/Dockerfile
  * docker/debian-11/bash/Makefile        debian:11-slim based BASH login
+ * docker/debian-11/dev/Dockerfile
+ * docker/debian-11/dev/Makefile         debian:11-slim based GCC dev shell
  * docker/debian-11/docker/Dockerfile
  * docker/debian-11/docker/Makefile      debian:11-slim based DOCKER shell
  * docker/debian-11/xfce/Dockerfile
@@ -1058,6 +1069,25 @@ the years.
  * docker/i386-debian-11/bash/Makefile   i386/debian:11-slim based BASH login
  * docker/i386-debian-11/dev/Dockerfile
  * docker/i386-debian-11/dev/Makefile    i386/debian:11-slim based GCC dev shell
+ * docker/debian-12/Dockerfile
+ * docker/debian-12/Makefile             debian:12-slim based linux
+ * docker/debian-12/bash/Dockerfile
+ * docker/debian-12/bash/Makefile        debian:12-slim based BASH login
+ * docker/debian-12/dev/Dockerfile
+ * docker/debian-12/dev/Makefile         debian:12-slim based GCC dev shell
+ * docker/debian-12/docker/Dockerfile
+ * docker/debian-12/docker/Makefile      debian:12-slim based DOCKER shell
+ * docker/debian-12/xfce/Dockerfile
+ * docker/debian-12/xfce/Makefile        debian:12-slim based XFCE environment
+ * docker/debian-12/xfce/files/allow-owner
+ * docker/debian-12/xfce/files/docker-init
+ * docker/debian-12/xfce/files/xstartup
+ * docker/i386-debian-12/Dockerfile
+ * docker/i386-debian-12/Makefile        i386/debian:12-slim based linux
+ * docker/i386-debian-12/bash/Dockerfile
+ * docker/i386-debian-12/bash/Makefile   i386/debian:12-slim based BASH login
+ * docker/i386-debian-12/dev/Dockerfile
+ * docker/i386-debian-12/dev/Makefile    i386/debian:12-slim based GCC dev shell
  * docker/golang-1.19/Dockerfile
  * docker/golang-1.19/Makefile           golang:1.19-alpine based compiler app
  * docker/httpd-2.4/Dockerfile
@@ -1070,15 +1100,15 @@ the years.
  * docker/nginx-1.18/Makefile            nginx:1.18-alpine based reverse proxy server
  * docker/nginx-1.18/files/nginx-proxy.conf
  * docker/python-3.10/Dockerfile
- * docker/python-3.10/Makefile           python:3.10-slim-bullseye based Python app
+ * docker/python-3.10/Makefile           python:3.10-slim-bookworm based Python app
  * docker/python-3.10/bash/Dockerfile
- * docker/python-3.10/bash/Makefile      python:3.10-slim-bullseye based BASH login
+ * docker/python-3.10/bash/Makefile      python:3.10-slim-bookworm based BASH login
  * docker/python-3.10/dev/Dockerfile
- * docker/python-3.10/dev/Makefile       python:3.10-slim-bullseye based dev shell
+ * docker/python-3.10/dev/Makefile       python:3.10-slim-bookworm based dev shell
  * docker/python-3.10/devpi/Dockerfile
- * docker/python-3.10/devpi/Makefile     python:3.10-slim-bullseye based devpi server app
+ * docker/python-3.10/devpi/Makefile     python:3.10-slim-bookworm based devpi server app
  * docker/python-3.10/full/Dockerfile
- * docker/python-3.10/full/Makefile      python:3.10-slim-bullseye based shell with full packages
+ * docker/python-3.10/full/Makefile      python:3.10-slim-bookworm based shell with full packages
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml
@@ -1106,8 +1136,6 @@ the years.
  * etc/python-packages.bash              Install/check Python packages requirements
  * etc/python-requirements.txt           Default requirements file for Python
  * etc/python-requirements_2.7.txt       Additional requirements for Python 2.7
- * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
- * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
  * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
  * etc/python-requirements_3.8.txt       Additional requirements for Python 3.8
  * etc/python-requirements_3.9.txt       Additional requirements for Python 3.9

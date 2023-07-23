@@ -1,8 +1,8 @@
-BASE_IMAGE := drtuxwang/python:3.10-slim-bookworm
-IMAGE := drtuxwang/python-devpi:3.10-slim-bookworm
-NAME := python310-devpi
-HOSTNAME := python310-devpi
-LOCALPORT ?= 8080
+BASE_IMAGE := drtuxwang/debian:12-slim
+IMAGE := drtuxwang/debian-xfce:12-slim
+NAME := debian12-xfce
+HOSTNAME := debian12-xfce
+LOCALPORT ?= 2222
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
@@ -13,10 +13,9 @@ DOCKER_RUN := docker run \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=1000m \
+	--memory=2000m \
 	--memory-reservation=50m \
-	--workdir /var/lib/devpi \
-	--publish $(LOCALPORT):8080 \
+	--publish $(LOCALPORT):22 \
 	--name $(NAME) \
 	--hostname $(HOSTNAME)
 
@@ -31,7 +30,9 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	../../bin/create-rootfs.bash bash bin init python3.9 sudo tmux vim xfce
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
@@ -40,8 +41,8 @@ run:                 # Run Docker container
 
 .PHONY: version
 version:             # Check versions
-	@docker run --rm --entrypoint devpi-server $(IMAGE) --version 2> /dev/null | \
-		   awk '{printf("'$(shell pwd)': devpi-server %s\n", $$1)}'
+	@docker run --rm --entrypoint dpkg $(IMAGE) -s xfce4 | \
+		awk '/^Version: / {printf("'$(shell pwd)': Xfce %s\n", $$2)}'
 
 .PHONY: rmi
 rmi:                 # Remove Docker images

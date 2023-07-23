@@ -5,6 +5,8 @@ BUILD_DIRS := \
 	i386-alpine-3.17 \
 	alpine-3.16 \
 	\
+	debian-12 \
+	i386-debian-12 \
 	debian-11 \
 	i386-debian-11 \
 	debian-10 \
@@ -24,13 +26,13 @@ BUILD_DIRS := \
 	registry-2.6 \
 	scratch
 STABLE_IMAGES := \
-	drtuxwang/debian-bash:11-slim \
-	drtuxwang/debian-dev:11-slim \
-	drtuxwang/debian-docker:11-slim \
-	drtuxwang/debian-xfce:11-slim \
+	drtuxwang/debian-bash:12-slim \
+	drtuxwang/debian-dev:12-slim \
+	drtuxwang/debian-docker:12-slim \
+	drtuxwang/debian-xfce:12-slim \
 	drtuxwang/nginx:1.18-alpine \
-	drtuxwang/python-dev:3.10-slim-bullseye \
-	drtuxwang/python-full:3.10-slim-bullseye \
+	drtuxwang/python-dev:3.10-slim-bookworm \
+	drtuxwang/python-full:3.10-slim-bookworm \
 	drtuxwang/scratch
 TEST_DIRS := \
 	python-3.10

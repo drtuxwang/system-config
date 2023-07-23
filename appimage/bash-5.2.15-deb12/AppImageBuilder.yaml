@@ -1,0 +1,101 @@
+version: 1
+
+script:
+  - rm -rf ./AppDir || true
+
+AppDir:
+  path: ./AppDir
+
+  app_info:
+    id: org.gnu.bash
+    icon: utilities-terminal
+    name: bash
+    version: 5.2.15
+    exec: bin/bash
+    exec_args: $@
+
+  apt:
+    sources:
+    - sourceline: deb https://deb.debian.org/debian bookworm main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bookworm-updates main contrib non-free
+    - sourceline: deb https://security.debian.org bookworm-security main contrib non-free
+    allow_unauthenticated: true
+    arch: amd64
+    include:
+    - bash
+    - adwaita-icon-theme
+    - libc6
+    exclude:
+    - gcc-12-base
+    - gtk-update-icon-cache
+    - hicolor-icon-theme
+    - libcrypt1
+    - libgcc-s1
+    - libffi8
+    - libgdk-pixbuf-2.0-0
+    - libgdk-pixbuf2.0-common
+    - libglib2.0-0
+    - libjpeg62-turbo
+    - libmount1
+    - libncursesw6
+    - libpam-modules
+    - libpam-modules-bin
+    - libpam-runtime
+    - libpam0g
+    - libpcre2-8-0
+    - libpng16-16
+    - libreadline8
+    - libselinux1
+    - libsmartcols1
+    - libstdc++6
+    - libsystemd0
+    - libsystemd-shared
+    - libtiff6
+    - libtinfo6
+    - libudev1
+    - libudev1
+    - libuuid1
+    - libwebp7
+    - libzstd1
+    - mount
+    - readline-common
+    - systemd
+    - systemd-sysv
+    - util-linux
+    - util-linux-extra
+    - zlib1g
+
+  files:
+    exclude:
+    - usr/share/doc
+    - usr/share/locale
+    - usr/share/man
+    - usr/share/icons/Adwaita/8x8
+    - usr/share/icons/Adwaita/16x16
+    - usr/share/icons/Adwaita/22x22
+    - usr/share/icons/Adwaita/24x24/actions
+    - usr/share/icons/Adwaita/24x24/apps
+    - usr/share/icons/Adwaita/24x24/categories
+    - usr/share/icons/Adwaita/24x24/devices
+    - usr/share/icons/Adwaita/24x24/emblems
+    - usr/share/icons/Adwaita/24x24/emotes
+##    - usr/share/icons/Adwaita/24x24/legacy
+    - usr/share/icons/Adwaita/24x24/mimetypes
+    - usr/share/icons/Adwaita/24x24/places
+    - usr/share/icons/Adwaita/24x24/status
+    - usr/share/icons/Adwaita/24x24/ui
+    - usr/share/icons/Adwaita/32x32
+    - usr/share/icons/Adwaita/48x48
+    - usr/share/icons/Adwaita/64x64
+    - usr/share/icons/Adwaita/96x96
+    - usr/share/icons/Adwaita/256x256
+    - usr/share/icons/Adwaita/512x512
+    - usr/share/icons/Adwaita/cursor*
+    - usr/share/icons/Adwaita/index*
+    - usr/share/icons/Adwaita/scalable*
+    - usr/share/pkgconfig
+
+AppImage:
+  arch: x86_64
+  sign-key: None
+  update-information: None
