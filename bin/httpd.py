@@ -140,7 +140,10 @@ class Main:
             f"{os.environ['PWD']}:ro",
         ]
         command.sandbox(configs, errors='stop')
-        subtask_mod.Exec(command.get_cmdline()).run()
+        task = subtask_mod.Task(command.get_cmdline())
+        while task.get_exitcode() not in (114, 130):
+            task.run()
+            print(task.get_exitcode())
 
     @classmethod
     def run(cls) -> int:

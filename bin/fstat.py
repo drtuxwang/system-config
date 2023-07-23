@@ -4,6 +4,7 @@ Display file status.
 """
 
 import argparse
+import os
 import signal
 import sys
 from typing import List
@@ -24,7 +25,7 @@ class Options:
         """
         Return list of files.
         """
-        return self._args.files
+        return [os.path.expandvars(x) for x in self._args.files]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description="Display file status.")

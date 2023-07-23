@@ -25,13 +25,13 @@ class Options:
         """
         Return source file.
         """
-        return self._args.source[0]
+        return os.path.expandvars(self._args.source[0])
 
     def get_targets(self) -> List[str]:
         """
         Return target files.
         """
-        return self._args.targets
+        return [os.path.expandvars(x) for x in self._args.targets]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(

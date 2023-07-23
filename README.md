@@ -237,6 +237,8 @@ the years.
  * bin/fcpall               Copy a file to multiple target files
  * bin/fcpall.bat
  * bin/fcpall.py
+ * bin/fcpclip              Copy file from clipboard location
+ * bin/fcpclip.py
  * bin/fcplink              Replace symbolic link to files with copies
  * bin/fcplink.py
  * bin/fdiff                Show summary of differences between two directories recursively
@@ -806,8 +808,6 @@ the years.
  * bin/xfreerdp.tcl         XFreeRDP TCL/TK panel
  * bin/xedit                Start GNOME/KDE/XFCE graphical editor
  * bin/xedit.py
- * bin/xfcp                 Copy file from clipboard location
- * bin/xfcp.py
  * bin/xlight               Desktop screen backlight utility
  * bin/xlight.py
  * bin/xlock                Start GNOME/KDE/XFCE screen lock

@@ -28,7 +28,7 @@ class Options:
         """
         Return list of source files.
         """
-        return self._args.sources
+        return [os.path.expandvars(x) for x in self._args.sources]
 
     def get_target(self) -> str:
         """
@@ -258,7 +258,7 @@ class Main:
                             f'{sys.argv[0]}: Cannot create '
                             f'"{path}" directory.',
                         ) from exception
-                self._copy(Path(source), Path(target, source))
+                self._copy(Path(source), Path(target, Path(source).name))
 
         return 0
 

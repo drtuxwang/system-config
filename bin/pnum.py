@@ -4,15 +4,14 @@ Renumber picture/video files into a numerical series.
 """
 
 import argparse
-import glob
 import os
+import re
 import signal
 import sys
 from pathlib import Path
 from typing import List
 
 import config_mod
-import file_mod
 
 
 class Options:
@@ -24,11 +23,11 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directories(self) -> List[str]:
+    def get_directories(self) -> List[Path]:
         """
         Return list of directories.
         """
-        return self._args.directories
+        return [Path(x) for x in self._args.directories]
 
     def get_order(self) -> str:
         """
@@ -126,19 +125,45 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _sorted(
-        options: Options,
-        file_stats: List[file_mod.FileStat],
-    ) -> List[file_mod.FileStat]:
+    def _sorted(options: Options, paths: List[Path]) -> List[Path]:
         order = options.get_order()
         if order == 'time':
-            file_stats = sorted(
-                file_stats,
-                key=lambda s: (s.get_time(), s.get_file())
-            )
-        else:
-            file_stats = sorted(file_stats, key=lambda s: s.get_file())
-        return file_stats
+            return sorted(paths, key=lambda x: (x.stat().st_mtime, x))
+        return sorted(paths)
+
+    @staticmethod
+    def _rename(number: int, paths: List[Path]) -> None:
+        paths_new = []
+
+        for path in paths:
+            extension = path.suffix.lower().replace('.jpeg', '.jpg')
+            path_new = Path(f'pic{number:05d}{extension}')
+            paths_new.append(path_new)
+            try:
+                path.replace(f'pnum.tmp-{path_new}')
+            except OSError as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot rename "{path}" image file.',
+                ) from exception
+            number += 1
+
+        for path in paths_new:
+            try:
+                Path(f'pnum.tmp-{path}').replace(path)
+            except OSError as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot rename to '
+                    f'"{path}" image file.',
+                ) from exception
+
+    @staticmethod
+    def _set_time(path: Path) -> None:
+        dir_time = path.stat().st_mtime
+        file_times = [x.stat().st_mtime for x in path.glob('*') if x.is_file()]
+        if file_times:
+            mtime = max(file_times)
+            if mtime != dir_time:
+                os.utime(path, (mtime, mtime))
 
     def run(self) -> int:
         """
@@ -154,40 +179,23 @@ class Main:
             config.get('image_extensions') + config.get('video_extensions')
         )
 
-        for path in [Path(x) for x in options.get_directories()]:
-            if reset_flag:
-                number = options.get_start()
-            if path.is_dir():
-                os.chdir(path)
-                file_stats = []
-                for file in glob.glob('*.*'):
-                    if Path(file).suffix.lower() in images_extensions:
-                        file_stats.append(file_mod.FileStat(file))
-                newfiles = []
-                for file_stat in self._sorted(options, file_stats):
-                    extension = Path(file_stat.get_file()).suffix
-                    extension = extension.lower().replace('.jpeg', '.jpg')
-                    newfile = f'pic{number:05d}{extension}'
-                    newfiles.append(newfile)
-                    try:
-                        Path(file_stat.get_file()).replace(
-                            f'pnum.tmp-{newfile}'
-                        )
-                    except OSError as exception:
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot rename '
-                            f'"{file_stat.get_file()}" image file.',
-                        ) from exception
-                    number += 1
-                for file in newfiles:
-                    try:
-                        Path(f'pnum.tmp-{file}').replace(file)
-                    except OSError as exception:
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot rename to '
-                            f'"{file}" image file.',
-                        ) from exception
-                os.chdir(startdir)
+        isvalid = re.compile(r'pic\d{5}\.')
+        for path in [x for x in options.get_directories() if x.is_dir()]:
+            os.chdir(path)
+            paths = sorted([
+                x
+                for x in Path().glob('*.*')
+                if x.suffix.lower() in images_extensions
+            ])
+            paths_valid = [x for x in paths if isvalid.match(x.name)]
+            paths_sorted = self._sorted(options, paths)
+            if paths != paths_valid or paths != paths_sorted:
+                print(f"Renaming image files: {path}")
+                if reset_flag:
+                    number = options.get_start()
+                self._rename(number, paths_sorted)
+                self._set_time(Path())
+            os.chdir(startdir)
 
         return 0
 

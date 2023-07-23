@@ -25,7 +25,7 @@ class Options:
         """
         Return list of directories.
         """
-        return self._args.directories
+        return [os.path.expandvars(x) for x in self._args.directories]
 
     def get_pattern(self) -> str:
         """

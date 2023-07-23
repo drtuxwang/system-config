@@ -24,7 +24,7 @@ class Options:
         """
         Return list of files.
         """
-        return self._args.files
+        return [os.path.expandvars(x) for x in self._args.files]
 
     def get_summary_flag(self) -> bool:
         """

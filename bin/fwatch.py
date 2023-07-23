@@ -4,6 +4,7 @@ Watch file system events.
 """
 
 import argparse
+import os
 import signal
 import sys
 from typing import List
@@ -52,7 +53,7 @@ class Options:
             '-e',
             'attrib,create,modify,move,delete',
             '-mr'
-        ] + self._args.directories)
+        ] + [os.path.expandvars(x) for x in self._args.directories])
 
 
 class Main:

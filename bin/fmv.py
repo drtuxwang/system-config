@@ -31,7 +31,7 @@ class Options:
         """
         Return list of source files.
         """
-        return self._args.sources
+        return [os.path.expandvars(x) for x in self._args.sources]
 
     def get_target(self) -> str:
         """
@@ -116,6 +116,17 @@ class Main:
                 self._options.get_target(),
                 Path(source_path).name,
             )
+            if target_path.is_dir():
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot safely overwrite '
+                    f'"{target_path}" directory.'
+                )
+            if target_path.is_file():
+                if not self._options.get_overwrite_flag():
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot safely overwrite '
+                        f'"{target_path}" file.'
+                    )
             if source_path.is_dir():
                 print(f'Moving directory to "{target_path}"...')
             elif source_path.is_file():
@@ -125,17 +136,6 @@ class Main:
                     f'{sys.argv[0]}: Cannot find '
                     f'"{source_path}" source file or directory.',
                 )
-            if target_path.is_dir():
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot safely overwrite '
-                    f'"{target_path}" target directory.',
-                )
-            if target_path.is_file():
-                if not self._options.get_overwrite_flag():
-                    raise SystemExit(
-                        f'{sys.argv[0]}: Cannot safely overwrite '
-                        f'"{target_path}" target file.',
-                    )
             try:
                 source_path.replace(target_path)
             except OSError:

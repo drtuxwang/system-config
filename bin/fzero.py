@@ -25,7 +25,7 @@ class Options:
         """
         Return location.
         """
-        return self._args.location[0]
+        return os.path.expandvars(self._args.location[0])
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(

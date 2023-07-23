@@ -24,7 +24,7 @@ class Options:
         """
         Return file.
         """
-        return self._args.file[0]
+        return os.path.expandvars(self._args.file[0])
 
     def get_max_size(self) -> int:
         """

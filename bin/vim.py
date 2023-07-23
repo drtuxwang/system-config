@@ -51,8 +51,9 @@ class Main:
                 command.set_args(['-N', '-n', '-i', 'NONE', '-T', 'xterm'])
         else:
             command = command_mod.Command('vi', errors='stop')
+        command.extend_args([os.path.expandvars(x) for x in sys.argv[1:]])
 
-        task = subtask_mod.Task(command.get_cmdline() + sys.argv[1:])
+        task = subtask_mod.Task(command.get_cmdline())
         task.run()
         if task.get_exitcode():
             print(

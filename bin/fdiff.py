@@ -32,13 +32,13 @@ class Options:
         """
         Return directory 1.
         """
-        return self._args.directories[0]
+        return os.path.expandvars(self._args.directories[0])
 
     def get_directory_2(self) -> str:
         """
         Return directory 2.
         """
-        return self._args.directories[1]
+        return os.path.expandvars(self._args.directories[1])
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(

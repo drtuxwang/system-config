@@ -24,7 +24,7 @@ class Options:
         """
         Return directory.
         """
-        return self._directory
+        return os.path.expandvars(self._directory)
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(

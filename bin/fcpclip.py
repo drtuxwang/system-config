@@ -97,20 +97,24 @@ class Main:
         task = subtask_mod.Batch(xclip.get_cmdline())
         task.run()
 
-        path = Path(''.join(task.get_output()))
+        path = Path(os.path.expandvars(''.join(task.get_output())))
         if path.is_file():
             directory = Path(options.get_directory())
             path_new = Path(directory, path.name)
-            if not path_new.exists():
-                print(f'Copying "{path}" file to "{path_new}"...')
-                try:
-                    if not directory.is_dir():
-                        directory.mkdir(parents=True)
-                    shutil.copy2(path, path_new)
-                except (OSError, shutil.Error) as exception:
-                    raise SystemExit(
-                        f'{sys.argv[0]}: Cannot copy to "{path_new}" file.',
-                    ) from exception
+            if path_new.exists():
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot safely overwrite '
+                    f'"{path_new}" file.',
+                )
+            print(f'Creating "{path_new}" file...')
+            try:
+                if not directory.is_dir():
+                    directory.mkdir(parents=True)
+                shutil.copy2(path, path_new)
+            except (OSError, shutil.Error) as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot copy to "{path_new}" file.',
+                ) from exception
 
         return 0
 

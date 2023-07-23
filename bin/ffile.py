@@ -4,6 +4,7 @@ Determine file type
 """
 
 import argparse
+import os
 import re
 import signal
 import sys
@@ -31,7 +32,7 @@ class Options:
         """
         Return list of files.
         """
-        return self._args.files
+        return [os.path.expandvars(x) for x in self._args.files]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description="determine file type.")

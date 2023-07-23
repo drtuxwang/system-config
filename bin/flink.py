@@ -26,7 +26,7 @@ class Options:
         """
         Return list of directories.
         """
-        return self._args.directories
+        return [os.path.expandvars(x) for x in self._args.directories]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -93,7 +93,7 @@ class Main:
         self,
         path1: Path,
         path2: Path,
-        subdir: Path = Path(''),
+        subdir: Path = Path(),
     ) -> None:
         try:
             source_paths = sorted(path1.iterdir())
@@ -156,7 +156,7 @@ class Main:
         options = Options()
 
         for path in [Path(x) for x in options.get_directories()]:
-            self._link_files(path, Path('.'))
+            self._link_files(path, Path())
 
         return 0
 

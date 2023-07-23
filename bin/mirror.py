@@ -95,7 +95,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        directories = self._args.directories
+        directories = [os.path.expandvars(x) for x in self._args.directories]
         if len(directories) % 2:
             raise SystemExit(
                 f"{sys.argv[0]}: Source and target directory pair has missing "
@@ -392,7 +392,7 @@ class Main:
         self._start = int(time.time())
         for mirror in self._options.get_mirrors():
             self._automount(mirror[1], 8)
-            self._mirror(Path(mirror[0]), Path(mirror[1]))
+            self._mirror(Path(mirror[0]), Path(mirror[1]).resolve())
         logger.info('[%s] Finished!', self._get_stats())
 
         return 0
