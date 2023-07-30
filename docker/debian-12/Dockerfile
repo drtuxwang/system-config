@@ -21,4 +21,5 @@ RUN apt-get update --fix-missing && \
         tcptraceroute \
         vim \
         wget && \
-    apt-get clean
+    apt-get clean && \
+    rm /usr/lib/python*/EXTERNALLY-MANAGED

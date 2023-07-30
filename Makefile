@@ -11,7 +11,7 @@ endif
 default: test        # Default
 
 .PHONY: test
-test: check-makefile check-config check-python check-packages # Run tests
+test: check-makefile check-config check-packages check-python  # Run tests
 	@echo "\n*** Tests all successfull ***"
 
 .PHONY: test-docker
@@ -22,11 +22,14 @@ test-docker:         # Run tests in docker
 test-all: test       # Run tests for all versions
 	@for VERSION in $(PYTHONS_VERSIONS); do \
 		case $$VERSION in \
+		3.[56]) \
+			PYTHON=python$$VERSION make --no-print-directory check-packages || exit 1; \
+			;; \
 		3.[7-9]|3.??) \
+			PYTHON=python$$VERSION make --no-print-directory check-packages || exit 1; \
 			PYTHON=python$$VERSION make --no-print-directory check-python || exit 1 \
 			;; \
 		esac; \
-		PYTHON=python$$VERSION make --no-print-directory check-packages || exit 1; \
 	done
 
 .PHONY: check-makefile-help

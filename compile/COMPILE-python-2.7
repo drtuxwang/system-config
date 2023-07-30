@@ -42,6 +42,9 @@ umask 022
 make
 make install
 
+# Fix pip
+install/bin/python -m ensurepip
+
 if [ -d install/bin ]
 then
     for FILE in $(cd install/bin; ls -1 | grep -v "*.py$")
@@ -83,10 +86,6 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
 
     # Fix for porting on Ubuntu and running on RHEL
     [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
-
-    # Fix pip
-    install/bin/python -m ensurepip
-    install/bin/python -m pip install --upgrade pip==20.2.4
 
     # Remove tests
     find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf

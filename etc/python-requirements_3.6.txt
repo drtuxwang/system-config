@@ -1,0 +1,51 @@
+astroid                      # ==2.11.7 (last compatible version)
+asttokens==None
+cached-property==1.5.2
+charset-normalizer==2.0.0
+click                        # ==8.0.4 (last compatible version)
+cookiecutter                 # ==1.7.3 (last compatible version)
+dill                         # ==0.3.4 (last compatible version)
+executing==None
+filelock==3.4.1
+flake8==3.9.2
+gitdb                        # ==4.0.9 last compatible version)
+GitPython                    # ==3.1.20 (last compatible version)
+gTTS                         # ==2.2.4 (last compatible version)
+importlib-metadata==4.8.3
+importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
+ipdb==None
+ipython==None
+isort                        # ==5.10.1 (last compatible version)
+jedi==None
+Jinja2                       # ==3.0.3 (last compatible version)
+lazy-object-proxy            # ==1.7.1 (last compatible version)
+MarkupSafe==2.0.1
+matplotlib-inline==None
+mccabe==0.6.1
+motor                        # ==2.5.1 (last compatible version)
+mypy==None
+parso==None
+pip                          # ==20.2.4 (last compatible version)
+pipdeptree                   # ==2.2.1 (last compatible version)
+platformdirs==2.4.0
+poyo==0.5.0                  #   (required by cookiecutter for 3.6)
+prompt-toolkit               # ==3.0.35 (last compatible version)
+pure-eval==None
+pycodestyle==2.7.0
+pyflakes==2.3.1
+Pygments                     # ==2.14.0 (last compatible version)
+pylint==2.13.9
+pymongo==3.13.0
+requests                     # ==2.27.1 (last compatible version)
+setuptools                   # ==59.6.0 (last compatible version)
+stack-data==None
+tomli                        # ==1.2.3 (last compatible version)
+tomlkit                      # ==0.11.6 (last compatible version)
+tornado                      # ==6.1 (last compatible version)
+traitlets==None
+typed-ast==1.4.3             #   (required by pylint/mypy for 3.6)
+typing-extensions            # ==4.1.1 (last compatible version)
+typing_extensions==None      #   (requires hyphen instead of underscore)
+virtualenv                   # ==20.17.1 (last compatible version)
+wheel                        # ==0.37.1 (last compatible version)
+zipp==3.6.0                  #   (required by importlib-metadata for 3.7)

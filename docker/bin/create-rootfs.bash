@@ -70,9 +70,9 @@ do
         cp -p "$TOPDIR"/config/vimrc rootfs/root/.vimrc
         ;;
     xfce)
-        mkdir -p rootfs/.config/xfce4/terminal rootfs/.vnc
-        echo "Creating \"rootfs/.config/xfce4/terminal/terminalrc\"..."
-        cp -p "$TOPDIR"/config/terminalrc rootfs/.config/xfce4/terminal
+        mkdir -p rootfs/home/owner/.config/xfce4/terminal rootfs/.vnc
+        echo "Creating \"rootfs/home/owner/.config/xfce4/terminal/terminalrc\"..."
+        cp -p "$TOPDIR"/config/terminalrc rootfs/home/owner/.config/xfce4/terminal
         if [ -f "files/xstartup" ]
         then
             echo "Creating \"rootfs/.vnc/xstartup\"..."

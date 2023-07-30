@@ -11,12 +11,10 @@ COPY rootfs/ /rootfs
 COPY files/docker-init /etc/
 
 # Create user's home directory
-RUN cd /rootfs && \
-    cp -rp root home && \
-    mv home/root home/${USER} && \
-    mkdir home/${USER}/.ssh && \
-    chmod 711 home/${USER} && \
-    chmod 700 home/${USER}/.ssh
+RUN cp -p /rootfs/root/.??* /rootfs/home/${USER} && \
+    mkdir /rootfs/home/${USER}/.ssh && \
+    chmod 711 /rootfs/home/${USER} && \
+    chmod 700 /rootfs/home/${USER}/.ssh
 
 FROM ${BASE_IMAGE}
 ARG USER

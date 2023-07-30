@@ -27,10 +27,18 @@ Darwin)
     ;;
 esac
 
+# Fix pip Segmentation fault
+sed -i "s/double dummy;/long double dummy;/" Include/objimpl.h
+sed -i "s/#define ALIGNMENT               8/#define ALIGNMENT               16/" Objects/obmalloc.c
+sed -i "s/#define ALIGNMENT_SHIFT         3/#define ALIGNMENT_SHIFT         4/" Objects/obmalloc.c
+
 umask 022
 ./configure --prefix="$PWD/install"
 make
 make install
+
+# Fix readonly permission on some libraries
+chmod -R u+w install
 
 if [ -d install/bin ]
 then
@@ -68,14 +76,11 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     mv "install/bin/python$VERSION-config-new" "install/bin/python$VERSION-config"
     chmod 755 "install/bin/python$VERSION-config"
 
-    # Fix readonly permission on some libraries
-    chmod -R u+w install
-
     # Fix for porting on Ubuntu and running on RHEL
     [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
 
-    # Fix pip
-    install/bin/python$VERSION -m pip install --upgrade pip==20.2.4
+    # Fix pip (https://bootstrap.pypa.io/pip/$VERSION/get-pip.py)
+    install/bin/python$VERSION get-pip.py
 
     # Remove tests
     find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf

@@ -1136,6 +1136,8 @@ the years.
  * etc/python-packages.bash              Install/check Python packages requirements
  * etc/python-requirements.txt           Default requirements file for Python
  * etc/python-requirements_2.7.txt       Additional requirements for Python 2.7
+ * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
+ * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
  * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
  * etc/python-requirements_3.8.txt       Additional requirements for Python 3.8
  * etc/python-requirements_3.9.txt       Additional requirements for Python 3.9

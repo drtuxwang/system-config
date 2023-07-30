@@ -4,6 +4,7 @@ Make uncompressed archive in TAR format (GNU Tar version).
 """
 
 import argparse
+import getpass
 import os
 import signal
 import sys
@@ -111,7 +112,7 @@ class Main:
             else command_mod.Command('tar', errors='stop')
         )
         task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
-        task.run(pattern='--numeric-owner|--xattrs')
+        task.run(pattern='--owner|--numeric-owner|--xattrs')
 
         monitor = command_mod.Command('pv', errors='ignore')
 
@@ -121,10 +122,14 @@ class Main:
             monitor.set_args(['>', archive+'.part'])
         else:
             cmdline.extend(['cfv', archive+'.part'] + files)
-        if task.is_match_output('--numeric-owner'):
-            cmdline.append('--numeric-owner')
-        if task.is_match_output('--xattrs'):
-            cmdline.extend(['--xattrs', '--xattrs-include=*'])
+        if getpass.getuser() == 'root':
+            if task.is_match_output('--numeric-owner'):
+                cmdline.append('--numeric-owner')
+            if task.is_match_output('--xattrs'):
+                cmdline.extend(['--xattrs', '--xattrs-include=*'])
+        elif task.is_match_output('--owner'):
+            cmdline.extend(['--owner=0:0', '--group=0:0'])
+
         if monitor.is_found():
             cmdline.extend(['|'] + monitor.get_cmdline())
 

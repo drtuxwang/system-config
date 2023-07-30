@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/debian:12-slim
 IMAGE := drtuxwang/debian-bash:12-slim
-NAME := debian11-bash
-HOSTNAME := debian11-bash
+NAME := debian12-bash
+HOSTNAME := debian12-bash
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build

@@ -117,6 +117,21 @@ check_packages() {
 
 install_packages() {
     MODE=${1:-}
+    case $VERSION in
+    2.[67]|3.[3456])
+        GETPIP="https://bootstrap.pypa.io/pip/$VERSION/get-pip.py"
+        ;;
+    *)
+        GETPIP="https://bootstrap.pypa.io/pip/get-pip.py"
+        ;;
+    esac
+    if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
+    then
+        echo "curl --location --progress-bar $GETPIP | $PYTHON"
+        curl --location --progress-bar $GETPIP | $PYTHON 2>&1 | grep -v "'root' user"
+        [ ${PIPESTATUS[0]} = 0 ] || exit 1
+        echo -e "\033[33mInstalled!\033[0m"
+    fi
 
     PACKAGES=$(check_packages | grep -v "not found" | awk '/ # Requirement / {print $NF}')
     for PACKAGE in $(echo "$PACKAGES" | grep -E "^(pip|setuptools|wheel)([>=]=.*|)$")
@@ -170,13 +185,8 @@ then
 else
     export CFLAGS="$PY_INC ${CFLAGS:-}"
 fi
-case $VERSION in
-2.6|3.[0-6])
-    echo -e "\033[31mERROR! Unsupported legacy Python version\033[0m" && exit 1
-    ;;
-esac
-
 echo -e "\033[33mChecking \"$PY_EXE\"...\033[0m"
+
 declare -A requirements
 if [ "$REQUIREMENT" ]
 then
@@ -192,6 +202,6 @@ else
     esac
 fi
 
-[ "$MODE" = install ] && install_packages "$MODE" && install_packages "$MODE"  # Retry
+[ "$MODE" = install -o "$MODE" = piponly ] && install_packages "$MODE" && install_packages "$MODE"  # Retry
 [ "$MODE" != piponly ] && check_packages
 echo -e "\033[33mOK!\033[0m"
