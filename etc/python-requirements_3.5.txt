@@ -54,7 +54,7 @@ python-slugify==4.0.1
 PyYAML                       # ==5.3.1 (last compatible version)
 pyzstd==None
 questionary==None
-requests==2.25.1
+requests                     # ==2.25.1 (last compatible version)
 setuptools                   # ==50.3.2 (last compatible version)
 soupsieve==2.1
 stack-data==None
