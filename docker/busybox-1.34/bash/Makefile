@@ -1,9 +1,7 @@
-BASE_IMAGE := drtuxwang/debian:11-slim
-DOCKER_REPO=https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64
-DOCKER_DEB=docker-ce-cli_23.0.6-1~debian.11~bullseye_amd64.deb
-IMAGE := drtuxwang/debian-docker:11-slim
-NAME := debian11-docker
-HOSTNAME := debian11-docker
+BASE_IMAGE := drtuxwang/busybox:1.34
+IMAGE := drtuxwang/busybox-bash:1.34
+NAME := busybox133-bash
+HOSTNAME := busybox133-bash
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
@@ -16,8 +14,6 @@ DOCKER_RUN := docker run \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
-	--volume /var/run/docker.sock:/var/run/docker.sock \
-	--privileged=true \
 	--name $(NAME) \
 	--hostname $(HOSTNAME)
 
@@ -26,19 +22,14 @@ DOCKER_RUN := docker run \
 default: build status # Default
 
 .PHONY: status
-status:              # Status of Docker images
+status:              # Status of Docker image
 	@make --no-print-directory --directory .. status
 
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.bash bash bin vim
-	$(DOCKER_BUILD) \
-		$(DOCKER_BUILD_FLAGS) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg DOCKER_REPO=$(DOCKER_REPO) \
-		--build-arg DOCKER_DEB=$(DOCKER_DEB) \
-		-t $(IMAGE) .
+	../../bin/create-rootfs.bash bash bash2ash bin-sysinfo vim
+	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
@@ -48,8 +39,8 @@ run:                 # Run Docker container
 
 .PHONY: version
 version:             # Check versions
-	@docker run --rm --entrypoint docker $(IMAGE) --version 2> /dev/null | \
-		grep ^Docker | sed -e "s/,/ /g" | awk '{printf("'$(shell pwd)': docker %s\n", $$3)}'
+	@docker run --rm $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | \
+		sed -e "s@^BusyBox v@$(shell pwd): BusyBox @;s@ (.*@@"
 
 .PHONY: rmi
 rmi:                 # Remove Docker images

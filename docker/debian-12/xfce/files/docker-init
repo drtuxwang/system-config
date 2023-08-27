@@ -10,7 +10,8 @@ run_vnc() {
     ps -ef | grep "[0-9] /usr/sbin/sshd -D"
 
     echo "Starting VNC server..."
-    sudo -u owner vncserver \
+    cd /home/owner
+    sudo -u owner HOME=/home/owner vncserver \
         -geometry 1280x720 \
         -depth 24 \
         -localhost \

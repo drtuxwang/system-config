@@ -5,7 +5,7 @@ ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
 endif
 
-BUILD_DIRS := bash docker dev xfce
+BUILD_DIRS := bash dev
 
 
 .PHONY: default

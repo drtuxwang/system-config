@@ -32,6 +32,17 @@ build:                # Build Docker images
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
+.PHONY: push-stable
+push-stable:         # Tag and push stable Docker images
+	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+	docker push ${IMAGE}
+	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+
+.PHONY: pull-stable
+pull-stable:         # Pull stable Docker images
+	docker pull ${IMAGE}
+	docker pull `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+
 .PHONY: run
 run:                  # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"

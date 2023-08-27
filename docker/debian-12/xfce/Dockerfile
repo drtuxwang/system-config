@@ -49,13 +49,14 @@ RUN \
     apt-get install --no-install-recommends -y \
         file \
         fonts-noto-cjk \
-        fonts-noto-hinted \
+        fonts-symbola \
         libgl1-mesa-glx \
         libsdl1.2debian \
         openssh-server \
         procps \
         sudo \
         tmux \
+        tk \
         x11-xserver-utils \
         xauth && \
     mkdir -p /run/sshd && \
@@ -86,6 +87,10 @@ RUN \
 
 COPY --from=builder /rootfs /
 RUN /etc/python-packages.bash -pip /usr/bin/python3 && \
+    grep -E "^(bson|dicttoxml|Jinja2|MarkupSafe|pip|python-dateutil|PyYAML|setuptools|six|urllib3|wheel|xmltodict)" \
+        /etc/python-requirements.txt > /etc/python-requirements_min.txt && \
+    /etc/python-packages.bash /usr/bin/python3 /etc/python-requirements_min.txt && \
+    rm /etc/python-requirements_min.txt && \
     chown -R ${USER}:${GROUP} /home/${USER}
 
 # Configure start

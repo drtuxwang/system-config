@@ -18,22 +18,22 @@ BUILD_DIRS := \
 	almalinux-8 \
 	centos-7 \
 	\
-	busybox-1.33 \
+	busybox-1.34 \
 	golang-1.19 \
 	httpd-2.4 \
 	nginx-1.18 \
 	python-3.10 \
 	registry-2.6 \
 	scratch
-STABLE_IMAGES := \
-	drtuxwang/debian-bash:12-slim \
-	drtuxwang/debian-dev:12-slim \
-	drtuxwang/debian-docker:12-slim \
-	drtuxwang/debian-xfce:12-slim \
-	drtuxwang/nginx:1.18-alpine \
-	drtuxwang/python-dev:3.10-slim-bookworm \
-	drtuxwang/python-full:3.10-slim-bookworm \
-	drtuxwang/scratch
+STABLE_DIRS := \
+	debian-12/bash \
+	debian-12/dev \
+	debian-12/docker \
+	debian-12/xfce \
+	nginx-1.18 \
+	python-3.10/dev \
+	python-3.10/full \
+	scratch
 TEST_DIRS := \
 	python-3.10
 
@@ -81,6 +81,20 @@ build: $(BUILD_DIRS) # Build Docker images
 $(BUILD_DIRS):       # Build Docker images in parallel
 	make --no-print-directory --directory=$@
 
+.PHONY: push-stable
+push-stable:         # Tag and push stable Docker images
+	for DIR in $(STABLE_DIRS); do \
+		make --no-print-directory --directory $$DIR push-stable || exit 1; \
+	done
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
+
+.PHONY: pull
+pull-stable:         # Pull stable Docker images
+	for DIR in $(STABLE_DIRS); do \
+		make --no-print-directory --directory $$DIR pull-stable || exit 1; \
+	done
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
+
 .PHONY: test
 test:                # Run tests
 	for DIR in $(TEST_DIRS); do \
@@ -92,28 +106,6 @@ version:             # Check versions
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR version || exit 1; \
 	done
-
-.PHONY: push-stable
-push-stable:         # Tag and push stable Docker images
-	for IMAGE in $(STABLE_IMAGES); do \
-		echo "docker tag $$IMAGE $${IMAGE%:*}:stable"; \
-		docker tag $$IMAGE $${IMAGE%:*}:stable; \
-	done
-	for IMAGE in $(STABLE_IMAGES); do \
-		echo "docker push $$IMAGE"; \
-		docker push $$IMAGE; \
-		echo "docker push $${IMAGE%:*}:stable"; \
-		docker push $${IMAGE%:*}:stable; \
-	done
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
-
-.PHONY: pull
-pull-stable:         # Pull stable Docker images
-	for IMAGE in $(STABLE_IMAGES); do \
-		docker pull $$IMAGE ; \
-		docker pull $${IMAGE%:*}:stable ; \
-	done
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 
 .PHONY: prune
 prune:               # Prune Docker images/containers

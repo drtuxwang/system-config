@@ -1034,10 +1034,10 @@ the years.
  * docker/i386-alpine-3.17/bash/Dockerfile  i386/alpine:3.17 based BASH login
  * docker/i386-alpine-3.17/dev/Makefile
  * docker/i386-alpine-3.17/dev/Dockerfile  i386/alpine:3.17 based GCC dev shell
- * docker/busybox-1.32/Dockerfile
- * docker/busybox-1.32/Makefile          busybox:1.33 based linux
- * docker/busybox-1.32/bash/Dockerfile
- * docker/busybox-1.32/bash/Makefile     busybox:1.33 based BASH login
+ * docker/busybox-1.34/Dockerfile
+ * docker/busybox-1.34/Makefile          busybox:1.34 based linux
+ * docker/busybox-1.34/bash/Dockerfile
+ * docker/busybox-1.34/bash/Makefile     busybox:1.34 based BASH login
  * docker/centos-7/Dockerfile
  * docker/centos-7/Makefile              centos:7 based linux
  * docker/centos-7/bash/Dockerfile
@@ -1056,13 +1056,6 @@ the years.
  * docker/debian-11/bash/Makefile        debian:11-slim based BASH login
  * docker/debian-11/dev/Dockerfile
  * docker/debian-11/dev/Makefile         debian:11-slim based GCC dev shell
- * docker/debian-11/docker/Dockerfile
- * docker/debian-11/docker/Makefile      debian:11-slim based DOCKER shell
- * docker/debian-11/xfce/Dockerfile
- * docker/debian-11/xfce/Makefile        debian:11-slim based XFCE environment
- * docker/debian-11/xfce/files/allow-owner
- * docker/debian-11/xfce/files/docker-init
- * docker/debian-11/xfce/files/xstartup
  * docker/i386-debian-11/Dockerfile
  * docker/i386-debian-11/Makefile        i386/debian:11-slim based linux
  * docker/i386-debian-11/bash/Dockerfile
