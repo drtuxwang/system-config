@@ -19,19 +19,29 @@
   - user-home
   - ssh
 
-- name: Check "{{ home_directory }}/.ssh/config" file stat
+- name: Copy file to "{{ home_directory }}/.ssh/config"
+  copy:
+    src: '{{ config_directory }}/config'
+    dest: '{{ home_directory }}/.ssh/config'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  tags:
+  - user-home
+  - ssh
+
+- name: Check "{{ home_directory }}/.ssh/config-opt" file stat
   stat:
-    path: '{{ home_directory }}/.ssh/config'
+    path: '{{ home_directory }}/.ssh/config-opt'
   register: ssh_config
   tags:
   - user-home
   - ssh
 
-- name: Copy file to "{{ home_directory }}/.ssh/config"
+- name: Copy file to "{{ home_directory }}/.ssh/config-opt"
   when: not ssh_config.stat.exists
   copy:
-    src: '{{ config_directory }}/config'
-    dest: '{{ home_directory }}/.ssh/config'
+    src: '{{ config_directory }}/config-opt'
+    dest: '{{ home_directory }}/.ssh/config-opt'
     owner: '{{ user }}'
     group: '{{ group }}'
   tags:

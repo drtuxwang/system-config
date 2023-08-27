@@ -1,10 +1,12 @@
 astroid                      # ==2.11.7 (last compatible version)
 asttokens==None
 cached-property==1.5.2
+chardet                      # ==5.0.0 (last compatible version)
 charset-normalizer==2.0.0
 click                        # ==8.0.4 (last compatible version)
 cookiecutter                 # ==1.7.3 (last compatible version)
 dill                         # ==0.3.4 (last compatible version)
+dnspython                    # ==2.2.1 (last compatible version)
 executing==None
 filelock==3.4.1
 flake8==3.9.2

@@ -91,7 +91,7 @@ class Main:
             ]['Global']['MachineRegistry']['MachineEntry']]:
                 data.read(file, config='XML')
                 cls._config_machine(next(data.get())['VirtualBox']['Machine'])
-        except KeyError:
+        except (KeyError, TypeError):
             pass
 
     @classmethod

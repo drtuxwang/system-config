@@ -124,6 +124,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     setenv LC_COLLATE C
     setenv EDITOR vi
     setenv LESSHISTFILE /dev/null
+    setenv PIP_BREAK_SYSTEM_PACKAGES 1
     setenv PYTHONDONTWRITEBYTECODE 1
     set history=256
 

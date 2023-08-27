@@ -2,10 +2,10 @@
 #
 # System configuration detection tool
 #
-# 1996-2022 By Dr Colin Kong
+# 1996-2023 By Dr Colin Kong
 #
-VERSION=20230408
-RELEASE="2.6.47-3"
+VERSION=20230820
+RELEASE="2.6.48"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -891,6 +891,9 @@ EOF
         if [ "`echo \"$DEVICES\" | egrep '^(.*Hyper-V|hv_'`" ]
         then
             VM="Hyper-V"
+        elif [ "`echo \"$DEVICES\" | grep '^qemu'`" ]
+        then
+            VM="QEMU"
         elif [ "`echo \"$DEVICES\" | egrep '^(VBOX|vboxguest)'`" ]
         then
             VM="VirtualBox"
@@ -901,6 +904,7 @@ EOF
         then
             VM="Xen"
         fi
+
         if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
         then
             CONTAINER="Docker `head -1 /proc/1/cgroup | sed -e \"s@.*/docker/\(.\{12\}\).*@\1@\"`"

@@ -9,6 +9,8 @@ ARG=${1:-}
 # Setup bash
 export TERM=xterm
 source $HOME/.profile
+[ ! "$BASE_PATH" ] && export BASE_PATH="$PATH"
+export PATH="$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$BASE_PATH"
 
 # Use /tmp (tmpfs) for cache
 [ ! -h $HOME/.local/share/gvfs-metadata ] && \

@@ -77,15 +77,15 @@ class Options:
                     pass
 
     @staticmethod
-    def select(directories: List[str]) -> str:
+    def select(selections: List[str]) -> str:
         """
-        Select directory randomly
+        Select file/directory randomly
         """
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
         path = Path(tmpdir, 'gqview.json')
         config = Configuration(path)
-        config.set_choices(directories)
-        directory = config.get_choice(directories)
+        config.set_choices(selections)
+        selected = config.get_choice(selections)
 
         path_new = Path(f'{path}.part')
         config.write(path_new)
@@ -93,7 +93,7 @@ class Options:
             path_new.replace(path)
         except OSError:
             path_new.unlink()
-        return directory
+        return selected
 
     def parse(self, args: List[str]) -> None:
         """
@@ -107,15 +107,19 @@ class Options:
         if len(args) == 1:
             self._gqview.set_args([os.curdir])
         else:
-            for arg in args[1:]:
-                if not Path(arg).is_dir():
+            paths = [Path(x) for x in args[1:]]
+            for path in paths:
+                if not path.exists():
                     self._gqview.set_args(args[1:])
                     return
-
-            directories = [x for x in args[1:] if list(Path(x).glob('*'))]
-            directory = self.select(directories)
-            print("GQView selection:", directory)
-            self._gqview.set_args([directory])
+            selections = [
+                str(x)
+                for x in paths
+                if x.is_file() or list(x.glob('*'))
+            ]
+            selected = self.select(selections)
+            print("GQView selection:", selected)
+            self._gqview.set_args([selected])
 
 
 class Configuration:
@@ -131,33 +135,33 @@ class Configuration:
             except (KeyError, OSError):
                 pass
 
-    def get_choice(self, directories: List[str]) -> str:
+    def get_choice(self, selections: List[str]) -> str:
         """
         Return next choice
         """
-        key = str(directories)
+        key = str(selections)
         choices = self._data['gqview'][key]
         choice = choices[0]
         self._data['gqview'][key] = choices[1:] + [choice]
         return choice
 
-    def set_choices(self, directories: List[str]) -> None:
+    def set_choices(self, selections: List[str]) -> None:
         """
-        If new choices shuffle directory
+        If new choices shuffle selections
         """
-        key = str(directories)
+        key = str(selections)
         if key not in self._data['gqview']:
             ismatch = re.compile(r'_\d+$')
             weights = []
-            for directory in directories:
-                if ismatch.search(directory):
-                    weights.append(int(directory.rsplit('_')[-1]))
+            for selection in selections:
+                if ismatch.search(selection):
+                    weights.append(int(selection.rsplit('_')[-1]))
                 else:
                     weights.append(1)
             choices: List[str] = []
-            while len(choices) < len(directories):
-                choices.extend(random.choices(directories, weights, k=128))
-                choices = list(dict.fromkeys(choices))
+            while len(choices) < len(selections):
+                choices.extend(random.choices(selections, weights, k=128))
+                choices = list(dict.fromkeys(choices))  # Unique ordered list
             self._data['gqview'][key] = choices
 
     def write(self, path: Path) -> None:

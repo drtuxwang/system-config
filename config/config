@@ -2,6 +2,8 @@
 #   <ENTER> ~ ? = Help
 #   <ENTER> ~ . = Disconnect
 
+Include config-opt
+
 # Host settings
 Host debian4.local
   HostKeyAlgorithms +ssh-rsa
@@ -14,6 +16,10 @@ Host debian7.local debian8.local
   PubkeyAcceptedKeyTypes +ssh-rsa
 Host *.local
   User owner
+  ForwardX11 yes
+  StrictHostKeyChecking no
+  UserKnownHostsFile=/dev/null
+Host localhost
   ForwardX11 yes
   StrictHostKeyChecking no
   UserKnownHostsFile=/dev/null

@@ -32,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.5.4'
-VERSION = 20230520
+RELEASE = '6.6.0'
+VERSION = 20230820
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -1942,11 +1942,13 @@ class LinuxSystem(PosixSystem):
                 'Xen': ' Xen ',
             },
             'scsi': {
+                'QEMU': 'QEMU',
                 'VirtualBox': 'VBOX ',
                 'VMware': 'vmware',
             },
             'lsmod': {
                 'Hyper-V': 'hv_',
+                'qemu': 'QEMU',
                 'VirtualBox': 'vboxguest',
                 'VMware': 'vmw_',
                 'Xen': 'xen_blkfront',

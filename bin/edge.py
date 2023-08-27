@@ -92,7 +92,8 @@ class Options:
                     pass
         ispattern = re.compile(
             '^(lastDownload|lastSuccess|lastCheck|expires|'
-            r'softExpiration)=\d*|CBCM is not enabled|Uncaught SecurityError:'
+            r'softExpiration)=\d*|CBCM is not enabled|Uncaught SecurityError:|'
+            'cloud_management|org.freedesktop'
         )
         for path in config_path.glob('File System/*/p/00/*'):
             path_new = Path(f'{path}.part')
@@ -326,7 +327,10 @@ class Main:
         options = Options()
 
         cmdline = options.get_browser().get_cmdline()
-        subtask_mod.Background(cmdline).run(pattern=options.get_pattern())
+        subtask_mod.Background(cmdline).run(
+            error2output=True,
+            pattern=options.get_pattern(),
+        )
 
         # Kill filtering process after start up to avoid hang
         tkill = command_mod.Command(

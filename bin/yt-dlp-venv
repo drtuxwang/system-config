@@ -4,7 +4,7 @@
 #
 
 PYTHON="python3.10"
-PACKAGE="yt-dlp==2023.3.4"
+PACKAGE="yt-dlp==2023.7.6"
 DEPENDS=""
 POSTINST=
 

@@ -7,6 +7,7 @@ bcrypt==3.1.7
 beautifulsoup4               # ==4.9.3 (last compatible version)
 certifi                      # ==2021.10.8 (last compatible version)
 cffi==1.15.1
+chardet                      # ==4.0.0 (last compatible version)
 charset-normalizer==None
 click                        # ==7.1.2 (last compatible version)
 configparser==3.8.1          #   (required by pylint/virtualenv for 2.7)

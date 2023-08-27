@@ -5,6 +5,7 @@ bcrypt==3.1.7
 beautifulsoup4               # ==4.10.0 (last compatible version)
 cached-property==None
 certifi                      # ==2021.10.8 (last compatible version)
+chardet                      # ==4.0.0 (last compatible version)
 charset-normalizer==None
 click                        # ==7.1.2 (last compatible version)
 cookiecutter                 # ==1.7.3 (last compatible version)

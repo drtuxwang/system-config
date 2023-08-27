@@ -86,7 +86,7 @@ class Main:
         """
         options = Options()
 
-        is_bad_char = re.compile(r'^-|[ !\'$&`"()*<>?\[\]\\\\|]')
+        is_bad_char = re.compile(r'^-|[ !:=$&`\'"\(\)\[\]{}<>*?\\\\|｜]')
         for path in [Path(x) for x in options.get_files()]:
             path_new = Path(is_bad_char.sub('_', str(path)))
             if path_new != path and not path_new.is_file():

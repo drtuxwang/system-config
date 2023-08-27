@@ -152,6 +152,9 @@ then
                 *Hyper-V*|*hv_*)
                     PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](Hyper-V)/')
                     ;;
+                *qemu*)
+                    PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](QEMU)/')
+                    ;;
                 *VBOX*|*vboxguest*)
                     PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](VirtualBox)/')
                     ;;
@@ -288,6 +291,7 @@ then
     export HISTSIZE=256
     export HISTTIMEFORMAT=
     export LESSHISTFILE=/dev/null
+    export PIP_BREAK_SYSTEM_PACKAGES=1
     export PYTHONDONTWRITEBYTECODE=1
 
     # Save/load default path settings

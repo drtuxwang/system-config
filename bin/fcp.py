@@ -249,15 +249,6 @@ class Main:
                             ) from exception
                     self._copy(Path(source), Path(target, source))
             else:
-                path = Path(target, Path(source).parent)
-                if not path.is_dir():
-                    try:
-                        path.mkdir(parents=True)
-                    except OSError as exception:
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot create '
-                            f'"{path}" directory.',
-                        ) from exception
                 self._copy(Path(source), Path(target, Path(source).name))
 
         return 0

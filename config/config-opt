@@ -1,0 +1,48 @@
+# PT Host settings
+Host lhh-* gns-*
+  User colin.kong
+Host lhh-ops*
+  ForwardX11 yes
+Host lhh-*
+  ForwardX11 no
+
+# VM Host settings
+#Host debian4.local
+#  Hostname localhost
+#  Port 2204
+#  HostKeyAlgorithms +ssh-rsa
+#  PubkeyAcceptedKeyTypes +ssh-rsa
+#  KexAlgorithms +diffie-hellman-group1-sha1
+#Host debian5.local
+#  Hostname localhost
+#  Port 2205
+#  HostKeyAlgorithms +ssh-rsa
+#  PubkeyAcceptedKeyTypes +ssh-rsa
+#Host debian6.local
+#  Hostname localhost
+#  Port 2206
+#  HostKeyAlgorithms +ssh-rsa
+#  PubkeyAcceptedKeyTypes +ssh-rsa
+#Host debian7.local
+#  Hostname localhost
+#  Port 2207
+#  PubkeyAcceptedKeyTypes +ssh-rsa
+#Host debian8.local
+#  Hostname localhost
+#  Port 2208
+#  PubkeyAcceptedKeyTypes +ssh-rsa
+#Host debian9.local
+#  Hostname localhost
+#  Port 2209
+#Host debian10.local
+#  Hostname localhost
+#  Port 2210
+#Host debian10-32.local
+#  Hostname localhost
+#  Port 2210
+#Host debian11.local
+#  Hostname localhost
+#  Port 2211
+#Host debian12.local
+#  Hostname localhost
+#  Port 2212

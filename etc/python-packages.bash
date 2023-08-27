@@ -40,6 +40,7 @@ REQUIREMENT=${2-}
 [[ ! /$PYTHON =~ /python[1-9]* ]] && help
 
 export PYTHONPATH=
+export PIP_BREAK_SYSTEM_PACKAGES=1  # Fix >= 3.11
 
 
 read_requirements() {
