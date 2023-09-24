@@ -2,6 +2,6 @@ cmdline_apps: true
 dhclient_call: false
 gui_apps: true
 sudo_commands: true
-vbox_shared: true
+vm_vboxsf: true
 
 download_rate: 32000

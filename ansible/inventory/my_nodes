@@ -1,8 +1,9 @@
-[local_nodes:children]
-local_hosts
-local_vmhosts
+[my:children]
+my_local_hosts
+my_local_vhosts
+my_vm_vhosts
 
-[local_hosts]
+[my_local_hosts]
 hotdog.local           ansible_user=admin
 koko.local             ansible_user=admin
 netbook.local          ansible_user=admin
@@ -14,17 +15,28 @@ webtv.local            ansible_user=admin
 wolfdale.local         ansible_user=admin
 xiaobear.local         ansible_user=admin
 
-# Virtual Machines
-[local_vmhosts]
+[my_local_vhosts]
 debian4.local          ansible_user=admin
 debian5.local          ansible_user=admin
 debian6.local          ansible_user=admin
 debian7.local          ansible_user=admin
 debian8.local          ansible_user=admin
 debian9.local          ansible_user=admin
-debian9-32.local       ansible_user=admin
 debian10.local         ansible_user=admin
 debian10-32.local      ansible_user=admin
 debian11.local         ansible_user=admin
 debian12.local         ansible_user=admin
 debianmac.local        ansible_user=admin
+
+[my_vm_vhosts]
+debian4.vm             ansible_user=admin
+debian5.vm             ansible_user=admin
+debian6.vm             ansible_user=admin
+debian7.vm             ansible_user=admin
+debian8.vm             ansible_user=admin
+debian9.vm             ansible_user=admin
+debian10.vm            ansible_user=admin
+debian10-32.vm         ansible_user=admin
+debian11.vm            ansible_user=admin
+debian12.vm            ansible_user=admin
+debianmac.vm           ansible_user=admin

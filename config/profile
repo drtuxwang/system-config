@@ -59,7 +59,8 @@ then
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
         __fcd() {
-            cd $(eval realpath "$1" 2> /dev/null)
+            local directory=${1:-$HOME/Desktop}
+            cd $(eval realpath "$directory" 2> /dev/null)
         }
         __git_ps1() {
             local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
@@ -259,14 +260,13 @@ then
 
     # Use /tmp (tmpfs) for cache
     export TMPDIR="/tmp/$MYUNAME"
-    export TMP="/tmp/$MYUNAME"
     rm -f `find $HOME/.???* -xdev -type l 2> /dev/null | xargs -r -d '\n' ls -ld 2> /dev/null | \
         grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
-    mkdir -p $TMP/.cache
+    mkdir -p $TMPDIR/.cache
     if [ ! -h $HOME/.cache ]
     then
         rm -rf $HOME/.cache 2> /dev/null
-        ln -s $TMP/.cache $HOME/.cache 2> /dev/null
+        ln -s $TMPDIR/.cache $HOME/.cache 2> /dev/null
     fi
     ENV=
 
@@ -279,7 +279,7 @@ then
         ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 2> /dev/null
         ;;
     esac
-    ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.???* 2> /dev/null | \
+    ls -ld $TMPDIR $HOME/Desktop $HOME/Desktop/private $HOME/.???* 2> /dev/null | \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
 
     # General stuff

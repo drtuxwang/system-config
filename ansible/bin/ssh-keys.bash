@@ -4,7 +4,7 @@ cd "${0%/*}/.."
 
 for HOST in $*
 do
-    ANSIBLE_USER=$(ansible-inventory --inventory=inventory/local_nodes --host "$HOST" --yaml 2> /dev/null | awk '/ansible_user: / {printf("%s@", $2)}')
+    ANSIBLE_USER=$(ansible-inventory --inventory=inventory/my_nodes --host "$HOST" --yaml 2> /dev/null | awk '/ansible_user: / {printf("%s@", $2)}')
     for KEY in $(ssh -G "$ANSIBLE_USER$HOST" 2> /dev/null | awk '/^identityfile / {print $2}' | sed -e "s@\~@$HOME@")
     do
         if [ -f "$KEY" ]

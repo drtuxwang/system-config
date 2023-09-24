@@ -47,7 +47,7 @@ class Options:
             type=int,
             dest='drate',
             default=[0],
-            help='Download rate limit in kps. Default is set in '
+            help='Download rate limit in kbps. Default is set in '
             '".config/netnice.json".'
         )
         parser.add_argument(

@@ -38,7 +38,7 @@ create_virtualenv() {
 # Setup Virtual Environment
 PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
 VIRTUAL_ENV="$PYTHON_DIR-venv/${PACKAGE/==/-}"
-[ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="$TMP/$($PYTHON --version 2>&1 | sed -e "s/ /-/g")-venv/${PACKAGE/==/-}"
+[ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/$($PYTHON --version 2>&1 | sed -e "s/ /-/g")-venv/${PACKAGE/==/-}"
 FLAGS="${1:-}"
 export VIRTUAL_ENV
 export PATH="$VIRTUAL_ENV/bin:$PATH"

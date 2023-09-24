@@ -19,6 +19,7 @@ fi
 
 install_collections() {
     "$VIRTUAL_ENV/bin/ansible-galaxy" collection install ansible.posix -p "$VIRTUAL_ENV/lib/$PYTHON/site-packages"
+    "$VIRTUAL_ENV/bin/ansible-galaxy" collection install community.general -p "$VIRTUAL_ENV/lib/$PYTHON/site-packages"
     find "$VIRTUAL_ENV/lib" -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
 }
 

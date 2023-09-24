@@ -5,26 +5,17 @@
 Include config-opt
 
 # Host settings
-Host debian4.local
+Host *.local *.vm localhost
   HostKeyAlgorithms +ssh-rsa
   PubkeyAcceptedKeyTypes +ssh-rsa
   KexAlgorithms +diffie-hellman-group1-sha1
-Host debian5.local debian6.local
-  HostKeyAlgorithms +ssh-rsa
-  PubkeyAcceptedKeyTypes +ssh-rsa
-Host debian7.local debian8.local
-  PubkeyAcceptedKeyTypes +ssh-rsa
-Host *.local
-  User owner
-  ForwardX11 yes
-  StrictHostKeyChecking no
-  UserKnownHostsFile=/dev/null
-Host localhost
   ForwardX11 yes
   StrictHostKeyChecking no
   UserKnownHostsFile=/dev/null
 
 # User settings
+Host *.local *.vm
+  User owner
 Match User admin
   IdentityFile=~/.ssh/admin/id_rsa
 

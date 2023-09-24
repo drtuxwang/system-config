@@ -28,7 +28,12 @@ mount_disk {{ data2_mount }} &
 {% else %}
 ##mount_disk -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2 &
 {% endif %}
-{% if vbox_shared %}
+{% if vm_9pnet %}
+mount -t 9p -o msize=131072 Shared /mnt/host &
+{% else %}
+##mount -t 9p -o msize=131072 Shared /mnt/host &
+{% endif %}
+{% if vm_vboxsf %}
 mount -t vboxsf -o uid=owner,gid=users Shared /mnt/host &
 {% else %}
 ##mount -t vboxsf -o uid=owner,gid=users Shared /mnt/host &

@@ -99,13 +99,12 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
 
     # Use /tmp (tmpfs) for cache
     setenv TMPDIR "/tmp/$MYUNAME"
-    setenv TMP "/tmp/$MYUNAME"
     (rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
         grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`) >& /dev/null
-    mkdir -p $TMP/.cache
+    mkdir -p $TMPDIR/.cache
     if ( ! -l $HOME/.cache ) then
         rm -rf $HOME/.cache >& /dev/null
-        ln -s $TMP/.cache $HOME/.cache >& /dev/null
+        ln -s $TMPDIR/.cache $HOME/.cache >& /dev/null
     endif
 
     # Protect files

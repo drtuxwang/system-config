@@ -64,14 +64,15 @@ DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --network=$NETWORK"
 # Sandbox user (workaround AD passwd/group bug)
 if [ "$SANDBOX" != "0:0" ]
 then
-    mkdir -p $TMP/docker/home
-    cp -rp $HOME/.bashrc $HOME/.profile $HOME/.tmux.conf $HOME/.vim* $TMP/docker/home
-    echo "$(id -un):x:$(id -u):$(id -g):$(id -un),,,:/home/$(id -un):/bin/bash" > $TMP/docker/passwd
-    echo "$(id -gn):x:$(id -g):" > $TMP/docker/group
+    export TMPDIR=${TMPDIR:-/tmp/$(id -un)}
+    mkdir -p $TMPDIR/docker/home
+    cp -rp $HOME/.bashrc $HOME/.profile $HOME/.tmux.conf $HOME/.vim* $TMPDIR/docker/home
+    echo "$(id -un):x:$(id -u):$(id -g):$(id -un),,,:/home/$(id -un):/bin/bash" > $TMPDIR/docker/passwd
+    echo "$(id -gn):x:$(id -g):" > $TMPDIR/docker/group
     DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS
-        --volume=$TMP/docker/passwd:/etc/passwd:ro
-        --volume=$TMP/docker/group:/etc/group:ro
-        --volume=$TMP/docker/home:/home/$(id -un)
+        --volume=$TMPDIR/docker/passwd:/etc/passwd:ro
+        --volume=$TMPDIR/docker/group:/etc/group:ro
+        --volume=$TMPDIR/docker/home:/home/$(id -un)
         --user=$SANDBOX
         --env HOME=/home/$(id -un)
         --env cdsrc=/vol/sandbox

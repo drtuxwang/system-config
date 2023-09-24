@@ -417,6 +417,8 @@ the years.
  * bin/httpd                Sandbox a simple Python HTTP server
  * bin/httpd.bat
  * bin/httpd.py
+ * bin/httplog              A simple Python HTTP request logger
+ * bin/httplog.py
  * bin/index                Produce "index.fsum" file and "..fsum" cache files
  * bin/index.bat
  * bin/index.py
@@ -875,11 +877,14 @@ the years.
  * ansible/bin/show-tags.bash
  * ansible/bin/ssh-keys.bash
  * ansible/inventory/group_vars/all
- * ansible/inventory/group_vars/local_hosts
- * ansible/inventory/group_vars/local_nodes
- * ansible/inventory/group_vars/local_vmhosts
+ * ansible/inventory/group_vars/my
+ * ansible/inventory/group_vars/my_local_hosts
+ * ansible/inventory/group_vars/my_local_vhosts
+ * ansible/inventory/group_vars/my_vm_vmhosts
  * ansible/inventory/host_vars/debian11.local
+ * ansible/inventory/host_vars/debian11.vm
  * ansible/inventory/host_vars/debian12.local
+ * ansible/inventory/host_vars/debian12.vm
  * ansible/inventory/host_vars/debianmac.local
  * ansible/inventory/host_vars/hotdog.local
  * ansible/inventory/host_vars/koko.local
@@ -889,8 +894,8 @@ the years.
  * ansible/inventory/host_vars/viva.local
  * ansible/inventory/host_vars/webtv.local
  * ansible/inventory/host_vars/xiaobear.local
- * ansible/inventory/local_nodes
- * ansible/local-playbook.yaml
+ * ansible/inventory/my_nodes
+ * ansible/my_playbook.yaml
  * ansible/roles/ansible-user/tasks/main.yaml
  * ansible/roles/local-system/defaults/main.yaml
  * ansible/roles/local-system/files/iptables
@@ -965,6 +970,7 @@ the years.
  * config/autostart-opt.bash             Copy to "$HOME/.config/autostart-opt.bash" for optional settings
  * config/autostart.desktop              Copy to "$HOME/.config/autostart/autostart.desktop" for XFCE autostart
  * config/config                         Copy to "$HOME/.ssh/config"
+ * config/config-opt                     Copy to "$HOME/.ssh/config-opt"
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
  * config/iptables.conf                  IPTABLES setup script
  * config/login                          Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
@@ -977,12 +983,12 @@ the years.
  * config/rc.local-opt                   Copy to "/etc/rc.local-opt" for optional system startup commands
  * config/terminalrc                     Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
  * config/vimrc                          Copy to "$HOME/.vimrc" for VIM defaults
- * config/vm-linux0.vbox                 VirtualBox Linux example
- * config/vm-win10.vbox                  VirtualBox Windows example
  * config/userapp-evince.desktop         Copy to "$HOME/.local/share/applications" for Evince/Atril
  * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for GQview/Geeqie
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
+ * config/vm-linux0.vbox                 VirtualBox Linux example
+ * config/vm-win10.vbox                  VirtualBox Windows example
  * config/winsetup.bat                   Configure Windows VirtualBox VMs
  * config/winsetup.bash
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
@@ -1134,6 +1140,7 @@ the years.
  * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
  * etc/python-requirements_3.8.txt       Additional requirements for Python 3.8
  * etc/python-requirements_3.9.txt       Additional requirements for Python 3.9
+ * etc/python-requirements_3.9mac.txt    Additional requirements for Python 3.9 on Mac
  * etc/python-requirements_3.10mac.txt   Additional requirements for Python 3.10 on Mac
  * etc/python-requirements_3.11.txt      Additional requirements for Python 3.11
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
@@ -1240,6 +1247,28 @@ the years.
  * python/simple-tornado/Makefile        Tornado examples
  * python/simple-tornado/tornado_client.py
  * python/simple-tornado/tornado_server.py
+ * qemu/debian4.vm.bash                Debian 4 amd64 VM
+ * qemu/debian5.vm.bash                Debian 5 amd64 VM
+ * qemu/debian6.vm.bash                Debian 6 amd64 VM
+ * qemu/debian7.vm.bash                Debian 7 amd64 VM
+ * qemu/debian8.vm.bash                Debian 8 amd64 VM
+ * qemu/debian9.vm.bash                Debian 9 amd64 VM
+ * qemu/debian10.vm.bash               Debian 10 amd64 VM
+ * qemu/debian10-32.vm.bash            Debian 10 i386 VM
+ * qemu/debian11.vm.bash               Debian 11 amd64 VM
+ * qemu/debian12.vm.bash               Debian 12 amd64 VM
+ * qemu/debian12-arm.vm.bash           Debian 12 aarch64 VM
+ * qemu/debianmac.vm.bash
+ * qemu/qemu-mount.bash                QEMU mount image file
+ * qemu/qemu-system-aarch64.bash       QEMU system aarch64 wrapper
+ * qemu/qemu-system-x86_64.bash        QEMU system x86_64 wrapper
+ * qemu/qemu-trim.bash                 QEMU trim image file
+ * qemu/qemu-umount.bash               QEMU umount image file
+ * qemu/windowsxp-32.vm.bash           Windows XP i386 VM
+ * qemu/windowsvista-32.vm.bash        Windows Vista i386 VM
+ * qemu/windows7-32.vm.bash            Windows 7 i386 VM
+ * qemu/windows8-32.vm.bash            Windows 8 i386 VM
+ * qemu/windows10.vm.bash              Windows 10 amd64 VM
  * terraform-aws/1pxy/aws_config.tf      Terraform AWS: 1pxy example
  * terraform-aws/1pxy/aws_resources.tf
  * terraform-aws/1pxy/pxy_resources.tf

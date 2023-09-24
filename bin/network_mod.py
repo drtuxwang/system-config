@@ -15,8 +15,8 @@ from typing import Any, List, Tuple, Union
 
 import command_mod
 
-RELEASE = '3.4.3'
-VERSION = 20230423
+RELEASE = '3.4.4'
+VERSION = 20230916
 
 
 class NetNice(command_mod.Command):
@@ -24,23 +24,29 @@ class NetNice(command_mod.Command):
     NetNice network traffic shaping command class
     """
 
-    def __init__(self, drate: int = 8000, errors: str = 'ignore') -> None:
+    def __init__(self, drate: int = None, errors: str = 'ignore') -> None:
         """
-        drate = Download rate (default 8000kbps)
+        drate = Download rate
         errors = Optional error handling ('stop' or 'ignore')
         """
-        self._drate = drate
+        self._drate = None
 
         path = Path(Path.home(), '.config', 'netnice.json')
-        if not self._read(path):
-            self._write(path)
+        self._read(path)
+        if drate:
+            self._drate = drate
+            if not path.is_file():
+                self._write(path)
 
         # Try trickle bandwidth limits
         super().__init__('trickle', errors=errors)
-        if self.is_found():
-            self.set_args(['-d', self._drate, '-s'])
 
-    def _read(self, path: Path) -> bool:
+        if self.is_found():
+            self.set_args(['-s'])
+            if self._drate:
+                self.extend_args(['-d', self._drate / 8])
+
+    def _read(self, path: Path) -> None:
         """
         Read configuration file
         """
@@ -50,10 +56,6 @@ class NetNice(command_mod.Command):
                 self._drate = data['trickle']['download']
             except (KeyError, OSError, ValueError):
                 pass
-            else:
-                return True
-
-        return False
 
     def _write(self, path: Path) -> None:
         """

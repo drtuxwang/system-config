@@ -1,2 +1,2 @@
 dhclient_call: true
-vbox_guest: true
+vm_guest: true
