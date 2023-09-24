@@ -2,9 +2,9 @@ NAME := kafka
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := kafka
-CHART_VERSION := 21.4.6
-APP_VERSION := 2.8.1
-IMAGE_TAG := 2.8.1-debian-11-r7
+CHART_VERSION := 24.0.14
+APP_VERSION := 3.5.1
+IMAGE_TAG := 3.5.1-debian-11-r27
 NAMESPACE ?= default
 HOSTNAME ?= kafka.kube.local
 
@@ -38,10 +38,9 @@ HELM_FLAGS := \
 	--values values.yaml \
 	--set fullnameOverride=$(NAME)-server \
 	--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
-	--set externalAccess.service.domain=$(EXTERNAL_IP) \
 	--version $(CHART_VERSION)
 ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
-	HELM_FLAGS += --set service.externalIPs='{$(EXTERNAL_IP)}'
+	HELM_FLAGS += --set externalAccess.enabled=true --set externalAccess.controller.service.loadBalancerIPs='{$(EXTERNAL_IP)}'
 endif
 ifdef IMAGE_TAG
 	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
@@ -116,17 +115,6 @@ check: repo-add      # Install Helm release dryrun
 install: repo-add    # Install Helm release
 	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
-
-.PHONY: connect
-connect:             # Connect to endpoint
-	@if [ "$(EXTERNAL_IP)" ]; \
-	then \
-		./test-connect.bash $(NAME)-server-0 \
-			$(EXTERNAL_IP):`kubectl get svc kafka-server-0-external | awk 'NR==2 {print $$5}' | sed -e "s/.*://;s#/.*##"`; \
-	else \
-		./test-connect.bash $(NAME)-server-0 \
-			127.0.0.1:`kubectl get svc kafka-server-0-external | awk 'NR==2 {print $$5}' | cut -f1 -d:`; \
-	fi
 
 .PHONY: uninstall
 uninstall:           # Uninstall Helm release
