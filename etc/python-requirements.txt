@@ -26,7 +26,7 @@ filelock==3.12.2             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 flake8==6.1.0                # Python modular source code checker
 gitdb==4.0.10                #   (required by GitPython)
-GitPython==3.1.35            # Library to interact with Git repositories
+GitPython==3.1.37            # Library to interact with Git repositories
 gTTS==2.3.2                  # Google Text-to-Speech
 humpty==0.2.1                # Convert whl to egg
 idna==3.3                    #   (required by requests)
@@ -83,7 +83,7 @@ tomlkit==0.11.8              #   (required by pylint)
 tornado==6.3.3               # Web server framework
 traitlets==5.8.1             #   (required by ipython)
 typing_extensions==4.7.1     #   (required by mypy)
-urllib3==1.26.16             #   (required by requests)
+urllib3==1.26.17             #   (required by requests)
 virtualenv==20.23.1          # Python Virtual Environments
 wcwidth==0.2.6               #   (required by prompt-toolkit)
 wheel==0.40.0                # Python wheel packaging
