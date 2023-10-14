@@ -179,7 +179,7 @@ class Main:
         }
 
         try:
-            with Path(f'{ file}.part.json').open('w') as ofile:
+            with Path(f'{file}.part.json').open('w') as ofile:
                 print(json.dumps(
                     json_data,
                     ensure_ascii=False,

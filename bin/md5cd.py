@@ -210,7 +210,7 @@ class Main:
                 break
             md5.update(chunk)
             size += len(chunk)
-        pad = int(blocks * 2048 - size)
+        pad = blocks * 2048 - size
         if 0 < pad < 16777216:
             md5.update(b'\0'*pad)  # Padding
         print(md5.hexdigest(), device, sep='  ')

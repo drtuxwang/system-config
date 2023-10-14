@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/python:3.10-slim-bookworm
-IMAGE := drtuxwang/python-full:3.10-slim-bookworm
-NAME := python310-full
-HOSTNAME := python310-full
+BASE_IMAGE := drtuxwang/python:3.11-slim-bookworm
+IMAGE := drtuxwang/python-dev:3.11-slim-bookworm
+NAME := python311-dev
+HOSTNAME := python311-dev
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
@@ -55,7 +55,7 @@ test:                # Run tests
 		--volume=$(shell realpath ../../..):/vol/app:ro \
 		--workdir=/vol/app \
 		$(IMAGE) \
-		make test
+		make install test
 
 .PHONY: version
 version:             # Check versions

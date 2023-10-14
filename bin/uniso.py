@@ -135,7 +135,7 @@ class Main:
             print("")
         else:
             minutes, remainder = divmod(size, 734003200 / 80)
-            seconds = remainder * 4800 / 734003200.
+            seconds = remainder * 4800 / 734003200
             logger.info(
                 "%s: %4.2f MB (%.0f min %05.2f sec)",
                 image,

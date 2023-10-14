@@ -1,5 +1,5 @@
 PYTHONDONTWRITEBYTECODE := 1
-PYTHONS_VERSIONS := 3.11 3.10 3.9 3.8 3.7 3.6 3.5 2.7
+PYTHONS_VERSIONS := 3.12 3.11 3.10 3.9 3.8 3.7 3.6 3.5 2.7
 BROWSER := firefox
 
 ifndef PYTHON
@@ -79,6 +79,14 @@ check-packages:      # Check packages
 install:             # Install Python packages
 	@echo "\n*** Installing Python 3 requirements ***"
 	etc/python-packages.bash -i ${PYTHON}
+
+.PHONY: time
+time:                # Set file timestamps to git commit times
+	@echo "\n*** Fixing git timestamps ***"
+	bin/git-time bin/*
+	bin/git-time compile/*
+	bin/git-time config/*
+	bin/git-time qemu/*
 
 .PHONY: gc
 gc:                  # Run git garbage collection

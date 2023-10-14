@@ -2,7 +2,7 @@
 
 // Environment variables
 def alpine_version = "3.16"
-def python_version = "3.10"
+def python_version = "3.11"
 def docker_builder_image = "drtuxwang/debian-docker:stable"
 String branch_name = env.JOB_NAME - "system-config-"
 
@@ -103,7 +103,7 @@ pipeline {
                             }
                             agent {
                                 docker {
-                                    image "${params.DOCKER_REG}/drtuxwang/python-full:${python_version}-slim-bookworm"
+                                    image "${params.DOCKER_REG}/drtuxwang/python-full:${python_version}"
                                     reuseNode true
                                     alwaysPull false
                                 }

@@ -3,8 +3,8 @@ ARG BASE_IMAGE=i386/debian:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN apt-get update --fix-missing && \
-    apt-get install --no-install-recommends -y \
+RUN apt-get update && \
+    apt-get install --no-install-recommends --fix-missing -y \
         ca-certificates \
         curl \
         dnsutils \

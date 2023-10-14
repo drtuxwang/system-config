@@ -3,9 +3,11 @@
 # awscli virtualenv
 #
 
-PYTHON="python3.10"
-PACKAGE="awscli==1.27.109"
-##DEPENDS="PyYAML==5.4.1"  # >=6 still not supported
+PYTHON="python3.11"
+PACKAGE="awscli==1.29.59"
+
+DEPENDS="PyYAML==5.4.1"  # >=6 still not supported
+DEPENDS=
 POSTINST=
 
 source "${0%/*}/virtualenv.bash"

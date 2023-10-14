@@ -36,8 +36,9 @@ the years.
  * bin/python3.8
  * bin/python3.9
  * bin/python3.10
- * bin/python3.10.bat
  * bin/python3.11
+ * bin/python3.11.bat
+ * bin/python3.12
  * bin/2to3                 Python 3.x script wrappers
  * bin/2to3.bat
  * bin/ansible
@@ -958,6 +959,7 @@ the years.
  * compile/COMPILE-python-3.9.bash       Python 3.9 compile script
  * compile/COMPILE-python-3.10.bash      Python 3.10 compile script
  * compile/COMPILE-python-3.11.bash      Python 3.11 compile script
+ * compile/COMPILE-python-3.12.bash      Python 3.12 compile script
  * compile/COMPILE-tinyproxy             TinyProxy compile script
  * compile/COMPILE-tmux                  TMUX compile script
  * compile/COMPILE-unrar                 UnRar compile script
@@ -989,8 +991,8 @@ the years.
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
  * config/vm-linux0.vbox                 VirtualBox Linux example
  * config/vm-win10.vbox                  VirtualBox Windows example
- * config/winsetup.bat                   Configure Windows VirtualBox VMs
- * config/winsetup.bash
+ * config/setup.bat                      Configure Windows QEMU/VirtualBox VMs
+ * config/setupwin.ash
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
@@ -1098,16 +1100,16 @@ the years.
  * docker/nginx-1.18/Dockerfile
  * docker/nginx-1.18/Makefile            nginx:1.18-alpine based reverse proxy server
  * docker/nginx-1.18/files/nginx-proxy.conf
- * docker/python-3.10/Dockerfile
- * docker/python-3.10/Makefile           python:3.10-slim-bookworm based Python app
- * docker/python-3.10/bash/Dockerfile
- * docker/python-3.10/bash/Makefile      python:3.10-slim-bookworm based BASH login
- * docker/python-3.10/dev/Dockerfile
- * docker/python-3.10/dev/Makefile       python:3.10-slim-bookworm based dev shell
- * docker/python-3.10/devpi/Dockerfile
- * docker/python-3.10/devpi/Makefile     python:3.10-slim-bookworm based devpi server app
- * docker/python-3.10/full/Dockerfile
- * docker/python-3.10/full/Makefile      python:3.10-slim-bookworm based shell with full packages
+ * docker/python-3.11/Dockerfile
+ * docker/python-3.11/Makefile           python:3.11-slim-bookworm based Python app
+ * docker/python-3.11/bash/Dockerfile
+ * docker/python-3.11/bash/Makefile      python:3.11-slim-bookworm based BASH login
+ * docker/python-3.11/dev/Dockerfile
+ * docker/python-3.11/dev/Makefile       python:3.11-slim-bookworm based dev shell
+ * docker/python-3.11/devpi/Dockerfile
+ * docker/python-3.11/devpi/Makefile     python:3.11-slim-bookworm based devpi server app
+ * docker/python-3.11/full/Dockerfile
+ * docker/python-3.11/full/Makefile      python:3.11-slim-bookworm based shell with full packages
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml
@@ -1143,6 +1145,7 @@ the years.
  * etc/python-requirements_3.9mac.txt    Additional requirements for Python 3.9 on Mac
  * etc/python-requirements_3.10mac.txt   Additional requirements for Python 3.10 on Mac
  * etc/python-requirements_3.11.txt      Additional requirements for Python 3.11
+ * etc/python-requirements_3.11mac.txt   Additional requirements for Python 3.11 on Mac
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
@@ -1247,28 +1250,29 @@ the years.
  * python/simple-tornado/Makefile        Tornado examples
  * python/simple-tornado/tornado_client.py
  * python/simple-tornado/tornado_server.py
- * qemu/debian4.vm.bash                Debian 4 amd64 VM
- * qemu/debian5.vm.bash                Debian 5 amd64 VM
- * qemu/debian6.vm.bash                Debian 6 amd64 VM
- * qemu/debian7.vm.bash                Debian 7 amd64 VM
- * qemu/debian8.vm.bash                Debian 8 amd64 VM
- * qemu/debian9.vm.bash                Debian 9 amd64 VM
- * qemu/debian10.vm.bash               Debian 10 amd64 VM
- * qemu/debian10-32.vm.bash            Debian 10 i386 VM
- * qemu/debian11.vm.bash               Debian 11 amd64 VM
- * qemu/debian12.vm.bash               Debian 12 amd64 VM
- * qemu/debian12-arm.vm.bash           Debian 12 aarch64 VM
- * qemu/debianmac.vm.bash
- * qemu/qemu-mount.bash                QEMU mount image file
- * qemu/qemu-system-aarch64.bash       QEMU system aarch64 wrapper
- * qemu/qemu-system-x86_64.bash        QEMU system x86_64 wrapper
- * qemu/qemu-trim.bash                 QEMU trim image file
- * qemu/qemu-umount.bash               QEMU umount image file
- * qemu/windowsxp-32.vm.bash           Windows XP i386 VM
- * qemu/windowsvista-32.vm.bash        Windows Vista i386 VM
- * qemu/windows7-32.vm.bash            Windows 7 i386 VM
- * qemu/windows8-32.vm.bash            Windows 8 i386 VM
- * qemu/windows10.vm.bash              Windows 10 amd64 VM
+ * qemu/debian4.vm.bash                  Debian 4 amd64 VM
+ * qemu/debian5.vm.bash                  Debian 5 amd64 VM
+ * qemu/debian6.vm.bash                  Debian 6 amd64 VM
+ * qemu/debian7.vm.bash                  Debian 7 amd64 VM
+ * qemu/debian8.vm.bash                  Debian 8 amd64 VM
+ * qemu/debian9.vm.bash                  Debian 9 amd64 VM
+ * qemu/debian10.vm.bash                 Debian 10 amd64 VM
+ * qemu/debian10-32.vm.bash              Debian 10 i386 VM
+ * qemu/debian11.vm.bash                 Debian 11 amd64 VM
+ * qemu/debian12.vm.bash                 Debian 12 amd64 VM
+ * qemu/debian12-arm.vm.bash             Debian 12 aarch64 VM
+ * qemu/debianmac.vm.bash                Debian Mac VM
+ * qemu/fstrim-qemu.bash                 QEMU mount image file
+ * qemu/qemu-system-aarch64.bash         QEMU system aarch64 wrapper
+ * qemu/qemu-system-x86_64.bash          QEMU system x86_64 wrapper
+ * qemu/mount-qemu.bash                  QEMU mount image file
+ * qemu/qemu-nbd.bash                    QEMU NBD server wrappr
+ * qemu/umount-qemu.bash                 QEMU umount image file
+ * qemu/windowsxp-32.vm.bash             Windows XP i386 VM
+ * qemu/windowsvista-32.vm.bash          Windows Vista i386 VM
+ * qemu/windows7-32.vm.bash              Windows 7 i386 VM
+ * qemu/windows8-32.vm.bash              Windows 8 i386 VM
+ * qemu/windows10.vm.bash                Windows 10 amd64 VM
  * terraform-aws/1pxy/aws_config.tf      Terraform AWS: 1pxy example
  * terraform-aws/1pxy/aws_resources.tf
  * terraform-aws/1pxy/pxy_resources.tf

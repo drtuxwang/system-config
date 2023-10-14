@@ -3,7 +3,7 @@
 # dropbox virtualenv
 #
 
-PYTHON="python3.10"
+PYTHON="python3.11"
 PACKAGE="dropbox==11.35.0"
 DEPENDS=
 POSTINST=

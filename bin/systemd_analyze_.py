@@ -43,9 +43,9 @@ class Main:
         for timing in isjunk.sub('', line).split(' + '):
             delay, name = timing.split(' ', 1)
             if delay.endswith('min'):
-                seconds = float(delay[:-3]) * 60
+                seconds = float(delay[:-3]) * 60.
             elif delay.endswith('ms'):
-                seconds = float(delay[:-2]) / 1000
+                seconds = float(delay[:-2]) / 1000.
             else:
                 seconds = float(delay[:-1])
             yield (seconds, name)

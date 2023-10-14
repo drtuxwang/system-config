@@ -57,6 +57,7 @@ pyzstd==None
 questionary==None
 requests                     # ==2.25.1 (last compatible version)
 setuptools                   # ==50.3.2 (last compatible version)
+smmap                        # ==4.0.0 (last compatible version)
 soupsieve==2.1
 stack-data==None
 toml==0.10.2                 #   (required by pylint for 3.5)

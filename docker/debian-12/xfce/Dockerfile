@@ -23,7 +23,7 @@ ARG GROUP
 # Install compiler & dev packages
 RUN \
     # For Python build
-    apt-get install --no-install-recommends -y \
+    apt-get install --no-install-recommends --fix-missing -y \
         g++ \
         gfortran \
         libbz2-dev \
@@ -40,13 +40,14 @@ RUN \
         python3-dev \
         uuid-dev && \
     # For Python packages
-    apt-get install --no-install-recommends -y libcurl4-openssl-dev && \
+    apt-get install --no-install-recommends --fix-missing -y \
+        libcurl4-openssl-dev && \
     apt-get clean
 
 # Install user environment packages
 RUN \
     # User environment
-    apt-get install --no-install-recommends -y \
+    apt-get install --no-install-recommends --fix-missing -y \
         file \
         fonts-noto-cjk \
         fonts-symbola \
@@ -61,7 +62,7 @@ RUN \
         xauth && \
     mkdir -p /run/sshd && \
     # XFCE desktop
-    apt-get install --no-install-recommends -y \
+    apt-get install --no-install-recommends --fix-missing -y \
         xorg \
         dbus-x11 \
         xfce4 \
@@ -70,11 +71,17 @@ RUN \
         xfce4-screenshooter \
         xfce4-terminal && \
     # VNC server
-    apt-get install --no-install-recommends -y tigervnc-standalone-server tigervnc-common && \
+    apt-get install --no-install-recommends --fix-missing -y \
+        tigervnc-standalone-server \
+        tigervnc-common && \
     # WINE 32bit server
     dpkg --add-architecture i386 && \
     apt-get update && \
-    apt-get install --no-install-recommends -y wine wine64 wine32:i386 libc6-dev:i386 && \
+    apt-get install --no-install-recommends --fix-missing -y \
+        wine \
+        wine64 \
+        wine32:i386 \
+        libc6-dev:i386 && \
     apt-get clean && \
     # Init for container
     wget \

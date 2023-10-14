@@ -25,6 +25,7 @@ echo.
 echo Running "net use h: \\vboxsvr\shared"...
 net use h: \\vboxsvr\shared 2> nul
 
-c:\software\bin\busybox %~dp0\winsetup.bash
+if exist %~dp0\setupwin.ash c:\software\bin\busybox %~dp0\setupwin.ash
+if exist %~dp0\config\setupwin.ash c:\software\bin\busybox %~dp0\config\setupwin.ash
 
 echo DONE!

@@ -219,7 +219,7 @@ class Main:
         self._automount(target, 8)
 
         if len(sources) == 1:
-            if not Path(target).is_dir():
+            if not Path(target).is_dir() and Path(sources[0]).is_file():
                 self._copy_file(Path(sources[0]), Path(target))
                 return 0
         elif not Path(target).is_dir():

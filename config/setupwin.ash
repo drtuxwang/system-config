@@ -16,10 +16,10 @@ install "$DIR/vim_*_win*x86.7z"
 
 if [ $VERSION -ge 60 ]
 then
-    echo "@echo off" > "$TMP/winsetup.bat"
+    echo "@echo off" > "$TMP/setupwin.bat"
     case $VERSION in
     60)
-        cat << EOF >> "$TMP/winsetup.bat"
+        cat << EOF >> "$TMP/setupwin.bat"
 schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\Defrag\ScheduledDefrag" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" /f
@@ -27,7 +27,7 @@ schtasks.exe /delete /tn "\Microsoft\Windows Defender\MP Scheduled Scan" /f
 EOF
         ;;
     61)
-        cat << EOF >> "$TMP/winsetup.bat"
+        cat << EOF >> "$TMP/setupwin.bat"
 schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" /f
@@ -42,7 +42,7 @@ schtasks.exe /delete /tn "\Microsoft\Windows Defender\MP Scheduled Scan" /f
 EOF
         ;;
     63)
-        cat << EOF >> "$TMP/winsetup.bat"
+        cat << EOF >> "$TMP/setupwin.bat"
 schtasks.exe /delete /tn "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\Defrag\ScheduledDefrag" /f
@@ -53,7 +53,7 @@ schtasks.exe /delete /tn "\Microsoft\Windows\WS\WSRefreshBannedAppsListTask" /f
 EOF
         ;;
     100)
-        cat << EOF >> "$TMP/winsetup.bat"
+        cat << EOF >> "$TMP/setupwin.bat"
 schtasks.exe /delete /tn "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\Data Integrity Scan\Data Integrity Scan" /f
 schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
@@ -71,9 +71,9 @@ EOF
     [ $VERSION -ge 100 ] && echo y | powershell Set-WinUserLanguageList -LanguageList en-GB
 
     echo
-    echo "Running \"$TMP/winsetup.bat\"..."
-    echo "pause" >> "$TMP/winsetup.bat"
-    powershell.exe -command start-process "$TMP/winsetup.bat" -verb runas
+    echo "Running \"$TMP/setupwin.bat\"..."
+    echo "pause" >> "$TMP/setupwin.bat"
+    powershell.exe -command start-process "$TMP/setupwin.bat" -verb runas
 
     if [ $VERSION -ge 61 ]
     then
@@ -109,6 +109,16 @@ fi
 
 if [ "${0%/*}/../scripts/index-system" ]
 then
-    cd h:/
-    ${0%/*}/../scripts/index-system
+    for DRIVE in h g f e d c
+    do
+        (echo > $DRIVE:/setupwin.write) 2> /dev/null
+        if [ $? = 0 ]
+        then
+            rm -f $DRIVE:/setupwin.write
+            cd $DRIVE:/
+            ${0%/*}/../scripts/index-system
+            ls -l $DRIVE:/windows_*
+            break
+        fi
+    done
 fi

@@ -22,7 +22,7 @@ BUILD_DIRS := \
 	golang-1.19 \
 	httpd-2.4 \
 	nginx-1.18 \
-	python-3.10 \
+	python-3.11 \
 	registry-2.6 \
 	scratch
 STABLE_DIRS := \
@@ -31,11 +31,11 @@ STABLE_DIRS := \
 	debian-12/docker \
 	debian-12/xfce \
 	nginx-1.18 \
-	python-3.10/dev \
-	python-3.10/full \
+	python-3.11/dev \
+	python-3.11/full \
 	scratch
 TEST_DIRS := \
-	python-3.10
+	python-3.11
 
 
 .PHONY: default

@@ -1,5 +1,5 @@
-BASE_IMAGE := python:3.10-slim-bookworm
-IMAGE := drtuxwang/python:3.10-slim-bookworm
+BASE_IMAGE := python:3.11-slim-bookworm
+IMAGE := drtuxwang/python:3.11-slim-bookworm
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build

@@ -65,10 +65,9 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        if self._args.port[0] < 1:
+        if self._args.port[0] < 0 or self._args.port[0] > 65535:
             raise SystemExit(
-                f'{sys.argv[0]}: You must specific a positive integer for '
-                'port number.',
+                f'{sys.argv[0]}: You must specific a port number from 1-65535',
             )
 
     def parse(self, args: List[str]) -> None:

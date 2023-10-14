@@ -229,18 +229,6 @@ class Xterm(Terminal):
         except OSError:
             return
 
-    @staticmethod
-    def _check_server(host: str) -> None:
-        """
-        Check hostname can be resolvedto IP address.
-        """
-        try:
-            socket.gethostbyname(host)
-        except (socket.gaierror, UnicodeError) as exception:
-            raise SystemExit(
-                f"{sys.argv[0]}: Could not resolve: {host}",
-            ) from exception
-
     def run(self) -> None:
         """
         Start terminal
@@ -249,7 +237,6 @@ class Xterm(Terminal):
         for host in self._options.get_hosts():
             cmdline = self._command.get_cmdline() + self.get_label_flags(host)
             if host != self._myhost:
-                self._check_server(host)
                 cmdline.append(self.get_run_flag())
                 if not ssh:
                     ssh = command_mod.Command('ssh', errors='stop')

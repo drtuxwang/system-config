@@ -13,8 +13,8 @@ set_vga() {
 # Fix display:
 ##set_vga VGA-0 1024 768 60 &
 ##set_vga VGA1 1440 900 60 &
-##xreset DVI-I=1360x768
-##xreset Virtual1=1280x720
+##xreset DVI-I=1360x768 &
+##xreset Virtual1=1280x720 &
 ##xrandr --dpi 96
 
 # Fix audio (pactl list short sinks):
@@ -23,8 +23,10 @@ set_vga() {
 ##pactl set-card-profile 0 off
 ##pactl set-sink-volume 0 50%  # Default volume from 0% to 153%
 
-# Fix keyboard:
+# Fix keyboard (xmodmap -pke, xev)
 ##setxkbmap us
+##xmodmap -e "keycode 94 = grave notsign grave notsign bar bar bar"
+##xmodmap -e "keycode 49 = backslash bar backslash bar bar brokenbar bar"
 
 # Fix mouse:
 ##xset m 4,16

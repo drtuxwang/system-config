@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE}
 # Install compiler & dev packages
 RUN \
     # For Python packages
-    apt-get install --no-install-recommends -y \
+    apt-get install --no-install-recommends --fix-missing -y \
         curl \
         g++ \
         libcurl4-openssl-dev \

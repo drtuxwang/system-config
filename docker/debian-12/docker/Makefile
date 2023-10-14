@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/debian:12-slim
+IMAGE := drtuxwang/debian-docker:12-slim
 DOCKER_REPO=https://download.docker.com/linux/debian/dists/bookworm/pool/stable/amd64
 DOCKER_DEB=docker-ce-cli_23.0.6-1~debian.12~bookworm_amd64.deb
-IMAGE := drtuxwang/debian-docker:12-slim
 NAME := debian12-docker
 HOSTNAME := debian12-docker
 DOCKER_BUILD := docker buildx build

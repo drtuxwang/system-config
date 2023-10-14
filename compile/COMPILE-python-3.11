@@ -62,8 +62,7 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
         done
         unset IFS
     fi
-
-    sed -e "s/^prefix_build=.*/prefix_build=\${0%/*/*}/" -e "s@\".*/install/lib@\"\$prefix_build/lib@" \
+    sed -e "s@^prefix_build=.*@prefix_build=\${0%/*/*}@" -e "s@\".*/install/lib@\"\$prefix_build/lib@" \
         "install/bin/python$VERSION-config" > "install/bin/python$VERSION-config-new"
     mv "install/bin/python$VERSION-config-new" "install/bin/python$VERSION-config"
     chmod 755 "install/bin/python$VERSION-config"
@@ -77,7 +76,7 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     # Remove tests
     find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf
 
-    rm install/bin/python3
+    ##rm install/bin/python3
 fi
 
 ls -ld install/* install/bin/*

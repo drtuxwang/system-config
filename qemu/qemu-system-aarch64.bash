@@ -29,12 +29,14 @@ defaults_settings() {
     DRIVE_FILES=
     DRIVE_ROLLBACK=no
     DRIVE_SNAPSHOT=no
-    DRIVE_TMPDIR=${TMPDIR:-/tmp/$(id -un)}/qemu
+    DRIVE_TMPDIR="/tmp/qemu-$(id -un)"
     CONNECT_DISPLAY=yes
     CONNECT_NETWORK=no
     CONNECT_SSHPORT=
     CONNECT_SHARE=$(realpath "$HOME/Desktop/shared")
-    DEBUG=no
+    CONNECT_SOUND=no
+    VERBOSE=no
+    DRYRUN=no
 
     [ $(uname) = Darwin ] && BIOS="/usr/local/Cellar/qemu/$(qemu-system-aarch64 --version | awk '/^QEMU emulator / {print $NF}')/share/qemu/edk2-aarch64-code.fd"
 }
@@ -55,9 +57,11 @@ show_settings() {
     echo "Debug: DRIVE_TMPDIR=$DRIVE_TMPDIR"
     echo "Debug: CONNECT_DISPLAY=$CONNECT_DISPLAY"
     echo "Debug: CONNECT_NETWORK=$CONNECT_NETWORK"
+    echo "Debug: CONNECT_SOUND=$CONNECT_SOUND"
     echo "Debug: CONNECT_SSHPORT=$CONNECT_SSHPORT"
     echo "Debug: CONNECT_SHARE=$CONNECT_SHARE"
-    echo "Debug: DEBUG=$DEBUG"
+    echo "Debug: VERBOSE=$VERBOSE"
+    echo "Debug: DRYRUN=$DRYRUN"
 }
 
 parse_options() {
@@ -69,19 +73,17 @@ parse_options() {
             echo
             echo "Options:"
             echo "  -h, --help  Show this help message and exit"
-            echo "  -debug      Show debug info without starting QEMU"
             echo "  -net        Connect VM to network"
             echo "  -nonet      Disable network (internet)"
             echo "  -novirt     Disable virtualisation (use full emulation)"
             echo "  -nox        Disable GUI display"
             echo "  -rollback   Rollback drives to base snapshot"
             echo "  -snap       Snapshot drives and auto rollback after execution"
+            echo "  -v          Show debug info"
+            echo "  -test       Show debug info without starting QEMU"
             echo "  file.qcow2  Attach disk image file"
             echo "  file.iso    Attach CD/DVD iso file"
             exit 0
-            ;;
-        -debug)
-            DEBUG=yes
             ;;
         -net)
             CONNECT_NETWORK=yes
@@ -101,6 +103,13 @@ parse_options() {
         -snap)
             DRIVE_SNAPSHOT=yes
             ;;
+        -v)
+            VERBOSE=yes
+            ;;
+        -test)
+            VERBOSE=yes
+            DRYRUN=yes
+            ;;
         *.qcow2|*.iso)
             DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
             ;;
@@ -111,10 +120,11 @@ parse_options() {
          esac
          shift
     done
+    DRIVE_FILES="$(ls -1 ${0%/*}/$MACHINE_NAME.vd[a-z].qcow2 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
 }
 
 snapshot_drive() {
-   [ ! -f "$2" ] && retrun
+   [ -f "$2" ] && return
    echo -e "\nqemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2"
    qemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2
 }
@@ -166,7 +176,6 @@ setup_drives() {
     done
     [ "$DRIVE_ROLLBACK" = yes ] && rollback_drives
 
-    DRIVE_FILES="$(ls -1 ${0%/*}/$MACHINE_NAME.vd[a-z].qcow2 2> /dev/null | awk '{printf("%s ", $1)}') $DRIVE_FILES"
     mkdir -p "$DRIVE_TMPDIR/$MACHINE_NAME" && chmod go= "$DRIVE_TMPDIR"
     for FILE in $DRIVE_FILES
     do
@@ -189,12 +198,12 @@ setup_drives() {
             ;;
         esac
         add_args "-drive file=$MOUNT_DEV,$MOUNT_OPT" || continue
-        echo -e "\nqemu-img info $MOUNT_DEV"
-        qemu-img info $MOUNT_DEV
+        [ "$VERBOSE" = yes ] && echo -e "\nqemu-img info $MOUNT_DEV" && qemu-img info $MOUNT_DEV
     done
 }
 
 setup_connects() {
+    [ "$CONNECT_SOUND" = yes ] && add_args "-device intel-hda -device hda-output"
     [ "$CONNECT_DISPLAY" != yes ] && add_args "-display none"
     NETWORK="user,net=192.168.56.0/24"
     [ "$CONNECT_SSHPORT" ] && NETWORK="$NETWORK,hostfwd=tcp::$CONNECT_SSHPORT-:22"
@@ -207,7 +216,7 @@ setup() {
     defaults_settings
     [[ $(type -t qemu_settings) == function ]] && qemu_settings
     parse_options "$@"
-    [ "$DEBUG" = yes ] && show_settings
+    [ "$VERBOSE" = yes ] && show_settings
 
     setup_machine
     setup_drives
@@ -218,7 +227,7 @@ setup() {
 setup "$@"
 echo
 echo "$COMMAND" | sed -e 's/$/ \\/;$s/ \\//'
-[ "$DEBUG" = yes ] && exit
+[ "$DRYRUN" = yes ] && exit
 
 trap true INT
 ($COMMAND 2>&1 | grep -v ": warning: dbind:"; rm -rf "$DRIVE_TMPDIR/$MACHINE_NAME") &

@@ -1,5 +1,11 @@
 ifndef HOST
-	HOST := `hostname`.local
+	HOST := $(shell \
+		if [ "`hostname | grep ^debian[^.]`" ]; then \
+			echo `hostname`.vm; \
+		else \
+			echo `hostname`.local; \
+		fi \
+	)
 endif
 
 ifdef TAGS

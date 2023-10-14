@@ -71,7 +71,7 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
         unset IFS
     fi
 
-    sed -e "s/^prefix_build=.*/prefix_build=\${0%/*/*}/" -e "s@\".*/install/lib@\"\$prefix_build/lib@" \
+    sed -e "s@^prefix_build=.*@prefix_build=\${0%/*/*}@" -e "s@\".*/install/lib@\"\$prefix_build/lib@" \
         "install/bin/python$VERSION-config" > "install/bin/python$VERSION-config-new"
     mv "install/bin/python$VERSION-config-new" "install/bin/python$VERSION-config"
     chmod 755 "install/bin/python$VERSION-config"

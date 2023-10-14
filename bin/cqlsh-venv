@@ -3,7 +3,7 @@
 # cqlsh virtualenv (Cassandra DB client)
 #
 
-PYTHON="python3.10"
+PYTHON="python3.11"
 PACKAGE="cqlsh==6.1.2"
 DEPENDS=
 POSTINST=

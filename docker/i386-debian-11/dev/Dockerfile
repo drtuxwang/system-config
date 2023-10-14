@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE}
 # Install compiler & dev packages
 RUN \
     # For Python build
-    apt-get install --no-install-recommends -y \
+    apt-get install --no-install-recommends --fix-missing -y \
         automake \
         bison \
         g++ \
@@ -25,7 +25,8 @@ RUN \
         python3-dev \
         uuid-dev && \
     # For Python packages
-    apt-get install --no-install-recommends -y libcurl4-openssl-dev make && \
+    apt-get install --no-install-recommends --fix-missing -y \
+        libcurl4-openssl-dev make && \
     apt-get clean
 
 COPY rootfs/ /

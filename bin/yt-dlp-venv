@@ -3,8 +3,8 @@
 # yt-dlp virtualenv (for downloading vidoes)
 #
 
-PYTHON="python3.10"
-PACKAGE="yt-dlp==2023.7.6"
+PYTHON="python3.11"
+PACKAGE="yt-dlp==2023.9.24"
 DEPENDS=""
 POSTINST=
 
