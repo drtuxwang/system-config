@@ -83,7 +83,7 @@ tomlkit==0.11.8              #   (required by pylint)
 tornado==6.3.3               # Web server framework
 traitlets==5.9.0             #   (required by ipython)
 typing_extensions==4.8.0     #   (required by mypy)
-urllib3==1.26.17             #   (required by requests)
+urllib3==1.26.18             #   (required by requests)
 virtualenv==20.23.1          # Python Virtual Environments
 wcwidth==0.2.7               #   (required by prompt-toolkit)
 wheel==0.40.0                # Python wheel packaging
