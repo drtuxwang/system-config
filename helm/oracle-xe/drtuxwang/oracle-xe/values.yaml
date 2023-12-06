@@ -5,8 +5,8 @@ app:
 image:
   pullPolicy: IfNotPresent
   registry: docker.io
-  repository: datagrip/oracle
-  tag: 11.2
+  repository: gvenzl/oracle-xe
+  tag: 21.3.0-slim
 
 service:
   http:

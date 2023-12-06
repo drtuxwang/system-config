@@ -2,10 +2,12 @@ nodeSelector:
   kubernetes.io/os: linux
   ##kubernetes.io/hostname: ryzen.local
 
+password: oracle
+
 resources:
   limits:
     cpu: 1000m
-    memory: 2048M
+    memory: 4096M
   requests:
     cpu: 100m
     memory: 64M

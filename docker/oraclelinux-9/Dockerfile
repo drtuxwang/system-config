@@ -1,9 +1,10 @@
-ARG BASE_IMAGE=almalinux:latest
+ARG BASE_IMAGE=oraclelinux:latest
 
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN yum install -y epel-release && \
+RUN ln -s microdnf /bin/yum && \
+    yum install -y epel-release && \
     yum update -y && \
     yum install -y \
         bind-utils \

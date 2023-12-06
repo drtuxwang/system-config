@@ -23,7 +23,8 @@ RUN \
         ncurses-devel \
         openssl-devel \
         readline-devel \
-        xz-devel && \
+        xz-devel \
+        zlib-devel && \
     # For Python packages
     yum install -y python38-devel && \
     yum clean all

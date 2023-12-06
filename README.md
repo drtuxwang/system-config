@@ -1017,13 +1017,13 @@ the years.
  * docker/almalinux-8/bash/Dockerfile
  * docker/almalinux-8/bash/Makefile      almalinux:8 based BASH login
  * docker/almalinux-8/dev/Dockerfile
- * docker/almalinux-8/dev/Makefile       alamlinux:8 based GCC dev shell
+ * docker/almalinux-8/dev/Makefile       almalinux:8 based GCC dev shell
  * docker/almalinux-9/Dockerfile
  * docker/almalinux-9/Makefile           almalinux:9 based linux
  * docker/almalinux-9/bash/Dockerfile
  * docker/almalinux-9/bash/Makefile      almalinux:9 based BASH login
  * docker/almalinux-9/dev/Dockerfile
- * docker/almalinux-9/dev/Makefile       alamlinux:9 based GCC dev shell
+ * docker/almalinux-9/dev/Makefile       almalinux:9 based GCC dev shell
  * docker/alpine-3.16/Makefile
  * docker/alpine-3.16/Dockerfile         alpine:3.16 based linux
  * docker/alpine-3.16/bash/Makefile
@@ -1100,6 +1100,18 @@ the years.
  * docker/nginx-1.18/Dockerfile
  * docker/nginx-1.18/Makefile            nginx:1.18-alpine based reverse proxy server
  * docker/nginx-1.18/files/nginx-proxy.conf
+ * docker/oraclelinux-8/Dockerfile
+ * docker/oraclelinux-8/Makefile         oralcelinux:8 based linux
+ * docker/oraclelinux-8/bash/Dockerfile
+ * docker/oraclelinux-8/bash/Makefile    oraclelinux:8 based BASH login
+ * docker/oraclelinux-8/dev/Dockerfile
+ * docker/oraclelinux-8/dev/Makefile     oralcelinux:8 based GCC dev shell
+ * docker/oraclelinux-9/Dockerfile
+ * docker/oraclelinux-9/Makefile         oralcelinux:9 based linux
+ * docker/oraclelinux-9/bash/Dockerfile
+ * docker/oraclelinux-9/bash/Makefile    oraclelinux:9 based BASH login
+ * docker/oraclelinux-9/dev/Dockerfile
+ * docker/oraclelinux-9/dev/Makefile     oralcelinux:9 based GCC dev shell
  * docker/python-3.11/Dockerfile
  * docker/python-3.11/Makefile           python:3.11-slim-bookworm based Python app
  * docker/python-3.11/bash/Dockerfile
@@ -1198,7 +1210,7 @@ the years.
  * helm/nginx/values.yaml
  * helm/ops-server/ops-server/templates/box-deployment.yaml
  * helm/ops-server/values.yaml
- * helm/oracle-xe/Makefile               Helm Chart: Oracle XE test (datagrip/oracle:11.2)
+ * helm/oracle-xe/Makefile               Helm Chart: Oracle XE test (gvenzl/oracle-xe:21.3.0-slim)
  * helm/oracle-xe/oracle-xe/Chart.yaml
  * helm/oracle-xe/oracle-xe/templates/_helpers.tpl
  * helm/oracle-xe/oracle-xe/templates/box-headless-service.yaml

@@ -81,12 +81,14 @@ install:             # Install Python packages
 	etc/python-packages.bash -i ${PYTHON}
 
 .PHONY: time
-time:                # Set file timestamps to git commit times
-	@echo "\n*** Fixing git timestamps ***"
-	bin/git-time bin/*
-	bin/git-time compile/*
-	bin/git-time config/*
-	bin/git-time qemu/*
+time:                # Set file timestamps to git commit times (last 7 days)
+	@echo "\n*** Fixing git timestamps (last 7 days)***"
+	find * -type f -mtime -7 | xargs git time
+
+.PHONY: time-all
+time-all:            # Set file timestamps to git commit times (all files)
+	@echo "\n*** Fixing git timestamps (all files)***"
+	find * -type f | xargs git time
 
 .PHONY: gc
 gc:                  # Run git garbage collection

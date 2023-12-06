@@ -3,7 +3,7 @@ ARG BASE_IMAGE=almalinux:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN dnf install -y epel-release && \
+RUN yum install -y epel-release && \
     yum update -y && \
     yum install -y \
         bind-utils \

@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=drtuxwang/centos:latest
+ARG BASE_IMAGE=drtuxwang/oraclelinux:latest
 
 FROM ${BASE_IMAGE}
 
@@ -14,20 +14,18 @@ RUN \
         pkg-config \
         bzip2-devel \
         gdbm-devel \
-        libdb-devel \
         libcurl-devel \
+        libdb-devel \
         libevent-devel \
         libffi-devel \
         libsqlite3x-devel \
+        libuuid-devel \
         ncurses-devel \
         openssl-devel \
         readline-devel \
-        uuid-devel \
-        xz-devel \
-        zlib-devel && \
+        xz-devel && \
     # For Python packages
-    yum install -y python36-devel && \
-    rpm -e --nodeps python3-rpm-generators python3-rpm-macros python3-setuptools && \
+    yum install -y python38-devel && \
     yum clean all
 
 COPY rootfs/ /

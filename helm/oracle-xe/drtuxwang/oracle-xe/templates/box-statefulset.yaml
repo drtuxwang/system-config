@@ -24,6 +24,9 @@ spec:
       - image: {{ include "chart.image.name" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-oracle
+        env:
+        - name: ORACLE_PASSWORD
+          value: {{ .Values.password }}
         ports:
         - name: http
           containerPort: 8080
