@@ -1,1 +1,1 @@
-data2_mount: -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=da1287e9-2ae7-43a0-8c19-dd844638089c /mnt/data2
+data2_mount: -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=5bee4cd9-0b2a-481d-9e6f-a0fe4464a0f6 /mnt/data2

@@ -120,7 +120,7 @@ class Main:
                             print(f"Error: Found zero size file: {file_path}")
                             error = True
                     except OSError:
-                        print(f"Error: Found broken link: {file_path}")
+                        print(f"Error: Found broken link: {file}")
                         error = True
             elif not [x for x in Path(root).glob('*') if x.name != '...']:
                 print(f"Error: Found empty directory: {Path(root).resolve()}")

@@ -100,7 +100,7 @@ trim_image() {
 
 if [ "$MYUNAME" != root ]
 then
-    echo -e "\033[33mSwitch root@$MYHNAME: sudo \"$0\" \"$@\"\033[0m"
+    echo -e "\033[33mSwitch root@$MYHNAME: sudo \"$0\" \"\$@\"\033[0m"
     exec sudo "$0" "--chown=$(id -un):$(id -gn)" "$@"
 fi
 

@@ -132,34 +132,30 @@ class Main:
 
     @staticmethod
     def _md5sum(path: Path) -> str:
+        md5 = hashlib.md5()
         try:
             with path.open('rb') as ifile:
-                md5 = hashlib.md5()
                 while True:
                     chunk = ifile.read(131072)
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (OSError, TypeError) as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{path}" file.',
-            ) from exception
+        except (OSError, TypeError):
+            print(f'{sys.argv[0]}: Cannot read "{path}" file', file=sys.stderr)
         return md5.hexdigest()
 
     @staticmethod
     def _sha512sum(path: Path) -> str:
+        sha512 = hashlib.sha512()
         try:
             with path.open('rb') as ifile:
-                sha512 = hashlib.sha512()
                 while True:
                     chunk = ifile.read(131072)
                     if not chunk:
                         break
                     sha512.update(chunk)
-        except (OSError, TypeError) as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{path}" file.',
-            ) from exception
+        except (OSError, TypeError):
+            print(f'{sys.argv[0]}: Cannot read "{path}" file', file=sys.stderr)
         return f'sha512:{sha512.hexdigest()}'
 
     @staticmethod

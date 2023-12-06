@@ -78,6 +78,8 @@ class Main:
     @staticmethod
     def _check_missing(seq_name: Tuple[str, str], numbers: List[int]) -> None:
         sequence = set(range(min(numbers), max(numbers)+1))
+        if max(sequence) >= 19700101:  # Skip date sequence
+            return
         name, ext = seq_name
         for missing in sorted(sequence - set(numbers)):
             print(f"Missing file in sequence: {name}_{missing:03d}{ext}")

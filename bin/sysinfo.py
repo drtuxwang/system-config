@@ -32,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.6.0'
-VERSION = 20230820
+RELEASE = '6.7.0'
+VERSION = 20231201
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -1440,7 +1440,12 @@ class LinuxSystem(PosixSystem):
     def _scan_etc_release(cls) -> dict:
         info = {}
 
-        if Path('/etc/redhat-release').is_file():
+        if Path('/etc/oracle-release').is_file():
+            try:
+                info['OS Name'] = cls._read_file('/etc/oracle-release')[0]
+            except IndexError:
+                pass
+        elif Path('/etc/redhat-release').is_file():
             try:
                 info['OS Name'] = cls._read_file('/etc/redhat-release')[0]
             except IndexError:
