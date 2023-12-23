@@ -1042,10 +1042,10 @@ the years.
  * docker/i386-alpine-3.17/bash/Dockerfile  i386/alpine:3.17 based BASH login
  * docker/i386-alpine-3.17/dev/Makefile
  * docker/i386-alpine-3.17/dev/Dockerfile  i386/alpine:3.17 based GCC dev shell
- * docker/busybox-1.34/Dockerfile
- * docker/busybox-1.34/Makefile          busybox:1.34 based linux
- * docker/busybox-1.34/bash/Dockerfile
- * docker/busybox-1.34/bash/Makefile     busybox:1.34 based BASH login
+ * docker/busybox-1.35/Dockerfile
+ * docker/busybox-1.35/Makefile          busybox:1.35 based linux
+ * docker/busybox-1.35/bash/Dockerfile
+ * docker/busybox-1.35/bash/Makefile     busybox:1.35 based BASH login
  * docker/centos-7/Dockerfile
  * docker/centos-7/Makefile              centos:7 based linux
  * docker/centos-7/bash/Dockerfile

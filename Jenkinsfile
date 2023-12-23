@@ -62,6 +62,7 @@ pipeline {
                                     image "${params.DOCKER_REG}/${docker_builder_image}"
                                     reuseNode true
                                     alwaysPull false
+                                    args "--entrypoint="
                                 }
                             }
                             steps {
@@ -85,6 +86,7 @@ pipeline {
                                     image "${params.DOCKER_REG}/${docker_builder_image}"
                                     reuseNode true
                                     alwaysPull false
+                                    args "--entrypoint="
                                 }
                             }
                             steps {
@@ -106,6 +108,7 @@ pipeline {
                                     image "${params.DOCKER_REG}/drtuxwang/python-full:${python_version}"
                                     reuseNode true
                                     alwaysPull false
+                                    args "--entrypoint="
                                 }
                             }
                             steps {

@@ -12,8 +12,8 @@
 #   qemu-img create -f qcow2 name.vda.qcow2 8M
 #   qemu-img create -f qcow2 name.vdb.qcow2 8192M
 #   qemu-img create -F qcow2 -b name.vdb-base.qcow2 -f qcow2 name.vdb.qcow2
-#   qemu-img convert -f vdi file1.vdi -O qcow2 file2.qcow2
-#   qemu-img convert -f qcow2 file1.qcow2 -O qcow2 -c -o compression_type=zstd file2.qcow2
+#   qemu-img convert -p -f vdi file1.vdi -O qcow2 file2.qcow2
+#   qemu-img convert -p -f qcow2 file1.qcow2 -O qcow2 -c -o compression_type=zstd file2.qcow2
 #
 
 defaults_settings() {

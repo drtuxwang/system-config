@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# qemu-img convert file.vdi -O qcow2 -c -o compression_type=zstd windows10.vm.vda-base.qcow2
+# qemu-img convert -p file.vdi -O qcow2 -c -o compression_type=zstd windows10.vm.vda-base.qcow2
 # qemu-img create -F qcow2 -b windows10.vm.vda-base.qcow2 -f qcow2 windows10.vm.vda.qcow2  # Also rollback
 #
 
