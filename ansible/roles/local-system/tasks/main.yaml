@@ -1,6 +1,6 @@
 - name: Import "system-setup.yaml" tasks
   import_tasks: system-setup.yaml
-  become: yes
+  become: true
   tags:
   - local-system
 
@@ -15,7 +15,7 @@
 - name: Import "tlp-setup.yaml" tasks
   when: tlp_conf.stat.exists
   import_tasks: tlp-setup.yaml
-  become: yes
+  become: true
   tags:
   - local-system
   - tlp-config

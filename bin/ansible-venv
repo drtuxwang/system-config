@@ -10,8 +10,8 @@ then
     DEPENDS=
     POSTINST=
 else
-    PYTHON="python3.11"
-    PACKAGE="ansible-core==2.14.12"
+    PYTHON=${ANSIBLE_PYTHON:-python3.11}
+    PACKAGE="ansible-core==2.15.8"
     DEPENDS=
     POSTINST="install_collections"
 fi
