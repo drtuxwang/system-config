@@ -41,12 +41,15 @@ jedi==None
 Jinja2                       # ==2.11.3 (last compatible version)
 lazy-object-proxy==1.6.0
 markdown2==None
+markdown-it-py==None
 MarkupSafe==1.1.1
 matplotlib-inline==None
 mccabe                       # ==0.6.1 (last compatible version)
+mdurl==None
 motor==2.1.0
 mypy-extensions==None
 mypy==None
+paramiko                     # ==2.12.0 (last compatible version)
 parso==None
 pathlib2==2.3.6              #   (required by virtualenv for 2.7)
 pip                          # ==20.3.4 (last compatible version)
@@ -61,12 +64,14 @@ pyflakes==2.3.1
 Pygments==None
 pylint==1.9.5
 pymongo                      # ==3.13.0 (last compatible version)
+PyNaCl                       # ==1.4.0 (last compatible version)
 pyOpenSSL==21.0.0
 pyparsing                    # ==2.2.2 (last compatible required by legacy code)
 pytz==2023.3                 #   (required by legacy code)
 PyYAML                       # ==5.4.1 (last compatible version)
 pyzstd==None
 requests                     # ==2.27.1 (last compatible version)
+rich==None
 scandir==1.10.0              #   (required by pathlib2 for 2.7)
 setuptools                   # ==44.1.1 (last compatible version)
 singledispatch==3.7.0        #   (required by astroid for 2.7)

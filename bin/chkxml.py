@@ -75,7 +75,11 @@ class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
         self._nelement = 0
         self._view_flag = view
 
-    def startElement(self, name: str, attrs: dict) -> None:
+    def startElement(
+        self,
+        name: str,
+        attrs: xml.sax.xmlreader.AttributesImpl,
+    ) -> None:
         self._nelement += 1
         self._elements.append(f'{name}({self._nelement})')
         if self._view_flag:

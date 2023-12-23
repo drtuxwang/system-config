@@ -8,6 +8,7 @@ set -u
 
 
 create_virtualenv() {
+    echo -e "\033[33mCreating Python VirtualEnv: $VIRTUAL_ENV\033[0m"
     umask 022
     if [ ! -d "$VIRTUAL_ENV" ]
     then

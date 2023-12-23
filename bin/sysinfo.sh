@@ -4,8 +4,8 @@
 #
 # 1996-2023 By Dr Colin Kong
 #
-VERSION=20230820
-RELEASE="2.6.48"
+VERSION=20231215
+RELEASE="2.6.48-1"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -500,7 +500,7 @@ detect() {
         for FILE in `ls -1 /etc/*release 2> /dev/null | egrep -v "/etc/(lsb|os)-release"`
         do
             MYOSNAME="$MYOSNAME
-`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/Linux //\" -e \"s/release //\" -e \"s/[(].*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
+`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/ Linux / /\" -e \"s/release //\" -e \"s/[(].*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
         done
         MYOSNAME=`echo "$MYOSNAME" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
         if [ ! "$MYOSNAME" ]

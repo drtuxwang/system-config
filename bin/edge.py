@@ -91,9 +91,7 @@ class Options:
                 except OSError:
                     pass
         ispattern = re.compile(
-            '^(lastDownload|lastSuccess|lastCheck|expires|'
-            r'softExpiration)=\d*|CBCM is not enabled|Uncaught SecurityError:|'
-            'cloud_management|org.freedesktop'
+            r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*'
         )
         for path in config_path.glob('File System/*/p/00/*'):
             path_new = Path(f'{path}.part')
@@ -279,9 +277,9 @@ class Options:
             ])
 
         self._pattern = (
-            ': /dev/null/|:ERROR:disk_cache|implemented in both|'
-            'multiple threads in process gpu-process|'
-            '.config/microsoft-edge/Default|ERROR:edge_install_updater'
+            'ERROR:assistance_home|ERROR:disk_cache|ERROR:persistent_asset|'
+            'ERROR:policy_logger|ERROR:simple_backend|ERROR:video_hover|'
+            'Fontconfig error:'
         )
         self._config()
         self._set_libraries(self._browser)
