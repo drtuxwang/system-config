@@ -859,6 +859,8 @@ the years.
  * bin/z.py
  * bin/zcat                 Concatenate compressed files and print on the standard output
  * bin/zcat.py
+ * bin/zgrep                Print lines matching a pattern in compressed files.
+ * bin/zgrep.py
  * bin/zip                  Make a compressed archive in ZIP format.
  * bin/zip.py
  * bin/zoom                 Wrapper for "zoom" command
@@ -948,23 +950,27 @@ the years.
  * appimage/wesnoth-1.16.9-deb12/Makefile   Wesnoth 1.16.9 (Debian 12)
  * compile/COMPILE-7zip.bash             7zip compile script
  * compile/COMPILE-aria2.bash            Aria2 compile script
+ * compile/COMPILE-cutilities.bash       C utilities compile script
  * compile/COMPILE-git.bash              Git compile script
+ * compile/COMPILE-libdvdcss.bash        DVDCSS compile script
  * compile/COMPILE-openmpi.bash          Open MPI compile script
  * compile/COMPILE-par2.bash             Par2cmdline compile script
- * compile/COMPILE-python-2.7.bash       Python 2.7 compile script
- * compile/COMPILE-python-3.5.bash       Python 3.5 compile script
- * compile/COMPILE-python-3.6.bash       Python 3.6 compile script
- * compile/COMPILE-python-3.7.bash       Python 3.7 compile script
- * compile/COMPILE-python-3.8.bash       Python 3.8 compile script
- * compile/COMPILE-python-3.9.bash       Python 3.9 compile script
- * compile/COMPILE-python-3.10.bash      Python 3.10 compile script
- * compile/COMPILE-python-3.11.bash      Python 3.11 compile script
- * compile/COMPILE-python-3.12.bash      Python 3.12 compile script
+ * compile/COMPILE-python2.7.bash        Python 2.7 compile script
+ * compile/COMPILE-python3.5.bash        Python 3.5 compile script
+ * compile/COMPILE-python3.6.bash        Python 3.6 compile script
+ * compile/COMPILE-python3.7.bash        Python 3.7 compile script
+ * compile/COMPILE-python3.8.bash        Python 3.8 compile script
+ * compile/COMPILE-python3.9.bash        Python 3.9 compile script
+ * compile/COMPILE-python3.10.bash       Python 3.10 compile script
+ * compile/COMPILE-python3.11.bash       Python 3.11 compile script
+ * compile/COMPILE-python3.12.bash       Python 3.12 compile script
  * compile/COMPILE-tinyproxy             TinyProxy compile script
- * compile/COMPILE-tmux                  TMUX compile script
- * compile/COMPILE-unrar                 UnRar compile script
- * compile/COMPILE-xz-utils              XZ-Utils compile script
- * compile/COMPILE-zstd                  Zstandard compile script
+ * compile/COMPILE-tmux.bash             TMUX compile script
+ * compile/COMPILE-unrar.bash            UnRar compile script
+ * compile/COMPILE-unzip.bash            UNZIP compile script
+ * compile/COMPILE-xz-utils.bash         XZ-Utils compile script
+ * compile/COMPILE-zip.bash              ZIP compile script
+ * compile/COMPILE-zstd.bash             Zstandard compile script
  * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
  * config/accels                         Copy to "$HOME/.config/geeqie" for keyboard shortcuts
  * config/adblock.txt                    Adblock filter list
@@ -1274,12 +1280,13 @@ the years.
  * qemu/debian12.vm.bash                 Debian 12 amd64 VM
  * qemu/debian12-arm.vm.bash             Debian 12 aarch64 VM
  * qemu/debianmac.vm.bash                Debian Mac VM
- * qemu/fstrim-qemu.bash                 QEMU mount image file
+ * qemu/fstrim-qemu-nbd.bash             QEMU mount image file
  * qemu/qemu-system-aarch64.bash         QEMU system aarch64 wrapper
  * qemu/qemu-system-x86_64.bash          QEMU system x86_64 wrapper
- * qemu/mount-qemu.bash                  QEMU mount image file
+ * qemu/mount-qemu-bnd.bash              QEMU mount image file
  * qemu/qemu-nbd.bash                    QEMU NBD server wrappr
- * qemu/umount-qemu.bash                 QEMU umount image file
+ * qemu/recompress-qemu-img.bash         QEMU recompress image
+ * qemu/umount-qemu-nbd.bash             QEMU umount image file
  * qemu/windowsxp-32.vm.bash             Windows XP i386 VM
  * qemu/windowsvista-32.vm.bash          Windows Vista i386 VM
  * qemu/windows7-32.vm.bash              Windows 7 i386 VM

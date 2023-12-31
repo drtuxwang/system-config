@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """
-Print lines matching a pattern in files.
+Print lines matching a pattern in compressed files.
 """
 
 import argparse
 import os
-import re
 import signal
 import sys
 from pathlib import Path
-from typing import List, TextIO
+from typing import List
+
+import command_mod
+import subtask_mod
 
 
 class Options:
@@ -99,6 +101,8 @@ class Main:
     """
     Main class
     """
+    zcat = command_mod.Command('zcat', errors='stop')
+    grep = command_mod.Command('grep', errors='stop')
 
     def __init__(self) -> None:
         try:
@@ -123,64 +127,34 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    def _file(self, options: Options, file: str, prefix: str = '') -> None:
-        try:
-            with Path(file).open(errors='replace') as ifile:
-                self._pipe(options, ifile, prefix)
-        except OSError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" file.',
-            ) from exception
+    @classmethod
+    def _file(cls, grep: List[str], file: str, prefix: str = '') -> None:
+        cmdline = cls.zcat.get_cmdline() + [file, '|'] + grep
+        if prefix:
+            cmdline.extend(['|', 'sed', '-e', f's@^@{prefix}@'])
+        subtask_mod.Task(cmdline).run()
 
-    def _pipe(self, options: Options, pipe: TextIO, prefix: str = '') -> None:
-        number = 0
-        if options.get_invert_flag():
-            for line in pipe:
-                line = line.rstrip('\n')
-                number += 1
-                if not self._is_match.search(line):
-                    if options.get_number_flag():
-                        line = f'{number}:{line}'
-                    try:
-                        print(f"{prefix}{line}")
-                    except OSError as exception:
-                        raise SystemExit(0) from exception
-        else:
-            for line in pipe:
-                line = line.rstrip('\n')
-                number += 1
-                if self._is_match.search(line):
-                    if options.get_number_flag():
-                        line = f'{number}:{line}'
-                    try:
-                        print(f"{prefix}{line}")
-                    except OSError as exception:
-                        raise SystemExit(0) from exception
-
-    def run(self) -> int:
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
 
-        try:
-            if options.get_ignore_case_flag():
-                self._is_match = re.compile(
-                    options.get_pattern(), re.IGNORECASE)
-            else:
-                self._is_match = re.compile(options.get_pattern())
-        except re.error as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Invalid regular expression '
-                f'"{options.get_pattern()}".',
-            ) from exception
+        grep = cls.grep.get_cmdline()
+        if options.get_ignore_case_flag():
+            grep.append('-i')
+        if options.get_invert_flag():
+            grep.append('-v')
+        if options.get_number_flag():
+            grep.append('-n')
+        grep.append(options.get_pattern())
+
         if len(options.get_files()) > 1:
             for file in options.get_files():
-                self._file(options, file, prefix=f'{file}:')
-        elif len(options.get_files()) == 1:
-            self._file(options, options.get_files()[0])
+                cls._file(grep, file, prefix=f'{file}:')
         else:
-            self._pipe(options, sys.stdin)
+            cls._file(grep, options.get_files()[0])
 
         return 0
 

@@ -84,17 +84,7 @@ class Main:
                 print("# fwrapper.py generated script", file=ofile)
                 print("#\n", file=ofile)
                 print('MYDIR=$(dirname "$0")', file=ofile)
-                if path == path.resolve():
-                    path = path.parent
-                    print(
-                        'PATH=$(echo "$PATH" | '
-                        f'sed -e "s@$MYDIR@{path}@")',
-                        file=ofile,
-                    )
-                    print("export PATH\n", file=ofile)
-                    print(f'exec "{path}" "$@"', file=ofile)
-                else:
-                    print(f'exec "$MYDIR/{path}" "$@"', file=ofile)
+                print(f'exec "$MYDIR/{path}" "$@"', file=ofile)
 
             link_path.chmod(0o755)
             file_time = int(path.stat().st_mtime)
@@ -117,7 +107,7 @@ class Main:
                     f'{sys.argv[0]}: Cannot find "{path}" file.',
                 )
 
-            link = Path(path.name)
+            link = Path(path.name.lower().replace(' ', ''))
             if link.exists():
                 print(f'Updating "{link}" wrapper for "{path}"...')
             else:
