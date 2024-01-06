@@ -8,5 +8,5 @@ PACKAGE="glances==3.3.1.1"
 DEPENDS=
 POSTINST=
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox for "audacity" launcher
+Sandbox for "tenacity" launcher
 """
 
 import getpass
@@ -42,7 +42,10 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _config() -> None:
+    def _config(audacity: network_mod.Sandbox) -> Path:
+        if Path(audacity.get_file()).name == 'tenacity':
+            return Path(Path.home(), '.config', 'tenacity')
+
         audacitydir = Path(Path.home(), '.audacity-data')
         if not audacitydir.is_dir():
             try:
@@ -56,15 +59,19 @@ class Main:
                         print("[AudioIO]", file=ofile)
                         print("PlaybackDevice=ALSA: pulse", file=ofile)
                         print("RecordingDevice=ALSA: pulse", file=ofile)
+        return audacitydir
 
-    def run(self) -> int:
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
-        audacity = network_mod.Sandbox('audacity', errors='stop')
-
+        audacity = network_mod.Sandbox('tenacity', errors='ignore')
+        if not audacity.is_found():
+            audacity = network_mod.Sandbox('audacity', errors='stop')
         if Path(f'{audacity.get_file()}.py').is_file():
             subtask_mod.Exec(audacity.get_cmdline() + sys.argv[1:]).run()
+        config_dir = cls._config(audacity)
 
         # "os.getcwd()" returns realpath instead
         work_dir = Path(os.environ['PWD'])
@@ -78,7 +85,7 @@ class Main:
             f'/tmp/{getpass.getuser()}:/var/tmp',
             f'/run/user/{os.getuid()}/pulse',
             Path(Path.home(), '.config/ibus'),
-            Path(Path.home(), '.audacity-data'),
+            config_dir,
             work_dir,
         ]
 
@@ -100,7 +107,6 @@ class Main:
         pattern = (
             '^$|: (Gdk|GdkPixbuf|GLib-GObject)-|[.]so|: invalid (image|bitmap)'
         )
-        self._config()
 
         cmdline = audacity.get_cmdline()
         subtask_mod.Background(cmdline).run(pattern=pattern)

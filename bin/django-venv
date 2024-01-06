@@ -4,10 +4,10 @@
 #
 
 PYTHON="python3.11"
-PACKAGE="Django==4.1.11"
+PACKAGE="Django==4.1.13"
 DEPENDS=
 POSTINST=
 
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

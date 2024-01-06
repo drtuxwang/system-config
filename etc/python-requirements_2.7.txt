@@ -59,7 +59,7 @@ poyo==0.5.0                  #   (required by cookiecutter for 2.7)
 prompt-toolkit==None
 pure-eval==None
 pycodestyle==2.7.0
-pycryptodome==3.14.1         #   (required by abettersqlplus)
+pycryptodome==3.19.1         #   (required by abettersqlplus)
 pyflakes==2.3.1
 Pygments==None
 pylint==1.9.5

@@ -110,6 +110,7 @@ the years.
  * bin/pylint.bat
  * bin/virtualenv
  * bin/virtualenv.bat
+ * bin/venv_mod.bash
  * bin/yt-dlp
  * bin/yt-dlp.bat
  * bin/yt-dlp-venv
@@ -966,6 +967,7 @@ the years.
  * compile/COMPILE-python3.12.bash       Python 3.12 compile script
  * compile/COMPILE-tinyproxy             TinyProxy compile script
  * compile/COMPILE-tmux.bash             TMUX compile script
+ * compile/COMPILE-unace.bash            UNACE compile script
  * compile/COMPILE-unrar.bash            UnRar compile script
  * compile/COMPILE-unzip.bash            UNZIP compile script
  * compile/COMPILE-xz-utils.bash         XZ-Utils compile script

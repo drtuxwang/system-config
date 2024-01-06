@@ -8,5 +8,5 @@ PACKAGE="docker-compose==1.28.6"
 DEPENDS="PyYAML==5.4.1"           # >=6 still not supported
 POSTINST=
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

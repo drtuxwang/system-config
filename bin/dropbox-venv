@@ -8,5 +8,5 @@ PACKAGE="dropbox==11.35.0"
 DEPENDS=
 POSTINST=
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

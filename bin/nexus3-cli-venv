@@ -8,5 +8,5 @@ PACKAGE="nexus3-cli==4.1.9"
 DEPENDS=""
 POSTINST=
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

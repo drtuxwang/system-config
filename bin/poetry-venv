@@ -4,9 +4,9 @@
 #
 
 PYTHON="python3.11"
-PACKAGE="poetry==1.2.2"
-DEPENDS="poetry-core==1.3.2 poetry-plugin-export==1.2.0"
+PACKAGE="poetry==1.7.1"
+DEPENDS="poetry-core==1.8.1 poetry-plugin-export==1.6.0"
 POSTINST=
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

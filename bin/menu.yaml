@@ -282,18 +282,18 @@ menu_graphics:
 
 menu_multimedia:
 - button:
-    name: audacity
-    color: '#ffcc00'
-    label: Audacity
-    run: exec audacity &
-  checks:
-  - audacity.desktop
-  - /usr/bin/audacity
-- button:
     name: xmixer
     color: '#ffcc00'
     label: Audio Mixer
     run: exec xmixer &
+- button:
+    name: tenacity
+    color: '#ffcc00'
+    label: Tenacity
+    run: exec audacity &
+  checks:
+  - tenacity.desktop
+  - /usr/bin/tenacity
 - button:
     name: zhspeak
     color: '#ffcc00'

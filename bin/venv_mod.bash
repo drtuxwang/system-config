@@ -36,6 +36,18 @@ create_virtualenv() {
 }
 
 
+# Show Virtual Environment configurations
+if [ "${0##*/}" = venv_mod.bash ]
+then
+    for FILE in "${0%/*}"/*-venv
+    do
+        echo "${FILE##*/}" | awk '{printf("%-24s", $1)}'
+        grep -E "(PYTHON=|PACKAGE=|source )" "$FILE" | grep -v "/${0##*/}" | sed -e 's/  *#.*//;s@^[^=]*[=/]@@;s/"//g' | awk '{printf(" %s", $NF)}'
+        echo
+    done
+    exit
+fi
+
 # Setup Virtual Environment
 PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
 VIRTUAL_ENV="$PYTHON_DIR-venv/${PACKAGE/==/-}"

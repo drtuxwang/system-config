@@ -3,14 +3,14 @@
 # ansible virtualenv (system automation tool)
 #
 
-if [ "$ANSIBLE_PYTHON" = "python2.7" ]
+if [ "$ANSIBLE_PYTHON27" ]
 then
     PYTHON="python2.7"
     PACKAGE="ansible==2.7.18"
     DEPENDS=
     POSTINST=
 else
-    PYTHON=${ANSIBLE_PYTHON:-python3.11}
+    PYTHON="python3.11"
     PACKAGE="ansible-core==2.15.8"
     DEPENDS=
     POSTINST="install_collections"
@@ -24,5 +24,5 @@ install_collections() {
 }
 
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

@@ -8,5 +8,5 @@ PACKAGE="ImageHash==4.3.1"
 DEPENDS="Pillow==9.5.0 scipy==1.10.1 numpy==1.25.2 PyWavelets==1.4.1 pybktree==1.1"
 POSTINST=
 
-source "${0%/*}/virtualenv.bash"
+source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

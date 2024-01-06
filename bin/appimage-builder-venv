@@ -8,5 +8,5 @@ PACKAGE="appimage-builder==1.1.0"
 DEPENDS=
 POSTINST=
 
-source "${0%/*}/virtualenv.bash" -noclean
+source "${0%/*}/venv_mod.bash" -noclean
 exec "${0##*/}" "$@"
