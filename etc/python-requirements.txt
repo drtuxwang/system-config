@@ -36,7 +36,7 @@ isort==5.11.5                #   (required by pylint)
 jedi==0.18.2                 #   (required by ipython)
 jinja2-cli==0.8.2            # Jinja2 commandline
 jinja2-time==0.2.0           #   (required by cookiecutter)
-Jinja2==3.1.2                # Stand-alone template engine
+Jinja2==3.1.3                # Stand-alone template engine
 jsbeautifier==1.13.13        # JavaScript unobfuscator/beautifier
 jsonpickle==2.2.0            # Serializing any arbitrary object into JSON
 lazy-object-proxy==1.8.0     #   (required by astroid)

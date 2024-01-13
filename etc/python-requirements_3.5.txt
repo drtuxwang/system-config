@@ -27,7 +27,7 @@ ipdb==None
 ipython==None
 isort==4.3.21
 jedi==None
-Jinja2==2.11.3
+Jinja2                       # ==2.11.3 (last compatible version)
 lazy-object-proxy==1.4.3
 lockfile==None
 Markdown==3.2.2
