@@ -114,6 +114,7 @@ class Options:
             '-snh',
             '-snl',
             '-stl',
+            '-bsp1',
             '-y',
         ])
         if self._args.split:

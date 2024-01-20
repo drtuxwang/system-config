@@ -85,7 +85,7 @@ tomli==2.0.1                 #   (required by mypy)
 tomlkit==0.11.8              #   (required by pylint)
 tornado==6.3.3               # Web server framework
 traitlets==5.13.0            #   (required by ipython)
-typing_extensions==4.8.0     #   (required by mypy)
+typing-extensions==4.8.0     #   (required by mypy)
 urllib3==1.26.18             #   (required by requests)
 virtualenv==20.24.7          # Python Virtual Environments
 wcwidth==0.2.11              #   (required by prompt-toolkit)

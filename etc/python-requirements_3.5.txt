@@ -72,7 +72,6 @@ tornado                      # ==6.1 (last compatible version)
 traitlets==None
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.5)
 typing-extensions            # ==3.10.0.2 (last compatible version)
-typing_extensions==None      #   (requires hyphen instead of underscore)
 urllib3                      # ==1.26.9 (last compatible version)
 virtualenv                   # ==20.15.1 (last compatible version)
 wheel                        # ==0.37.1 (last compatible version)

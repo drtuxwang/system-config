@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Make uncompressed archive in TAR format (Python version).
+Make optional compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.XZ/TGZ/TBZ/TXZ
+format (Python version).
 """
 
 import argparse
@@ -35,7 +36,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Make a compressed archive in TAR format.",
+            description="Make a compressed archive in "
+            "TAR/TAR.GZ/TAR.BZ2/TAR.XZ (TGZ/TBZ/TXZ) format.",
         )
 
         parser.add_argument(
@@ -64,10 +66,6 @@ class Options:
             if Path(self._args.archive[0]).is_dir()
             else self._args.archive[0]
         )
-        if '.tar' not in self._archive:
-            raise SystemExit(
-                f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
-            )
 
         self._files = self._args.files if self._args.files else os.listdir()
 
@@ -133,8 +131,22 @@ class Main:
         os.umask(0o022)
         archive = options.get_archive()
         path_tmp = Path(f'{archive}.part')
+
+        if archive.endswith(('.tar.xz', '.txz', )):
+            mode = 'w:xz'
+        elif archive.endswith(('.tar.bz2', '.tbz', )):
+            mode = 'w:bz2'
+        elif archive.endswith(('.tar.gz', '.tgz', )):
+            mode = 'w:gz'
+        elif archive.endswith('.tar'):
+            mode = 'w'
+        else:
+            raise SystemExit(
+                f'{sys.argv[0]}: Unsupported "{archive}" archive format.'
+            )
+
         try:
-            with tarfile.open(path_tmp, 'w') as ofile:
+            with tarfile.open(path_tmp, mode) as ofile:
                 self._addfile(ofile, [Path(x) for x in options.get_files()])
         except OSError as exception:
             raise SystemExit(

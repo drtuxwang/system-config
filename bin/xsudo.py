@@ -3,6 +3,7 @@
 Run sudo command in new terminal session
 """
 
+import os
 import signal
 import sys
 
@@ -37,10 +38,20 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def run() -> int:
-        """
-        Start program
-        """
+    def _powershell() -> None:
+        powershell = command_mod.Command('powershell.exe', errors='stop')
+        powershell.extend_args(['-command', 'start-process', 'cmd.exe'])
+        if len(sys.argv) > 1:
+            args = powershell.args2cmd(sys.argv[1:])
+            powershell.extend_args([
+                '-argumentlist',
+                powershell.args2cmd(['/r', args]),
+            ])
+        powershell.extend_args(['-verb', '-runas'])
+        subtask_mod.Exec(powershell.get_cmdline()).run()
+
+    @staticmethod
+    def _xsudo() -> None:
         xterm = command_mod.Command('xterm', errors='stop')
         xterm.set_args([
             '-fn',
@@ -70,6 +81,16 @@ class Main:
             sudo.set_args(['su', '-'])
 
         subtask_mod.Exec(xterm.get_cmdline() + sudo.get_cmdline()).run()
+
+    @classmethod
+    def run(cls) -> int:
+        """
+        Start program
+        """
+        if os.name == 'nt':
+            cls._powershell()
+        else:
+            cls._xsudo()
 
         return 0
 

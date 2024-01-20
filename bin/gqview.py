@@ -104,22 +104,22 @@ class Options:
             self._config_geeqie()
         else:
             self._gqview = command_mod.Command('gqview', errors='stop')
-        if len(args) == 1:
-            self._gqview.set_args([os.curdir])
-        else:
-            paths = [Path(x) for x in args[1:]]
-            for path in paths:
-                if not path.exists():
-                    self._gqview.set_args(args[1:])
-                    return
-            selections = [
-                str(x)
-                for x in paths
-                if x.is_file() or list(x.glob('*'))
+        paths = [Path(x) for x in args[1:]]
+        for path in paths:
+            if not path.exists():
+                self._gqview.set_args(args[1:])
+                return
+        selections = [
+            str(x)
+            for x in paths
+            if x.is_file() or list(x.glob('*'))
             ]
+        try:
             selected = self.select(selections)
             print("GQView selection:", selected)
             self._gqview.set_args([selected])
+        except IndexError:
+            self._gqview.set_args([os.curdir])
 
 
 class Configuration:

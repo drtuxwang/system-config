@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Make uncompressed archive in TAR format (GNU Tar version).
+Make optional compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.ZST/TAR.LZMA/
+TAR.XZ/TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ/T7Z format (GNU Tar version).
 """
 
 import argparse
@@ -39,7 +40,9 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Make a compressed archive in TAR format.",
+            description="Make optional compressed archive in TAR/TAR.GZ/"
+            "TAR.BZ2/TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/"
+            "TXZ|T7Z) format.",
         )
 
         parser.add_argument(
@@ -68,11 +71,6 @@ class Options:
             if Path(self._args.archive[0]).is_dir()
             else self._args.archive[0]
         )
-        if '.tar' not in self._archive:
-            raise SystemExit(
-                f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
-            )
-
         self._files = self._args.files if self._args.files else os.listdir()
 
 
@@ -104,24 +102,18 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    @staticmethod
-    def _get_cmdline(archive: str, files: List[str]) -> List[str]:
-        tar = (
-            command_mod.Command('tar.exe', errors='stop')
-            if os.name == 'nt'
-            else command_mod.Command('tar', errors='stop')
-        )
+    @classmethod
+    def _pack(  # pylint: disable=too-many-branches
+        cls,
+        archive: str,
+        files: List[str],
+    ) -> None:
+        task: subtask_mod.Task
+
+        tar = command_mod.Command('tar', errors='stop')
         task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
         task.run(pattern='--owner|--numeric-owner|--xattrs')
-
-        monitor = command_mod.Command('pv', errors='ignore')
-
-        cmdline = tar.get_cmdline()
-        if monitor.is_found():
-            cmdline.extend(['cf', '-'] + files)
-            monitor.set_args(['>', archive+'.part'])
-        else:
-            cmdline.extend(['cfv', archive+'.part'] + files)
+        cmdline = tar.get_cmdline() + ['cf', '-'] + files
         if getpass.getuser() == 'root':
             if task.is_match_output('--numeric-owner'):
                 cmdline.append('--numeric-owner')
@@ -130,10 +122,79 @@ class Main:
         elif task.is_match_output('--owner'):
             cmdline.extend(['--owner=0:0', '--group=0:0'])
 
-        if monitor.is_found():
-            cmdline.extend(['|'] + monitor.get_cmdline())
+        path_tmp = Path(f'{archive}.part')
+        if archive.endswith(('.tar.7z', 't7z')):
+            cmdline.extend(['|'] + command_mod.Command('7z', args=[
+                'a',
+                '-m0=lzma2',
+                '-mmt=2',
+                '-mx=9',
+                '-myx=9',
+                '-md=128m',
+                '-mfb=256',
+                '-ms=on',
+                '-bsp1',
+                '-y',
+                '-si',
+                path_tmp,
+            ], errors='stop').get_cmdline())
+        else:
+            monitor = command_mod.Command('pv', errors='ignore')
+            if monitor.is_found():
+                cmdline.extend(['|'] + monitor.get_cmdline())
+            if archive.endswith(('.tar.xz', '.txz')):
+                cmdline.extend(['|'] + command_mod.Command('xz', args=[
+                    '-9',
+                    '-e',
+                    '--x86',
+                    '--lzma2=dict=128MiB',
+                    '--threads=1',
+                    '--verbose',
+                ], errors='stop').get_cmdline())
+            elif archive.endswith(('.tar.lzma', '.tlz')):
+                cmdline.extend(['|'] + command_mod.Command('xz', args=[
+                    '-9',
+                    '-e',
+                    '--format=lzma',
+                    '--threads=1',
+                    '--verbose',
+                ], errors='stop').get_cmdline())
+            elif archive.endswith(('.tar.zst', '.tar.zstd', '.tzs', '.tzst')):
+                cmdline.extend(['|'] + command_mod.Command(
+                    'zstd',
+                    args=['--ultra', '-22', '-T0'],
+                    errors='stop',
+                ).get_cmdline())
+            elif archive.endswith(('.tar.bz2', '.tbz')):
+                cmdline.extend(['|'] + command_mod.Command(
+                    'bzip2',
+                    args=['-9'],
+                    errors='stop',
+                ).get_cmdline())
+            elif archive.endswith(('.tar.gz', '.tgz')):
+                cmdline.extend(['|'] + command_mod.Command(
+                    'gzip',
+                    args=['-9'],
+                    errors='stop',
+                ).get_cmdline())
+            elif not archive.endswith(('.tar')):
+                raise SystemExit(
+                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
+                )
+            cmdline.extend(['>', f'{archive}.part'])
 
-        return cmdline
+        task = subtask_mod.Task(cmdline)
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(task.get_exitcode())
+        if archive.endswith('.tar'):
+            cls._check_tar(path_tmp)
+        try:
+            path_tmp.replace(archive)
+        except OSError as exception:
+            raise SystemExit(
+                f'{sys.argv[0]}: Cannot create "{archive}" archive file.',
+            ) from exception
 
     @staticmethod
     def _check_tar(path: Path) -> None:
@@ -154,22 +215,13 @@ class Main:
         Start program
         """
         options = Options()
-        task: subtask_mod.Task
+
+        if os.name == 'nt':
+            tar = command_mod.Command('tar_py.py', errors='stop')
+            subtask_mod.Exec(tar.get_cmdline() + sys.argv[1:]).run()
 
         os.umask(0o022)
-        archive = options.get_archive()
-        task = subtask_mod.Task(cls._get_cmdline(archive, options.get_files()))
-        task.run()
-        if task.get_exitcode():
-            raise SystemExit(task.get_exitcode())
-        path_tmp = Path(f'{archive}.part')
-        cls._check_tar(path_tmp)
-        try:
-            path_tmp.replace(archive)
-        except OSError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{archive}" archive file.',
-            ) from exception
+        cls._pack(options.get_archive(), options.get_files())
         print("Completed!")
 
         return 0

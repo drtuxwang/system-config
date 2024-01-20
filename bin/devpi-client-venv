@@ -4,8 +4,8 @@
 #
 
 PYTHON="python3.11"
-PACKAGE="devpi-client==5.2.3"
-DEPENDS="devpi-common==3.6.0"  # Requires insecure py (1.11.0 last version and seems abandoned)
+PACKAGE="devpi-client==6.0.7"
+DEPENDS="devpi-common==3.7.2"  # Requires insecure py (1.11.0 last version and seems abandoned)
 POSTINST=
 
 source "${0%/*}/venv_mod.bash"

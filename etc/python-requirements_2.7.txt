@@ -84,7 +84,7 @@ tomlkit==None
 tornado                      # ==5.1.1 (last compatible version)
 traitlets==None
 typing==3.10.0.0
-typing_extensions==None
+typing-extensions==None
 virtualenv                   # ==20.15.1 (last compatible version)
 wheel                        # ==0.37.1 (last compatible version)
 whichcraft==0.6.1            #   (required by cookiecutter for 2.7)

@@ -41,7 +41,7 @@ pytar() {
 
 
 case $1 in
-*.tar|*.tar.gz|*.tar.bz2|*.tar.lzma|*.tar.xz|*.tar.7z|*.t[gblx]z)
+*[./]*)
     pytar "$@";;
 *)
     if [ -d "$1" ]
@@ -49,7 +49,7 @@ case $1 in
         pytar "$@"
     else
         case $(uname) in
-        NT)
+        *NT*)
             TAR="tar.exe"
             ;;
         *)

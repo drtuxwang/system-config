@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.ZST/TAR.LZMA/TAR.XZ/
-TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ/T7Z format (GNU Tar version).
+Unpack optional compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.ZST/TAR.LZMA/
+TAR.XZ/TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ/T7Z format (GNU Tar version).
 """
 
 import argparse
@@ -38,9 +38,9 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/"
-            "TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/TXZ|T7Z) "
-            "format.",
+            description="Unpack optional compressed archive in TAR/TAR.GZ/"
+            "TAR.BZ2/TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/"
+            "TXZ|T7Z) format.",
         )
 
         parser.add_argument(
@@ -57,29 +57,6 @@ class Options:
         )
 
         self._args = parser.parse_args(args)
-
-        tar_extensions = (
-            '.tar',
-            '.tar.gz',
-            '.tar.bz2',
-            '.tar.zst',
-            '.tar.zstd',
-            '.tar.lzma',
-            '.tar.xz',
-            '.tar.7z',
-            '.tgz',
-            '.tbz',
-            '.tzs',
-            '.tzst',
-            '.tlz',
-            '.txz',
-            '.t7z',
-        )
-        for path in [Path(x) for x in self._args.archives]:
-            if not path.name.endswith(tar_extensions):
-                raise SystemExit(
-                    f'{sys.argv[0]}: Unsupported "{path}" archive format.',
-                )
 
     def parse(self, args: List[str]) -> None:
         """
@@ -121,20 +98,24 @@ class Main:
     def _unpack(self, file: str) -> None:
         task: subtask_mod.Task
 
-        if file.endswith(('.tar.7z', 't7z')):
+        if file.endswith(('.tar.7z', '.t7z')):
             unpacker = command_mod.Command('7z', args=['x', '-so'])
-        elif file.endswith(('.tar.lzma', 'tlz')):
-            unpacker = command_mod.Command('lzma', args=['-d', '-c'])
-        elif file.endswith(('.tar.xz', 'txz')):
+        elif file.endswith(('.tar.xz', '.txz')):
             unpacker = command_mod.Command('xz', args=['-d', '-c'])
-        elif file.endswith(('.tar.zst', '.tar.zstd', 'tzst', 'tzs')):
+        elif file.endswith(('.tar.lzma', '.tlz')):
+            unpacker = command_mod.Command('lzma', args=['-d', '-c'])
+        elif file.endswith(('.tar.zst', '.tar.zstd', '.tzs', '.tzst')):
             unpacker = command_mod.Command('zstd', args=['-d', '-c'])
-        elif file.endswith(('.tar.bz2', 'tbz')):
+        elif file.endswith(('.tar.bz2', '.tbz')):
             unpacker = command_mod.Command('bzip2', args=['-d', '-c'])
-        elif file.endswith(('.tar.gz', 'tgz')):
+        elif file.endswith(('.tar.gz', '.tgz')):
             unpacker = command_mod.Command('gzip', args=['-d', '-c'])
-        else:
+        elif file.endswith(('.tar')):
             unpacker = command_mod.Command('cat')
+        else:
+            raise SystemExit(
+                f'{sys.argv[0]}: Unsupported "{file}" archive format.',
+            )
         cmdline = unpacker.get_cmdline() + [file]
 
         monitor = command_mod.Command('pv', errors='ignore')
@@ -170,9 +151,10 @@ class Main:
         options = Options()
 
         if os.name == 'nt':
-            self._tar = command_mod.Command('tar.exe', errors='stop')
-        else:
-            self._tar = command_mod.Command('tar', errors='stop')
+            untar = command_mod.Command('untar_py.py', errors='stop')
+            subtask_mod.Exec(untar.get_cmdline() + sys.argv[1:]).run()
+
+        self._tar = command_mod.Command('tar', errors='stop')
 
         for file in options.get_archives():
             print(f"{file}:")

@@ -63,7 +63,7 @@ read_requirements() {
 
 check_packages() {
     ERROR=
-    PACKAGES=$($LIST | awk 'NR>=3 {printf("%s==%s\n", $1, $2)}')
+    PACKAGES=$($LIST | awk 'NR>=3 {printf("%s==%s\n", $1, $2)}' | sed -e "s/_/-/g")
     for PACKAGE in $PACKAGES
     do
         NAME=${PACKAGE%==*}

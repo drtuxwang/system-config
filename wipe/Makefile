@@ -3,7 +3,10 @@ default: build       # Default
 
 .PHONY: build
 build:               # Build executable
-	./COMPILE
+	gcc -O3 wipe.c -o wipe
+	ls -l wipe
+	strip wipe
+	ls -l wipe
 
 .PHONY: clean
 clean:                # Remove temporary build files

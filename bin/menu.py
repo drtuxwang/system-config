@@ -153,7 +153,9 @@ class Menu:
                     f'{sys.argv[0]}: Cannot create "{path}" file.',
                 ) from exception
 
-            subtask_mod.Background(wish.get_cmdline() + [path]).run()
+            subtask_mod.Background(wish.get_cmdline() + [path]).run(
+                directory=Path.home()
+            )
 
         if self._menus == ['main']:
             self.update(self._config_file, self._status_file)

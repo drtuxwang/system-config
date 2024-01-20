@@ -2,5 +2,4 @@ docker_daemon: true
 vm_host: true
 
 clamav_directory: /mnt/data1/var/lib/clamav
-data2_mount: -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=bf5bb38e-1873-469f-8a1e-547cfdd3b1bb /mnt/data2
 download_rate: 32000

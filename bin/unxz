@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
+PYLD_MAIN="unxz"
 source "${0%/*}/pyld.bash"

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Unpack an archive in TAR format (Python version).
+Unpack optional compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.XZ/TGZ/TBZ/TXZ
+format (Python version).
 """
 
 import argparse
@@ -35,7 +36,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Unpack an archive in TAR format.",
+            description="Unpack an archive in "
+            "TAR/TAR.GZ/TAR.BZ2/TAR.XZ (TGZ/TBZ/TXZ) format.",
         )
 
         parser.add_argument(
@@ -58,12 +60,6 @@ class Options:
         Parse arguments
         """
         self._parse_args(args[1:])
-
-        for path in [Path(x) for x in self._args.archives]:
-            if path.suffix != '.tar':
-                raise SystemExit(
-                    f'{sys.argv[0]}: Unsupported "{path}" archive format.',
-                )
 
 
 class Main:
@@ -133,18 +129,30 @@ class Main:
         options = Options()
 
         for file in options.get_archives():
-            if file.endswith('.tar'):
-                print(f"{file}:")
-                try:
-                    with tarfile.open(file, 'r:') as archive:
-                        if options.get_view_flag():
-                            cls._view(archive)
-                        else:
-                            cls._unpack(archive)
-                except OSError as exception:
-                    raise SystemExit(
-                        f'{sys.argv[0]}: Cannot open "{file}" archive file.',
-                    ) from exception
+            if file.endswith(('.tar.xz', '.txz', )):
+                mode = 'r:xz'
+            elif file.endswith(('.tar.bz2', '.tbz', )):
+                mode = 'r:bz2'
+            elif file.endswith(('.tar.gz', '.tgz', )):
+                mode = 'r:gz'
+            elif file.endswith('.tar'):
+                mode = 'r'
+            else:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Unsupported "{file}" archive format.',
+                )
+
+            print(f"{file}:")
+            try:
+                with tarfile.open(file, mode) as archive:
+                    if options.get_view_flag():
+                        cls._view(archive)
+                    else:
+                        cls._unpack(archive)
+            except OSError as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot open "{file}" archive file.',
+                ) from exception
 
         return 0
 
