@@ -44,73 +44,73 @@ TEST_DIRS := \
 default: build status # Default
 
 .PHONY: status
-status:              # Status of Docker images
+status:               # Status of Docker images
 	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGES):" | sort
 	docker system df
 
 .PHONY: new
-new:                 # Create new Docker project
+new:                  # Create new Docker project
 	python3 -m cookiecutter ../cookiecutter/docker
 
 .PHONY: check-base
-check-base:          # Show base Docker images
+check-base:           # Show base Docker images
 	grep "^BASE_IMAGE" */Makefile
 
 .PHONY: pull
-pull:                # Pull base Docker images
+pull:                 # Pull base Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR pull || exit 1; \
 	done
 
 .PHONY: pull-save
-pull-save:           # Pull base Docker images and save as tar file if changed
+pull-save:            # Pull base Docker images and save as tar file if changed
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR pull-save || exit 1; \
 	done
 	ls -l *.tar* 2> /dev/null ||:
 
 .PHONY: save
-save:                # Save base Docker images as tar files
+save:                 # Save base Docker images as tar files
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR save; \
 	done
 	ls -l *.tar* 2> /dev/null ||:
 
 .PHONY: build
-build: $(BUILD_DIRS) # Build Docker images
+build: $(BUILD_DIRS)  # Build Docker images
 
 .PHONY: $(BUILD_DIRS)
-$(BUILD_DIRS):       # Build Docker images in parallel
+$(BUILD_DIRS):        # Build Docker images in parallel
 	make --no-print-directory --directory=$@
 
 .PHONY: push-stable
-push-stable:         # Tag and push stable Docker images
+push-stable:          # Tag and push stable Docker images
 	for DIR in $(STABLE_DIRS); do \
 		make --no-print-directory --directory $$DIR push-stable || exit 1; \
 	done
 	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 
 .PHONY: pull
-pull-stable:         # Pull stable Docker images
+pull-stable:          # Pull stable Docker images
 	for DIR in $(STABLE_DIRS); do \
 		make --no-print-directory --directory $$DIR pull-stable || exit 1; \
 	done
 	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 
 .PHONY: test
-test:                # Run tests
+test:                 # Run tests
 	for DIR in $(TEST_DIRS); do \
 		make --no-print-directory --directory $$DIR test; \
 	done
 
 .PHONY: version
-version:             # Check versions
+version:              # Check versions
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR version || exit 1; \
 	done
 
 .PHONY: prune
-prune:               # Prune Docker images/containers
+prune:                # Prune Docker images/containers
 	docker system df
 	@echo
 	df /var/lib/docker
@@ -129,11 +129,11 @@ prune:               # Prune Docker images/containers
 	docker network ls
 
 .PHONY: clean
-clean:               # Remove temporary build files
+clean:                # Remove temporary build files
 	rm -f docker-image_*
 
 .PHONY: rmi
-rmi:                 # Remove Docker images
+rmi:                  # Remove Docker images
 	for IMAGE in $(PUSH_IMAGES); do \
 		docker rmi -f $${IMAGE%:*}:stable ||:; \
 	done
@@ -142,11 +142,11 @@ rmi:                 # Remove Docker images
 	done
 
 .PHONY: rmi-base
-rmi-base: rmi        # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker images including base image
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR rmi-base; \
 	done
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

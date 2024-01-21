@@ -9,6 +9,7 @@ the years.
  * Jenkinsfile                     Jenkins pipeline configuration file
  * codefresh.yaml                  Codefresh pipeline configuration file
  * Makefile                        Makefile for testing
+ * .gitattributes                  GIT settings (LFS support)
  * .pylintrc                       Python Pylint configuration file
  * bin/command_mod.py              Python command line handling module
  * bin/test_command_mod.py         Unit testing suite for "command_mod.py"
@@ -95,7 +96,7 @@ the years.
  * docker/ubuntu-22.04/            ubuntu:22.04 based Docker images
  * etc/python-packages.bash        Install/check Python packages requirements
  * etc/python-requirements.txt     Default requirements file for Python
- * etc/python-requirements_*.txt   Additional requirements for Python 2.7
+ * etc/python-requirements_*.txt   Additional requirements for Python versions
  * etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                  Windows Command prompt initialization
  * etc/setbin.ps1                  Windows Power shell initialization
@@ -139,4 +140,5 @@ the years.
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example
  * wipe/                           Disk wipe utility
+ * zhspeak/                        Zhong Hua Speak TTS software and data
 ```

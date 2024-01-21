@@ -38,10 +38,10 @@ endif
 
 
 .PHONY: default
-default: status      # Default
+default: status       # Default
 
 .PHONY: status
-status:              # Show workload status
+status:               # Show workload status
 	@echo "\n*** Checking Helm release status ***"
 	@make --no-print-directory status-helm
 	@echo "\n*** Checking Kube status ***"
@@ -49,52 +49,52 @@ status:              # Show workload status
 	@echo
 
 .PHONY: status-helm
-status-helm:         # Show Helm release status
+status-helm:          # Show Helm release status
 	$(HELM_STATUS) ||:
 	$(HELM_LIST)
 
 .PHONY: status-kube
-status-kube:         # Show Kube workload status
+status-kube:          # Show Kube workload status
 	@kubectl --namespace=$(NAMESPACE) get Ingress -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@$(NAMESPACE)   Ingress/@" ||:
 	@kubectl --namespace=$(NAMESPACE) get Secrets -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@$(NAMESPACE)   Secrets/@" ||:
 	@kubectl --namespace=$(NAMESPACE) get all -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s/^/$(NAMESPACE)   /" ||:
 
 .PHONY: list
-list:                # List Helm chart versions
+list:                 # List Helm chart versions
 	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_REPO)'/%s   ", $$2)}'
 	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: version
-version: list        # Show Helm chart and app version
+version: list         # Show Helm chart and app version
 	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: images
-images:              # Show Docker images
+images:               # Show Docker images
 	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
-pull:                # Pull Docker images
+pull:                 # Pull Docker images
 
 .PHONY: save
-save:                # Save Docker images as tar file
+save:                 # Save Docker images as tar file
 
 .PHONY: template
-template:            # Show Helm template
+template:             # Show Helm template
 	helm template $(HELM_FLAGS) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check:               # Install Helm release dryrun
+check:                # Install Helm release dryrun
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME) --dry-run --debug
 
 .PHONY: install
-install:             # Install Helm release
+install:              # Install Helm release
 	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: connect
-connect:             # Connect to endpoint
+connect:              # Connect to endpoint
 	@echo "\n*** Connecting to Test Server box ***"
 	@kubectl --namespace=$(NAMESPACE) exec -it \
 		`kubectl --namespace=$(NAMESPACE) get pod | grep $(NAME)-box | awk 'NR==1 {print $$1}'` \
@@ -102,16 +102,16 @@ connect:             # Connect to endpoint
 
 
 .PHONY: uninstall
-uninstall:           # Uninstall Helm release
+uninstall:            # Uninstall Helm release
 	$(HELM_LIST)
 	$(HELM_UNINSTALL) ||:
 
 .PHONY: clean
-clean:               # Remove temporary build files
+clean:                # Remove temporary build files
 
 .PHONY: rmi
-rmi:                 # Remove Docker images
+rmi:                  # Remove Docker images
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

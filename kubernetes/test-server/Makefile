@@ -8,16 +8,16 @@ endif
 
 
 .PHONY: default
-default: status      # Default
+default: status       # Default
 
 .PHONY: status
-status:              # Show workload status
+status:               # Show workload status
 	@echo "\n*** Checking Kube status ***"
 	@make --no-print-directory status-kube | sort
 	@echo
 
 .PHONY: status-kube
-status-kube:         # Show Kube workload status
+status-kube:          # Show Kube workload status
 	@kubectl get PersistentVolumes -o wide 2> /dev/null | grep $(NAME) | sed -e "s@^@PersistentVolumes/@" ||:
 	@kubectl get StorageClass -o wide 2> /dev/null | sed -e "s@^@$$StorageClass/@" ||:
 	@for RESOURCE in Ingress PersistentVolumeClaims Secrets Serviceaccount; do \
@@ -26,7 +26,7 @@ status-kube:         # Show Kube workload status
 	@kubectl --namespace=$(NAMESPACE) get all -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s/^/$(NAMESPACE)   /" ||:
 
 .PHONY: create
-create:              # Create workload
+create:               # Create workload
 	@echo "\n*** Creating pods ***"
 	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-secret-tls.yaml ||:
@@ -36,12 +36,12 @@ create:              # Create workload
 	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-statefulset.yaml ||:
 
 .PHONY: forward
-forward:             # Forward http to service
+forward:              # Forward http to service
 	kubectl --namespace=$(NAMESPACE) describe service/$(NAME)
 	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):80
 
 .PHONY: delete
-delete:              # Delete workload
+delete:               # Delete workload
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-statefulset.yaml ||:
 	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-headless-service.yaml ||:
@@ -50,5 +50,5 @@ delete:              # Delete workload
 	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-secret-tls.yaml ||:
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

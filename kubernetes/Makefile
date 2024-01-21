@@ -1,8 +1,8 @@
 .PHONY: default
-default: status      # Default
+default: status       # Default
 
 .PHONY: status
-status:              # Show Kubernetes status
+status:               # Show Kubernetes status
 	kubectl --namespace=kube-system get pod
 	@echo
 	kubectl --namespace=kube-system get pod -o yaml | grep -E " image: " | grep -v "image: docker.io/" | sort | uniq
@@ -18,14 +18,14 @@ status:              # Show Kubernetes status
 	kubectl get nodes -o wide
 
 .PHONY: save
-save:                # Save Docker images used by Kubernetes
+save:                 # Save Docker images used by Kubernetes
 	./bin/kube-save.bash
 	ls -l *.tar*
 
 .PHONY: clean
-clean:               # Remove temporary build files
+clean:                # Remove temporary build files
 	rm -f kubernetes-images_*
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

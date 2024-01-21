@@ -22,48 +22,48 @@ DOCKER_RUN := docker run \
 default: build status # Default
 
 .PHONY: status
-status:              # Status of Docker image
+status:               # Status of Docker image
 	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | \
 		grep -E "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
 
 .PHONY: pull
-pull:                # Pull Docker base image
+pull:                 # Pull Docker base image
 	docker pull $(BASE_IMAGE)
 	@make --no-print-directory status
 
 .PHONY: pull-save
-pull-save:           # Pull Docker base image and save as tar file if changed
+pull-save:            # Pull Docker base image and save as tar file if changed
 	../bin/docker-pull-save.bash $(BASE_IMAGE)
 
 .PHONY: save
-save:                # Save Docker base image as tar file
+save:                 # Save Docker base image as tar file
 	../bin/docker-save.bash $(BASE_IMAGE)
 
 .PHONY: build
-build:               # Build Docker images
+build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash bin vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
-run:                 # Run Docker container
+run:                  # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:             # Check versions
+version:              # Check versions
 	@$(DOCKER_RUN) $(IMAGE) go version 2> /dev/null | \
 		sed -e "s@.*go@$(shell pwd): Golang @"
 
 .PHONY: rmi
-rmi:                 # Remove Docker images
+rmi:                  # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi        # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker images including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

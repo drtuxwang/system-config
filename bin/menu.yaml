@@ -40,15 +40,15 @@ menu_main:
     label: Games
     run: exec menu games &
 - button:
-    name: utility
-    color: '#00ff00'
-    label: Utility
-    run: exec menu utility &
-- button:
     name: system
     color: '#00ff00'
     label: System
     run: exec menu system &
+- button:
+    name: utility
+    color: '#00ff00'
+    label: Utility
+    run: exec menu utility &
 - button:
     name: close
     color: '#ff0000'

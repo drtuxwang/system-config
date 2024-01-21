@@ -10,10 +10,10 @@ BUILD_DIRS := \
 
 
 .PHONY: default
-default: status      # Default
+default: status       # Default
 
 .PHONY: status
-status:              # Status of Appimage builds
+status:               # Status of Appimage builds
 	@for DIR in $(BUILD_DIRS); do \
 		ls -l $$DIR/*.AppImage 2> /dev/null ||:; \
 	done
@@ -31,5 +31,5 @@ clean:                # Remove temporary build files
 	done
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

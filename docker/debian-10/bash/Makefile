@@ -43,9 +43,9 @@ version:              # Check versions
 		sed -e "s@^@$(shell pwd): Debian Linux @"
 
 .PHONY: rmi
-rmi:                 # Remove Docker images
+rmi:                  # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

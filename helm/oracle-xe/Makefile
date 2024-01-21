@@ -41,10 +41,10 @@ endif
 
 
 .PHONY: default
-default: status      # Default
+default: status       # Default
 
 .PHONY: status
-status:              # Show workload status
+status:               # Show workload status
 	@echo "\n*** Checking Helm release status ***"
 	@make --no-print-directory status-helm
 	@echo "\n*** Checking Kube status ***"
@@ -52,37 +52,37 @@ status:              # Show workload status
 	@echo
 
 .PHONY: status-helm
-status-helm:         # Show Helm release status
+status-helm:          # Show Helm release status
 	$(HELM_STATUS) ||:
 	$(HELM_LIST)
 
 .PHONY: status-kube
-status-kube:         # Show Kube workload status
+status-kube:          # Show Kube workload status
 	@kubectl --namespace=$(NAMESPACE) get all -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s/^/$(NAMESPACE)   /" ||:
 
 .PHONY: list
-list:                # List Helm chart versions
+list:                 # List Helm chart versions
 	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_REPO)'/%s   ", $$2)}'
 	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: version
-version: list        # Show Helm chart and app version
+version: list         # Show Helm chart and app version
 	@echo "\033[33m$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION)   $(APP_VERSION)\033[0m"
 
 .PHONY: images
-images:              # Show Docker images
+images:               # Show Docker images
 	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
-pull:                # Pull Docker images
+pull:                 # Pull Docker images
 	@for IMAGE in `make --no-print-directory images`; do \
 		docker pull $$IMAGE; \
 	done
 
 .PHONY: save
-save:                # Save Docker images as tar file
+save:                 # Save Docker images as tar file
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
@@ -90,24 +90,24 @@ save:                # Save Docker images as tar file
 		$(shell make --no-print-directory images)
 
 .PHONY: template
-template:            # Show Helm template
+template:             # Show Helm template
 	helm template $(HELM_FLAGS) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check:               # Install Helm release dryrun
+check:                # Install Helm release dryrun
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME) --dry-run --debug
 
 .PHONY: install
-install:             # Install Helm release
+install:              # Install Helm release
 	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
-forward:             # Forward traffic to endpoint
+forward:              # Forward traffic to endpoint
 	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-box $(LOCALPORT):1521
 
 .PHONY: connect
-connect:             # Connect to endpoint
+connect:              # Connect to endpoint
 	@echo "\n*** Connecting to Oracle XE database ***"
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
@@ -117,19 +117,19 @@ connect:             # Connect to endpoint
 	fi
 
 .PHONY: uninstall
-uninstall:           # Uninstall Helm release
+uninstall:            # Uninstall Helm release
 	$(HELM_LIST)
 	$(HELM_UNINSTALL) ||:
 
 .PHONY: clean
-clean:               # Remove temporary build files
+clean:                # Remove temporary build files
 
 .PHONY: rmi
-rmi:                 # Remove Docker images
+rmi:                  # Remove Docker images
 	@for IMAGE in `make --no-print-directory images`; do \
 		docker rmi -f $$IMAGE ||:; \
 	done
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -24,59 +24,59 @@ DOCKER_RUN := docker run \
 default: build status # Default
 
 .PHONY: status
-status:              # Status of Docker image
+status:               # Status of Docker image
 	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | \
 		grep -E "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
 
 .PHONY: pull
-pull:                # Pull Docker base image
+pull:                 # Pull Docker base image
 	docker pull $(BASE_IMAGE)
 	@make --no-print-directory status
 
 .PHONY: pull-save
-pull-save:           # Pull Docker base image and save as tar file if changed
+pull-save:            # Pull Docker base image and save as tar file if changed
 	../bin/docker-pull-save.bash $(BASE_IMAGE)
 
 .PHONY: save
-save:                # Save Docker base image as tar file
+save:                 # Save Docker base image as tar file
 	../bin/docker-save.bash $(BASE_IMAGE)
 
 .PHONY: build
-build:               # Build Docker images
+build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash bash2ash bin-sysinfo
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: push-stable
-push-stable:         # Tag and push stable Docker images
+push-stable:          # Tag and push stable Docker images
 	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 	docker push ${IMAGE}
 	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 
 .PHONY: pull-stable
-pull-stable:         # Pull stable Docker image
+pull-stable:          # Pull stable Docker image
 	docker pull ${IMAGE}
 	docker pull `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 
 .PHONY: run
-run:                 # Run Docker container
+run:                  # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:             # Check versions
+version:              # Check versions
 	@$(DOCKER_RUN) $(IMAGE) -v 2>&1 | grep "^nginx version:" | \
 		sed -e "s@.*/@$(shell pwd): Nginx @"
 
 .PHONY: rmi
-rmi:                 # Remove Docker images
+rmi:                  # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi        # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker images including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -1,8 +1,8 @@
 .PHONY: default
-default: test        # Default
+default: test         # Default
 
 .PHONY: test
-test:                # Run tests
+test:                 # Run tests
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile *.pyx
 	rm -rf __pycache__
@@ -16,19 +16,19 @@ test:                # Run tests
 	@echo "\n*** Tests successfull ***"
 
 .PHONY: build
-build: clean test    # Build package
+build: clean test     # Build package
 	@echo "\n*** Building Cython example ***"
 	python3 -m Cython.Build.Cythonize --build -3 cython_example.pyx
 
 .PHONY: run
-run:                 # Run Python code
+run:                  # Run Python code
 	@echo "\n*** Running Cython example ***"
 	./run.py
 
 .PHONY: clean
-clean:               # Remove temporary build files
+clean:                # Remove temporary build files
 	rm -rf build *.c *.so
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

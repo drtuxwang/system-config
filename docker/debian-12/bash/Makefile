@@ -33,13 +33,13 @@ build:                # Build Docker images
 	rm -rf rootfs
 
 .PHONY: push-stable
-push-stable:         # Tag and push stable Docker images
+push-stable:          # Tag and push stable Docker images
 	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 	docker push ${IMAGE}
 	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 
 .PHONY: pull-stable
-pull-stable:         # Pull stable Docker images
+pull-stable:          # Pull stable Docker images
 	docker pull ${IMAGE}
 	docker pull `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 
@@ -54,9 +54,9 @@ version:              # Check versions
 		sed -e "s@^@$(shell pwd): Debian Linux @"
 
 .PHONY: rmi
-rmi:                 # Remove Docker images
+rmi:                  # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: help
-help:                # Show Makefile options
+help:                 # Show Makefile options
 	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
