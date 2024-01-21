@@ -140,5 +140,5 @@ the years.
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example
  * wipe/                           Disk wipe utility
- * zhspeak/                        Zhong Hua Speak TTS software and data
+ * zhspeak/                        Zhong Hua Speak 6.2.0 TTS software and data
 ```
