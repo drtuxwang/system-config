@@ -2,9 +2,9 @@ NAME := kafka
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := kafka
-CHART_VERSION := 26.4.5
-APP_VERSION := 3.5.1
-IMAGE_TAG := 3.5.1-debian-11-r27
+CHART_VERSION := 26.7.1
+APP_VERSION := 3.5.2
+IMAGE_TAG := 3.5.2-debian-11-r3
 NAMESPACE ?= default
 HOSTNAME ?= kafka.kube.local
 
@@ -29,7 +29,6 @@ else
 endif
 HELM_INSTALL := helm upgrade --install --wait
 
-EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
 ifndef INGRESS_ENABLED
 	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -Eq "^ingress|traefik" && echo true || echo false)
 endif
@@ -39,9 +38,6 @@ HELM_FLAGS := \
 	--set fullnameOverride=$(NAME)-server \
 	--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
 	--version $(CHART_VERSION)
-ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
-	HELM_FLAGS += --set externalAccess.enabled=true --set externalAccess.controller.service.loadBalancerIPs='{$(EXTERNAL_IP)}'
-endif
 ifdef IMAGE_TAG
 	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
 endif
@@ -96,7 +92,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
@@ -115,6 +111,10 @@ check: repo-add       # Install Helm release dryrun
 install: repo-add     # Install Helm release
 	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
+
+.PHONY: connect
+connect:             # Connect to endpoint
+	./test-connect.sh kafka-server-controller-0 kafka-server-controller-0:9092
 
 .PHONY: uninstall
 uninstall:            # Uninstall Helm release

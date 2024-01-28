@@ -2,9 +2,9 @@ NAME := postgresql
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := postgresql
-CHART_VERSION := 13.1.5
-APP_VERSION := 11.20.0
-IMAGE_TAG := 11.20.0-debian-11-r2
+CHART_VERSION := 13.2.30
+APP_VERSION := 11.22.0
+IMAGE_TAG := 11.22.0-debian-11-r4
 NAMESPACE ?= infra
 LOCALPORT ?=
 
@@ -90,7 +90,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

@@ -36,7 +36,7 @@ the years.
  * appimage/wesnoth-1.14.15-deb11/ Wesnoth 1.14.15 (Debian 11) appimage
  * appimage/wesnoth-1.16.8-deb11/  Wesnoth 1.16.8 (Debian 11 backports) appimage
  * appimage/wesnoth-1.16.9-deb12/  Wesnoth 1.16.9 (Debian 12) appimage
- * compile/COMPILE-zip.bash        Build scripts of open source software
+ * compile/                        Build scripts of open source software
  * config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
  * config/accels                   Copy to "$HOME/.config/geeqie" for keyboard shortcuts
  * config/adblock.txt              Adblock filter list
@@ -85,7 +85,7 @@ the years.
  * docker/i386-alpine-3.17/        i386/alpine:3.17 based based Docker images
  * docker/i386-debian-11/          i386/debian:11-slim based Docker images
  * docker/i386-debian-12/          i386/debian:12-slim based Docker images
- * docker/nginx-1.18/              nginx:1.18-alpine based reverse proxy server
+ * docker/nginx-1.24/              nginx:1.24-bullseye based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
  * docker/oraclelinux-9/           oralcelinux:9 based Docker images
  * docker/python-3.11/             python:3.11-slim-bookworm based Docker images
@@ -111,19 +111,19 @@ the years.
  * kubernetes/test-storage/        Kubernetes: Persistent Volume example
  * helm/Makefile
  * helm/bin/
- * helm/cassandra/                 Helm Chart: bitnami/cassandra 10.5.8 (app-3.11.13)
- * helm/etcd/                      Helm Chart: bitnami/etcd 9.7.7 (app-3.4.26)
- * helm/grafana/                   Helm Chart: bitnami/grafana 9.5.6 (app-8.5.10)
- * helm/jenkins/                   Helm Chart: bitnami/jenkins 12.3.9 (app-2.414.3)
- * helm/kafka/                     Helm Chart: bitnami/kafka 26.4.5 (app-3.5.1)
- * helm/mongodb/                   Helm Chart: bitnami/mongodb 14.3.2 (app-4.4.15)
+ * helm/cassandra/                 Helm Chart: bitnami/cassandra 10.7.1 (app-3.11.13)
+ * helm/etcd/                      Helm Chart: bitnami/etcd 9.9.1 (app-3.4.29)
+ * helm/grafana/                   Helm Chart: bitnami/grafana 9.7.1 (app-9.5.6)
+ * helm/jenkins/                   Helm Chart: bitnami/jenkins 12.5.1 (app-2.414.3)
+ * helm/kafka/                     Helm Chart: bitnami/kafka 26.7.1 (app-3.5.2)
+ * helm/mongodb/                   Helm Chart: bitnami/mongodb 14.6.1 (app-5.0.24)
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
- * helm/nginx/                     Helm Chart: bitnami/nginx 15.4.5 (app-1.18.0)
+ * helm/nginx/                     Helm Chart: bitnami/nginx 15.8.1 (app-1.18.0)
  * helm/oracle-xe/                 Helm Chart: Oracle XE test (gvenzl/oracle-xe:21.3.0-slim)
- * helm/postgresql/                Helm Chart: bitnami/postgresql 13.1.5 (app-11.20.0)
- * helm/prometheus/                Helm Chart: prometheus-community/prometheus 24.5.0 (app-2.37.8)
+ * helm/postgresql/                Helm Chart: bitnami/postgresql 13.2.30 (app-11.22.0)
+ * helm/prometheus/                Helm Chart: prometheus-community/prometheus 25.8.2 (app-2.37.8)
  * helm/pushgateway/               Helm Chart: prometheus-community/prometheus-pushgateway 2.4.2 (app-1.3.1)
- * helm/rabbitmq/                  Helm Chart: bitnami/rabbitmq 12.5.7 (app-3.8.35)
+ * helm/rabbitmq/                  Helm Chart: bitnami/rabbitmq 12.6.3 (app-3.10.25)
  * helm/test-box/                  Helm Chart: drtuxwang/test-box (drtuxwang/debian-bash:stable)
  * helm/test-server/               Helm Chart: drtuxwang/test-server (drtuxwang/debian-bash:stable)
  * helm/xfce-server/               Helm Chart: drtuxwang/xfce-server (drtuxwang/debian-xfce:stable)

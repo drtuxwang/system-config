@@ -2,9 +2,9 @@ NAME := mongodb
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := mongodb
-CHART_VERSION := 14.3.2
-APP_VERSION := 4.4.15
-IMAGE_TAG := 4.4.15-debian-10-r8
+CHART_VERSION := 14.6.1
+APP_VERSION := 5.0.24
+IMAGE_TAG := 5.0.24-debian-11-r0
 NAMESPACE ?= infra
 HOSTNAME ?= mongodb.kube.local
 LOCALPORT ?=
@@ -92,7 +92,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

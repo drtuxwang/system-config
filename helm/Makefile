@@ -66,7 +66,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save:                 # Pull Docker images and save to tar archive
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR save || exit 1; \
 	done

@@ -98,7 +98,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

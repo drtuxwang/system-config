@@ -23,7 +23,7 @@ BUILD_DIRS := \
 	busybox-1.35 \
 	golang-1.19 \
 	httpd-2.4 \
-	nginx-1.18 \
+	nginx-1.24 \
 	python-3.11 \
 	registry-2.6 \
 	scratch
@@ -32,7 +32,7 @@ STABLE_DIRS := \
 	debian-12/dev \
 	debian-12/docker \
 	debian-12/xfce \
-	nginx-1.18 \
+	nginx-1.24 \
 	python-3.11/dev \
 	python-3.11/full \
 	scratch
@@ -57,22 +57,22 @@ check-base:           # Show base Docker images
 	grep "^BASE_IMAGE" */Makefile
 
 .PHONY: pull
-pull:                 # Pull base Docker images
+pull:                 # Pull Docker base images
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR pull || exit 1; \
 	done
 
-.PHONY: pull-save
-pull-save:            # Pull base Docker images and save as tar file if changed
+.PHONY: save
+save:                 # Pull Docker base images and save to tar archive
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR pull-save || exit 1; \
+		make --no-print-directory --directory $$DIR save; \
 	done
 	ls -l *.tar* 2> /dev/null ||:
 
-.PHONY: save
-save:                 # Save base Docker images as tar files
+.PHONY: save-new
+save-new:             # Pull Docker base images and save to tar archive if newer
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR save; \
+		make --no-print-directory --directory $$DIR save-new || exit 1; \
 	done
 	ls -l *.tar* 2> /dev/null ||:
 

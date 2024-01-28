@@ -2,7 +2,7 @@ NAME := nginx
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := nginx
-CHART_VERSION := 15.4.5
+CHART_VERSION := 15.8.1
 APP_VERSION := 1.18.0
 IMAGE_TAG := 1.18.0-debian-10-r363
 NAMESPACE ?= default
@@ -100,7 +100,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

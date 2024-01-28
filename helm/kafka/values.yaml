@@ -11,6 +11,9 @@ controller:
   replicaCount: 1
 persistence:
   enabled: false
+listeners:
+  client:
+    protocol: PLAINTEXT
 
 zookeeper:
   metrics:

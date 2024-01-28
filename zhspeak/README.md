@@ -38,7 +38,7 @@ The supported audio players are:
 # Changes
 
 ## Since 6.2.0 (2023-09-23)
-* 78) Update Python star twrapper scripts.
+* 78) Update Python start wrapper scripts.
 * 77) Updated Putonghua dictionary (Ekho 9.0).
 
 ## Since 6.1.2 (2023-01-24)

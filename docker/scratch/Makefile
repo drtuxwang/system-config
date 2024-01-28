@@ -34,11 +34,11 @@ status:               # Status of Docker image
 .PHONY: pull
 pull:                 # Pull Docker base image
 
-.PHONY: pull-save
-pull-save:            # pull Docker base image and save as tar file if changed
-
 .PHONY: save
-save:                 # Save Docker base image as tar file
+save: pull            # Pull Docker base image and save to tar archive
+
+.PHONY: pull-save
+save-new:             # Pull Docker base image and save to tar archive if newer
 
 .PHONY: build
 build:                # Build Docker images

@@ -2,7 +2,7 @@ NAME := jenkins
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := jenkins
-CHART_VERSION := 12.3.9
+CHART_VERSION := 12.5.1
 APP_VERSION := 2.414.3
 IMAGE_TAG := 2.414.3-debian-11-r1
 NAMESPACE ?= infra
@@ -96,7 +96,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

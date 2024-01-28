@@ -78,7 +78,7 @@ images:               # Show Docker images
 pull:                 # Pull Docker images
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 
 .PHONY: template
 template:             # Show Helm template

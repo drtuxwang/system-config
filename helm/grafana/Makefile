@@ -2,9 +2,9 @@ NAME := grafana
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := grafana
-CHART_VERSION := 9.5.6
-APP_VERSION := 8.5.10
-IMAGE_TAG := 8.5.10-debian-11-r3
+CHART_VERSION := 9.7.1
+APP_VERSION := 9.5.6
+IMAGE_TAG := 9.5.6-debian-11-r0
 NAMESPACE ?= infra
 HOSTNAME ?= grafana.kube.local
 LOCALPORT ?=
@@ -96,7 +96,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

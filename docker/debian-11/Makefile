@@ -21,13 +21,13 @@ pull:                 # Pull Docker base image
 	docker pull $(BASE_IMAGE)
 	@make --no-print-directory status
 
-.PHONY: pull-save
-pull-save:            # Pull Docker base image and save as tar file if changed
-	../bin/docker-pull-save.bash $(BASE_IMAGE)
-
 .PHONY: save
-save:                 # Save Docker base image as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/docker-save.bash $(BASE_IMAGE)
+
+.PHONY: pull-save
+save-new:             # Pull Docker base image and save to tar archive if newer
+	../bin/docker-save-new.bash $(BASE_IMAGE)
 
 .PHONY: build
 build:                # Build Docker images

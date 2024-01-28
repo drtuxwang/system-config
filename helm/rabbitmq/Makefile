@@ -2,9 +2,9 @@ NAME := rabbitmq
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := rabbitmq
-CHART_VERSION := 12.5.7
-APP_VERSION := 3.8.35
-IMAGE_TAG := 3.8.35-debian-11-r5
+CHART_VERSION := 12.6.3
+APP_VERSION := 3.10.25
+IMAGE_TAG := 3.10.25-debian-11-r79
 NAMESPACE ?= default
 HOSTNAME ?= rabbitmq.kube.local
 LOCALPORT ?=
@@ -103,7 +103,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

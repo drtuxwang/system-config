@@ -2,7 +2,7 @@ NAME := prometheus
 CHART_REPO := prometheus-community
 CHART_URL := https://prometheus-community.github.io/helm-charts
 CHART_NAME := prometheus
-CHART_VERSION := 24.5.0
+CHART_VERSION := 25.8.2
 APP_VERSION := 2.37.8
 IMAGE_TAG := v2.37.8
 NAMESPACE ?= infra
@@ -106,7 +106,7 @@ pull:                 # Pull Docker images
 	done
 
 .PHONY: save
-save:                 # Save Docker images as tar file
+save: pull            # Pull Docker base image and save to tar archive
 	../bin/helm-save.bash \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \

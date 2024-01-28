@@ -35,6 +35,20 @@ create:               # Create workload
 		--from-file=proxy-kube-local.key
 	kubectl --namespace=$(NAMESPACE) create -f $(NAME).yaml ||:
 
+.PHONY: test
+test:                 # Test TLS
+	@echo "\n*** Test TLS 1 fails ***"
+	openssl s_client -connect localhost:8443 -tls1 < /dev/null && exit 1 ||:
+	@echo "\n*** Test TLS 1.1 fails ***"
+	openssl s_client -connect localhost:8443 -tls1_1 < /dev/null && exit 1 ||:
+	@echo "\n*** Test TLS 1.2 works ***"
+	openssl s_client -connect localhost:8443 -tls1_2 < /dev/null
+	@echo "\n*** Test TLS 1.3 works ***"
+	openssl s_client -connect localhost:8443 -tls1_3 < /dev/null
+	@echo "\n*** Test redirection ***"
+	curl http://localhost:8080 | grep "BBC Homepage"
+	curl --insecure https://localhost:8443 | grep "BBC Homepage"
+
 .PHONY: delete
 delete:               # Delete workload
 	@echo "\n*** Removing pods ***"

@@ -18,7 +18,7 @@ status:               # Show Kubernetes status
 	kubectl get nodes -o wide
 
 .PHONY: save
-save:                 # Save Docker images used by Kubernetes
+save:                 # Save Docker images used by Kubernetes to tar archive
 	./bin/kube-save.bash
 	ls -l *.tar*
 

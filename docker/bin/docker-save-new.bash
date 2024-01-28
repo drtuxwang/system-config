@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Pull Docker images and save to tar archives
+# Pull Docker images and save to tar archives if newer
 #
 
 set -eu
