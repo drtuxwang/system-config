@@ -51,6 +51,9 @@ class Main:
         # Re-direct $HOME/oradiag_<user> to /tmp/<user>/oradiag_<user>
         os.environ['HOME'] = file_mod.FileUtil.tmpdir()
 
+        # SQLPATH fro scripts
+        os.environ['SQLPATH'] = os.environ.get('PATH', '')
+
         command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])
         subtask_mod.Exec(command.get_cmdline()).run()

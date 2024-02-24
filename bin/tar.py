@@ -123,7 +123,8 @@ class Main:
             cmdline.extend(['--owner=0:0', '--group=0:0'])
 
         path_tmp = Path(f'{archive}.part')
-        if archive.endswith(('.tar.7z', 't7z')):
+        name = archive.replace('-new', '')
+        if name.endswith(('.tar.7z', 't7z')):
             cmdline.extend(['|'] + command_mod.Command('7z', args=[
                 'a',
                 '-m0=lzma2',
@@ -142,7 +143,7 @@ class Main:
             monitor = command_mod.Command('pv', errors='ignore')
             if monitor.is_found():
                 cmdline.extend(['|'] + monitor.get_cmdline())
-            if archive.endswith(('.tar.xz', '.txz')):
+            if name.endswith(('.tar.xz', '.txz')):
                 cmdline.extend(['|'] + command_mod.Command('xz', args=[
                     '-9',
                     '-e',
@@ -151,7 +152,7 @@ class Main:
                     '--threads=1',
                     '--verbose',
                 ], errors='stop').get_cmdline())
-            elif archive.endswith(('.tar.lzma', '.tlz')):
+            elif name.endswith(('.tar.lzma', '.tlz')):
                 cmdline.extend(['|'] + command_mod.Command('xz', args=[
                     '-9',
                     '-e',
@@ -159,25 +160,30 @@ class Main:
                     '--threads=1',
                     '--verbose',
                 ], errors='stop').get_cmdline())
-            elif archive.endswith(('.tar.zst', '.tar.zstd', '.tzs', '.tzst')):
+            elif name.endswith(('.tar.zst', '.tar.zstd', '.tzs', '.tzst')):
                 cmdline.extend(['|'] + command_mod.Command(
                     'zstd',
                     args=['--ultra', '-22', '-T0'],
                     errors='stop',
                 ).get_cmdline())
-            elif archive.endswith(('.tar.bz2', '.tbz')):
+            elif name.endswith(('.tar.bz2', '.tbz')):
                 cmdline.extend(['|'] + command_mod.Command(
                     'bzip2',
                     args=['-9'],
                     errors='stop',
                 ).get_cmdline())
-            elif archive.endswith(('.tar.gz', '.tgz')):
+            elif name.endswith(('.tar.gz', '.tgz')):
                 cmdline.extend(['|'] + command_mod.Command(
                     'gzip',
                     args=['-9'],
                     errors='stop',
                 ).get_cmdline())
-            elif not archive.endswith(('.tar')):
+            elif name.endswith(('.tar')):
+                cmdline.extend(['|'] + command_mod.Command(
+                    'cat',
+                    errors='stop',
+                ).get_cmdline())
+            else:
                 raise SystemExit(
                     f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
                 )
@@ -187,7 +193,7 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())
-        if archive.endswith('.tar'):
+        if name.endswith('.tar'):
             cls._check_tar(path_tmp)
         try:
             path_tmp.replace(archive)

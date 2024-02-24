@@ -14,7 +14,7 @@ from typing import List
 import command_mod
 import subtask_mod
 
-RELEASE = '2.8.6'
+RELEASE = '3.1.0'
 
 
 class Options:
@@ -23,7 +23,6 @@ class Options:
     """
 
     def __init__(self) -> None:
-        self._release = RELEASE
         self._args = None
         self.parse(sys.argv)
 
@@ -44,12 +43,6 @@ class Options:
         Return myqs directory.
         """
         return self._myqsdir
-
-    def get_release(self) -> str:
-        """
-        Return release version.
-        """
-        return self._release
 
     def parse(self, args: List[str]) -> None:
         """
@@ -99,57 +92,67 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _get_command(file: str) -> command_mod.Command:
-        if Path(file).is_file():
-            return command_mod.CommandFile(Path(file).resolve())
-        return command_mod.Command(file, errors='stop')
-
-    def _spawn(self, options: Options) -> None:
-        path = Path(self._myqsdir, f'{self._jobid}.r')
-        try:
-            with path.open('a') as ofile:
-                mypid = os.getpid()
-                os.setpgid(mypid, mypid)  # New PGID
-                pgid = os.getpgid(mypid)
-                print(f"PGID={pgid}\nSTART={time.time()}", file=ofile)
-        except OSError:
-            return
-
+    def _get_info(path: Path) -> dict:
+        info = {}
         try:
             with path.open(errors='replace') as ifile:
-                info = {}
                 for line in ifile:
                     line = line.strip()
                     if '=' in line:
-                        info[line.split('=')[0]] = line.split('=', 1)[1]
+                        key, value = line.split('=', 1)
+                        info[key] = value
+        except OSError:
+            return {}
+        return info
+
+    @staticmethod
+    def _get_command(command: str) -> command_mod.Command:
+        cmdline = command_mod.Command.cmd2args(command)
+        path = Path(cmdline[0])
+        if path.is_file():
+            return command_mod.CommandFile(path.resolve(), args=cmdline[1:])
+        return command_mod.Command(path, errors='stop', args=cmdline[1:])
+
+    def _spawn(self) -> None:
+        mypid = os.getpid()
+        os.setpgid(mypid, mypid)  # New PGID
+        pgid = os.getpgid(mypid)
+        if pgid != mypid:  # Double check new PGID
+            return
+
+        path = Path(self._myqsdir, f'{self._jobid}.r')
+        try:
+            with path.open('a') as ofile:
+                print(f"START={time.time()}\nPGID={pgid}", file=ofile)
         except OSError:
             return
 
-        print(
-            f"\nMyQS v{options.get_release()}, "
-            "My Queuing System batch job exec.\n",
-        )
-        print("MyQS JOBID  =", self._jobid)
-        print("MyQS QUEUE  =", info['QUEUE'])
-        print("MyQS NCPUS  =", info['NCPUS'])
-        print("MyQS PGID   =", pgid)
-        print("MyQS START  =", time.strftime('%Y-%m-%d-%H:%M:%S'))
+        info = self._get_info(path)
+        nice = "nice -9" if info.get('QUEUE') == 'express' else "nice -18"
+        command = self._get_command(info['COMMAND'])
+        bash_command = command.args2cmd(command.get_cmdline())
+        cmdline = [
+            'bash',
+            '-l',
+            '-c',
+            f'echo -e "MyQS v3 batch job command: {bash_command}"; '
+            f'time {nice} {bash_command}',
+        ]
+        print(f"\nMyQS v{RELEASE}, My Queuing System batch job exec.\n")
+        print(f"MyQS JOBID       = {self._jobid}")
+        print(f"MyQS QUEUE       = {info['QUEUE']}")
+        print(f"MyQS NCPUS SLOTS = {info['NCPUS']}")
+        print(f"MyQS DIRECTORY   = {info['DIRECTORY']}")
+        print(f"MyQS COMMAND     = {info['COMMAND']}")
+        print(f"MyQS START       = {time.strftime('%Y-%m-%d-%H:%M:%S')}")
+        print(f"MyQS PGID        = {mypid}")
+        print(f"MyQS EXECUTE     = {bash_command}")
         print("-"*80)
         sys.stdout.flush()
-        os.environ['PATH'] = info['PATH']
-        command = self._get_command(info['COMMAND'])
-        self._sh(command)
-        subtask_mod.Exec(command.get_cmdline()).run()
-
-    @staticmethod
-    def _sh(command: command_mod.Command) -> None:
-        try:
-            with Path(command.get_file()).open(errors='replace') as ifile:
-                line = ifile.readline().rstrip()
-                if line == '#!/bin/sh':
-                    command.set_args(['/bin/sh'] + command.get_cmdline())
-        except OSError:
-            pass
+        os.environ['TIMEFORMAT'] = (
+            ' [ time(s)  -  real: %2R  user: %2U  sys: %2S  cpu: %P%% ]'
+        )
+        subtask_mod.Exec(cmdline).run()
 
     def _start(self) -> None:
         path = Path(self._myqsdir, f'{self._jobid}.r')
@@ -166,20 +169,21 @@ class Main:
             os.chdir(info['DIRECTORY'])
         else:
             os.chdir(Path.home())
-        renice = command_mod.Command('renice', errors='ignore')
-        if renice.is_found():
-            renice.set_args(['100', os.getpid()])
-            subtask_mod.Batch(renice.get_cmdline()).run()
+
         myqexec = command_mod.CommandFile(
             __file__,
             args=['-spawn', self._jobid]
         )
-        subtask_mod.Task(myqexec.get_cmdline()).run()
-        print("-"*80)
-        print("MyQS FINISH =", time.strftime('%Y-%m-%d-%H:%M:%S'))
-        time.sleep(1)
+        task = subtask_mod.Task(myqexec.get_cmdline())
+        task.run()
         try:
-            path.unlink()
+            if task.get_exitcode():
+                path_new = path.with_suffix('.f')
+            else:
+                path_new = path.with_suffix('.d')
+            path.replace(path_new)
+            with path_new.open('a') as ofile:
+                print(f"FINISH={time.time()}", file=ofile)
         except OSError:
             pass
 
@@ -197,7 +201,7 @@ class Main:
                 f"{sys.argv[0]}: Cannot determine home directory.",
             )
         if options.get_mode() == 'spawn':
-            self._spawn(options)
+            self._spawn()
         else:
             self._start()
 

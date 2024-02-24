@@ -113,7 +113,7 @@ install: repo-add     # Install Helm release
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: connect
-connect:             # Connect to endpoint
+connect:              # Connect to endpoint
 	./test-connect.sh kafka-server-controller-0 kafka-server-controller-0:9092
 
 .PHONY: uninstall

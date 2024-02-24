@@ -41,7 +41,7 @@ class Options:
         path = Path(Path.home(), '.gitconfig')
         if not path.is_file():
             try:
-                with path.open('w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w', newline='\n') as ofile:
                     user = getpass.getuser()
                     host = socket.gethostname().split('.')[0].lower()
                     print("[user]", file=ofile)

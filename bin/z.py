@@ -99,20 +99,26 @@ class Main:
         path = Path(options.get_archive())
 
         name = path.name.replace('-new', '')
-        if name.endswith(('.tar.7z', '.t7z')):
-            command = command_mod.Command('t7z', errors='stop')
-        elif name.endswith(('.tar.xz', '.txz')):
-            command = command_mod.Command('txz', errors='stop')
-        elif name.endswith(('.tar.lzma', '.tlz')):
-            command = command_mod.Command('tlz', errors='stop')
-        elif name.endswith(('.tar.zst', '.tar.zstd', '.tzs', '.tzst')):
-            command = command_mod.Command('tzs', errors='stop')
-        elif name.endswith(('.tar.bz2', '.tbz')):
-            command = command_mod.Command('tbz', errors='stop')
-        elif name.endswith(('.tar.gz', '.tgz')):
-            command = command_mod.Command('tgz', errors='stop')
-        elif name.endswith(('.tar', '.zip')):
-            command = command_mod.Command(name.rsplit('.')[-1], errors='stop')
+        if name.endswith((
+            '.tar',
+            '.tar.gz',
+            '.tar.bz2',
+            '.tar.zst',
+            '.tar.zstd',
+            '.tar.lzma',
+            '.tar.xz',
+            '.tar.7z',
+            '.tgz',
+            '.tbz',
+            '.tzs',
+            '.tzst',
+            '.tlz',
+            '.txz',
+            '.t7z',
+        )):
+            command = command_mod.Command('tar.py', errors='stop')
+        elif name.endswith('.zip'):
+            command = command_mod.Command('zip', errors='stop')
         elif name.endswith(('.7z', '.exe')) or path.is_dir():
             command = command_mod.Command('7z', errors='stop')
         else:

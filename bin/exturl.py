@@ -80,7 +80,7 @@ class Main:
     def _extract(self, path: Path) -> List[str]:
         try:
             with path.open(errors='replace') as ifile:
-                urls = []
+                urls: List[str] = []
                 for line in ifile:
                     line = line.strip()
                     for token in self._is_iframe.sub('href=', line).split():

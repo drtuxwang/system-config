@@ -13,7 +13,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.8'
+RELEASE = '3.1.0'
 
 
 class Options:
@@ -22,9 +22,14 @@ class Options:
     """
 
     def __init__(self) -> None:
-        self._release = RELEASE
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
+
+    def get_all_flag(self) -> str:
+        """
+        Return all flag.
+        """
+        return self._args.all_flag
 
     def get_force_flag(self) -> bool:
         """
@@ -32,7 +37,7 @@ class Options:
         """
         return self._args.force_flag
 
-    def get_jobids(self) -> List[str]:
+    def get_jobids(self) -> List[int]:
         """
         Return list of job IDs.
         """
@@ -40,10 +45,16 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description=f"MyQS v{self._release}, "
+            description=f"MyQS v{RELEASE}, "
             "My Queuing System batch job deletion.",
         )
 
+        parser.add_argument(
+            '-a',
+            dest='all_flag',
+            action='store_true',
+            help="Purge all completed jobs.",
+        )
         parser.add_argument(
             '-k',
             action='store_true',
@@ -52,7 +63,7 @@ class Options:
         )
         parser.add_argument(
             'jobIds',
-            nargs='+',
+            nargs='*',
             metavar='jobid',
             help="Batch job ID.",
         )
@@ -67,9 +78,9 @@ class Options:
 
         self._jobids = []
         for jobid in self._args.jobIds:
-            if not jobid.isdigit():
+            if not jobid.isdigit() or int(jobid) < 1:
                 raise SystemExit(f'{sys.argv[0]}: Invalid "{jobid}" job ID.')
-            self._jobids.append(jobid)
+            self._jobids.append(int(jobid))
 
 
 class Main:
@@ -100,55 +111,58 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    def _remove(self, jobid: str) -> None:
-        path = Path(self._myqsdir, f'{jobid}.q')
-        if path.is_file():
-            try:
-                path.unlink()
-            except OSError:
-                pass
-            else:
-                print(
-                    'Batch job with jobid',
-                    jobid,
-                    'has been deleted from MyQS.'
-                )
+    @staticmethod
+    def _get_info(path: Path) -> dict:
+        info = {}
+        try:
+            with path.open(errors='replace') as ifile:
+                for line in ifile:
+                    line = line.strip()
+                    if '=' in line:
+                        key, value = line.split('=', 1)
+                        info[key] = value
+        except OSError:
+            return {}
+        return info
+
+    def _remove(self, jobid: int) -> None:
+        for status in 'dfq':
+            path = Path(self._myqsdir, f'{jobid}.{status}')
+            info = self._get_info(path)
+            if info.get('COMMAND'):
+                try:
+                    path.unlink()
+                except OSError:
+                    continue
+                print(f"MyQS jobid {jobid} deleted: {info['COMMAND']}")
                 return
+
         path = Path(self._myqsdir, f'{jobid}.r')
-        if path.is_file():
-            try:
-                with path.open(errors='replace') as ifile:
-                    if not self._force_flag:
-                        print(
-                            'MyQS cannot delete batch job with jobid',
-                            jobid,
-                            'as it is running.'
-                        )
-                    else:
-                        info = {}
-                        for line in ifile:
-                            line = line.strip()
-                            if '=' in line:
-                                info[line.split('=')[0]] = (
-                                    line.split('=', 1)[1])
-                        if 'PGID' in info:
-                            try:
-                                pgid = int(info['PGID'])
-                            except ValueError:
-                                return
-                            task_mod.Tasks.factory(
-                                ).killpgid(pgid, signal='TERM')
-                        try:
-                            path.unlink()
-                        except OSError:
-                            pass
-                        print(
-                            'Batch job with jobid',
-                            jobid,
-                            'has been deleted from MyQS.'
-                        )
-            except OSError:
-                pass
+        info = self._get_info(path)
+        if info.get('COMMAND'):
+            if self._force_flag:
+                try:
+                    task_mod.Tasks.factory().killpgid(
+                        int(info.get('PGID', '')),
+                        signame='TERM',
+                    )
+                except ValueError:
+                    pass
+                try:
+                    path.unlink()
+                except OSError:
+                    pass
+                print(
+                    f"MyQS jobid {jobid} killed and deleted: {info['COMMAND']}"
+                )
+            else:
+                print(f"MyQS jobid {jobid} is running: {info['COMMAND']}")
+
+    def _purge(self) -> None:
+        for jobid in sorted(
+            [int(x.stem) for x in self._myqsdir.glob('*.[df]')]
+        ):
+            self._remove(jobid)
 
     def run(self) -> int:
         """
@@ -169,14 +183,12 @@ class Main:
             socket.gethostname().split('.')[0].lower()
         )
         for jobid in options.get_jobids():
-            if not list(Path(self._myqsdir).glob(f'{jobid}.[qr]')):
-                print(
-                    'MyQS cannot delete batch job with jobid',
-                    jobid,
-                    'as it does no exist.',
-                )
+            if not list(Path(self._myqsdir).glob(f'{jobid}.[dfqr]')):
+                print(f"MyQS jobid {jobid} does not exists.")
             else:
                 self._remove(jobid)
+        if options.get_all_flag():
+            self._purge()
 
         return 0
 

@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-source "${0%/*}/nexus3-cli-venv"

@@ -164,7 +164,7 @@ class Main:
             # Invert colours of today
             today = f"{now.day:2d}"
             rows = [
-                x.replace(' '+today, f" \033[7m{today}\033[m")
+                x.replace(' '+today, f" \x1b[7m{today}\x1b[m")
                 for x in rows
             ]
 

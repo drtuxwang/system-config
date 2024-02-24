@@ -61,7 +61,7 @@ class Options:
         parser.add_argument(
             '-mode',
             nargs=1,
-            choices=['l', 'p', 'lp'],
+            choices=('l', 'p', 'lp'),
             default='lp',
             help="Select lines(l), points(p) or both (lp). Default is lp.",
         )

@@ -10,11 +10,12 @@ import socket
 import sys
 import time
 from pathlib import Path
-from typing import List
+from typing import Generator, List
 
+import command_mod
 import task_mod
 
-RELEASE = '2.8.6'
+RELEASE = '3.1.0'
 
 
 class Options:
@@ -23,15 +24,20 @@ class Options:
     """
 
     def __init__(self) -> None:
-        self._release = RELEASE
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self) -> List[str]:
+    def get_add_flag(self) -> str:
         """
-        Return list of files.
+        Return add job flag.
         """
-        return self._args.files
+        return self._args.add_flag
+
+    def get_multi_flag(self) -> str:
+        """
+        Return multi job flag.
+        """
+        return self._args.multi_flag
 
     def get_ncpus(self) -> int:
         """
@@ -45,12 +51,30 @@ class Options:
         """
         return self._args.queue[0]
 
+    def get_cmdline(self) -> List[str]:
+        """
+        Return command line.
+        """
+        return self._args.cmdline
+
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description=f"MyQS v{self._release}, My Queuing System "
-            f"batch job submission.",
+            description=f"MyQS v{RELEASE}, "
+            "My Queuing System batch job submission.",
         )
 
+        parser.add_argument(
+            '-a',
+            dest='add_flag',
+            action='store_true',
+            help="Add batch jobs for new command only.",
+        )
+        parser.add_argument(
+            '-m',
+            dest='multi_flag',
+            action='store_true',
+            help="Submit multiple batch jobs.",
+        )
         parser.add_argument(
             '-n',
             nargs=1,
@@ -59,18 +83,20 @@ class Options:
             default=[1],
             help="Select CPU core slots to reserve for job. Default is 1.",
         )
+
         parser.add_argument(
             '-q',
             nargs=1,
             dest='queue',
+            choices=('normal', 'express'),
             default=['normal'],
             help='Select "normal" or "express" queue. Default is "normal".',
         )
         parser.add_argument(
-            'files',
+            'cmdline',
             nargs='+',
-            metavar='batch.sh',
-            help="Batch job file.",
+            metavar='command',
+            help='Batch job command (use "--" to protect flags)',
         )
 
         self._args = parser.parse_args(args)
@@ -135,7 +161,7 @@ class Main:
                     f'{sys.argv[0]}: Cannot read '
                     f'"{path}" MyQS lastjob file.',
                 ) from exception
-            if jobid > 32767:
+            if jobid > 99999:
                 jobid = 1
         else:
             jobid = 1
@@ -164,8 +190,7 @@ class Main:
                                 path.unlink()
                 except OSError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot read '
-                        f'"{path}" MyQS lock file.',
+                        f"{sys.argv[0]}: MyQS cannot obtain lock: {path}"
                     ) from exception
             if not path.is_file():
                 try:
@@ -173,14 +198,13 @@ class Main:
                         print(os.getpid(), file=ofile)
                 except OSError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot create '
-                        f'"{path}" MyQS lock file.'
+                        f"{sys.argv[0]}: MyQS cannot create lock: {path}"
                     ) from exception
                 break
             time.sleep(1)
         return path
 
-    def _myqsd(self) -> None:
+    def _has_myqsd(self) -> bool:
         path = Path(self._myqsdir, 'myqsd.pid')
         try:
             with path.open(errors='replace') as ifile:
@@ -190,40 +214,84 @@ class Main:
                     pass
                 else:
                     if task_mod.Tasks.factory().haspid(pid):
-                        return
+                        return True
                     path.unlink()
         except OSError:
             pass
-        print('MyQS batch job scheduler not running. Run "myqsd" command.')
+        return False
+
+    def _new_jobs(
+        self,
+        cmdlines: List[List[str]],
+    ) -> Generator[List[str], None, None]:
+        commands = set()
+        for _ in range(2):  # Check existig jobs twice
+            for path in [Path(x) for x in self._myqsdir.glob('*.[dfqr]')]:
+                try:
+                    with path.open() as ifile:
+                        for line in ifile:
+                            if line.startswith('COMMAND='):
+                                commands.add(line.rstrip().split('=', 1)[-1])
+                                break
+                except OSError:
+                    pass
+
+        for cmdline in cmdlines:
+            command = command_mod.Command.args2cmd(cmdline)
+            if command not in commands:
+                commands.add(command)
+                yield cmdline
 
     def _submit(self, options: Options) -> None:
         path_new = Path(self._myqsdir, 'newjob.tmp')
         queue = options.get_queue()
         ncpus = options.get_ncpus()
 
-        for path in [Path(x) for x in options.get_files()]:
-            if not path.is_file():
-                print(f'MyQS cannot find "{path}" batch file.')
+        if options.get_multi_flag():
+            cmdlines = [[x] for x in options.get_cmdline()]
+        else:
+            cmdlines = [options.get_cmdline()]
+        if options.get_add_flag():
+            cmdlines = list(self._new_jobs(cmdlines))
+
+        for cmdline in cmdlines:
+            command: command_mod.Command
+            if Path(cmdline[0]).is_file():
+                command = command_mod.CommandFile(cmdline[0])
+            else:
+                command = command_mod.Command(cmdline[0], errors='ignore')
+                if not command.is_found():
+                    print(f'MyQS cannot find "{cmdline[0]}" command.')
+                    return
+            if not os.access(command.get_file(), os.X_OK):
+                print(f'MyQS cannot execute "{command.get_file()}" command.')
                 return
+
             jobid = self._lastjob()
+            job_command = command.args2cmd(cmdline)
+            if len(job_command) < 21:
+                job_name = job_command
+            elif len(cmdline) == 2 and not cmdline[1].startswith('-'):
+                job_name = Path(cmdline[1]).name
+            else:
+                job_name = Path(cmdline[0]).name
             try:
                 with path_new.open('w') as ofile:
-                    print(f"COMMAND={path}", file=ofile)
-                    print(f"DIRECTORY={os.getcwd()}", file=ofile)
-                    print(f"PATH={os.environ['PATH']}", file=ofile)
+                    print(f"JOBID={jobid}", file=ofile)
+                    print(f"JOBNAME={job_name}", file=ofile)
                     print(f"QUEUE={queue}", file=ofile)
                     print(f"NCPUS={ncpus}", file=ofile)
+                    print(f"DIRECTORY={os.getcwd()}", file=ofile)
+                    print(f"COMMAND={job_command}", file=ofile)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{path_new}" '
                     'temporary file.'
                 ) from exception
             path_new.replace(Path(self._myqsdir, f'{jobid}.q'))
-            print(
-                f'Batch job with jobid {jobid} has been submitted into MyQS.',
-            )
+            print(f'MyQS jobid {jobid} submitted: {command.args2cmd(cmdline)}')
 
-            time.sleep(0.5)
+            time.sleep(0.25)
 
     def run(self) -> int:
         """
@@ -253,9 +321,11 @@ class Main:
         lock_path = self._lock()
         self._submit(options)
         lock_path.unlink()
-        self._myqsd()
 
-        return 0
+        if self._has_myqsd():
+            return 0
+        print('\nMyQS batch job scheduler not running. Run "myqsd" command.')
+        return 1
 
 
 if __name__ == '__main__':

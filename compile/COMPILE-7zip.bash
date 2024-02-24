@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+cd ${0%/*}
+umask 022
+
 # Compile 7zzs as well
 export COMPL_STATIC=1
 
@@ -24,7 +27,7 @@ else
     make -C CPP/7zip/Bundles/Alone2 -f makefile.gcc
 fi
 
-FILE=$(find -name 7zz*)
-ls -l $FILE
-strip $FILE
-ls -l $FILE
+FILES=$(find $PWD -name 7zz*)
+ls -l $FILES
+strip $FILES
+ls -l $FILES

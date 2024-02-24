@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+cd ${0%/*}
 umask 022
+
 ./configure
 make
 
-ls -l ./src/unace
-strip ./src/unace
-ls -l ./src/unace
+ls -l $PWD/src/unace
+strip $PWD/src/unace
+ls -l $PWD/src/unace

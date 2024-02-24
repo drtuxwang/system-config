@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/busybox:1.35
-IMAGE := drtuxwang/busybox-bash:1.35
-NAME := busybox135-bash
-HOSTNAME := busybox135-bash
+BASE_IMAGE := drtuxwang/busybox:1.36
+IMAGE := drtuxwang/busybox-bash:1.36
+NAME := busybox136-bash
+HOSTNAME := busybox136-bash
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build

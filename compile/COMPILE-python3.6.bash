@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+cd ${0%/*}
+umask 022
+
 VERSION="3.6"
 
 case $(uname) in
@@ -32,8 +35,7 @@ sed -i "s/double dummy;/long double dummy;/" Include/objimpl.h
 sed -i "s/#define ALIGNMENT               8/#define ALIGNMENT               16/" Objects/obmalloc.c
 sed -i "s/#define ALIGNMENT_SHIFT         3/#define ALIGNMENT_SHIFT         4/" Objects/obmalloc.c
 
-umask 022
-./configure --prefix="$PWD/install"
+./configure --prefix="$PWD/install" --enable-optimizations
 make
 make install
 
@@ -88,4 +90,4 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     rm install/bin/python3
 fi
 
-ls -ld install/* install/bin/*
+ls -ld $PWD/install/* $PWD/install/bin/*

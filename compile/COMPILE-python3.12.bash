@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+cd ${0%/*}
+umask 022
+
 VERSION="3.12"
 
 case $(uname) in
@@ -27,8 +30,7 @@ Darwin)
     ;;
 esac
 
-umask 022
-./configure --prefix="$PWD/install"
+./configure --prefix="$PWD/install" --enable-optimizations
 make
 make install
 
@@ -80,4 +82,4 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     rm install/bin/python3
 fi
 
-ls -ld install/* install/bin/*
+ls -ld $PWD/install/* $PWD/install/bin/*

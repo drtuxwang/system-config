@@ -1,7 +1,12 @@
 #!/usr/env/bin bash
 #
+# Bash Python launcher module
+#
 # Python loader for starting system/non system Python or Python tools/modules
 #
+# Copyright GPL v2: 2006-2024 By Dr Colin Kong
+#
+
 
 #
 # Function to redirect Python dot files/directories to temp cache
@@ -165,8 +170,8 @@ exec_python() {
     fi
     if [ "$PYTHON_VENVS" -a "$(echo "$PYLD_MAIN" | grep -E "^(${PYTHON_VENVS//[, ]/|})")" -a ! "$VIRTUAL_ENV" ]
     then
-        [ -x "$0-venv" ] && source "$0-venv" "$@" && exit 1
-        [ -x "$PYLD_BIN/${PYLD_MAIN%-*}-venv" ] && source "$PYLD_BIN/${PYLD_MAIN%-*}-venv" "$@" && exit 1
+        [ -x "$PYLD_BIN/venv-${0##*/}" ] && source "$PYLD_BIN/venv-${0##*/}" "$@" && exit 1
+        [ -x "$PYLD_BIN/venv-${PYLD_MAIN%-*}" ] && source "$PYLD_BIN/venv-${PYLD_MAIN%-*}" "$@" && exit 1
     fi
 
     if [ "$OSTYPE" = "cygwin" ]
@@ -215,7 +220,7 @@ exec_python() {
 
     if [ -f "$PYLD_BIN/$PYLD_MAIN.py" ]
     then
-        exec "$PYTHON" -B -E "$PYLD_BIN/pyld.py" $PYLD_FLAGS $PYLD_MAIN "$@"
+        exec "$PYTHON" -B -E "$PYLD_BIN/pyld_mod.py" $PYLD_FLAGS $PYLD_MAIN "$@"
     fi
 
     if [ "$PYLD_EXE" != "$PYLD_MAIN" ]

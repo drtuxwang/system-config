@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+cd ${0%/*}
+umask 022
+
 case $(uname) in
 Darwin)
     export CPPFLAGS="-I/usr/local/opt/libxml2/include $CPPFLAGS"
@@ -8,10 +11,9 @@ Darwin)
     ;;
 esac
 
-umask 022
 ./configure
 make
 
-ls -l src/aria2c
-strip src/aria2c
-ls -l src/aria2c
+ls -l $PWD/src/aria2c
+strip $PWD/src/aria2c
+ls -l $PWD/src/aria2c

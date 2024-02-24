@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+cd ${0%/*}
+umask 022
+
 VERSION="2.7"
 
 case $(uname) in
@@ -36,7 +39,6 @@ Darwin)
     ;;
 esac
 
-umask 022
 # Check UCS4: sys.maxunicode = 1114111
 ./configure --prefix="$PWD/install" --enable-unicode=ucs4
 make
@@ -94,4 +96,4 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
     ln -s python$VERSION install/bin/python2
 fi
 
-ls -ld install/* install/bin/* install/lib/python*/site-packages/*info/METADATA 2> /dev/null
+ls -ld $PWD/install/* $PWD/install/bin/*

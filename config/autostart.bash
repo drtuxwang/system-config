@@ -14,22 +14,13 @@ export PATH="$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$BASE_P
 export TMPDIR=${TMPDIR:-/tmp/$(id -un)}
 
 # Use /tmp (tmpfs) for cache
-[ ! -h $HOME/.local/share/gvfs-metadata ] && \
-    rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMPDIR/.cache $HOME/.local/share/gvfs-metadata
+[ ! -h $HOME/.local/share/gvfs-metadata ] && rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMPDIR/.cache $HOME/.local/share/gvfs-metadata
 [ ! -h $HOME/.fontconfig ] && rm -rf $HOME/.fontconfig &&  ln -s $TMPDIR/.cache $HOME/.fontconfig
-[ ! -d "$HOME/.local/share/recently-used.xbel" ] && \
-    rm -f $HOME/.local/share/recently-used.xbel && mkdir -p $HOME/.local/share/recently-used.xbel
+[ ! -d "$HOME/.local/share/recently-used.xbel" ] && rm -f $HOME/.local/share/recently-used.xbel && mkdir -p $HOME/.local/share/recently-used.xbel
 [ ! -h $HOME/.pki ] && rm -rf $HOME/.pki &&  ln -s $TMPDIR/.cache $HOME/.pki
-[ ! -d "$HOME/.recently-used.xbel" ] && \
-    rm -f $HOME/.recently-used.xbel && mkdir -p $HOME/.recently-used.xbel
-[ ! -d $HOME/.xsession-errors.old ] && \
-    rm -f $HOME/.xsession-errors.old && mkdir $HOME/.xsession-errors.old
-[ ! -h $HOME/.xsession-errors ] && \
-    rm -f $HOME/.xsession-errors && ln -s /dev/null $HOME/.xsession-errors
-[ ! -d $HOME/.xfce4-session.verbose-log.last ] && \
-    rm -f $HOME/.xfce4-session.verbose-log.last && mkdir $HOME/.xfce4-session.verbose-log.last
-[ ! -h $HOME/.xfce4-session.verbose-log ] && \
-    rm -f $HOME/.xfce4-session.verbose-log && ln -s /dev/null $HOME/.xfce4-session.verbose-log
+[ ! -d "$HOME/.recently-used.xbel" ] && rm -f $HOME/.recently-used.xbel && mkdir -p $HOME/.recently-used.xbel
+[ ! -d $HOME/.xsession-errors.old ] && rm -f $HOME/.xsession-errors.old && mkdir $HOME/.xsession-errors.old
+[ ! -h $HOME/.xsession-errors ] && rm -f $HOME/.xsession-errors && ln -s /dev/null $HOME/.xsession-errors
 [ ! -h $HOME/Desktop/tmp ] && rm -rf $HOME/Desktop/tmp && ln -s $TMPDIR $HOME/Desktop/tmp
 
 # Wipe Trash

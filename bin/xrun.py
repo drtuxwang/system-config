@@ -100,7 +100,7 @@ class Options:
                 if Path(output).is_file():
                     nargs.extend([
                         'echo',
-                        f'\033[1;33mOutput file exists: {output}\033[0m',
+                        f'\x1b[1;33mOutput file exists: {output}\x1b[0m',
                     ])
                 else:
                     outputs.append(output)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test module for 'pyld.py' module
+Test module for 'pyld_mod.py' module
 """
 
 import os
@@ -10,7 +10,7 @@ import unittest.mock
 from pathlib import Path
 from typing import List
 
-import pyld
+import pyld_mod
 
 
 class TestOptions(
@@ -32,7 +32,7 @@ class TestOptions(
         Test object dumping does not fail.
         """
         args = ['arg0', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
         options.dump()
 
     def test_get_dump_flag_default(self) -> None:
@@ -40,7 +40,7 @@ class TestOptions(
         Test default dumpFlag.
         """
         args = ['arg0', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_dump_flag()
         self.assertFalse(result)
@@ -50,7 +50,7 @@ class TestOptions(
         Test '-pyldv' does not set dumpFlag.
         """
         args = ['arg0', 'moduleX', '-pyldv']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_dump_flag()
         self.assertFalse(result)
@@ -60,7 +60,7 @@ class TestOptions(
         Test '-pyldverbose' does not set dumpFlag.
         """
         args = ['arg0', 'moduleX', '-pyldverbose']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_dump_flag()
         self.assertFalse(result)
@@ -70,7 +70,7 @@ class TestOptions(
         Test '-pyldvv' sets dump flag.
         """
         args = ['arg0', 'moduleX', '-pyldvv']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_dump_flag()
         self.assertTrue(result)
@@ -80,7 +80,7 @@ class TestOptions(
         Test '-pyldvvv' sets dump flag.
         """
         args = ['arg0', 'moduleX', '-pyldvvv']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_dump_flag()
         self.assertTrue(result)
@@ -91,7 +91,7 @@ class TestOptions(
         """
         expected: List[str] = []
         args = ['arg0', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_library_path()
         self.assertListEqual(result, expected)
@@ -107,7 +107,7 @@ class TestOptions(
             '-pyldpath',
             f'pathX{os.pathsep}pathY',
         ]
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_library_path()
         self.assertListEqual(result, expected)
@@ -124,11 +124,11 @@ class TestOptions(
         args = ['arg0', 'moduleX', '-pyldpath', '-pyldv']
 
         with self.assertRaises(SystemExit) as context:
-            pyld.Options(args)
+            pyld_mod.Options(args)
         self.assertEqual(2, context.exception.args[0])
 
         # pylint: disable=no-member
-        result = pyld.sys.stderr.getvalue()  # type: ignore
+        result = pyld_mod.sys.stderr.getvalue()  # type: ignore
         self.assertIn(expected, result)
 
     def test_get_module(self) -> None:
@@ -137,7 +137,7 @@ class TestOptions(
         """
         expected = 'moduleX'
         args = ['arg0', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module()
         self.assertEqual(result, expected)
@@ -148,7 +148,7 @@ class TestOptions(
         """
         expected = 'moduleX'
         args = ['arg0', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_name()
         self.assertEqual(result, expected)
@@ -159,7 +159,7 @@ class TestOptions(
         """
         expected = 'moduleY'
         args = ['arg0', '-pyldname', 'moduleY', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_name()
         self.assertEqual(result, expected)
@@ -170,7 +170,7 @@ class TestOptions(
         """
         expected = 'moduleY'
         args = ['arg0', '-pyldname=moduleY', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_name()
         self.assertEqual(result, expected)
@@ -181,7 +181,7 @@ class TestOptions(
         """
         expected: List[str] = []
         args = ['arg0', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_args()
         self.assertListEqual(result, expected)
@@ -192,7 +192,7 @@ class TestOptions(
         """
         expected = ['moduleYarg1', 'moduleYarg2']
         args = ['arg0', 'moduleX', 'moduleYarg1', 'moduleYarg2']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_args()
         self.assertListEqual(result, expected)
@@ -210,7 +210,7 @@ class TestOptions(
             'moduleYarg1',
             'moduleYarg2'
         ]
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_args()
         self.assertListEqual(result, expected)
@@ -221,7 +221,7 @@ class TestOptions(
         """
         expected = ['moduleYarg1', 'moduleYarg2']
         args = ['arg0', 'moduleX', '-pyldv', 'moduleYarg1', 'moduleYarg2']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_args()
         self.assertListEqual(result, expected)
@@ -238,7 +238,7 @@ class TestOptions(
             'moduleYarg1',
             'moduleYarg2'
         ]
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_args()
         self.assertListEqual(result, expected)
@@ -249,7 +249,7 @@ class TestOptions(
         """
         expected = ['moduleYarg1', 'moduleYarg2']
         args = ['arg0', 'moduleX', '-pyldvv', 'moduleYarg1', 'moduleYarg2']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_args()
         self.assertListEqual(result, expected)
@@ -266,7 +266,7 @@ class TestOptions(
             'moduleYarg1',
             'moduleYarg2'
         ]
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_args()
         self.assertListEqual(result, expected)
@@ -280,7 +280,7 @@ class TestOptions(
             str(Path('myDir', 'myFile')),
             str(Path('moduleDir', 'moduleX')),
         ]
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_module_dir()
         self.assertEqual(result, expected)
@@ -290,7 +290,7 @@ class TestOptions(
         Test verbose flag default.
         """
         args = ['arg0', 'moduleX']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_verbose_flag()
         self.assertFalse(result)
@@ -300,7 +300,7 @@ class TestOptions(
         Test '-pyldv' sets verbose flag.
         """
         args = ['arg0', 'moduleX', '-pyldv']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_verbose_flag()
         self.assertTrue(result)
@@ -310,7 +310,7 @@ class TestOptions(
         Test '-pyldverbose' sets verbose flag.
         """
         args = ['arg0', 'moduleX', '-pyldverbose']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_verbose_flag()
         self.assertTrue(result)
@@ -320,7 +320,7 @@ class TestOptions(
         Test '-pyldvv' sets verbose flag.
         """
         args = ['arg0', 'moduleX', '-pyldvv']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_verbose_flag()
         self.assertTrue(result)
@@ -330,7 +330,7 @@ class TestOptions(
         Test '-pyldvvv' sets verbose flag.
         """
         args = ['arg0', 'moduleX', '-pyldvvv']
-        options = pyld.Options(args)
+        options = pyld_mod.Options(args)
 
         result = options.get_verbose_flag()
         self.assertTrue(result)
@@ -346,10 +346,10 @@ class TestOptions(
         args = ['arg0', '-h']
 
         with self.assertRaises(SystemExit):
-            pyld.Options(args)
+            pyld_mod.Options(args)
 
         # pylint: disable=no-member
-        result = pyld.sys.stdout.getvalue()  # type: ignore
+        result = pyld_mod.sys.stdout.getvalue()  # type: ignore
         for expected in all_expected:
             self.assertIn(expected, result)
 
@@ -364,10 +364,10 @@ class TestOptions(
         args = ['arg0', '--h']
 
         with self.assertRaises(SystemExit):
-            pyld.Options(args)
+            pyld_mod.Options(args)
 
         # pylint: disable=no-member
-        result = pyld.sys.stdout.getvalue()  # type: ignore
+        result = pyld_mod.sys.stdout.getvalue()  # type: ignore
         for expected in all_expected:
             self.assertIn(expected, result)
 
@@ -382,10 +382,10 @@ class TestOptions(
         args = ['arg0', '--help']
 
         with self.assertRaises(SystemExit):
-            pyld.Options(args)
+            pyld_mod.Options(args)
 
         # pylint: disable=no-member
-        result = pyld.sys.stdout.getvalue()  # type: ignore
+        result = pyld_mod.sys.stdout.getvalue()  # type: ignore
         for expected in all_expected:
             self.assertIn(expected, result)
 
@@ -401,12 +401,12 @@ class TestOptions(
         args = ['arg0']
 
         with self.assertRaises(SystemExit) as context:
-            pyld.Options(args)
+            pyld_mod.Options(args)
 
         self.assertEqual(2, context.exception.args[0])
 
         # pylint: disable=no-member
-        result = pyld.sys.stderr.getvalue()  # type: ignore
+        result = pyld_mod.sys.stderr.getvalue()  # type: ignore
         self.assertIn(expected, result)
 
 
@@ -443,18 +443,18 @@ class TestPythonLoader(unittest.TestCase):
     def tearDown(self) -> None:
         os.chdir(self._start_directory)
 
-    @unittest.mock.patch('pyld.PythonLoader.dump', return_value=None)
+    @unittest.mock.patch('pyld_mod.PythonLoader.dump', return_value=None)
     def test_dump(self, _: unittest.mock.MagicMock) -> None:
         """
         Test object dumping does not fail.
         """
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
         python_loader.dump()
 
         # pylint: disable=no-member
         self.assertTrue(python_loader.dump.called)  # type: ignore
 
-    @unittest.mock.patch('pyld.PythonLoader.dump', return_value=None)
+    @unittest.mock.patch('pyld_mod.PythonLoader.dump', return_value=None)
     def test_run_dump_flag(self, _: unittest.mock.MagicMock) -> None:
         """
         Test run with dump flag set.
@@ -462,7 +462,7 @@ class TestPythonLoader(unittest.TestCase):
         self._mock_options.get_dump_flag = unittest.mock.MagicMock(
             return_value=True)
 
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
@@ -474,7 +474,7 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test run failure when module does not exist
         """
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
@@ -485,11 +485,11 @@ class TestPythonLoader(unittest.TestCase):
         We use this module as the test module.
         """
         self._mock_options.get_module = unittest.mock.MagicMock(
-            return_value='test_pyld')
+            return_value='test_pyld_mod')
         self._mock_options.get_module_dir = unittest.mock.MagicMock(
             return_value=os.curdir)
 
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
 
         with self.assertRaises(AttributeError) as context:
             python_loader.run()
@@ -503,7 +503,7 @@ class TestPythonLoader(unittest.TestCase):
         self._mock_options.get_library_path = unittest.mock.MagicMock(
             return_value=['directory1', 'directory2'])
 
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
@@ -517,20 +517,20 @@ class TestPythonLoader(unittest.TestCase):
         self._mock_options.get_verbose_flag = unittest.mock.MagicMock(
             return_value=True)
 
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
 
         # pylint: disable=no-member
-        result = pyld.sys.stdout.getvalue()  # type: ignore
+        result = pyld_mod.sys.stdout.getvalue()  # type: ignore
         self.assertIn('sys.argv =', result)
 
     def test_get_options(self) -> None:
         """
         Test options is set correctly.
         """
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
 
         result = python_loader.get_options()
         self.assertEqual(result, self._mock_options)
@@ -541,7 +541,7 @@ class TestPythonLoader(unittest.TestCase):
         """
         expected = [str(Path('directory', 'arg0')), 'args1', 'args2']
 
-        python_loader = pyld.PythonLoader(self._mock_options)
+        python_loader = pyld_mod.PythonLoader(self._mock_options)
 
         result: list = python_loader.get_sys_argv()
         self.assertListEqual(result, expected)

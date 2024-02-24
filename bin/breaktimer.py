@@ -117,7 +117,7 @@ class Main:
 
     def _alert(self) -> None:
         if self._alarm < 601:
-            sys.stdout.write("\033]11;#ff8888\007")
+            sys.stdout.write("\x1b]11;#ff8888\x07")
             sys.stdout.flush()
             subtask_mod.Batch(self._bell.get_cmdline()).run()
             self._options.get_pop().set_args(
@@ -137,7 +137,7 @@ class Main:
 
         while True:
             try:
-                sys.stdout.write("\033]11;#ffffdd\007")
+                sys.stdout.write("\x1b]11;#ffffdd\x07")
                 elapsed = 0
                 self._alarm = 0
                 start = int(time.time())

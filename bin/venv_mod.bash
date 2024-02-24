@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 #
-# Build Python virtual environment
-# (set PYTHON, PACKAGE, DEPENDS, POSTINST)
+# Bash Python Virtual Environments module
+#
+# Build and run Python virtual environment (set PYTHON, PACKAGE, DEPENDS, POSTINST)
+#
+# Copyright GPL v2: 2023-2024 By Dr Colin Kong
 #
 
 set -u
@@ -39,7 +42,7 @@ create_virtualenv() {
 # Show Virtual Environment configurations
 if [ "${0##*/}" = venv_mod.bash ]
 then
-    for FILE in "${0%/*}"/*-venv
+    for FILE in "${0%/*}"/venv-*
     do
         echo "${FILE##*/}" | awk '{printf("%-24s", $1)}'
         grep -E "(PYTHON=|PACKAGE=|source )" "$FILE" | grep -v "/${0##*/}" | sed -e 's/  *#.*//;s@^[^=]*[=/]@@;s/"//g' | awk '{printf(" %s", $NF)}'
@@ -57,4 +60,4 @@ export VIRTUAL_ENV
 export PATH="$VIRTUAL_ENV/bin:$PATH"
 [ "$("$VIRTUAL_ENV/bin/$PYTHON" -m pip freeze 2> /dev/null | grep -i "^$PACKAGE$")" ] || create_virtualenv "$@"
 
-[ "${0##*-}" = venv ] && exec bash -l
+[[ ${0##*/} =~ venv-* ]] && echo -e "\nVIRTUAL_ENV=$VIRTUAL_ENV" && exec bash -l

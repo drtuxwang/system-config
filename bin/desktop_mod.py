@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Python X-windows desktop module
+Python graphical desktop module
 
-Copyright GPL v2: 2013-2023 By Dr Colin Kong
+Copyright GPL v2: 2013-2024 By Dr Colin Kong
 """
 
 import functools

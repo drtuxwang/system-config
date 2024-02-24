@@ -256,23 +256,23 @@ class Main:
         options = Options()
 
         self._exe_magics = (
-            b'\177ELF',             # linux/sunos      (127  E   L   F )
-            b'\312\376\272\276',    # macos-x86/x86_64 (202 254 186 190)
-            b'\317\372\355\376',    # macos-x86_64     (207 250 237 254)
-            b'\316\372\355\376',    # macos-x86        (206 250 237 254)
-            b'MZ\220\000',          # windows          ( M   Z  144  0 )
+            b'\x7fELF',             # linux/sunos      (127  E   L   F )
+            b'\xca\xfe\xba\xbe',    # macos-x86/x86_64 (202 254 186 190)
+            b'\xcf\xfa\xed\xfe',    # macos-x86_64     (207 250 237 254)
+            b'\xce\xfa\xed\xfe',    # macos-x86        (206 250 237 254)
+            b'MZ\x90\0',            # windows          ( M   Z  144  0 )
         )
         self._is_exe_ext = re.compile(
             '[.](bat|cmd|com|dll|exe|ms[ip]|psd|sfx|s[olh]|s[ol][.].*|tcl)$',
             re.IGNORECASE
         )
         self._is_not_exe_ext = re.compile(
-            '[.](7z|[acfo]|ace|asr|avi|bak|bmp|bz2|ce?rt|cfg|cpp|css|dat|deb|'
-            'diz|doc|docx|egg|f77|f90|gif|gm|gz|h|hlp|htm|html|ico|ini|'
-            'installed|ism|iso|jar|java|jpe?g|js|json|key|lic|lib|list|log|'
-            'mov|mp[34g]|mpeg|o|obj|od[fgst]|ogg|opt|pk|pdf|png|ppt|pptx|rar|'
-            'reg|rpm|swf|tar([.].*)?|txt|url|wav|whl|wsdl|xhtml|xls|xlsx|xml|'
-            'xs[dl]|xvid|ya?ml|zip)$',
+            '[.](7z|[acfo]|ace|asr|avi|bak|bmp|bz2|ce?rt|cfg|conf|config|cpp|'
+            'css|dat|deb|diz|doc|docx|egg|f77|f90|gif|gm|gz|h|hlp|htm|html|'
+            'ico|ini|installed|ism|iso|jar|java|jpe?g|js|json|key|lic|lib|'
+            'list|log|mov|mp[34g]|mpeg|o|obj|od[fgst]|ogg|opt|pk|pdf|png|ppt|'
+            'pptx|rar|reg|rpm|swf|tar([.].*)?|txt|url|wav|whl|wsdl|xhtml|xls|'
+            'xlsx|xml|xs[dl]|xvid|ya?ml|zip)$',
             re.IGNORECASE
         )
 

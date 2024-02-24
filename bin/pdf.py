@@ -162,7 +162,7 @@ class Main:
                 try:
                     with path_new.open('wb') as ofile:
                         for line in ifile:
-                            ofile.write(line.rstrip(b"\r\n\004") + b"\n")
+                            ofile.write(line.rstrip(b"\r\n\x04") + b"\n")
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create '

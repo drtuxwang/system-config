@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 export MYPY_CACHE_DIR=/dev/null
-source "${0%/*}/pyld.bash"
+source "${0%/*}/pyld_mod.bash"

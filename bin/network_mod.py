@@ -15,8 +15,8 @@ from typing import Any, List, Tuple, Union
 
 import command_mod
 
-RELEASE = '3.4.4'
-VERSION = 20230916
+RELEASE = '3.4.5'
+VERSION = 20240221
 
 
 class NetNice(command_mod.Command):
@@ -95,7 +95,7 @@ class Sandbox(command_mod.Command):
 
     @staticmethod
     def _show(colour: int, message: str) -> None:
-        print(f"\033[1;3{colour}mSandbox: {message}\033[0m")
+        print(f"\x1b[1;3{colour}mSandbox: {message}\x1b[0m")
 
     @classmethod
     def _check_bwrap(cls, errors: str) -> command_mod.Command:

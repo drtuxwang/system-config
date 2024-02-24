@@ -8,7 +8,6 @@ import os
 import re
 import signal
 import sys
-import unicodedata
 from pathlib import Path
 from typing import List
 
@@ -16,6 +15,7 @@ import magic  # type: ignore
 
 import command_mod
 import config_mod
+import logging_mod
 import subtask_mod
 
 
@@ -79,30 +79,41 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _show(cls, pad: int, path: Path, info: str) -> None:
-        if path.suffix in cls._video_extensions and cls._ffprobe.is_found():
-            task = subtask_mod.Batch(cls._ffprobe.get_cmdline() + [path])
-            task.run(error2output=True)
-            length = 0
-            size = '?x?'
-            freq = '?Hz'
-            for line in task.get_output():
-                try:
-                    if line.strip().startswith('Duration:'):
-                        hrs, mins, secs = (
-                            line.replace(',', '').split()[1].split(':')
-                        )
-                        length = int(int(hrs)*3600+int(mins)*60+float(secs))
-                    elif line.strip().startswith('Stream #'):
-                        if ' fps,' in line:
-                            size = cls._isjunk.sub('', line).split(', ')[-1]
-                        elif ' Hz,' in line:
-                            freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
-                except IndexError:
-                    pass
-            info = f'{length}s, {size}, {freq}Hz, {info}'
+    def _get_media_info(cls, path: Path, info: str) -> str:
+        task = subtask_mod.Batch(cls._ffprobe.get_cmdline() + [path])
+        task.run(error2output=True)
+        length = 0
+        size = '?x?'
+        freq = '?Hz'
+        for line in task.get_output():
+            try:
+                if line.strip().startswith('Duration:'):
+                    hrs, mins, secs = (
+                        line.replace(',', '').split()[1].split(':')
+                    )
+                    length = int(int(hrs)*3600+int(mins)*60+float(secs))
+                elif line.strip().startswith('Stream #'):
+                    if ' fps,' in line:
+                        size = cls._isjunk.sub('', line).split(', ')[-1]
+                    elif ' Hz,' in line:
+                        freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
+            except IndexError:
+                pass
+        return f'{length}s, {size}, {freq}Hz, {info}'
 
-        print(f"{path}:{' '*pad} {info}")
+    @classmethod
+    def _show(cls, files: List[str]) -> None:
+        width = max(logging_mod.Message(x).width() for x in files)
+        with magic.Magic() as checker:
+            for file in files:
+                info = checker.id_filename(file)
+                path = Path(file)
+                if (
+                    path.suffix in cls._video_extensions and
+                    cls._ffprobe.is_found()
+                ):
+                    info = cls._get_media_info(path, info)
+                print(f"{logging_mod.Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:
@@ -112,15 +123,7 @@ class Main:
         options = Options()
         files = options.get_files()
 
-        cjk_widths = {
-            x: sum(1 + (unicodedata.east_asian_width(c) in "WF") for c in x)
-            for x in files
-        }
-        max_len = max(cjk_widths.values())
-        with magic.Magic() as checker:
-            for file in files:
-                pad = max_len - cjk_widths[file]
-                cls._show(pad, Path(file), checker.id_filename(file))
+        cls._show(files)
 
         return 0
 

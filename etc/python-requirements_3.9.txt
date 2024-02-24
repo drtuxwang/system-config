@@ -1,2 +1,3 @@
 exceptiongroup==1.1.3        #   (required by ipython for 3.9)
+ipython                      # ==8.18.1 (last compatible version)
 zipp==3.14.0                 #   (required by importlib-metadata for 3.9)

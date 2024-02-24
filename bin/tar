@@ -36,7 +36,7 @@ pytar() {
     fi
     PY_MAIN=${0##*/}
 
-    exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PY_MAIN "$@"
+    exec "$PYTHON" -B -E "$BIN_DIR/pyld_mod.py" $PY_MAIN "$@"
 }
 
 

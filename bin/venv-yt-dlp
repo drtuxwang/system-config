@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 #
-# django virtualenv
+# yt-dlp virtualenv (for downloading vidoes)
 #
 
 PYTHON="python3.11"
-PACKAGE="Django==4.1.13"
-DEPENDS=
+PACKAGE="yt-dlp==2023.12.30"
+DEPENDS=""
 POSTINST=
-
 
 source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

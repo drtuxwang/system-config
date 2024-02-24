@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+cd ${0%/*}
+umask 022
+
 if [ "${0##*/}" = COMPILE32 ]
 then
     CC="gcc"; CFLAGS="-fPIC -m32"; export CC CFLAGS
@@ -11,9 +14,8 @@ else
     FC="gfortran"; FFLAGS="-fPIC -fno-second-underscore"; export FC FFLAGS
 fi
 
-umask 022
 ./configure --prefix="$PWD/install"
 make
 make install
 
-ls -ld install/* install/bin/*
+ls -ld $PWD/install/* $PWD/install/bin/*

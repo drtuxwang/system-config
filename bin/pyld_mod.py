@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Load Python main program as module (must have Main class).
+Python main program loader module
+
+Copyright GPL v2: 2006-2024 By Dr Colin Kong
 """
 
 import argparse

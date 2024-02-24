@@ -12,17 +12,23 @@ the years.
  * .gitattributes                  GIT settings (LFS support)
  * .pylintrc                       Python Pylint configuration file
  * bin/command_mod.py              Python command line handling module
- * bin/test_command_mod.py         Unit testing suite for "command_mod.py"
- * bin/config_mod.py               Python config module for handling "config_mod.yaml)
- * bin/config_mod.yaml             Configuration file apps, bindings & parameters
+ * bin/config_mod.py               Python configuration module
+ * bin/config_mod.yaml             Python configuration YAML file
+ * bin/crypt_mod.bash              Bash encrypted partitions handling module
  * bin/debug_mod.py                Python debugging tools module
- * bin/desktop_mod.py              Python X-windows desktop module
+ * bin/desktop_mod.py              Python graphical desktop module
+ * bin/docker_mod.bash             Bash Docker utilities module
  * bin/file_mod.py                 Python file handling utility module
- * bin/logging_mod.py              Python logging handling module
+ * bin/host_mod.bash               Bash host connection utilities module
+ * bin/logging_mod.py              Python log handling module
  * bin/network_mod.py              Python network handling utility module
  * bin/power_mod.py                Python power handling module
+ * bin/pyld_mod.bash               Bash Python launcher module
+ * bin/pyld_mod.py                 Python main program loader module
+ * bin/qemu_mod.bash               Bash QEMU image file utilities module
  * bin/subtask_mod.py              Python sub task handling module
  * bin/task_mod.py                 Python task handling utility module
+ * bin/venv_mod.bash               Bash Python Virtual Environments module
  * bin/python*                     Python startup wrapper
  * bin/*                           Python utilities and wrapper scripts
  * ansible/                        Ansible for local hosts
@@ -75,7 +81,7 @@ the years.
  * docker/almalinux-9/             almalinux:9 based Docker images
  * docker/alpine-3.16/             alpine:3.16 based Docker images
  * docker/alpine-3.17/             alpine:3.17 based Docker images
- * docker/busybox-1.35/            busybox:1.35 based Docker images
+ * docker/busybox-1.36/            busybox:1.36 based Docker images
  * docker/centos-7/                centos:7 based Docker images
  * docker/debian-10/               debian:10-slim based Docker images
  * docker/debian-11/               debian:11-slim based Docker images
@@ -132,11 +138,8 @@ the years.
  * python/simple-package/          Simple Egg & WHL package
  * python/simple-tornado/          Tornado examples
  * qemu/*.vm.bash                  QEMU VM examples
- * qemu/mount-qemu-bnd.bash        Mount QEMU image file partitions
- * qemu/fstrim-qemu-nbd.bash       TRIM mounted QEMU image file partitions
- * qemu/umount-qemu-nbd.bash       Umount QEMU image file partitions
- * qemu/recompress-qemu-img.bash   Recompress QEMU image file
- * qemu/qemu-*.bash                QEMU wrapper scripts
+ * qemu-system-aarch64.bash        QEMU System aarch64 (arm64) wrapper
+ * qemu-system-x86_64.bash         QEMU System x86_64 (amd64) wrapper
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example
  * wipe/                           Disk wipe utility

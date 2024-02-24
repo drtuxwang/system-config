@@ -154,9 +154,9 @@ class Main:
         """
         options = Options()
 
-        print("\033[1;34mSandbox: Starting...\033[0m")
+        print("\x1b[1;34mSandbox: Starting...\x1b[0m")
         exitcode = subtask_mod.Task(options.get_command().get_cmdline()).run()
-        print("\033[1;34mSandbox: Shutdown!\033[0m")
+        print("\x1b[1;34mSandbox: Shutdown!\x1b[0m")
         return exitcode
 
 

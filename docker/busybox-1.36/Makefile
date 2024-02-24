@@ -1,5 +1,5 @@
-BASE_IMAGE := busybox:1.35
-IMAGE := drtuxwang/busybox:1.35
+BASE_IMAGE := busybox:1.36
+IMAGE := drtuxwang/busybox:1.36
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build

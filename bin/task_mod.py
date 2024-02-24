@@ -9,12 +9,13 @@ import functools
 import getpass
 import os
 import re
+import signal
 import subprocess
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.3.2'
-VERSION = 20230122
+RELEASE = '2.4.0'
+VERSION = 20240217
 
 
 class Tasks:
@@ -70,43 +71,43 @@ class Tasks:
         """
         raise NotImplementedError
 
-    def _kill(self, signal: str, pids: List[int]) -> None:
+    def _kill(self, pids: List[int], signame: str) -> None:
         raise NotImplementedError
 
     def killpids(
         self,
         pids: List[int],
-        signal: str = 'KILL',
+        signame: str = 'KILL',
     ) -> None:
         """
         Kill processes by process ID list.
 
         pids = List of process IDs
-        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signame = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
-        if signal not in ('CONT', 'KILL', 'STOP', 'TERM'):
-            raise InvalidSignalError(f'Invalid "{signal}" signal name.')
+        if signame not in ('CONT', 'KILL', 'STOP', 'TERM'):
+            raise InvalidSignalError(f'Invalid "{signame}" signal name.')
 
         if pids:
-            self._kill(signal, pids)
+            self._kill(pids, signame)
 
-    def killpgid(self, pgid: int, signal: str = 'KILL') -> None:
+    def killpgid(self, pgid: int, signame: str = 'KILL') -> None:
         """
         Kill processes by process group ID.
 
         pgids = List of process group ID
-        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signame = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         raise NotImplementedError
 
-    def killpname(self, pname: str, signal: str = 'KILL') -> None:
+    def killpname(self, pname: str, signame: str = 'KILL') -> None:
         """
         Kill all processes with program name.
 
         pname = Program name
-        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signame = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
-        self.killpids(self.pname2pids(pname), signal=signal)
+        self.killpids(self.pname2pids(pname), signame=signame)
 
     def haspgid(self, pgid: int) -> bool:
         """
@@ -212,6 +213,12 @@ class PosixTasks(Tasks):
 
     self._process = Dictionary containing process information
     """
+    signals = {
+        'CONT': signal.SIGCONT,
+        'KILL': signal.SIGKILL,
+        'STOP': signal.SIGSTOP,
+        'TERM': signal.SIGTERM,
+    }
 
     def _config(self, user: str) -> None:
         if 'COLUMNS' not in os.environ:
@@ -260,23 +267,24 @@ class PosixTasks(Tasks):
                 pids.append(pid)
         return sorted(pids)
 
-    def _kill(self, signal: str, pids: List[int]) -> None:
-        command = ['kill', f'-{signal}']
+    def _kill(self, pids: List[int], signame: str) -> None:
         for pid in pids:
-            command.append(str(pid))
-        try:
-            _System.run_program(command)
-        except (CommandNotFoundError, ExecutableCallError) as exception:
-            raise SystemExit(exception) from exception
+            try:
+                if pid < 0:  # Avoids broken /usr/bin/kill on some Linux
+                    os.killpg(-pid, self.signals[signame])
+                else:
+                    os.kill(pid, self.signals[signame])
+            except ProcessLookupError:
+                pass
 
-    def killpgid(self, pgid: int, signal: str = 'KILL') -> None:
+    def killpgid(self, pgid: int, signame: str = 'KILL') -> None:
         """
         Kill processes by process group ID.
 
         pgids = List of process group ID
-        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signame = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
-        self.killpids([-pgid], signal=signal)
+        self.killpids([-pgid], signame=signame)
 
 
 class WindowsTasks(Tasks):
@@ -331,7 +339,7 @@ class WindowsTasks(Tasks):
                 pids.append(pid)
         return sorted(pids)
 
-    def _kill(self, signal: str, pids: List[int]) -> None:
+    def _kill(self, pids: List[int], signame: str) -> None:
         command = ['taskkill', '/f']
         for pid in pids:
             command.extend(['/pid', str(pid)])
@@ -340,14 +348,14 @@ class WindowsTasks(Tasks):
         except (CommandNotFoundError, ExecutableCallError) as exception:
             raise SystemExit(exception) from exception
 
-    def killpgid(self, pgid: int, signal: str = 'KILL') -> None:
+    def killpgid(self, pgid: int, signame: str = 'KILL') -> None:
         """
         Kill processes by process group ID.
 
         pgids = List of process group ID
-        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signame = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
-        self.killpids([pgid], signal=signal)
+        self.killpids([pgid], signame=signame)
 
 
 class _System:

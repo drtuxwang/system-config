@@ -5,6 +5,7 @@ chardet                      # ==5.0.0 (last compatible version)
 charset-normalizer==2.0.0
 click                        # ==8.0.4 (last compatible version)
 cookiecutter                 # ==1.7.3 (last compatible version)
+cryptography                 # ==40.0.2 (last compatible version)
 dill                         # ==0.3.4 (last compatible version)
 dnspython                    # ==2.2.1 (last compatible version)
 executing==None
@@ -40,6 +41,7 @@ pyflakes==2.3.1
 Pygments                     # ==2.14.0 (last compatible version)
 pylint==2.13.9
 pymongo==3.13.0
+pyOpenSSL                    # ==23.2.0 (last compatible version)
 requests                     # ==2.27.1 (last compatible version)
 rich==None
 setuptools                   # ==59.6.0 (last compatible version)

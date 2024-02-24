@@ -293,6 +293,7 @@ then
     export LESSHISTFILE=/dev/null
     export PIP_BREAK_SYSTEM_PACKAGES=1
     export PYTHONDONTWRITEBYTECODE=1
+    export TIMEFORMAT=" [ time(s)  -  real: %2R  user: %2U  sys: %2S  cpu: %P%% ]"
 
     # Save/load default path settings
     if [ ! "$BASE_PATH" ]

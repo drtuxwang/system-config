@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 #
-# yt-dlp virtualenv (for downloading vidoes)
+# flask virtualenv
 #
 
 PYTHON="python3.11"
-PACKAGE="yt-dlp==2023.11.16"
-DEPENDS=""
+PACKAGE="flask==2.3.3"
+DEPENDS=
 POSTINST=
+
 
 source "${0%/*}/venv_mod.bash"
 exec "${0##*/}" "$@"

@@ -20,7 +20,7 @@ BUILD_DIRS := \
 	oraclelinux-8 \
 	centos-7 \
 	\
-	busybox-1.35 \
+	busybox-1.36 \
 	golang-1.19 \
 	httpd-2.4 \
 	nginx-1.24 \

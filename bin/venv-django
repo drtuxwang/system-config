@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
-# flask virtualenv
+# django virtualenv
 #
 
 PYTHON="python3.11"
-PACKAGE="flask==2.2.5"
+PACKAGE="Django==4.2.10"
 DEPENDS=
 POSTINST=
 

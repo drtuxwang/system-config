@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 PYLD_MAIN="pyld_gen"
-source "${0%/*}/pyld.bash"
+source "${0%/*}/pyld_mod.bash"

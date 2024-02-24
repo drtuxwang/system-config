@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+PYLD_MAIN="myqwrap"
+source "${0%/*}/pyld_mod.bash"
