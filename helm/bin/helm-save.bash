@@ -13,7 +13,7 @@ fi
 
 umask 022
 
-FILE="../${1#*/}_${2}_app-${3}.tar"
+FILE="${1#*/}_${2}_app-${3}.tar"
 shift 3
 CREATED=$(docker inspect "$@" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 

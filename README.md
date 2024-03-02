@@ -19,6 +19,7 @@ the years.
  * bin/desktop_mod.py              Python graphical desktop module
  * bin/docker_mod.bash             Bash Docker utilities module
  * bin/file_mod.py                 Python file handling utility module
+ * bin/git_mod.bash                Git utilities module
  * bin/host_mod.bash               Bash host connection utilities module
  * bin/logging_mod.py              Python log handling module
  * bin/network_mod.py              Python network handling utility module

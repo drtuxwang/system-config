@@ -3,8 +3,12 @@
 cd ${0%/*}
 umask 022
 
-./autogen.sh
-./configure
+if [ $(uname) = Darwin ]
+then
+    ./configure --enable-utf8proc
+else
+    ./configure
+fi
 make
 
 ls -l $PWD/tmux

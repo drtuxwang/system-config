@@ -144,7 +144,8 @@ mount_image() {
 #
 unmount_image() {
     local process_list=$(ps -ef)
-    device=$(echo "$process_list" | grep "qemu-nbd .*/dev/nbd.* $(realpath "${1#$hostname:}") " | sed -e "s@.*/dev/@/dev/@;s/ .*//")
+    device=$(echo "$process_list" | grep "qemu-nbd .*/dev/nbd.*/$1" | sed -e "s@.*/dev/@/dev/@;s/ .*//")
+    [ ! "$device" ] && device=$(echo "$process_list" | grep "qemu-nbd .*/dev/nbd.* $(realpath "${1#$hostname:}") " | sed -e "s@.*/dev/@/dev/@;s/ .*//")
     [ "$device" ] || return
 
     become_root

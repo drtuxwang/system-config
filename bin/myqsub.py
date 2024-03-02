@@ -13,9 +13,10 @@ from pathlib import Path
 from typing import Generator, List
 
 import command_mod
+import logging_mod
 import task_mod
 
-RELEASE = '3.1.0'
+RELEASE = '3.1.1'
 
 
 class Options:
@@ -269,9 +270,9 @@ class Main:
 
             jobid = self._lastjob()
             job_command = command.args2cmd(cmdline)
-            if len(job_command) < 21:
+            if logging_mod.Message(job_command).width() <= 45:
                 job_name = job_command
-            elif len(cmdline) == 2 and not cmdline[1].startswith('-'):
+            elif len(cmdline) == 2 and not os.access(cmdline[1], os.X_OK):
                 job_name = Path(cmdline[1]).name
             else:
                 job_name = Path(cmdline[0]).name

@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2023 By Dr Colin Kong
+1996-2024 By Dr Colin Kong
 """
 
 import argparse
@@ -32,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.7.0'
-VERSION = 20231201
+RELEASE = '6.7.1'
+VERSION = 20240224
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -2236,6 +2236,7 @@ class WindowsSystem(OperatingSystem):
         info['OS Patch'] = self._isitset(values, 'CSDVersion')
         patch_number = self._isitset(values, 'CSDBuildNumber')
         info['OS Patch X'] = '' if patch_number == 'Unknown' else patch_number
+        info['OS Boot'] = 'Unknown'
         return info
 
     def get_cpu_info(self) -> dict:

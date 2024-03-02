@@ -62,19 +62,19 @@ pull:                 # Pull Docker base images
 		make --no-print-directory --directory $$DIR pull || exit 1; \
 	done
 
+.PHONY: pull-save
+pull-save:            # Pull updated Docker images and save to tar archives
+	for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory --directory $$DIR pull-save|| exit 1; \
+	done
+	ls -l */*.tar* 2> /dev/null ||:
+
 .PHONY: save
 save:                 # Pull Docker base images and save to tar archive
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR save; \
 	done
-	ls -l *.tar* 2> /dev/null ||:
-
-.PHONY: save-new
-save-new:             # Pull Docker base images and save to tar archive if newer
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR save-new || exit 1; \
-	done
-	ls -l *.tar* 2> /dev/null ||:
+	ls -l */*.tar* 2> /dev/null ||:
 
 .PHONY: build
 build: $(BUILD_DIRS)  # Build Docker images

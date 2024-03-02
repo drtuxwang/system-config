@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Pull Docker images and save to tar archives if newer
+# Pull updated Docker images and save to tar archives
 #
 
 set -eu
@@ -11,8 +11,6 @@ then
     exit 1
 fi
 
-cd $(dirname $0)
-
 for IMAGE in $*;
 do
     CREATED_OLD=$(docker inspect "$IMAGE" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
@@ -20,6 +18,6 @@ do
     CREATED=$(docker inspect "$IMAGE" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
     if [ "$CREATED_OLD" != "$CREATED" ]
     then
-        $(dirname "$0")/docker-save.bash "$IMAGE"
+        $(dirname "$0")/../../bin/docker-save "$IMAGE"
     fi
 done

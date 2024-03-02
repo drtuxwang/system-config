@@ -183,6 +183,8 @@ then
         complete -f -o default 7z 2> /dev/null
         complete -f -o default tar 2> /dev/null
         complete -f -o default wine 2> /dev/null
+        complete -F _command qsub 2> /dev/null
+        complete -F _command myqsub 2> /dev/null
     elif [ "`echo $0 | \grep \"ksh$\"`" ]
     then
         MYSHELL="KORN"
