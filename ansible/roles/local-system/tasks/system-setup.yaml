@@ -68,6 +68,7 @@
     group: no
     delete: yes
     rsync_path: sudo rsync
+    rsync_opts: --exclude=..fsum
   tags:
   - local-system
   - software-bin

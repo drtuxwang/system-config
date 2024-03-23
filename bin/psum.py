@@ -16,6 +16,7 @@ from typing import List, Set, Tuple
 import imagehash  # type: ignore
 import PIL  # type: ignore
 import pybktree  # type: ignore
+import pyzstd
 
 import command_mod
 import file_mod
@@ -75,7 +76,7 @@ class Options:
             '-update',
             nargs=1,
             dest='update_file',
-            metavar='index.fsum',
+            metavar='index.psum.zst',
             help="Update checksums if file size and date changed.",
         )
         parser.add_argument(
@@ -142,7 +143,7 @@ class Main:
 
         images_phashes = {}
         try:
-            with path.open(errors='replace') as ifile:
+            with pyzstd.open(path, 'rt', errors='replace') as ifile:
                 for line in ifile:
                     try:
                         line = line.rstrip('\n')
@@ -232,7 +233,7 @@ class Main:
 
         path_new = Path(f'{path}.part')
         try:
-            with path_new.open('w') as ofile:
+            with pyzstd.open(path_new, 'wt') as ofile:
                 for key, phash in image_phashes.items():
                     file, file_size, file_time = key
                     print(

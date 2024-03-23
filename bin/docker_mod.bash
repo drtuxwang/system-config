@@ -18,6 +18,8 @@ options() {
         echo
         echo "docker-list     - List Docker images/volumes/containers/networks"
         echo "docker-images   - Show Docker images with optional filter"
+        echo "docker-pull     - Pull Docker images"
+        echo "docker-push     - Push Docker images"
         echo "docker-load     - Load Docker image archives \"tar|tar.gz|tar.bz2|tar.xz|t[bgx]z\""
         echo "docker-save     - Save images as \"tar.7z\" archives"
         echo "docker-prune    - Run prune to remove unused Docker data"
@@ -31,20 +33,8 @@ options() {
     }
 
     case "${0##*/}" in
-    *list*)
-        mode=list
-        ;;
-    *images*)
-        mode=images
-        ;;
-    *load*)
-        mode=load
-        ;;
-    *save*)
-        mode=save
-        ;;
-    *prune*)
-        mode=prune
+    *-list|*-images|*-pull|*-push|*-load|*-save|*-prune*)
+        mode=${0##*-}
         ;;
     *)
         help 0
@@ -106,6 +96,31 @@ docker_images() {
 }
 
 
+#
+# Pull Docker images
+#
+docker_pull() {
+    while [ $# != 0 ]
+    do
+        echo "docker pull \"$1\""
+        docker pull "$1" || exit 1
+        shift
+    done
+}
+
+
+#
+# Push Docker images
+#
+docker_push() {
+    while [ $# != 0 ]
+    do
+        echo "docker push \"$1\""
+        docker push "$1" || exit 1
+        shift
+    done
+}
+
 
 #
 # Load Docker image archives "tar|tar.gz|tar.bz2|tar.xz|t[bgx]z"
@@ -144,10 +159,10 @@ docker_save() {
         else
             [ ! "$CREATED" ] && continue
             echo "docker save $IMAGE -o $FILE.7z"
-            docker save "$IMAGE" | 7z a -m0=lzma2 -mmt=2 -mx=9 -myx=9 -md=128m -mfb=256 -ms=on -snh -snl -stl -y "$FILE.7z.part" || exit 1
-            [ ${PIPESTATUS[0]} != 141 ] && exit 1
+            docker save "$IMAGE" | 7z a -m0=lzma2 -mmt=2 -mx=9 -myx=9 -md=128m -mfb=256 -ms=on -snh -snl -stl -si -y "$FILE.7z.part" || exit 1
+            [ ${PIPESTATUS[0]} != 0 ] && exit 1
             echo "$IMAGE" > "$FILE.list"
-            touch -d $CREATED "$FILE.part" "$FILE.list.part"
+            touch -d $CREATED "$FILE.7z.part" "$FILE.list"
             mv "$FILE.7z.part" "$FILE.7z"
         fi
         shift

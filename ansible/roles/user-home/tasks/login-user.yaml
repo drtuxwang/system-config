@@ -29,7 +29,7 @@
   - user-home
   - ssh
 
-- name: Check "{{ home_directory }}/.ssh/config-opt" file stat
+- name: Check "{{ home_directory }}/.ssh/config-opt" file status
   stat:
     path: '{{ home_directory }}/.ssh/config-opt'
   register: ssh_config

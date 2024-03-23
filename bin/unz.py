@@ -127,6 +127,7 @@ class Main:
                 '.gpg',
                 '.pdf',
                 '.squashfs',
+                '.zst',
                 '.zstd',
             ):
                 command = command_mod.Command(f'un{suffix[1:]}', errors='stop')

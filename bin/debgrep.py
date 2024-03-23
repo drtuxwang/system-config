@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Search Debian package json.zstd file.
+Search Debian package json.zst file.
 """
 
 import argparse
@@ -63,7 +63,7 @@ class Options:
         parser.add_argument(
             'packages_files',
             nargs='+',
-            metavar='distro.json.zstd',
+            metavar='distro.json.zst',
             help="Debian package file.",
         )
 
@@ -162,7 +162,7 @@ class Main:
         package_files = options.get_packages_file()
 
         for path in [
-            Path(x) for x in package_files if x.endswith('.json.zstd')
+            Path(x) for x in package_files if x.endswith('.json.zst')
         ]:
             message = "{0:s}"
             if len(package_files) > 1:

@@ -1,7 +1,42 @@
-# Host settings
-Host qemu-system-x86_64.vm
+# VMs
+Host testpc.vm
   Hostname localhost
   Port 2201
+Host debian4.vm
+  Hostname localhost
+  Port 2204
+Host debian5.vm
+  Hostname localhost
+  Port 2205
+Host debian6.vm
+  Hostname localhost
+  Port 2206
+Host debian7.vm
+  Hostname localhost
+  Port 2207
+Host debian8.vm
+  Hostname localhost
+  Port 2208
+Host debian9.vm
+  Hostname localhost
+  Port 2209
+Host debian10.vm
+  Hostname localhost
+  Port 2210
+Host debian10-32.vm
+  Hostname localhost
+  Port 2291
+Host debian11.vm
+  Hostname localhost
+  Port 2211
+Host debian12.vm
+  Hostname localhost
+  Port 2212
+Host debian12-arm.vm
+  Hostname localhost
+  Port 2292
+
+# Host settings
 Host pattern
   User username
 Host pattern

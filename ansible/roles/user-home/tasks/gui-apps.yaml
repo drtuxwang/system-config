@@ -30,7 +30,7 @@
   - user-home
   - autostart
 
-- name: Check "{{ home_directory }}/.config/autostart-opt.bash" file stat
+- name: Check "{{ home_directory }}/.config/autostart-opt.bash" file status
   stat:
     path: '{{ home_directory }}/.config/autostart-opt.bash'
   register: autostart_opt_bash

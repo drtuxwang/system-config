@@ -3,6 +3,7 @@
 MyQS, My Queuing System batch job execution.
 """
 
+import json
 import os
 import signal
 import socket
@@ -14,7 +15,7 @@ from typing import List
 import command_mod
 import subtask_mod
 
-RELEASE = '3.1.0'
+RELEASE = '3.1.1'
 
 
 class Options:
@@ -135,7 +136,8 @@ class Main:
             'bash',
             '-l',
             '-c',
-            f'echo -e "MyQS v3 batch job command: {bash_command}"; '
+            'trap - DEBUG;'
+            'set -x; '
             f'time {nice} {bash_command}',
         ]
         print(f"\nMyQS v{RELEASE}, My Queuing System batch job exec.\n")
@@ -176,6 +178,11 @@ class Main:
         )
         task = subtask_mod.Task(myqexec.get_cmdline())
         task.run()
+
+        myqstat = command_mod.Command('myqstat', args=[self._jobid])
+        task = subtask_mod.Batch(myqstat.get_cmdline())
+        task.run()
+        output = json.dumps(task.get_output()[-2:], ensure_ascii=False)
         try:
             if task.get_exitcode():
                 path_new = path.with_suffix('.f')
@@ -184,6 +191,7 @@ class Main:
             path.replace(path_new)
             with path_new.open('a') as ofile:
                 print(f"FINISH={time.time()}", file=ofile)
+                print(f"OUTPUT={output}", file=ofile)
         except OSError:
             pass
 

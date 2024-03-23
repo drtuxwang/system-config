@@ -337,7 +337,11 @@ class Main:
 
     def _mirror(self, path1: Path, path2: Path) -> None:
         try:
-            source_paths = sorted(path1.iterdir())
+            source_paths = sorted([
+                x
+                for x in path1.iterdir()
+                if not x.name.startswith('..') or self._recursive
+            ])
         except (OSError, PermissionError) as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot open "{path1}" source directory.',

@@ -27,7 +27,8 @@ RUN \
         zlib-devel && \
     # For Python packages
     yum install -y python38-devel && \
-    yum clean all
+    yum clean all && \
+    rm -rf /var/cache/yum
 
 COPY rootfs/ /
 RUN /etc/python-packages.bash -pip /usr/bin/python3

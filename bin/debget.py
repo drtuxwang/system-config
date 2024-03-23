@@ -247,8 +247,13 @@ class Main:
         logger.info('Creating "%s" packages file.', path)
         path_new = Path(f'{path}.part')
         try:
-            path_new.write_bytes(pyzstd.compress(  # pylint: disable=no-member
-                json.dumps(data, ensure_ascii=False).encode(),
+            path_new.write_bytes(pyzstd.compress(
+                json.dumps(
+                    data,
+                    ensure_ascii=False,
+                    indent=4,
+                    sort_keys=True,
+                ).encode(),
                 11,
             ))
         except OSError as exception:
@@ -281,7 +286,7 @@ class Main:
             if dist_path.suffix == '.dist':
                 logger.info('Checking "%s" distribution file.', dist_path)
 
-                path = dist_path.with_suffix('.json.zstd')
+                path = dist_path.with_suffix('.json.zst')
                 data = (
                     self._read_data(path)
                     if path.is_file()

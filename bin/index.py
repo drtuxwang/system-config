@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate 'index.xhtml' & 'index.fsum' files plus '.../fsum' cache files
+Generate 'index.xhtml' & 'index.fsum' files plus '..fsum' cache files
 """
 
 import glob
@@ -108,35 +108,26 @@ class Main:
         isbadfile = re.compile(r'^core([.]\d+)?$')
 
         error = False
-        for root, _, files in os.walk(directory):
-            if files:
-                for file in files:
-                    file_path = Path(root, file).resolve()
-                    if isbadfile.search(file):
-                        print(f"Error: Found bad file: {file_path}")
-                        error = True
-                    try:
-                        if Path(file_path).stat().st_size == 0:
-                            print(f"Error: Found zero size file: {file_path}")
-                            error = True
-                    except OSError:
-                        print(f"Error: Found broken link: {file}")
-                        error = True
-            elif not [x for x in Path(root).glob('*') if x.name != '...']:
+        for root, directories, files in os.walk(directory):
+            files = [x for x in files if not x.startswith('..')]
+            if not directories + files:
                 print(f"Error: Found empty directory: {Path(root).resolve()}")
                 error = True
+                continue
+            for file in files:
+                file_path = Path(root, file).resolve()
+                if isbadfile.search(file):
+                    print(f"Error: Found bad file: {file_path}")
+                    error = True
+                try:
+                    if Path(file_path).stat().st_size == 0:
+                        print(f"Error: Found zero size file: {file_path}")
+                        error = True
+                except OSError:
+                    print(f"Error: Found broken link: {file}")
+                    error = True
         if error:
             raise SystemExit(1)
-
-    @staticmethod
-    def _create_directory(path: Path) -> None:
-        if not path.is_dir():
-            try:
-                path.mkdir()
-            except OSError as exception:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{path}" directory.',
-                ) from exception
 
     @classmethod
     def _set_time(cls, directory_path: Path) -> None:
@@ -177,21 +168,14 @@ class Main:
         for line in lines:
             checksum, file = line.split('  ', 1)
             path = Path(file).parent
-            if path.name == '...':
-                path = path.parent
-                file = Path(file).name
-                if file == 'fsum':
-                    continue
-            else:
-                file = f'../{Path(file).name}'
-            if path not in fsums:
-                fsums[path] = []
-            fsums[path].append(f'{checksum}  {file}')
+            file = f'{Path(file).name}'
+            if not file.startswith('..'):
+                if path not in fsums:
+                    fsums[path] = []
+                fsums[path].append(f'{checksum}  {file}')
 
         for directory in sorted(fsums):
-            directory_path = Path(directory, '...')
-            cls._create_directory(directory_path)
-            path = Path(directory_path, 'fsum')
+            path = Path(directory, '..fsum')
 
             time_new = 0
             try:

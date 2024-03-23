@@ -28,6 +28,7 @@ RUN ln -s microdnf /bin/yum && \
         python38-setuptools \
         python38-setuptools-wheel && \
     yum clean all && \
+    rm -rf /var/cache/yum && \
     rm -rf \
         /root/.bash_logout \
         /root/.bash_profile \

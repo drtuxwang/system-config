@@ -14,9 +14,10 @@ from typing import Generator, List
 
 import command_mod
 import logging_mod
+import subtask_mod
 import task_mod
 
-RELEASE = '3.1.1'
+RELEASE = '3.1.2'
 
 
 class Options:
@@ -323,10 +324,11 @@ class Main:
         self._submit(options)
         lock_path.unlink()
 
-        if self._has_myqsd():
-            return 0
-        print('\nMyQS batch job scheduler not running. Run "myqsd" command.')
-        return 1
+        if not self._has_myqsd():
+            myqsd = command_mod.Command('myqsd', args=['1'], errors='stop')
+            subtask_mod.Task(myqsd.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

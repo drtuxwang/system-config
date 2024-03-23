@@ -89,7 +89,7 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    def _link_files(  # pylint: disable=too-many-branches
+    def _link_files(
         self,
         path1: Path,
         path2: Path,
@@ -128,10 +128,11 @@ class Main:
                         ) from exception
                 else:
                     print(f'Creating "{target_path}" link...')
-                if source_path.is_absolute():
-                    path = source_path
-                else:
-                    path = Path(subdir, source_path)
+                path = (
+                    source_path
+                    if source_path.is_absolute() else
+                    Path(subdir, source_path)
+                )
                 try:
                     path.symlink_to(target_path)
                 except OSError as exception:

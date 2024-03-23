@@ -30,20 +30,8 @@ options() {
 
     smount_dir="${TMPDIR:-/tmp/$(id -un)}/hosts"
     case "${0##*/}" in
-    *run*)
-        mode=run
-        ;;
-    *key*)
-        mode=addkey
-        ;;
-    *setup*)
-        mode=setup
-        ;;
-    *umount*)
-        mode=unmount
-        ;;
-    *mount*)
-        mode=mount
+    *-run|*-keys|*-setup|*-mount|*-umount)
+        mode=${0##*-}
         ;;
     *)
         help 0
@@ -120,8 +108,8 @@ run_host() {
 #
 # Function to add SSH private key for hosts to authentication agent
 #
-addkey_host() {
-    for host in hosts
+keys_host() {
+    for host in $*
     do
         for key in $(ssh -G "$host" 2> /dev/null | awk '/^identityfile / {print $2}' | sed -e "s@\~@$HOME@")
         do

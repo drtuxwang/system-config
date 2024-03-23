@@ -19,6 +19,7 @@ RUN yum install -y epel-release && \
         wget && \
     rpm -e --nodeps python3-pip python3-setuptools && \
     yum clean all && \
+    rm -rf /var/cache/yum && \
     rm -rf \
         /root/.bash_logout \
         /root/.bash_profile \

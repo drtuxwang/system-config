@@ -110,23 +110,30 @@ class Main:
             ) from exception
         return paths
 
-    def _diff_dir(
+    def _diff_dir(  # pylint: disable=too-many-branches
         self,
         path1: Path,
         path2: Path,
         time_flag: bool = False,
     ) -> None:
         for path in self._get_files(path1):
-            if path.is_dir():
-                if Path(path2, path.name).is_dir():
-                    self._diff_dir(path, Path(path2, path.name), time_flag)
-                else:
-                    print(f"only  {path}/")
-            elif path.is_file():
-                if Path(path2, path.name).is_file():
-                    self._diff_file(path, Path(path2, path.name), time_flag)
-                else:
-                    print(f"only  {path}")
+            try:
+                if path.is_dir():
+                    if Path(path2, path.name).is_dir():
+                        self._diff_dir(path, Path(path2, path.name), time_flag)
+                    else:
+                        print(f"only  {path}/")
+                elif path.is_file():
+                    if Path(path2, path.name).is_file():
+                        self._diff_file(
+                            path,
+                            Path(path2, path.name),
+                            time_flag,
+                        )
+                    else:
+                        print(f"only  {path}")
+            except PermissionError:
+                print(f'{sys.argv[0]}: Cannot open "{path}" directory.')
 
         for path in self._get_files(path2):
             if path.is_dir():

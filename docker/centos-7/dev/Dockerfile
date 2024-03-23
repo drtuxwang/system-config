@@ -28,7 +28,8 @@ RUN \
     # For Python packages
     yum install -y python36-devel && \
     rpm -e --nodeps python3-rpm-generators python3-rpm-macros python3-setuptools && \
-    yum clean all
+    yum clean all && \
+    rm -rf /var/cache/yum
 
 COPY rootfs/ /
 RUN /etc/python-packages.bash -pip /usr/bin/python3

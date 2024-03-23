@@ -24,7 +24,7 @@ defaults_settings() {
     MACHINE_TYPE=virt
     MACHINE_VCPUS=2
     MACHINE_RAM=4096
-    MACHINE_BIOS="/usr/share/qemu-efi-aarch64/QEMU_EFI.fd"
+    MACHINE_BIOS=$(ls -1t /usr/share/qemu-efi-aarch64/QEMU_EFI.fd /usr/local/Cellar/qemu/*/share/qemu/*aarch64*.fd 2> /dev/null | head -1)
     DRIVE_INTERFACE=virtio
     DRIVE_FILES=
     DRIVE_ROLLBACK=no
@@ -164,7 +164,7 @@ setup_machine() {
             ;;
         esac
     fi
-    add_args "-machine $MACHINE_TYPE" "-cpu $CPU -smp $MACHINE_VCPUS" "-m $MACHINE_RAM"
+    add_args "-machine $MACHINE_TYPE" "-cpu $CPU" "-m $MACHINE_RAM"
     [ "$MACHINE_BIOS" ] && add_args "-bios $MACHINE_BIOS"
     add_args "-boot order=dc"
 }

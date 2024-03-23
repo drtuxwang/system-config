@@ -32,13 +32,13 @@ options() {
 
     uuids=
     case "${0##*/}" in
-    *umount*)
-        mode=unmount
-        ;;
-    *mount*)
+    *-mount)
         local rootdev=$(df / | awk '/^\/dev\// {print $1}' | sed -e "s@^/dev/@@;s/[0-9]*$//")
         uuids=$(lsblk -list -o NAME,FSTYPE,UUID 2> /dev/null | awk '/^'$rootdev'[1-9]* * crypto_LUKS/ {print $3}')
         mode=mount
+        ;;
+    *-umount)
+        mode=unmount
         ;;
     *)
         help 0
@@ -99,6 +99,7 @@ mount_crypt() {
     local fstype=${info% *}
     local mount="/media/$mount_user/${info#* }"
     mkdir -p $mount
+    chown $mount_user:$(id -gn $mount_user) ${mount%/*}
 
     echo "Mounting on $hostname: /dev/mapper/luks-$uuid => $mount ($device)"
     case $fstype in

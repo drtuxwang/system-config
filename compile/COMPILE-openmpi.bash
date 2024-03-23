@@ -3,7 +3,7 @@
 cd ${0%/*}
 umask 022
 
-if [ "${0##*/}" = COMPILE32 ]
+if [[ ${0##/*} =~ COMPILE32* ]]
 then
     CC="gcc"; CFLAGS="-fPIC -m32"; export CC CFLAGS
     CXX="g++"; CXXFLAGS="-fPIC -m32"; export CXX CXXFLAGS

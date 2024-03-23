@@ -21,7 +21,7 @@ Darwin)
     export LDFLAGS="-L/usr/local/opt/zlib/lib $LDFLAGS"
     ;;
 *)
-    if [[ ${0%/*} =~ ^COMPILE32 ]]
+    if [[ ${0##/*} =~ COMPILE32* ]]
     then
         export CPPFLAGS="-m32"
         export CFLAGS="-m32"

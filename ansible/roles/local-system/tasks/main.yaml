@@ -4,7 +4,7 @@
   tags:
   - local-system
 
-- name: Check whether "/etc/tlp.conf" file stat
+- name: Check "/etc/tlp.conf" file status
   stat:
     path: /etc/tlp.conf
   register: tlp_conf

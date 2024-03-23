@@ -26,13 +26,13 @@ options() {
     }
 
     case "${0##*/}" in
-    *diff*)
+    *-diff)
         mode=diff
         ;;
-    *gc*)
+    *-gc)
         mode=gc
         ;;
-    *reset*)
+    *-reset)
         mode=reset
         ;;
     *)
@@ -75,8 +75,9 @@ git_diff() {
 # Function to run aggressive Git garbage collection"
 #
 git_gc() {
-    du -s $PWD/.git
-    rm -rf .git/lfs
+    DIR=$(git rev-parse --show-toplevel)
+    du -s "$DIR"/.git
+    rm -rf "$DIR"/.git/lfs
     git \
         -c gc.reflogExpire=0 \
         -c gc.reflogExpireUnreachable=0 \
@@ -84,7 +85,7 @@ git_gc() {
         -c gc.rerereunresolved=0 \
         -c gc.pruneExpire=now gc \
         --aggressive
-    du -s $PWD/.git
+    du -s "$DIR"/.git
 }
 
 

@@ -7,7 +7,7 @@
   - ansible_user
   - rpmdb
 
-- name: Check "{{ home }}/{{ ansible_user }}/.rpmdb" directory/link stat
+- name: Check "{{ home }}/{{ ansible_user }}/.rpmdb" directory/link status
   stat:
     path: '{{ home }}/{{ ansible_user }}/.rpmdb'
   register: rpmdb

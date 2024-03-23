@@ -37,18 +37,12 @@ options() {
 
     drives=
     case "${0##*/}" in
-    *-mount*)
-        mode=mount
-        ;;
-    *-umount*)
+    *-umount)
         all=
         mode=unmount
         ;;
-    *-trim*)
-        mode=trim
-        ;;
-    *-compress*)
-        mode=compress
+    *-compress|*-mount|*-trim*)
+        mode=${0##*-}
         ;;
     *)
         help 0

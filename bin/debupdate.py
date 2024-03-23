@@ -172,7 +172,7 @@ class Main:
                         if not pattern.startswith('#'):
                             path = Path(
                                 pin_path.parent,
-                                f'{columns[1]}.json.zstd',
+                                f'{columns[1]}.json.zst',
                             )
                             if path not in packages_cache:
                                 packages_cache[path] = (
@@ -297,7 +297,7 @@ class Main:
                     distro = ispattern.sub('', str(path))
                     logger.info('Checking "%s" list file.', path)
                     self._packages = self._read_distro_packages(
-                        Path(f'{distro}.json.zstd')
+                        Path(f'{distro}.json.zst')
                     )
                     self._read_distro_pin_packages(
                         Path(f'{distro}.debs:select')

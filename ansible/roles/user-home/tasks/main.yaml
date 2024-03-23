@@ -22,7 +22,7 @@
   tags:
   - user-home
 
-- name: Check "{{ home_directory }}/.profile-opt" file stat
+- name: Check "{{ home_directory }}/.profile-opt" file status
   stat:
     path: '{{ home_directory }}/.profile-opt'
   register: profile_opt

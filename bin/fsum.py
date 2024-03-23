@@ -175,7 +175,7 @@ class Main:
 
     def _calc(self, options: Options, paths: List[Path]) -> None:
         for path in paths:
-            if str(path).endswith('.../fsum'):
+            if str(path).endswith('..fsum'):
                 self._get_cache(path)
             elif path.is_dir():
                 if not path.is_symlink():
@@ -328,7 +328,6 @@ class Main:
                         line = line.rstrip('\n')
                         checksum, size, mtime, file = self._get_checksum(line)
                         path = Path(directory_path, file)
-                        file = str(path).replace('/.../../', '/')
                         if (file, size, mtime) not in self._cache:
                             self._cache[(file, size, mtime)] = checksum
                     except IndexError:

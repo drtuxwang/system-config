@@ -4,6 +4,7 @@ MyQS, My Queuing System batch job status.
 """
 
 import argparse
+import json
 import os
 import signal
 import socket
@@ -17,7 +18,7 @@ import logging_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '3.1.0'
+RELEASE = '3.1.1'
 
 
 class Options:
@@ -164,15 +165,16 @@ class Main:
         else:
             elapsed = -1
         info['ETIME'] = f'{int(elapsed)}' if elapsed >= 0 else '-'
+        info['LINES'] = json.loads(info.get('OUTPUT', '[]'))
 
-        # Determine last output line
+        # Determine last two output lines
         try:
             log_path = Path(info['LOGFILE'])
             with log_path.open('rb') as ifile:
                 ifile.seek(max(0, log_path.stat().st_size - 1024))
                 data = ifile.read(1024)
         except (KeyError, OSError):
-            info['OUTPUT'] = []
+            pass
         else:
             if b'\n' not in data:
                 lines = [data.decode(errors='replace').rstrip()]
@@ -180,7 +182,7 @@ class Main:
                 lines = data.decode(errors='replace').split('\n')[-3:-1]
             else:
                 lines = data.decode(errors='replace').rstrip().split('\n')[-2:]
-            info['OUTPUT'] = [logging_mod.Message(x).get() for x in lines]
+            info['LINES'] = [logging_mod.Message(x).get() for x in lines]
 
         return info
 
@@ -194,7 +196,7 @@ class Main:
             if 'PGID' in info:
                 print(f"\x1b[1;35mMyQS PGID        = {info['PGID']}\x1b[0m")
 
-        for line in info['OUTPUT']:
+        for line in info['LINES']:
             print(f"\x1b[1;34m{line}\x1b[0m")
 
     def _showjobs(self, options: Options) -> None:
@@ -270,10 +272,11 @@ class Main:
         self._myqsdir = Path(Path.home(), '.config', 'myqs', host)
         self._showjobs(options)
 
-        if self._has_myqsd():
-            return 0
-        print('\nMyQS batch job scheduler not running. Run "myqsd" command.')
-        return 1
+        if not self._has_myqsd():
+            myqsd = command_mod.Command('myqsd', args=['1'], errors='stop')
+            subtask_mod.Task(myqsd.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':
