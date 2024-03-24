@@ -10,8 +10,8 @@ import re
 import unicodedata
 from typing import List
 
-RELEASE = '1.2.0'
-VERSION = 20240221
+RELEASE = '1.2.1'
+VERSION = 20240324
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 
@@ -83,17 +83,21 @@ class Message(str):
 
     def get(self, width: int = None) -> str:
         """
-        Return compacted string with optional width.
+        Return compacted string with optional width (negative left truncate).
         """
         string = self._compact(self)
         if width:
             chars = self._chars(string)
-            if width > len(chars):
+            if abs(width) > len(chars):
                 chars += ' '*(width - len(chars))
-            else:
+            elif width > 0:
                 chars = chars[:width]
                 if chars[-1:] == ['']:
                     chars[-1] = ' '
+            else:
+                chars = chars[width:]
+                if chars[:1] == ['']:
+                    chars[0] = ' '
             string = ''.join(chars)
 
         return string

@@ -16,7 +16,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '3.1.0'
+RELEASE = '3.1.1'
 PURGE_TIME = 604800
 
 
@@ -257,7 +257,7 @@ class Main:
                         errors='stop'
                     )
                     log_file = (
-                        f"{Path(info.get('JOBNAME').split()[0]).stem}.o{jobid}"
+                        f"{Path(info.get('JOBNAME')).stem}.o{jobid}"
                     )
                     if os.access(info['DIRECTORY'], os.W_OK):
                         log_path = Path(info['DIRECTORY'], log_file)
