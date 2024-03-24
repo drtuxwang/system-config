@@ -89,7 +89,7 @@ class Message(str):
         if width:
             chars = self._chars(string)
             if abs(width) > len(chars):
-                chars += ' '*(width - len(chars))
+                chars += ' '*(abs(width) - len(chars))
             elif width > 0:
                 chars = chars[:width]
                 if chars[-1:] == ['']:
