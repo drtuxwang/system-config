@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-[ "$PYTHON3" ] && exec "${0%/*}/$PYTHON3" "$@"
+[ "$PYTHON" ] && exec "$PYTHON" "$@"
 PYLD_EXE=${0##*/}
 source "${0%/*}/pyld_mod.bash"

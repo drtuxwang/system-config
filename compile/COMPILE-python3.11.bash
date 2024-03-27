@@ -77,8 +77,6 @@ exec \"\$MYDIR/python$VERSION\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$FIL
 
     # Remove tests
     find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf
-
-    ##rm install/bin/python3
 fi
 
 ls -ld $PWD/install/* $PWD/install/bin/*
