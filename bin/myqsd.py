@@ -63,7 +63,8 @@ class Options:
             'slots',
             nargs=1,
             type=int,
-            help="The maximum number of CPU execution slots to create.",
+            help="Number of CPU execution slots to create "
+            "(0 = express only, -1 = disabled).",
         )
 
         self._args = parser.parse_args(args)
@@ -81,10 +82,9 @@ class Options:
             socket.gethostname().split('.')[0].lower()
         )
 
-        if self._args.slots[0] < 1:
+        if self._args.slots[0] < -1:
             raise SystemExit(
-                f"{sys.argv[0]}: You must specific a positive integer "
-                "for the number of slots.",
+                f"{sys.argv[0]}: Invalid number of CPU execution slots (>= -1)"
             )
 
 

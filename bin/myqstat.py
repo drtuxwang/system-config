@@ -105,7 +105,7 @@ class Status:
     """
 
     def __init__(self) -> None:
-        self._lines = {
+        self._lines: dict = {
             'DONE': [],
             'FAIL': [],
             'RUN':  [],
