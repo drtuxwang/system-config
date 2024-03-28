@@ -11,7 +11,7 @@ import unicodedata
 from typing import List
 
 RELEASE = '1.2.1'
-VERSION = 20240324
+VERSION = 20240328
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 
@@ -96,7 +96,7 @@ class Message(str):
                     chars[-1] = ' '
             else:
                 chars = chars[width:]
-                if chars[:1] == ['']:
+                if chars[1:2] == ['']:
                     chars[0] = ' '
             string = ''.join(chars)
 
