@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Exec
 
 
 class Options:
@@ -27,7 +27,7 @@ class Options:
         """
         return self._files
 
-    def get_jar(self) -> command_mod.Command:
+    def get_jar(self) -> Command:
         """
         Return jar Command class object.
         """
@@ -49,13 +49,13 @@ class Options:
         """
         Parse arguments
         """
-        self._jar = command_mod.Command(Path('bin', 'jar'), errors='stop')
+        self._jar = Command(Path('bin', 'jar'), errors='stop')
 
         if len(args) == 1:
-            subtask_mod.Exec(self._jar.get_cmdline()).run()
+            Exec(self._jar.get_cmdline()).run()
         elif args[1][-4:] != '.jar':
             self._jar.set_args(args[1:])
-            subtask_mod.Exec(self._jar.get_cmdline()).run()
+            Exec(self._jar.get_cmdline()).run()
 
         self._jar_file = args[1]
         self._manifest = args[1][:-4] + '.manifest'
@@ -108,9 +108,9 @@ class Main:
                         f'"{target}" Java class file.',
                     ) from exception
         if not target.is_file():
-            javac = command_mod.Command('javac', args=[source], errors='stop')
+            javac = Command('javac', args=[source], errors='stop')
             print(f'Building "{target}" Java class file.')
-            task = subtask_mod.Batch(javac.get_cmdline())
+            task = Batch(javac.get_cmdline())
             task.run(error2output=True)
             if task.get_exitcode():
                 raise SystemExit(
@@ -163,7 +163,7 @@ class Main:
                 self._jar.append_arg(file)
         self._create_manifest()
         print(f'Building "{self._jar_file}" Java archive file.')
-        subtask_mod.Exec(self._jar.get_cmdline()).run()
+        Exec(self._jar.get_cmdline()).run()
 
         return 0
 

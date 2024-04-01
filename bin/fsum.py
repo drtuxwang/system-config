@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-import file_mod
+from file_mod import FileStat
 
 
 class Options:
@@ -182,7 +182,7 @@ class Main:
                     if options.get_recursive_flag():
                         self._calc(options, sorted(self._get_files(path)))
             elif path.is_file() and not path.is_symlink():
-                file_stat = file_mod.FileStat(path)
+                file_stat = FileStat(path)
                 try:
                     checksum = self._cache[
                         (str(path), file_stat.get_size(), file_stat.get_time())
@@ -210,7 +210,7 @@ class Main:
                                 f"{path.name}",
                                 file=ofile,
                             )
-                        file_stat = file_mod.FileStat(path)
+                        file_stat = FileStat(path)
                         os.utime(
                             fsum_path,
                             (file_stat.get_time(), file_stat.get_time())
@@ -246,7 +246,7 @@ class Main:
                         checksum, size, mtime, file = self._get_checksum(line)
                         file = f'{directory}/{file}'
                         found.append(file)
-                        file_stat = file_mod.FileStat(file)
+                        file_stat = FileStat(file)
                         try:
                             if not Path(file).is_file():
                                 print(f'{file} # FAILED open or read')

@@ -13,9 +13,9 @@ import time
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Batch, Child, Task
 
 
 class Options:
@@ -144,31 +144,31 @@ class Main:
 
     @staticmethod
     def _cdspeed(device: str, speed: int) -> None:
-        cdspeed = command_mod.Command('cdspeed', errors='ignore')
+        cdspeed = Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
                 cdspeed.set_args([device, speed])
             # If CD/DVD spin speed change fails its okay
-            subtask_mod.Task(cdspeed.get_cmdline()).run()
+            Task(cdspeed.get_cmdline()).run()
         elif speed and Path('/sbin/hdparm').is_file():
-            hdparm = command_mod.Command('/sbin/hdparm', errors='ignore')
+            hdparm = Command('/sbin/hdparm', errors='ignore')
             hdparm.set_args(['-E', speed, device])
-            subtask_mod.Batch(hdparm.get_cmdline()).run()
+            Batch(hdparm.get_cmdline()).run()
 
     @staticmethod
     def _md5tao(device: str) -> None:
-        isoinfo = command_mod.Command('isoinfo', errors='stop')
+        isoinfo = Command('isoinfo', errors='stop')
 
-        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        tmpdir = FileUtil.tmpdir('.cache')
         tmp_path = Path(tmpdir, f'md5cd.tmp{os.getpid()}')
-        command = command_mod.Command('dd', errors='stop')
+        command = Command('dd', errors='stop')
         command.set_args([
             f'if={device}',
             'bs=2048',
             'count=4096',
             f'of={tmp_path}',
         ])
-        task = subtask_mod.Batch(command.get_cmdline())
+        task = Batch(command.get_cmdline())
         task.run()
         if task.get_error('Permission denied$'):
             raise SystemExit(
@@ -181,7 +181,7 @@ class Main:
             )
 
         isoinfo.set_args(['-d', '-i', tmp_path])
-        task2 = subtask_mod.Batch(isoinfo.get_cmdline())
+        task2 = Batch(isoinfo.get_cmdline())
         task2.run(pattern='^Volume size is: ')
         if not task2.has_output():
             raise SystemExit(
@@ -197,8 +197,8 @@ class Main:
 
         command.set_args([f'if={device}', 'bs=2048', f'count={blocks}'])
 
-        nice = command_mod.Command('nice', args=['-20'], errors='stop')
-        child = subtask_mod.Child(
+        nice = Command('nice', args=['-20'], errors='stop')
+        child = Child(
             nice.get_cmdline() + command.get_cmdline()).run()
         child.stdin.close()
         size = 0
@@ -216,9 +216,9 @@ class Main:
         print(md5.hexdigest(), device, sep='  ')
         time.sleep(1)
 
-        eject = command_mod.Command('eject', errors='ignore')
+        eject = Command('eject', errors='ignore')
         if eject.is_found():
-            task = subtask_mod.Batch(eject.get_cmdline())
+            task = Batch(eject.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(

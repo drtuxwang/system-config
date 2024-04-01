@@ -12,9 +12,9 @@ import urllib.request
 from pathlib import Path
 from typing import List
 
-import command_mod
-import config_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -40,7 +40,7 @@ class Options:
         """
         return self._output
 
-    def get_vget(self) -> command_mod.Command:
+    def get_vget(self) -> Command:
         """
         Return vget Command class object.
         """
@@ -79,9 +79,7 @@ class Options:
         self._args = parser.parse_args(args)
 
     def _detect_code(self, url: str) -> str:
-        task = subtask_mod.Batch(
-            self._vget.get_cmdline() + ['--list-formats', url]
-        )
+        task = Batch(self._vget.get_cmdline() + ['--list-formats', url])
         task.run(pattern=r'^[^ ]+ +mp4 +\d+x\d+ ')
 
         codes = {}
@@ -98,12 +96,12 @@ class Options:
         raise SystemExit(f"{sys.argv[0]}: No video stream: {url}")
 
     def _detect_mtime(self, url: str) -> float:
-        task = subtask_mod.Batch(self._vget.get_cmdline() + ['--get-url', url])
+        task = Batch(self._vget.get_cmdline() + ['--get-url', url])
         task.run(pattern=r'^http')
         if task.has_output():
             try:
                 req = urllib.request.Request(task.get_output()[0], headers={
-                    'User-Agent': config_mod.Config().get('user_agent'),
+                    'User-Agent': Config().get('user_agent'),
                 })
             except (urllib.error.HTTPError, urllib.error.URLError):
                 pass
@@ -129,7 +127,7 @@ class Options:
         url = self._args.url[0]
         if '&index=' in url:  # Fix download one video for series
             url = url.split('&')[0]
-        self._vget = command_mod.Command('yt-dlp')
+        self._vget = Command('yt-dlp')
         self._vget.set_args(['--playlist-end', '1'])
 
         if self._args.view_flag:
@@ -193,7 +191,7 @@ class Main:
         output = options.get_output()
         vget = options.get_vget()
 
-        task = subtask_mod.Task(vget.get_cmdline())
+        task = Task(vget.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())

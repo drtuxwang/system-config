@@ -17,12 +17,12 @@ from typing import List, TextIO
 
 import pyzstd
 
-import command_mod
-import logging_mod
+from command_mod import LooseVersion
+from logging_mod import ColoredFormatter
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -42,10 +42,7 @@ class Package:
         """
         Return True if version newer than package.
         """
-        if (
-            command_mod.LooseVersion(self.version) >
-            command_mod.LooseVersion(package.version)
-        ):
+        if LooseVersion(self.version) > LooseVersion(package.version):
             return True
         return False
 

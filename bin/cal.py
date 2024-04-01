@@ -6,8 +6,8 @@ Wrapper for "cal" command
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -37,14 +37,14 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('ncal', errors='ignore')
+        command = Command('ncal', errors='ignore')
         if command.is_found():
             command.extend_args(['-b', '-M'])
         else:
-            command = command_mod.Command('cal', errors='stop')
+            command = Command('cal', errors='stop')
         command.extend_args(sys.argv[1:])
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

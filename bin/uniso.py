@@ -11,13 +11,13 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
+from subtask_mod import Task
 
-logger = logging.getLogger(__name__)   # ylint: disable = invalid-name
+logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -160,25 +160,17 @@ class Main:
         view_flag = options.get_view_flag()
 
         if view_flag:
-            archiver = command_mod.Command('7z', args=['l'], errors='stop')
-            isoinfo = command_mod.Command(
-                'isoinfo',
-                args=['-d', '-i'],
-                errors='stop'
-            )
+            archiver = Command('7z', args=['l'], errors='stop')
+            isoinfo = Command('isoinfo', args=['-d', '-i'], errors='stop')
         else:
-            archiver = command_mod.Command(
-                '7z',
-                args=['x', '-y', '-snld'],
-                errors='stop'
-            )
+            archiver = Command('7z', args=['x', '-y', '-snld'], errors='stop')
 
         for image in options.get_images():
             if not Path(image).is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{image}" ISO9660 file.',
                 )
-            task = subtask_mod.Task(archiver.get_cmdline() + [image])
+            task = Task(archiver.get_cmdline() + [image])
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -186,7 +178,7 @@ class Main:
                     f'received from "{task.get_file()}".',
                 )
             if view_flag:
-                task = subtask_mod.Task(isoinfo.get_cmdline() + [image])
+                task = Task(isoinfo.get_cmdline() + [image])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(

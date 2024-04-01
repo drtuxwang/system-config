@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Exec
 
 
 class Main:
@@ -47,7 +47,7 @@ class Main:
         """
         name = Path(sys.argv[0]).stem
 
-        appimagetool = network_mod.Sandbox(name, errors='stop')
+        appimagetool = Sandbox(name, errors='stop')
 
         if not Path(f'{appimagetool.get_file()}.py').is_file():
             work_dir = Path(os.environ['PWD'])
@@ -79,7 +79,7 @@ class Main:
 
             appimagetool.sandbox(configs)
 
-        subtask_mod.Exec(appimagetool.get_cmdline()).run()
+        Exec(appimagetool.get_cmdline()).run()
 
 
 if __name__ == '__main__':

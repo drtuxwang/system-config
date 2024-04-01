@@ -11,9 +11,9 @@ import sys
 import time
 from typing import List
 
-import command_mod
-import config_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from subtask_mod import Batch
 
 
 class Options:
@@ -103,10 +103,10 @@ class Main:
 
     @classmethod
     def _search(cls, options: Options) -> str:
-        user_agent = config_mod.Config().get('user_agent')
-        curl = command_mod.Command('curl', errors='stop')
+        user_agent = Config().get('user_agent')
+        curl = Command('curl', errors='stop')
         curl.set_args(['-A', user_agent, options.get_url()])
-        task = subtask_mod.Batch(curl.get_cmdline())
+        task = Batch(curl.get_cmdline())
         quiet = options.get_quiet_flag()
 
         if not quiet:

@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Exec
 
 
 class Main:
@@ -49,14 +49,14 @@ class Main:
         name = Path(sys.argv[0]).stem
 
         # Re-direct $HOME/oradiag_<user> to /tmp/<user>/oradiag_<user>
-        os.environ['HOME'] = file_mod.FileUtil.tmpdir()
+        os.environ['HOME'] = FileUtil.tmpdir()
 
         # SQLPATH fro scripts
         os.environ['SQLPATH'] = os.environ.get('PATH', '')
 
-        command = command_mod.Command(name, errors='stop')
+        command = Command(name, errors='stop')
         command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

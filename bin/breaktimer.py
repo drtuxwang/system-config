@@ -9,8 +9,8 @@ import sys
 import time
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Daemon
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#000000'
@@ -26,7 +26,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_pop(self) -> command_mod.Command:
+    def get_pop(self) -> Command:
         """
         Return pop Command class object.
         """
@@ -69,7 +69,7 @@ class Options:
         self._parse_args(args[1:])
 
         if self._args.gui_flag:
-            xterm = command_mod.Command('xterm', errors='stop')
+            xterm = Command('xterm', errors='stop')
             xterm.set_args([
                 '-fn',
                 TEXT_FONT,
@@ -86,10 +86,10 @@ class Options:
                 '-e',
                 sys.argv[0]
             ] + args[2:])
-            subtask_mod.Daemon(xterm.get_cmdline()).run()
+            Daemon(xterm.get_cmdline()).run()
             raise SystemExit(0)
 
-        self._pop = command_mod.Command('notify-send', errors='stop')
+        self._pop = Command('notify-send', errors='stop')
         self._pop.set_args(['--expire-time', '10000'])
 
 
@@ -119,11 +119,11 @@ class Main:
         if self._alarm < 601:
             sys.stdout.write("\x1b]11;#ff8888\x07")
             sys.stdout.flush()
-            subtask_mod.Batch(self._bell.get_cmdline()).run()
+            Batch(self._bell.get_cmdline()).run()
             self._options.get_pop().set_args(
                 [time.strftime('%H:%M') + ': break time reminder']
             )
-            subtask_mod.Batch(self._options.get_pop().get_cmdline()).run()
+            Batch(self._options.get_pop().get_cmdline()).run()
         self._alarm += 60  # One minute reminder
 
     def run(self) -> int:
@@ -131,7 +131,7 @@ class Main:
         Start program
         """
         self._options = Options()
-        self._bell = command_mod.Command('bell', errors='stop')
+        self._bell = Command('bell', errors='stop')
         self._limit = self._options.get_time() * 60
         self._alarm = None
 

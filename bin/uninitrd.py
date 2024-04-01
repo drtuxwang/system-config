@@ -9,8 +9,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -22,7 +22,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -66,7 +66,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._archiver = command_mod.Command('unmkinitramfs', errors='stop')
+        self._archiver = Command('unmkinitramfs', errors='stop')
 
 
 class Main:
@@ -102,16 +102,16 @@ class Main:
         view_flag = options.get_view_flag()
 
         archiver = (
-            command_mod.Command('lsinitramfs', errors='stop')
+            Command('lsinitramfs', errors='stop')
             if view_flag else
             options.get_archiver()
         )
 
         for archive in options.get_archives():
             task = (
-                subtask_mod.Task(archiver.get_cmdline() + [archive])
+                Task(archiver.get_cmdline() + [archive])
                 if view_flag
-                else subtask_mod.Task(archiver.get_cmdline() + [archive, '.'])
+                else Task(archiver.get_cmdline() + [archive, '.'])
             )
             task.run()
             if task.get_exitcode():

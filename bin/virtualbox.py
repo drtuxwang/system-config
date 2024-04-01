@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import config_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Data, ReadConfigError
+from subtask_mod import Background, Task
 
 
 class Main:
@@ -43,7 +43,7 @@ class Main:
 
     @staticmethod
     def _config_machine(machine: dict) -> None:
-        vboxmanage = command_mod.Command('vboxmanage')
+        vboxmanage = Command('vboxmanage')
         name = machine['@name']
 
         try:
@@ -73,17 +73,17 @@ class Main:
                             f"--medium={device['Image']['@uuid']}",
                         ])
                         print(vboxmanage.args2cmd(vboxmanage.get_cmdline()))
-                        subtask_mod.Task(vboxmanage.get_cmdline()).run()
+                        Task(vboxmanage.get_cmdline()).run()
                 except (AttributeError, KeyError):
                     pass
 
     @classmethod
     def _config(cls) -> None:
-        data = config_mod.Data()
+        data = Data()
         path = Path(Path.home(), '.config', 'VirtualBox', 'VirtualBox.xml')
         try:
             data.read(path)
-        except config_mod.ReadConfigError:
+        except ReadConfigError:
             return
         try:
             for file in [x['@src'] for x in next(data.get())[
@@ -99,12 +99,12 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('virtualbox', errors='stop')
+        command = Command('virtualbox', errors='stop')
         command.set_args(sys.argv[1:])
         cls._config()
 
         pattern = "^$|: dbind-WARNING"
-        subtask_mod.Background(command.get_cmdline()).run(pattern=pattern)
+        Background(command.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

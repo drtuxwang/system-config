@@ -8,7 +8,7 @@ import signal
 import sys
 from typing import List
 
-import task_mod
+from task_mod import Tasks
 
 
 class Options:
@@ -20,7 +20,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_task(self) -> task_mod.Tasks:
+    def get_task(self) -> Tasks:
         """
         Return task Task class object.
         """
@@ -48,11 +48,11 @@ class Options:
         self._parse_args(args[1:])
 
         if self._args.username:
-            self._task = task_mod.Tasks.factory(self._args.username)
+            self._task = Tasks.factory(self._args.username)
         elif self._args.all_flag:
-            self._task = task_mod.Tasks.factory('<all>')
+            self._task = Tasks.factory('<all>')
         else:
-            self._task = task_mod.Tasks.factory()
+            self._task = Tasks.factory()
 
 
 class Main:

@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -65,7 +65,7 @@ class Options:
         if 'DISPLAY' in os.environ:
             del os.environ['DISPLAY']
 
-    def get_gpg(self) -> command_mod.Command:
+    def get_gpg(self) -> Command:
         """
         Return gpg Command class object.
         """
@@ -150,13 +150,13 @@ class Options:
         """
         self._config()
 
-        self._gpg = command_mod.Command('gpg2', errors='ignore')
+        self._gpg = Command('gpg2', errors='ignore')
         if not self._gpg.is_found():
-            self._gpg = command_mod.Command('gpg', errors='stop')
+            self._gpg = Command('gpg', errors='stop')
 
         if len(args) > 1 and args[1].startswith('--'):
             self._gpg.set_args(args[1:])
-            subtask_mod.Exec(self._gpg.get_cmdline()).run()
+            Exec(self._gpg.get_cmdline()).run()
 
         self._parse_args(args[1:])
 
@@ -183,7 +183,7 @@ class Options:
             self._gpg.extend_args(['--sign-key', self._args.trust[0]])
         elif self._args.view_flag:
             self._gpg.extend_args(['--list-keys'])
-            task = subtask_mod.Task(self._gpg.get_cmdline())
+            task = Task(self._gpg.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -230,7 +230,7 @@ class Main:
         """
         options = Options()
 
-        task = subtask_mod.Task(options.get_gpg().get_cmdline())
+        task = Task(options.get_gpg().get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(

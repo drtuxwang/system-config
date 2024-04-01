@@ -13,13 +13,13 @@ import os
 from pathlib import Path
 from typing import Any, List, Tuple, Union
 
-import command_mod
+from command_mod import Command, CommandFile
 
-RELEASE = '3.4.5'
-VERSION = 20240221
+RELEASE = '3.4.6'
+VERSION = 20240329
 
 
-class NetNice(command_mod.Command):
+class NetNice(Command):
     """
     NetNice network traffic shaping command class
     """
@@ -78,7 +78,7 @@ class NetNice(command_mod.Command):
             pass
 
 
-class Sandbox(command_mod.Command):
+class Sandbox(Command):
     """
     This class stores a command (uses supplied executable)
     Optional sandbox network and disk writes command class
@@ -98,8 +98,8 @@ class Sandbox(command_mod.Command):
         print(f"\x1b[1;3{colour}mSandbox: {message}\x1b[0m")
 
     @classmethod
-    def _check_bwrap(cls, errors: str) -> command_mod.Command:
-        bwrap = command_mod.Command('bwrap', errors='ignore')
+    def _check_bwrap(cls, errors: str) -> Command:
+        bwrap = Command('bwrap', errors='ignore')
         if not bwrap.is_found():
             if errors == 'stop':
                 cls._show(
@@ -147,11 +147,7 @@ class Sandbox(command_mod.Command):
 
         return (realpath, mount, mode)
 
-    def _config_access(
-        self,
-        bwrap: command_mod.Command,
-        configs: list,
-    ) -> List[str]:
+    def _config_access(self, bwrap: Command, configs: list) -> List[str]:
 
         cmdline: list = bwrap.get_cmdline()
 
@@ -288,10 +284,8 @@ class Sandbox(command_mod.Command):
         cmdline = self._config_access(bwrap, configs)
 
         if not network:
-            command = command_mod.Command('sg', args=['nonet'], errors=errors)
-            cmdline = command.get_cmdline() + [
-                command_mod.Command.args2cmd(cmdline),
-            ]
+            command = Command('sg', args=['nonet'], errors=errors)
+            cmdline = command.get_cmdline() + [Command.args2cmd(cmdline)]
 
         self._sandbox = cmdline
 
@@ -303,7 +297,7 @@ class Sandbox(command_mod.Command):
             if self._sandbox[0].endswith('sg'):
                 cmdline = self._sandbox[:-1] + [' '.join([
                     self._sandbox[-1],
-                    command_mod.Command.args2cmd(self._args),
+                    Command.args2cmd(self._args),
                 ])]
             else:
                 cmdline = self._sandbox + self._args
@@ -313,7 +307,7 @@ class Sandbox(command_mod.Command):
         return cmdline
 
 
-class SandboxFile(command_mod.CommandFile, Sandbox):
+class SandboxFile(CommandFile, Sandbox):
     """
     This class stores a command (uses supplied executable location)
     Optional sandbox network and disk writes command class

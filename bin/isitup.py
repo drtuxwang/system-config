@@ -11,8 +11,8 @@ import time
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from subtask_mod import Batch
 
 
 class Options:
@@ -36,7 +36,7 @@ class Options:
         """
         return self._args.host[0]
 
-    def get_ping(self) -> command_mod.Command:
+    def get_ping(self) -> Command:
         """
         Return ping Command class object.
         """
@@ -68,12 +68,12 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _get_ping() -> command_mod.Command:
+    def _get_ping() -> Command:
         if Path('/usr/sbin/ping').is_file():
-            return command_mod.CommandFile('/usr/sbin/ping')
+            return CommandFile('/usr/sbin/ping')
         if Path('/usr/etc/ping').is_file():
-            return command_mod.CommandFile('/usr/etc/ping')
-        return command_mod.Command('ping')
+            return CommandFile('/usr/etc/ping')
+        return Command('ping')
 
     def parse(self, args: List[str]) -> None:
         """
@@ -92,7 +92,7 @@ class Options:
         else:
             osname = os.uname()[0]
             if osname == 'Linux':
-                task = subtask_mod.Batch(self._ping.get_cmdline() + ['-h'])
+                task = Batch(self._ping.get_cmdline() + ['-h'])
                 task.run(pattern='[-]w ')
                 if task.has_output():
                     self._ping.set_args(['-w', '4', '-c', '3', host])
@@ -132,7 +132,7 @@ class Main:
 
     @staticmethod
     def _ping(options: Options) -> str:
-        task = subtask_mod.Batch(options.get_ping().get_cmdline())
+        task = Batch(options.get_ping().get_cmdline())
         task.run(pattern=options.get_pattern())
         if task.has_output():
             return options.get_host() + ' is alive'

@@ -12,11 +12,11 @@ import time
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
-import task_mod
+from command_mod import Command, CommandFile
+from subtask_mod import Daemon
+from task_mod import Tasks
 
-RELEASE = '3.1.0'
+RELEASE = '3.1.1'
 PURGE_TIME = 604800
 
 
@@ -63,7 +63,8 @@ class Options:
             'slots',
             nargs=1,
             type=int,
-            help="The maximum number of CPU execution slots to create.",
+            help="Number of CPU execution slots to create "
+            "(0 = express only, -1 = disabled).",
         )
 
         self._args = parser.parse_args(args)
@@ -81,10 +82,9 @@ class Options:
             socket.gethostname().split('.')[0].lower()
         )
 
-        if self._args.slots[0] < 1:
+        if self._args.slots[0] < -1:
             raise SystemExit(
-                f"{sys.argv[0]}: You must specific a positive integer "
-                "for the number of slots.",
+                f"{sys.argv[0]}: Invalid number of CPU execution slots (>= -1)"
             )
 
 
@@ -109,7 +109,7 @@ class Lock:
         """
         Return True if lock exists
         """
-        return task_mod.Tasks.factory().haspid(self._pid)
+        return Tasks.factory().haspid(self._pid)
 
     def create(self) -> None:
         """
@@ -129,7 +129,7 @@ class Lock:
                     int(ifile.readline().strip())
                 except (OSError, ValueError) as exception:
                     raise SystemExit(0) from exception
-                if not task_mod.Tasks.factory().haspid(os.getpid()):
+                if not Tasks.factory().haspid(os.getpid()):
                     raise SystemExit(
                         f"{sys.argv[0]}: MyQS cannot obtain lock: {self._path}"
                     )
@@ -140,7 +140,7 @@ class Lock:
         """
         Remove lock file
         """
-        task_mod.Tasks.factory().killpids([self._pid])
+        Tasks.factory().killpids([self._pid])
         try:
             self._path.unlink()
         except OSError as exception:
@@ -192,7 +192,7 @@ class Main:
                 pgid = int(info.get('PGID', ''))
             except ValueError:
                 continue
-            if not task_mod.Tasks.factory().haspgid(pgid):
+            if not Tasks.factory().haspgid(pgid):
                 jobid = path.stem
                 print(f'MyQS jobid "{jobid}" re-queued after system restart.')
                 path.replace(path.with_suffix('.q'))
@@ -223,7 +223,7 @@ class Main:
         for path in [Path(x) for x in self._myqsdir.glob('*.r')]:
             info = self._get_info(path)
             if 'PGID' in info:
-                if not task_mod.Tasks.factory().haspgid(int(info['PGID'])):
+                if not Tasks.factory().haspgid(int(info['PGID'])):
                     time.sleep(0.25)
                     try:
                         path.unlink()
@@ -251,14 +251,9 @@ class Main:
             if info.get('QUEUE', '') == queue and info.get('NCPUS'):
                 if free_slots >= int(info['NCPUS']):
                     jobid = path.stem
-                    myqexec = command_mod.Command(
-                        'myqexec',
-                        args=['-jobid', jobid],
-                        errors='stop'
-                    )
-                    log_file = (
-                        f"{Path(info.get('JOBNAME').split()[0]).stem}.o{jobid}"
-                    )
+                    myqexec = Command('myqexec', errors='stop')
+                    myqexec.set_args(['-jobid', jobid])
+                    log_file = f"{Path(info.get('JOBNAME')).stem}.o{jobid}"
                     if os.access(info['DIRECTORY'], os.W_OK):
                         log_path = Path(info['DIRECTORY'], log_file)
                     else:
@@ -270,9 +265,7 @@ class Main:
                     except OSError:
                         continue
                     print(f'MyQS job starting: {log_path}')
-                    subtask_mod.Daemon(myqexec.get_cmdline()).run(
-                        file=str(log_path)
-                    )
+                    Daemon(myqexec.get_cmdline()).run(file=str(log_path))
                     return True
         return False
 
@@ -300,11 +293,8 @@ class Main:
             print("Stopping MyQS batch job scheduler...")
             lock.remove()
         print("Starting MyQS batch job scheduler...")
-        myqsd = command_mod.CommandFile(
-            __file__[:-3],
-            args=['-daemon', self._slots]
-        )
-        subtask_mod.Daemon(myqsd.get_cmdline()).run()
+        myqsd = CommandFile(__file__[:-3], args=['-daemon', self._slots])
+        Daemon(myqsd.get_cmdline()).run()
 
     def run(self) -> int:
         """

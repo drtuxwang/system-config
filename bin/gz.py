@@ -8,8 +8,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -21,7 +21,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_gzip(self) -> command_mod.Command:
+    def get_gzip(self) -> Command:
         """
         Return gzip Command class object.
         """
@@ -47,7 +47,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._gzip = command_mod.Command('gzip', errors='stop')
+        self._gzip = Command('gzip', errors='stop')
         self._gzip.set_args(['-9', '-k'] + self._args.files)
 
 
@@ -80,7 +80,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_gzip().get_cmdline()).run()
+        Exec(options.get_gzip().get_cmdline()).run()
 
         return 0
 

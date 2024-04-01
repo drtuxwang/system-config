@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -108,18 +108,18 @@ class Main:
         path = options.get_output()
         path_new = Path(f'{path}.part')
 
-        vlc = command_mod.Command('cvlc', errors='stop')
+        vlc = Command('cvlc', errors='stop')
         vlc.set_args(
             ['-v', '--sout', f'file/ts:{path_new}', url, 'vlc://quit']
         )
-        task = subtask_mod.Task(vlc.get_cmdline())
+        task = Task(vlc.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())
 
-        mp4 = command_mod.Command('mp4', errors='stop')
+        mp4 = Command('mp4', errors='stop')
         mp4.set_args([path.with_suffix('.mp4'), path_new])
-        task = subtask_mod.Task(mp4.get_cmdline())
+        task = Task(mp4.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())

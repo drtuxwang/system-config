@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return self._pattern
 
-    def get_meld(self) -> command_mod.Command:
+    def get_meld(self) -> Command:
         """
         Return meld Command class object.
         """
@@ -55,7 +55,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._meld = command_mod.Command('meld', errors='stop')
+        self._meld = Command('meld', errors='stop')
         paths = [Path(x) for x in self._args.files]
         if paths[0].is_dir() and paths[1].is_file():
             self._meld.set_args(
@@ -112,7 +112,7 @@ class Main:
         """
         options = Options()
 
-        task = subtask_mod.Task(options.get_meld().get_cmdline())
+        task = Task(options.get_meld().get_cmdline())
         task.run(pattern=options.get_pattern())
         return task.get_exitcode()
 

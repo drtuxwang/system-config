@@ -13,8 +13,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -32,7 +32,7 @@ class Options:
         """
         return self._args.logins
 
-    def get_ssh(self) -> command_mod.Command:
+    def get_ssh(self) -> Command:
         """
         Return ssh Command class object.
         """
@@ -58,7 +58,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._ssh = command_mod.Command('ssh', errors='stop')
+        self._ssh = Command('ssh', errors='stop')
 
 
 class Main:
@@ -136,7 +136,7 @@ class Main:
                 '    echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
                 'fi')
             self._ssh.set_args([login, '/bin/sh'])
-            task = subtask_mod.Task(self._ssh.get_cmdline())
+            task = Task(self._ssh.get_cmdline())
             task.run(stdin=stdin)
             if task.get_exitcode():
                 raise SystemExit(
@@ -198,7 +198,7 @@ class Main:
         private_key = Path(self._sshdir, 'id_rsa')
         if not private_key.is_file():
             print("\nGenerating 4096bit RSA private/public key pair...")
-            ssh_keygen = command_mod.Command('ssh-keygen', errors='stop')
+            ssh_keygen = Command('ssh-keygen', errors='stop')
             ssh_keygen.set_args([
                 '-t',
                 'rsa',
@@ -209,17 +209,17 @@ class Main:
                 '-N',
                 '',
             ])
-            task = subtask_mod.Task(ssh_keygen.get_cmdline())
+            task = Task(ssh_keygen.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
                     f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
                 )
-            ssh_add = command_mod.Command('ssh-add', errors='ignore')
+            ssh_add = Command('ssh-add', errors='ignore')
             if ssh_add.is_found():
                 # When SSH_AUTH_SOCK agent is used
-                subtask_mod.Batch(ssh_add.get_cmdline()).run()
+                Batch(ssh_add.get_cmdline()).run()
 
         path = Path(self._sshdir, 'id_rsa.pub')
         try:

@@ -9,9 +9,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Exec
 
 
 class Main:
@@ -43,7 +43,7 @@ class Main:
             Path.open = _open  # type: ignore
 
         # Send ".m2" to tmpfs
-        tmpdir_path = Path(file_mod.FileUtil.tmpdir(Path('.cache', 'm2')))
+        tmpdir_path = Path(FileUtil.tmpdir(Path('.cache', 'm2')))
         path = Path(Path.home(), '.m2')
         if not path.is_symlink():
             try:
@@ -60,10 +60,9 @@ class Main:
         """
         Start program
         """
-        mvn = command_mod.Command(Path('bin', 'mvn'), errors='stop')
-        mvn.extend_args(sys.argv[1:])
+        mvn = Command(Path('bin', 'mvn'), args=sys.argv[1:], errors='stop')
 
-        subtask_mod.Exec(mvn.get_cmdline()).run()
+        Exec(mvn.get_cmdline()).run()
 
         return 0
 

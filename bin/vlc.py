@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background, Exec
 
 
 class Options:
@@ -28,7 +28,7 @@ class Options:
         """
         return self._pattern
 
-    def get_vlc(self) -> command_mod.Command:
+    def get_vlc(self) -> Command:
         """
         Return vlc Command class object.
         """
@@ -64,11 +64,11 @@ class Options:
         """
         Parse arguments
         """
-        self._vlc = command_mod.Command('vlc', errors='stop')
+        self._vlc = Command('vlc', errors='stop')
         self._vlc.set_args(args[1:])
 
         if len(args) >= 2 and args[1].startswith('-'):
-            subtask_mod.Exec(self._vlc.get_cmdline()).run()
+            Exec(self._vlc.get_cmdline()).run()
 
         self._pattern = (
             ': Paint device returned engine|: playlist is empty|'
@@ -112,7 +112,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Background(options.get_vlc().get_cmdline()).run(
+        Background(options.get_vlc().get_cmdline()).run(
             pattern=options.get_pattern()
         )
 

@@ -7,8 +7,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -25,7 +25,7 @@ class Options:
         """
         return self._pattern
 
-    def get_pbsetup(self) -> command_mod.Command:
+    def get_pbsetup(self) -> Command:
         """
         Return pbsetup Command class object.
         """
@@ -35,9 +35,9 @@ class Options:
         """
         Parse arguments
         """
-        self._pbsetup = command_mod.Command('pbsetup.run', errors='ignore')
+        self._pbsetup = Command('pbsetup.run', errors='ignore')
         if not self._pbsetup.is_found():
-            self._pbsetup = command_mod.Command('pbsetup', errors='stop')
+            self._pbsetup = Command('pbsetup', errors='stop')
         self._pbsetup.set_args(args[1:])
         self._pattern = ': wrong ELF class:|: Gtk-WARNING '
 
@@ -71,9 +71,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Task(
-            options.get_pbsetup().get_cmdline()).run(
-                pattern=options.get_pattern())
+        Task(
+            options.get_pbsetup().get_cmdline()
+        ).run(pattern=options.get_pattern())
 
         return 0
 

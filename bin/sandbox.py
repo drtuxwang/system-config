@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox, SandboxFile
+from subtask_mod import Task
 
 
 class Options:
@@ -23,7 +23,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command(self) -> network_mod.Sandbox:
+    def get_command(self) -> Sandbox:
         """
         Return command Command class object.
         """
@@ -72,11 +72,11 @@ class Options:
         return args[len(my_args):]
 
     @staticmethod
-    def _get_command(command: str, args: List[str]) -> network_mod.Sandbox:
+    def _get_command(command: str, args: List[str]) -> Sandbox:
         if Path(command).is_file():
-            return network_mod.SandboxFile(Path(command).resolve())
+            return SandboxFile(Path(command).resolve())
 
-        return network_mod.Sandbox(command, args=args, errors='stop')
+        return Sandbox(command, args=args, errors='stop')
 
     def parse(self, args: List[str]) -> None:
         """
@@ -155,7 +155,7 @@ class Main:
         options = Options()
 
         print("\x1b[1;34mSandbox: Starting...\x1b[0m")
-        exitcode = subtask_mod.Task(options.get_command().get_cmdline()).run()
+        exitcode = Task(options.get_command().get_cmdline()).run()
         print("\x1b[1;34mSandbox: Shutdown!\x1b[0m")
         return exitcode
 

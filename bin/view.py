@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-import command_mod
-import config_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from config_mod import Config
+from subtask_mod import Daemon, Task
 
 
 class Options:
@@ -80,11 +80,11 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _get_program(command: List[str]) -> command_mod.Command:
+    def _get_program(command: List[str]) -> Command:
         path = Path(Path(sys.argv[0]).parent, command[0])
         if path.is_file():
-            return command_mod.CommandFile(path)
-        return command_mod.Command(command[0], errors='stop')
+            return CommandFile(path)
+        return Command(command[0], errors='stop')
 
     @classmethod
     def _spawn(cls, action: Tuple[List[str], bool], file: str) -> None:
@@ -94,18 +94,18 @@ class Main:
         program = cls._get_program(command)
         program.set_args(command[1:] + [file])
         cmdline = program.get_cmdline()
-        print("Viewing:", command_mod.Command.args2cmd(cmdline))
+        print(f"Viewing: {Command.args2cmd(cmdline)}")
         if daemon:
-            subtask_mod.Daemon(cmdline).run()
+            Daemon(cmdline).run()
         else:
-            subtask_mod.Task(cmdline).run()
+            Task(cmdline).run()
 
     def run(self) -> int:
         """
         Start program
         """
         options = Options()
-        config = config_mod.Config()
+        config = Config()
 
         for path in [Path(x) for x in options.get_files()]:
             if path.is_dir():

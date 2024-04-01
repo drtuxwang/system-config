@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import network_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from network_mod import NetNice
+from subtask_mod import Task
 
 
 class Options:
@@ -24,19 +24,19 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command(self) -> command_mod.Command:
+    def get_command(self) -> Command:
         """
         Return command Command class object.
         """
         return self._command
 
-    def get_netnice(self) -> command_mod.Command:
+    def get_netnice(self) -> Command:
         """
         Return NetNice Command class object.
         """
         return self._netnice
 
-    def _parse_args(self, args: List[str]) -> command_mod.Command:
+    def _parse_args(self, args: List[str]) -> Command:
         parser = argparse.ArgumentParser(
             description="Run a command with limited network bandwidth.",
         )
@@ -81,11 +81,11 @@ class Options:
             )
 
         if Path(self._args.command[0]).is_file():
-            return command_mod.CommandFile(
+            return CommandFile(
                 self._args.command[0],
                 args=args[len(my_args):]
             )
-        return command_mod.Command(
+        return Command(
             self._args.command[0], args=args[len(my_args):], errors='stop')
 
     def parse(self, args: List[str]) -> None:
@@ -93,7 +93,7 @@ class Options:
         Parse arguments
         """
         self._command = self._parse_args(args[1:])
-        self._netnice = network_mod.NetNice(self._args.drate[0], errors='stop')
+        self._netnice = NetNice(self._args.drate[0], errors='stop')
 
 
 class Main:
@@ -135,7 +135,7 @@ class Main:
         netnice = options.get_netnice()
         if netnice.is_found():
             cmdline = netnice.get_cmdline() + cmdline
-        task = subtask_mod.Task(cmdline)
+        task = Task(cmdline)
         task.run()
 
         return task.get_exitcode()

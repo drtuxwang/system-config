@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import Iterator, List, Union
 
-import command_mod
-import file_mod
+from command_mod import LooseVersion
+from file_mod import FileStat
 
 
 class Options:
@@ -150,11 +150,11 @@ class Main:
         file_stats = []
         for path in [Path(x) for x in files]:
             if path.is_symlink():
-                file_stats.append(file_mod.FileStat(path, size=0))
+                file_stats.append(FileStat(path, size=0))
             elif path.is_dir():
-                file_stats.append(file_mod.FileStat(f'{path}/'))
+                file_stats.append(FileStat(f'{path}/'))
             elif path.is_file():
-                file_stats.append(file_mod.FileStat(path))
+                file_stats.append(FileStat(path))
         for file_stat in self._sorted(options, file_stats):
             print(
                 f"{file_stat.get_size():10d} "
@@ -173,8 +173,8 @@ class Main:
     @staticmethod
     def _sorted(
         options: Options,
-        file_stats: List[file_mod.FileStat],
-    ) -> Union[Iterator[file_mod.FileStat], List[file_mod.FileStat]]:
+        file_stats: List[FileStat],
+    ) -> Union[Iterator[FileStat], List[FileStat]]:
         order = options.get_order()
         if order == 'ctime':
             file_stats = sorted(file_stats, key=lambda s: s.get_time_change())
@@ -185,7 +185,7 @@ class Main:
         elif order == 'version':
             file_stats = sorted(
                 file_stats,
-                key=lambda s: command_mod.LooseVersion(s.get_file()),
+                key=lambda s: LooseVersion(s.get_file()),
             )
         if options.get_reverse_flag():
             return reversed(file_stats)

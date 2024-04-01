@@ -6,9 +6,9 @@ Wrapper for GNOME/KDE/XFCE desktop file manager
 import signal
 import sys
 
-import command_mod
-import desktop_mod
-import subtask_mod
+from command_mod import Command
+from desktop_mod import Desktop
+from subtask_mod import Daemon
 
 PROGRAMS = {
     'cinnamon': ['nemo'],
@@ -47,16 +47,16 @@ class Main:
         """
         Start program
         """
-        desktop = desktop_mod.Desktop.detect()
+        desktop = Desktop.detect()
         cmdline = PROGRAMS.get(desktop, GENERIC)
-        command = command_mod.Command(cmdline[0], errors='ignore')
+        command = Command(cmdline[0], errors='ignore')
 
         if not command.is_found():
             cmdline = GENERIC
-            command = command_mod.Command(cmdline[0], errors='stop')
+            command = Command(cmdline[0], errors='stop')
 
         command.set_args(cmdline[1:] + sys.argv[1:])
-        subtask_mod.Daemon(command.get_cmdline()).run()
+        Daemon(command.get_cmdline()).run()
 
         return 0
 

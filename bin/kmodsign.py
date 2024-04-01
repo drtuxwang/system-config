@@ -6,8 +6,8 @@ Wrapper for Kernel's sign-file command
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import CommandFile, Platform
+from subtask_mod import Exec
 
 
 class Main:
@@ -37,12 +37,12 @@ class Main:
         """
         Start program
         """
-        release = command_mod.Platform.get_kernel()
+        release = Platform.get_kernel()
         file = f"/usr/src/linux-headers-{release}/scripts/sign-file"
 
-        command = command_mod.CommandFile(file, errors='stop')
+        command = CommandFile(file, errors='stop')
         command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
         return 0
 

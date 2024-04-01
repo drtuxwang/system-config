@@ -6,8 +6,8 @@ Wrapper for "ssh-askpass" command
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Main:
@@ -37,10 +37,10 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('ssh-askpass', errors='stop')
+        command = Command('ssh-askpass', errors='stop')
         cmdline = command.get_cmdline() + sys.argv[1:]
 
-        subtask_mod.Task(cmdline).run(pattern='dbind-WARNING|^$')
+        Task(cmdline).run(pattern='dbind-WARNING|^$')
 
         return 0
 

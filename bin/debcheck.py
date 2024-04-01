@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import file_mod
+from file_mod import FileStat
 
 
 class Options:
@@ -84,7 +84,7 @@ class Main:
         packages: dict = {}
         for path in paths:
             name = path.name.split('_')[0]
-            file_stat = file_mod.FileStat(path)
+            file_stat = FileStat(path)
             version = path.name.split('_')[1]
             if name in packages:
                 if file_stat.get_time() > packages[name].time:

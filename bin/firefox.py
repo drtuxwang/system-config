@@ -14,10 +14,10 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
-import task_mod
+from command_mod import Command, Platform
+from file_mod import FileUtil
+from subtask_mod import Background, Daemon
+from task_mod import Tasks
 
 
 class Options:
@@ -34,7 +34,7 @@ class Options:
         """
         return self._pattern
 
-    def get_firefox(self) -> command_mod.Command:
+    def get_firefox(self) -> Command:
         """
         Return Firefox Command class object.
         """
@@ -42,7 +42,7 @@ class Options:
 
     @staticmethod
     def _get_profiles_dir() -> Path:
-        if command_mod.Platform.get_system() == 'macos':
+        if Platform.get_system() == 'macos':
             return Path(
                 'Library',
                 'Application Support',
@@ -118,11 +118,11 @@ class Options:
     def _fix_installation(self) -> None:
         file = self._firefox.get_file()
         if Path(f'{file}-bin').is_file():
-            fmod = command_mod.Command('fmod', errors='ignore')
+            fmod = Command('fmod', errors='ignore')
             if fmod.is_found():
                 # Fix permissions if owner and updated
                 fmod.set_args(['wa', Path(self._firefox.get_file()).parent])
-                subtask_mod.Daemon(fmod.get_cmdline()).run()
+                Daemon(fmod.get_cmdline()).run()
 
     def _config(self) -> None:
         path = Path(Path.home(), self._get_profiles_dir())
@@ -136,8 +136,8 @@ class Options:
 
     @classmethod
     def _copy(cls) -> None:
-        task = task_mod.Tasks.factory()
-        tmp_path = Path(file_mod.FileUtil.tmpdir('.cache'))
+        task = Tasks.factory()
+        tmp_path = Path(FileUtil.tmpdir('.cache'))
         for directory in tmp_path.glob('firefox.*'):
             try:
                 if not task.pgid2pids(int(directory.suffix)):
@@ -344,10 +344,9 @@ class Options:
         """
         pathextra = (
             ['/Applications/Firefox.app/Contents/MacOS']
-            if command_mod.Platform.get_system() == 'macos'
-            else []
+            if Platform.get_system() == 'macos' else []
         )
-        self._firefox = command_mod.Command(
+        self._firefox = Command(
             Path(args[0]).stem,
             pathextra=pathextra,
             errors='stop',
@@ -374,9 +373,10 @@ class Options:
         # Avoids 'exo-helper-1 firefox http://' prob of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if (ppid != 1 and
-                    'exo-helper' in
-                    task_mod.Tasks.factory().get_process(ppid)['COMMAND']):
+            if (
+                ppid != 1 and
+                'exo-helper' in Tasks.factory().get_process(ppid)['COMMAND']
+            ):
                 raise SystemExit
 
         self._firefox.extend_args(args[1:])
@@ -432,16 +432,16 @@ class Main:
         options = Options()
 
         cmdline = options.get_firefox().get_cmdline()
-        subtask_mod.Background(cmdline).run(pattern=options.get_pattern())
+        Background(cmdline).run(pattern=options.get_pattern())
 
         # Kill filtering process after start up to avoid hang
-        tkill = command_mod.Command(
+        tkill = Command(
             'tkill',
             args=['-delay', '60', '-f', f'python3.* {cmdline[0]} '],
             errors='ignore'
         )
         if tkill.is_found():
-            subtask_mod.Daemon(tkill.get_cmdline()).run()
+            Daemon(tkill.get_cmdline()).run()
 
         return 0
 

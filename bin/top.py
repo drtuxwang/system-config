@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from subtask_mod import Exec
 
 
 class Main:
@@ -42,13 +42,13 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _get_top() -> command_mod.Command:
+    def _get_top() -> Command:
         if os.name == 'posix' and os.uname()[0] == 'SunOS':
             if Path('/bin/prstat').is_file():
-                return command_mod.CommandFile('/bin/prstat', args=['10'])
-            return command_mod.Command('prstat', args=['10'], errors='stop')
+                return CommandFile('/bin/prstat', args=['10'])
+            return Command('prstat', args=['10'], errors='stop')
 
-        return command_mod.Command('top', errors='stop')
+        return Command('top', errors='stop')
 
     @classmethod
     def run(cls) -> int:
@@ -58,7 +58,7 @@ class Main:
         top = cls._get_top()
         top.extend_args(sys.argv[1:])
 
-        subtask_mod.Exec(top.get_cmdline()).run()
+        Exec(top.get_cmdline()).run()
 
         return 0
 

@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Main:
@@ -46,14 +46,14 @@ class Main:
         Start program
         """
         if Path('/usr/bin/vim').is_file():
-            command = command_mod.Command('vim', errors='stop')
+            command = Command('vim', errors='stop')
             if '-n' not in sys.argv[1:]:
                 command.set_args(['-N', '-n', '-i', 'NONE', '-T', 'xterm'])
         else:
-            command = command_mod.Command('vi', errors='stop')
+            command = Command('vi', errors='stop')
         command.extend_args([os.path.expandvars(x) for x in sys.argv[1:]])
 
-        task = subtask_mod.Task(command.get_cmdline())
+        task = Task(command.get_cmdline())
         task.run()
         if task.get_exitcode():
             print(

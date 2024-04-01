@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import desktop_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from desktop_mod import Desktop
+from subtask_mod import Task
 
 PROGRAMS = {
     'cinnamon': ['gnome-screenshot', '--interactive'],
@@ -59,23 +59,23 @@ class Main:
         """
         Start program
         """
-        desktop = desktop_mod.Desktop.detect()
+        desktop = Desktop.detect()
         cmdline = PROGRAMS.get(desktop, GENERIC)
         command = (
-            command_mod.CommandFile(cmdline[0], errors='ignore')
+            CommandFile(cmdline[0], errors='ignore')
             if Path(cmdline[0]).is_file()
-            else command_mod.Command(cmdline[0], errors='ignore')
+            else Command(cmdline[0], errors='ignore')
         )
 
         if not command.is_found():
             cmdline = GENERIC
-            command = command_mod.Command(cmdline[0], errors='stop')
+            command = Command(cmdline[0], errors='stop')
         command.set_args(cmdline[1:] + sys.argv[1:])
 
         pattern = (
             '^$|dbind-WARNING|Gtk-WARNING|Gtk-CRITICAL|GLib-GObject-CRITICAL'
         )
-        task = subtask_mod.Task(command.get_cmdline())
+        task = Task(command.get_cmdline())
         task.run(pattern=pattern)
 
         return task.get_exitcode()

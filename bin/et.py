@@ -11,10 +11,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import command_mod
-import file_mod
-import network_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from network_mod import Sandbox
+from subtask_mod import Daemon, Exec
 
 
 class Main:
@@ -109,11 +109,10 @@ class Main:
         """
         Start program
         """
-        self._command = network_mod.Sandbox('et.x86', errors='ignore')
+        self._command = Sandbox('et.x86', errors='ignore')
         if not Path(self._command.get_file()).is_file():
-            command = command_mod.Command('et', errors='stop')
-            command.set_args(sys.argv[1:])
-            subtask_mod.Exec(command.get_cmdline()).run()
+            command = Command('et', args=sys.argv[1:], errors='stop')
+            Exec(command.get_cmdline()).run()
 
         configs = [
             'net',
@@ -126,8 +125,8 @@ class Main:
         self._punkbuster()
         self._command.set_args(sys.argv[1:])
 
-        log_path = Path(file_mod.FileUtil.tmpdir(), 'et.log')
-        subtask_mod.Daemon(self._command.get_cmdline()).run(file=log_path)
+        log_path = Path(FileUtil.tmpdir(), 'et.log')
+        Daemon(self._command.get_cmdline()).run(file=log_path)
 
         return 0
 

@@ -9,9 +9,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Exec
 
 
 class Main:
@@ -43,7 +43,7 @@ class Main:
             Path.open = _open  # type: ignore
 
         # Send ".java" to tmpfs
-        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'java'))
+        tmpdir = FileUtil.tmpdir(Path('.cache', 'java'))
         path = Path(Path.home(), '.java')
         if not path.is_symlink():
             try:
@@ -60,13 +60,13 @@ class Main:
         """
         Start program
         """
-        java = command_mod.Command(Path('bin', 'java'), errors='stop')
+        java = Command(Path('bin', 'java'), errors='stop')
         if len(sys.argv) > 1:
             if sys.argv[1].endswith('.jar'):
                 java.set_args(['-jar'])
         java.extend_args(sys.argv[1:])
 
-        subtask_mod.Exec(java.get_cmdline()).run()
+        Exec(java.get_cmdline()).run()
 
         return 0
 

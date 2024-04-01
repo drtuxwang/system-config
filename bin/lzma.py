@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat
+from subtask_mod import Exec
 
 VERBOSE_SIZE = 134217728
 
@@ -44,7 +44,7 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _set_libraries(command: command_mod.Command) -> None:
+    def _set_libraries(command: Command) -> None:
         libdir = Path(Path(command.get_file()).parent, 'lib')
         if libdir.is_dir():
             if os.name != 'nt' and os.uname()[0] == 'Linux':
@@ -60,19 +60,19 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('xz', errors='stop')
+        command = Command('xz', errors='stop')
         if len(sys.argv) > 1 and Path(sys.argv[1]).is_file():
             command.set_args(
                 ['-9', '-e', '--format=lzma', '--threads=1'],
             )
             for file in sys.argv[1:]:
-                if file_mod.FileStat(file).get_size() > VERBOSE_SIZE:
+                if FileStat(file).get_size() > VERBOSE_SIZE:
                     command.append_arg('--verbose')
                     break
         command.extend_args(sys.argv[1:])
         cls._set_libraries(command)
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
         return 0
 

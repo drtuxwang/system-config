@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -97,12 +97,8 @@ class Main:
                     f'{sys.argv[0]}: Cannot read "{path}" file.',
                 ) from exception
 
-            command = command_mod.Command(
-                'json_reformat',
-                args=['-s'],
-                errors='stop'
-            )
-            task = subtask_mod.Batch(command.get_cmdline())
+            command = Command('json_reformat', args=['-s'], errors='stop')
+            task = Batch(command.get_cmdline())
             task.run(stdin=lines)
             if task.has_error():
                 for line in task.get_error():

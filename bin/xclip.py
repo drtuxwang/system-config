@@ -6,8 +6,8 @@ Wrapper for "xclip" command
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command, Platform
+from subtask_mod import Exec
 
 
 class Main:
@@ -37,15 +37,15 @@ class Main:
         """
         Start program
         """
-        if command_mod.Platform.get_system() == 'macos':
+        if Platform.get_system() == 'macos':
             if '-in' in sys.argv[1:]:
-                xclip = command_mod.Command('pbcopy', errors='stop')
+                xclip = Command('pbcopy', errors='stop')
             else:
-                xclip = command_mod.Command('pbpaste', errors='stop')
+                xclip = Command('pbpaste', errors='stop')
         else:
-            xclip = command_mod.Command('xclip', errors='stop')
+            xclip = Command('xclip', errors='stop')
 
-        subtask_mod.Exec(xclip.get_cmdline() + sys.argv[1:]).run()
+        Exec(xclip.get_cmdline() + sys.argv[1:]).run()
 
 
 if __name__ == '__main__':

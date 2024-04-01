@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import Any, List
 
-import command_mod
-import subtask_mod
+from subtask_mod import Exec, Task
+from command_mod import Command
 
 
 class Options:
@@ -67,8 +67,8 @@ class Options:
         )
 
         if {'-c', '-f', '-q', '-t'} & set(args):
-            aplay = command_mod.Command('aplay', errors='stop')
-            subtask_mod.Exec(aplay.get_cmdline() + args[1:]).run()
+            aplay = Command('aplay', errors='stop')
+            Exec(aplay.get_cmdline() + args[1:]).run()
 
         self._args = parser.parse_args(args)
 
@@ -120,7 +120,7 @@ class Main:
         """
         options = Options()
 
-        play = command_mod.Command('play', errors='stop')
+        play = Command('play', errors='stop')
         if options.get_view_flag():
             play.set_args(['-v'])
         for directory in options.get_directories():
@@ -134,7 +134,7 @@ class Main:
                 random.shuffle(files)
             play.extend_args(files)
 
-        task = subtask_mod.Task(play.get_cmdline())
+        task = Task(play.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(

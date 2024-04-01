@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Daemon
 
 
 class Main:
@@ -46,12 +46,12 @@ class Main:
         """
         Start program
         """
-        etl = command_mod.Command('etl', errors='stop')
+        etl = Command('etl', errors='stop')
         etl.set_args(sys.argv[1:])
         os.chdir(Path(etl.get_file()).parent)
 
-        log_path = Path(file_mod.FileUtil.tmpdir(), 'etl.log')
-        subtask_mod.Daemon(etl.get_cmdline()).run(file=log_path)
+        log_path = Path(FileUtil.tmpdir(), 'etl.log')
+        Daemon(etl.get_cmdline()).run(file=log_path)
 
         return 0
 

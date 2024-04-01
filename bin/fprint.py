@@ -12,9 +12,9 @@ import time
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Batch, Daemon, Task
 
 
 class Options:
@@ -84,10 +84,10 @@ class Main:
 
     @staticmethod
     def _print(files: List[str]) -> None:
-        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'fprint'))
-        pdf = command_mod.Command('pdf', errors='stop')
-        xweb = command_mod.Command('xweb', errors='stop')
-        task: subtask_mod.Task
+        tmpdir = FileUtil.tmpdir(Path('.cache', 'fprint'))
+        pdf = Command('pdf', errors='stop')
+        xweb = Command('xweb', errors='stop')
+        task: Task
 
         for number, file in enumerate(files):
             if not Path(file).is_file():
@@ -96,7 +96,7 @@ class Main:
                 )
 
             tmpfile = f"{tmpdir}/{number:02d}.pdf"
-            task = subtask_mod.Batch(pdf.get_cmdline() + [tmpfile, file])
+            task = Batch(pdf.get_cmdline() + [tmpfile, file])
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -104,7 +104,7 @@ class Main:
                 )
 
             print(f"Sending to browser for printing: {file}")
-            task = subtask_mod.Daemon(xweb.get_cmdline() + [tmpfile])
+            task = Daemon(xweb.get_cmdline() + [tmpfile])
             task.run()
             time.sleep(0.5)
 

@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -36,14 +36,14 @@ class Options:
         """
         return self._args.urls
 
-    def get_aria2c(self) -> command_mod.Command:
+    def get_aria2c(self) -> Command:
         """
         Return aria2c Command class object.
         """
         return self._aria2c
 
     @staticmethod
-    def _set_libraries(command: command_mod.Command) -> None:
+    def _set_libraries(command: Command) -> None:
         libdir = Path(Path(command.get_file()).parent, 'lib')
         if libdir.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
@@ -81,7 +81,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._aria2c = command_mod.Command('aria2c', errors='stop')
+        self._aria2c = Command('aria2c', errors='stop')
         self._set_libraries(self._aria2c)
 
         if self._args.threads[0] < 1:
@@ -140,15 +140,12 @@ class Main:
                     ) from exception
 
     @staticmethod
-    def _get_remote(
-        aria2c: command_mod.Command,
-        files_remote: List[str],
-    ) -> None:
+    def _get_remote(aria2c: Command, files_remote: List[str]) -> None:
         if files_remote:
             cmdline = []
             for file in files_remote:
                 cmdline.append(file.replace('https://', 'http://'))
-            task = subtask_mod.Task(aria2c.get_cmdline() + cmdline)
+            task = Task(aria2c.get_cmdline() + cmdline)
             task.run()
             if task.get_exitcode():
                 raise SystemExit(

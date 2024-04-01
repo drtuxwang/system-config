@@ -14,8 +14,8 @@ import time
 from pathlib import Path
 from typing import Any, BinaryIO, List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -91,7 +91,7 @@ class VideoDownloader:
         self._output = options.get_output()
         self._url = options.get_url()
 
-        self._wget = command_mod.Command('wget', errors='stop')
+        self._wget = Command('wget', errors='stop')
         self._directory_path = Path(f'{self._output}.parts')
         self._m3u8_file = Path(self._directory_path, Path(self._url).name)
 
@@ -121,7 +121,7 @@ class VideoDownloader:
         self._write_resume()
 
         self._wget.set_args(['-O', self._m3u8_file, self._url])
-        task = subtask_mod.Task(self._wget.get_cmdline())
+        task = Task(self._wget.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(1)
@@ -164,7 +164,7 @@ class VideoDownloader:
             if Path(f'{path}.part').is_file():
                 Path(f'{path}.part').unlink()
             self._wget.set_args(['-O', path, url])
-            task = subtask_mod.Task(self._wget.get_cmdline())
+            task = Task(self._wget.get_cmdline())
             task.run()
             if task.get_exitcode() == 0:
                 return
@@ -224,7 +224,7 @@ class VideoDownloader:
         mp4_path = Path(f'{self._m3u8_file}-full.mp4')
         if mp4_path.is_file():
             mp4_path.unlink()
-        ffmpeg = command_mod.Command('ffmpeg', errors='stop')
+        ffmpeg = Command('ffmpeg', errors='stop')
         ffmpeg.set_args([
             '-i',
             full_path,
@@ -234,7 +234,7 @@ class VideoDownloader:
             'copy',
             mp4_path,
         ])
-        task = subtask_mod.Task(ffmpeg.get_cmdline())
+        task = Task(ffmpeg.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(1)

@@ -12,14 +12,14 @@ import sys
 from pathlib import Path
 from typing import Generator, List, Tuple
 
-import command_mod
-import file_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat, FileUtil
+from logging_mod import ColoredFormatter
+from subtask_mod import Batch, Child
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -185,8 +185,8 @@ class Media:
         self._length = '0'
         self._stream = {}
         self._type = 'Unknown'
-        ffprobe = command_mod.Command('ffprobe', args=[file], errors='stop')
-        task = subtask_mod.Batch(ffprobe.get_cmdline())
+        ffprobe = Command('ffprobe', args=[file], errors='stop')
+        task = Batch(ffprobe.get_cmdline())
         task.run(error2output=True)
         number = 0
         isjunk = re.compile('^ *Stream #[^ ]*: ')
@@ -334,8 +334,7 @@ class Encoder:
         return media
 
     def _run(self) -> None:
-        child = subtask_mod.Child(
-            self._ffmpeg.get_cmdline()).run(error2output=True)
+        child = Child(self._ffmpeg.get_cmdline()).run(error2output=True)
         line = ''
         ispattern = re.compile(
             '^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|'
@@ -407,8 +406,8 @@ class Encoder:
         Configure encoder
         """
         self._options = options
-        self._ffmpeg = command_mod.Command(
-            'ffmpeg', args=options.get_flags(), errors='stop')
+        self._ffmpeg = Command('ffmpeg', errors='stop')
+        self._ffmpeg.set_args(options.get_flags())
 
     def run(self) -> None:
         """
@@ -418,8 +417,8 @@ class Encoder:
             self._single()
         else:
             self._multi()
-        newest = file_mod.FileUtil.newest(self._options.get_files())
-        file_time = file_mod.FileStat(newest).get_time()
+        newest = FileUtil.newest(self._options.get_files())
+        file_time = FileStat(newest).get_time()
         os.utime(self._options.get_file_new(), (file_time, file_time))
 
 

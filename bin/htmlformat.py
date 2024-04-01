@@ -13,8 +13,8 @@ from typing import List
 
 import bs4  # type: ignore
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -55,7 +55,7 @@ class Main:
     """
     Main class
     """
-    _xmllint = command_mod.Command('xmllint', errors='stop')
+    _xmllint = Command('xmllint', errors='stop')
 
     def __init__(self) -> None:
         try:
@@ -131,7 +131,7 @@ class Main:
         errors = False
         for path in [Path(x) for x in options.get_files()]:
             if path.is_file() and path.suffix in ('.htm', '.html', '.xhtml'):
-                task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [path])
+                task = Batch(cls._xmllint.get_cmdline() + [path])
                 task.run()
                 if task.has_error():
                     for line in task.get_error():

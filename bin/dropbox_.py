@@ -17,11 +17,11 @@ import dropbox  # type: ignore
 import requests  # type: ignore
 import stone.backends.python_rsrc.stone_validators  # type: ignore
 
-import logging_mod
+from logging_mod import ColoredFormatter
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 

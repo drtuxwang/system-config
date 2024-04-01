@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Background
 
 
 class Main:
@@ -48,7 +48,7 @@ class Main:
         name = Path(sys.argv[0]).stem
         pattern = "QXcbConnection:|libpng warning:"
 
-        robo3t = network_mod.Sandbox(name, errors='stop')
+        robo3t = Sandbox(name, errors='stop')
         robo3t.set_args(sys.argv[1:])
         home = Path.home()
 
@@ -67,7 +67,7 @@ class Main:
         configs.append(work_dir)
         robo3t.sandbox(configs)
 
-        subtask_mod.Background(robo3t.get_cmdline()).run(pattern=pattern)
+        Background(robo3t.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

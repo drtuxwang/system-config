@@ -13,22 +13,22 @@ import types
 from pathlib import Path
 from typing import Any, Callable, Union
 
-import command_mod
-import subtask_mod
+from subtask_mod import Batch, Task
+from command_mod import Command
 
 
 class Options:
     """
     Options class
     """
-    _wine = command_mod.Command(Path(sys.argv[0]).name, errors='stop')
+    _wine = Command(Path(sys.argv[0]).name, errors='stop')
 
     def __init__(self) -> None:
         self._args = None
         self._config()
         self.parse(sys.argv)
 
-    def get_wine(self) -> command_mod.Command:
+    def get_wine(self) -> Command:
         """
         Return wine Command class object.
         """
@@ -117,8 +117,8 @@ class Main:
         options = Options()
 
         wine = options.get_wine()
-        xrandr = command_mod.Command('xrandr', errors='stop')
-        task = subtask_mod.Batch(xrandr.get_cmdline())
+        xrandr = Command('xrandr', errors='stop')
+        task = Batch(xrandr.get_cmdline())
         task.run(pattern='^  ')
         orig_resolution = 0
         for line in task.get_output():
@@ -126,9 +126,9 @@ class Main:
                 break
             orig_resolution += 1
 
-        subtask_mod.Task(wine.get_cmdline()).run()
+        Task(wine.get_cmdline()).run()
 
-        task = subtask_mod.Batch(xrandr.get_cmdline())
+        task = Batch(xrandr.get_cmdline())
         task.run(pattern='^  ')
         new_resolution = 0
         for line in task.get_output():
@@ -137,7 +137,7 @@ class Main:
             new_resolution += 1
         if new_resolution != orig_resolution:
             xrandr.set_args(['-s', orig_resolution])
-            subtask_mod.Batch(xrandr.get_cmdline()).run()
+            Batch(xrandr.get_cmdline()).run()
 
         return 0
 

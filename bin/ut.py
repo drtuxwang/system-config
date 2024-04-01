@@ -6,8 +6,8 @@ Urban Terror wrapper (wop)
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -37,10 +37,10 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('Quake3-UrT.x86_64', errors='stop')
+        command = Command('Quake3-UrT.x86_64', errors='stop')
         command.set_args(sys.argv[1:])
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
         return 0
 

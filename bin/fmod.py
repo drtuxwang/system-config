@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import Any, List
 
-import file_mod
+from file_mod import FileStat, FileUtil
 
 
 class Options:
@@ -170,15 +170,15 @@ class Main:
 
     @staticmethod
     def _chmod(path: Path, mod: int) -> None:
-        fmod = file_mod.FileStat(path).get_mode() % 512
+        fmod = FileStat(path).get_mode() % 512
         if fmod != mod:
             print(f"{fmod:o}>{mod:o}: {path}")
             path.chmod(mod)
 
     @staticmethod
     def _setmod_link(path: Path) -> None:
-        link_stat = file_mod.FileStat(path, follow_symlinks=False)
-        file_stat = file_mod.FileStat(path)
+        link_stat = FileStat(path, follow_symlinks=False)
+        file_stat = FileStat(path)
         file_time = file_stat.get_time()
 
         if file_time != link_stat.get_time():
@@ -200,11 +200,11 @@ class Main:
         except OSError:
             print(f"Permission denied: {path}{os.sep}")
         if paths:
-            file_stat = file_mod.FileStat(file_mod.FileUtil.newest(
+            file_stat = FileStat(FileUtil.newest(
                 [str(x) for x in paths]
             ))
             file_time = file_stat.get_time()
-            if file_time != file_mod.FileStat(path).get_time():
+            if file_time != FileStat(path).get_time():
                 print(f"<utime>: {path}/")
                 try:
                     os.utime(path, (file_time, file_time))

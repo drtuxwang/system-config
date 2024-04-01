@@ -10,10 +10,10 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import config_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from file_mod import FileStat
+from subtask_mod import Batch
 
 
 class Options:
@@ -102,23 +102,21 @@ class Main:
         """
         options = Options()
 
-        convert = command_mod.Command('convert', errors='stop')
+        convert = Command('convert', errors='stop')
         convert.set_args(['-rotate', options.get_rotation()])
 
-        images_extensions = config_mod.Config().get('image_extensions')
+        images_extensions = Config().get('image_extensions')
         for path in [Path(x) for x in options.get_files()]:
             if path.is_file() and path.suffix.lower() in images_extensions:
                 path_tmp = Path(f'{path}-rotate{path.suffix}')
-                task = subtask_mod.Batch(
-                    convert.get_cmdline() + [path, path_tmp]
-                )
+                task = Batch(convert.get_cmdline() + [path, path_tmp])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
                         f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                         f'received from "{task.get_file()}".',
                     )
-                file_time = file_mod.FileStat(path).get_time()
+                file_time = FileStat(path).get_time()
                 os.utime(path_tmp, (file_time, file_time))
                 path_tmp.replace(path)
 

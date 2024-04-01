@@ -6,8 +6,8 @@ Wrapper for "lsblk" command (sensible defaults)
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -37,7 +37,7 @@ class Main:
         """
         Start program
         """
-        lsblk = command_mod.Command('lsblk', errors='stop')
+        lsblk = Command('lsblk', errors='stop')
         if len(sys.argv) == 1:
             lsblk.set_args([
                 '-o',
@@ -45,7 +45,7 @@ class Main:
             ])
         else:
             lsblk.set_args(sys.argv[1:])
-        subtask_mod.Exec(lsblk.get_cmdline()).run()
+        Exec(lsblk.get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -23,13 +23,13 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command_1(self) -> command_mod.Command:
+    def get_command_1(self) -> Command:
         """
         Return command1 Command class object.
         """
         return self._command1
 
-    def get_command_2(self) -> command_mod.Command:
+    def get_command_2(self) -> Command:
         """
         Return command2 Command class object.
         """
@@ -73,12 +73,12 @@ class Options:
             host, file = source.split(':')[:2]
             device = target
             print(f'Restoring "{device}" from {host}:{file}...')
-            self._command1 = command_mod.Command(
+            self._command1 = Command(
                 'ssh',
                 args=[host, f'cat {file}'],
                 errors='stop'
             )
-            self._command2 = command_mod.Command(
+            self._command2 = Command(
                 'dd',
                 args=[f'of={device}'],
                 errors='stop'
@@ -96,12 +96,12 @@ class Options:
             device = source
             host, file = target.split(':')[:2]
             print(f'Backing up "{device}" to {host}:{file}...')
-            self._command1 = command_mod.Command(
+            self._command1 = Command(
                 'dd',
                 args=[f'if={device}'],
                 errors='stop'
             )
-            self._command2 = command_mod.Command(
+            self._command2 = Command(
                 'ssh',
                 args=[f'{host} cat - > {file}'],
                 errors='stop'
@@ -143,7 +143,7 @@ class Main:
         """
         options = Options()
 
-        task = subtask_mod.Task(
+        task = Task(
             options.get_command_1().get_cmdline() + ['|'] +
             options.get_command_2().get_cmdline()
         )

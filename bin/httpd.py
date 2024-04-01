@@ -13,8 +13,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import network_mod
-import subtask_mod
+from network_mod import SandboxFile
+from subtask_mod import Task
 
 
 class Options:
@@ -126,7 +126,7 @@ class Main:
         """
         Create sandbox
         """
-        command = network_mod.SandboxFile(sys.executable, args=[
+        command = SandboxFile(sys.executable, args=[
             '-B',
             __file__,
             '-run',
@@ -139,7 +139,7 @@ class Main:
             f"{os.environ['PWD']}:ro",
         ]
         command.sandbox(configs, errors='stop')
-        task = subtask_mod.Task(command.get_cmdline())
+        task = Task(command.get_cmdline())
         while task.get_exitcode() not in (114, 130):
             task.run()
             print(task.get_exitcode())

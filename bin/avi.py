@@ -12,15 +12,15 @@ import sys
 from pathlib import Path
 from typing import Generator, List, Tuple
 
-import command_mod
-import config_mod
-import file_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from file_mod import FileStat, FileUtil
+from logging_mod import ColoredFormatter
+from subtask_mod import Batch, Child, Task
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -247,9 +247,8 @@ class Media:
         self._length = '0'
         self._stream = {}
         self._type = 'Unknown'
-        ffprobe = command_mod.Command(
-            'ffprobe', args=[file], errors='stop')
-        task = subtask_mod.Batch(ffprobe.get_cmdline())
+        ffprobe = Command('ffprobe', args=[file], errors='stop')
+        task = Batch(ffprobe.get_cmdline())
         task.run(error2output=True)
         number = 0
         isjunk = re.compile('^ *Stream #[^ ]*: ')
@@ -443,7 +442,7 @@ class Encoder:
         return media
 
     def _config_images(self, files: List[str]) -> None:
-        convert = command_mod.Command('convert', errors='stop')
+        convert = Command('convert', errors='stop')
         extension = f'.tmp{os.getpid()}.png'
         frame = 0
         for file in files:
@@ -451,7 +450,7 @@ class Encoder:
             tmpfile = f'frame{frame:08d}{extension}'
             self._tempfiles.append(tmpfile)
             convert.set_args([file, tmpfile])
-            task = subtask_mod.Task(convert.get_cmdline())
+            task = Task(convert.get_cmdline())
             task.run()
         if self._options.get_video_rate():
             self._ffmpeg.set_args(['-r', self._options.get_video_rate()])
@@ -477,7 +476,7 @@ class Encoder:
             ])
         else:
             convert.set_args(['-verbose', tmpfile, '/dev/null'])
-            task2 = subtask_mod.Batch(convert.get_cmdline())
+            task2 = Batch(convert.get_cmdline())
             task.run()
             try:
                 # Must be multiple of 2 in x and y resolutions
@@ -503,7 +502,7 @@ class Encoder:
 
     @staticmethod
     def _all_images(files: List[str]) -> bool:
-        image_extensions = config_mod.Config().get('image_extensions')
+        image_extensions = Config().get('image_extensions')
 
         for file in files:
             if Path(file).suffix not in image_extensions:
@@ -511,7 +510,7 @@ class Encoder:
         return True
 
     def _run(self) -> None:
-        child = subtask_mod.Child(
+        child = Child(
             self._ffmpeg.get_cmdline()).run(error2output=True)
         line = ''
         ispattern = re.compile(
@@ -610,8 +609,8 @@ class Encoder:
         Configure encoder
         """
         self._options = options
-        self._ffmpeg = command_mod.Command(
-            'ffmpeg', args=options.get_flags(), errors='stop')
+        self._ffmpeg = Command('ffmpeg', errors='stop')
+        self._ffmpeg.set_args(options.get_flags())
         self._tempfiles: List[str] = []
 
     def run(self) -> None:
@@ -622,8 +621,8 @@ class Encoder:
             self._single()
         else:
             self._multi()
-        newest = file_mod.FileUtil.newest(self._options.get_files())
-        file_time = file_mod.FileStat(newest).get_time()
+        newest = FileUtil.newest(self._options.get_files())
+        file_time = FileStat(newest).get_time()
         os.utime(self._options.get_file_new(), (file_time, file_time))
 
 

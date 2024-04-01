@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Exec, Task
 
 
 class Options:
@@ -69,8 +69,8 @@ class Options:
         Parse arguments
         """
         if args[1:2] == ['setpci']:
-            setpci = command_mod.Command('setpci', errors='stop')
-            subtask_mod.Exec(setpci.get_cmdline() + args[2:]).run()
+            setpci = Command('setpci', errors='stop')
+            Exec(setpci.get_cmdline() + args[2:]).run()
 
         self._parse_args(args[1:])
         self._backlight = Backlight.factory()
@@ -87,7 +87,7 @@ class Backlight:
         self._default = self.get_brightness_default()
         self._step = self.get_brightness_step()
 
-        self._command: command_mod.Command = None
+        self._command: Command = None
         self._screens: List[str] = None
 
     @staticmethod
@@ -211,13 +211,12 @@ class BacklightIntelSetpci(Backlight):
         Return brightness
         """
         if getpass.getuser() != 'root':
-            sudo = command_mod.Command('sudo', errors='stop')
-            sudo.set_args(['-n', sys.argv[0]])
-            task = subtask_mod.Batch(
+            sudo = Command('sudo', args=['-n', sys.argv[0]], errors='stop')
+            task = Batch(
                 sudo.get_cmdline() + self._command.get_cmdline() + ['F4.B']
             )
         else:
-            task = subtask_mod.Batch(self._command.get_cmdline() + ['F4.B'])
+            task = Batch(self._command.get_cmdline() + ['F4.B'])
         task.run()
         try:
             return int(int(task.get_output()[0], 16) / 16)  # From 0 - 15
@@ -249,18 +248,18 @@ class BacklightIntelSetpci(Backlight):
         Set brightness
         """
         self._command.set_args([f'F4.B={int(brightness*16 + 15):x}'])
-        subtask_mod.Exec(self._command.get_cmdline()).run()
+        Exec(self._command.get_cmdline()).run()
 
     def detect(self) -> bool:
         """
         Detect status
         """
-        lspci = command_mod.Command('lspci', errors='ignore')
+        lspci = Command('lspci', errors='ignore')
         if lspci.is_found():
-            task = subtask_mod.Batch(lspci.get_cmdline())
+            task = Batch(lspci.get_cmdline())
             task.run(pattern='VGA.*Intel.*Atom')
             if task.has_output():
-                self._command = command_mod.Command(
+                self._command = Command(
                     'setpci',
                     args=['-s', task.get_output()[0].split()[0]],
                     errors='stop'
@@ -283,7 +282,7 @@ class BacklightXrandr(Backlight):
         Return brightness
         """
         self._command.set_args(['--verbose'])
-        task = subtask_mod.Batch(self._command.get_cmdline())
+        task = Batch(self._command.get_cmdline())
         task.run()
         try:
             brightness = float(
@@ -318,15 +317,15 @@ class BacklightXrandr(Backlight):
             self._command.set_args(
                 ['--output', screen, '--brightness', brightness]
             )
-            subtask_mod.Task(self._command.get_cmdline()).run()
+            Task(self._command.get_cmdline()).run()
 
     def detect(self) -> bool:
         """
         Detect status
         """
-        self._command = command_mod.Command('xrandr', errors='ignore')
+        self._command = Command('xrandr', errors='ignore')
         if self._command.is_found():
-            task = subtask_mod.Batch(self._command.get_cmdline())
+            task = Batch(self._command.get_cmdline())
             task.run()
             self._screens: List[str] = []
             for line in task.get_output('^[^ ]* connected '):

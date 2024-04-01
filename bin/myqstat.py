@@ -13,12 +13,12 @@ import time
 from pathlib import Path
 from typing import List
 
-import command_mod
-import logging_mod
-import subtask_mod
-import task_mod
+from command_mod import Command
+from logging_mod import Message
+from subtask_mod import Exec, Task
+from task_mod import Tasks
 
-RELEASE = '3.1.1'
+RELEASE = '3.1.2'
 
 
 class Options:
@@ -99,6 +99,39 @@ class Options:
             self._jobids.append(int(jobid))
 
 
+class Status:
+    """
+    Status class
+    """
+
+    def __init__(self) -> None:
+        self._lines: dict = {
+            'DONE': [],
+            'FAIL': [],
+            'RUN':  [],
+            'STOP':  [],
+            'QUEUE': [],
+        }
+
+    def add(self, mode: str, lines: List[str]) -> None:
+        """
+        Add job output lines.
+        """
+        self._lines[mode].extend(lines)
+
+    def show(self) -> None:
+        """
+        Show job status
+        """
+        print(
+            "JOBID  QUEUE   JOBNAME               "
+            "( MyQS v3)               CPUS  STATE  TIME"
+        )
+        for mode in ('DONE', 'FAIL', 'RUN', 'STOP', 'QUEUE'):
+            for line in self._lines[mode]:
+                print(line)
+
+
 class Main:
     """
     Main class
@@ -136,7 +169,7 @@ class Main:
                 except (OSError, ValueError):
                     pass
                 else:
-                    if task_mod.Tasks.factory().haspid(pid):
+                    if Tasks.factory().haspid(pid):
                         return True
                     path.unlink()
         except OSError:
@@ -182,35 +215,36 @@ class Main:
                 lines = data.decode(errors='replace').split('\n')[-3:-1]
             else:
                 lines = data.decode(errors='replace').rstrip().split('\n')[-2:]
-            info['LINES'] = [logging_mod.Message(x).get() for x in lines]
+            info['LINES'] = [Message(x).get() for x in lines]
 
         return info
 
     @staticmethod
-    def _show_info(info: dict, full: bool) -> None:
+    def _get_lines(info: dict, full: bool) -> List[str]:
+        lines = []
         if full:
-            print(f"\x1b[1;35mMyQS DIRECTORY   = {info['DIRECTORY']}")
-            print(f"MyQS COMMAND     = {info['COMMAND']}\x1b[0m")
+            lines.append(f"\x1b[1;35mMyQS DIRECTORY   = {info['DIRECTORY']}")
+            lines.append(f"MyQS COMMAND     = {info['COMMAND']}\x1b[0m")
             if 'LOGFILE' in info:
-                print(f"\x1b[1;35mMyQS LOGFILE     = {info['LOGFILE']}\x1b[0m")
+                lines.append(
+                    f"\x1b[1;35mMyQS LOGFILE     = {info['LOGFILE']}\x1b[0m"
+                )
             if 'PGID' in info:
-                print(f"\x1b[1;35mMyQS PGID        = {info['PGID']}\x1b[0m")
-
+                lines.append(
+                    f"\x1b[1;35mMyQS PGID        = {info['PGID']}\x1b[0m"
+                )
         for line in info['LINES']:
-            print(f"\x1b[1;34m{line}\x1b[0m")
+            lines.append(f"\x1b[1;34m{line}\x1b[0m")
+        return lines
 
     def _showjobs(self, options: Options) -> None:
         if 'HOME' not in os.environ:
             raise SystemExit(
                 f"{sys.argv[0]}: Cannot determine home directory.",
             )
-        print(
-            "JOBID  QUEUE   JOBNAME               "
-            "( MyQS v3)               CPUS  STATE  TIME"
-        )
 
         jobids = options.get_jobids()
-        statuses = (
+        modes = (
              ('DONE', 'FAIL', 'QUEUE')
              if options.get_all_flag() or jobids else
              ('QUEUE',)
@@ -220,44 +254,54 @@ class Main:
                 [int(x.stem) for x in self._myqsdir.glob('*.[dfqr]')]
             )
 
+        status = Status()
         for jobid in sorted(jobids):
-            for status in statuses:
-                path = Path(self._myqsdir, f'{jobid}.{status[0].lower()}')
+            for mode in modes:
+                path = Path(self._myqsdir, f'{jobid}.{mode[0].lower()}')
                 info = self._get_info(path)
                 if info:
-                    job_name = logging_mod.Message(info.get('JOBNAME')).get(45)
-                    print(
-                        f"{jobid:5d}  {info.get('QUEUE', ''):7s} "
-                        f"{job_name}        {status:5s}{info.get('ETIME'):>6s}"
+                    job_name = Message(info.get('JOBNAME')).get(45, lcut=True)
+                    status.add(
+                        mode,
+                        [
+                            f"{jobid:5d}  {info.get('QUEUE', ''):7s} "
+                            f"{job_name}        "
+                            f"{mode:5s}{info.get('ETIME'):>6s}"
+                        ] + self._get_lines(info, options.get_full_flag())
                     )
-                    self._show_info(info, options.get_full_flag())
                     continue
             info = self._get_info(Path(self._myqsdir, f'{jobid}.r'))
             if info:
-                job_name = logging_mod.Message(info.get('JOBNAME')).get(45)
+                job_name = Message(info.get('JOBNAME')).get(45, lcut=True)
                 pgid = int(info.get('PGID', '0'))
-                if not task_mod.Tasks.factory().haspgid(pgid):
+                if not Tasks.factory().haspgid(pgid):
                     time.sleep(0.1)
-                    if not task_mod.Tasks.factory().haspgid(pgid):
-                        print(
-                            f"\x1b[1;33m{jobid:5d}  {info.get('QUEUE', ''):7s}"
-                            f" {job_name}  {info.get('NCPUS', 1):>3s}   "
-                            "STOP      -\x1b[0m"
+                    if not Tasks.factory().haspgid(pgid):
+                        status.add(
+                            'STOP',
+                            [
+                                f"\x1b[1;33m{jobid:5d}  "
+                                f"{info.get('QUEUE', ''):7s}"
+                                f" {job_name}  {info.get('NCPUS', 1):>3s}   "
+                                "STOP      -\x1b[0m"
+                            ] + self._get_lines(info, options.get_full_flag())
                         )
-                        self._show_info(info, options.get_full_flag())
                         continue
-                print(
-                    f"\x1b[1;33m{jobid:5d}  {info.get('QUEUE', ''):7s} "
-                    f"{job_name}  {info.get('NCPUS', 1):>3s}   RUN  "
-                    f"{info.get('ETIME'):>6s}\x1b[0m"
+                status.add(
+                    'RUN',
+                    [
+                        f"\x1b[1;33m{jobid:5d}  {info.get('QUEUE', ''):7s} "
+                        f"{job_name}  {info.get('NCPUS', 1):>3s}   RUN  "
+                        f"{info.get('ETIME'):>6s}\x1b[0m"
+                    ] + self._get_lines(info, options.get_full_flag())
                 )
-                self._show_info(info, options.get_full_flag())
+        status.show()
 
     @staticmethod
     def _watch() -> None:
-        watch = command_mod.Command('watch', errors='stop')
+        watch = Command('watch', errors='stop')
         watch.set_args(['--interval', '10', '--color', __file__])
-        subtask_mod.Exec(watch.get_cmdline()).run()
+        Exec(watch.get_cmdline()).run()
 
     def run(self) -> int:
         """
@@ -273,8 +317,8 @@ class Main:
         self._showjobs(options)
 
         if not self._has_myqsd():
-            myqsd = command_mod.Command('myqsd', args=['1'], errors='stop')
-            subtask_mod.Task(myqsd.get_cmdline()).run()
+            myqsd = Command('myqsd', args=['1'], errors='stop')
+            Task(myqsd.get_cmdline()).run()
 
         return 0
 

@@ -9,7 +9,7 @@ import signal
 import sys
 from typing import List
 
-import file_mod
+from file_mod import FileStat
 
 
 class Options:
@@ -76,7 +76,7 @@ class Main:
         options = Options()
 
         for file in options.get_files():
-            file_stat = file_mod.FileStat(file)
+            file_stat = FileStat(file)
             print(f'"{file}".mode  =', oct(file_stat.get_mode()))
             print(f'"{file}".ino   =', file_stat.get_inode_number())
             print(f'"{file}".dev   =', file_stat.get_inode_device())

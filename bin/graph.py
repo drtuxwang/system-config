@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List, Sequence
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return self._args.file[0]
 
-    def get_gnuplot(self) -> command_mod.Command:
+    def get_gnuplot(self) -> Command:
         """
         Return gnuplot Command class object.
         """
@@ -92,7 +92,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._gnuplot = command_mod.Command('gnuplot', errors='stop')
+        self._gnuplot = Command('gnuplot', errors='stop')
 
         if self._args.xcol[0] < 1:
             raise SystemExit(
@@ -179,7 +179,7 @@ class Main:
                 )
                 self._writefile(f'{self._file}_{label}.plt', stdin)
                 print(f'Plotting "{output}"...')
-                task = subtask_mod.Task(self._gnuplot.get_cmdline())
+                task = Task(self._gnuplot.get_cmdline())
                 task.run(stdin=stdin)
                 if task.get_exitcode():
                     raise SystemExit(

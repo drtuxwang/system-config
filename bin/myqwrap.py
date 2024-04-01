@@ -9,9 +9,9 @@ import socket
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
-import task_mod
+from command_mod import Command
+from subtask_mod import Exec
+from task_mod import Tasks
 
 
 class Main:
@@ -51,7 +51,7 @@ class Main:
                 except (OSError, ValueError):
                     pass
                 else:
-                    if task_mod.Tasks.factory().haspid(pid):
+                    if Tasks.factory().haspid(pid):
                         return True
                     path.unlink()
         except OSError:
@@ -71,11 +71,11 @@ class Main:
 
         name = Path(sys.argv[0]).stem
         if not self._has_myqsd():
-            command = command_mod.Command(name, errors='ignore')
+            command = Command(name, errors='ignore')
             if command.is_found():
-                subtask_mod.Exec(command.get_cmdline() + sys.argv[1:]).run()
-        command = command_mod.Command(f'my{name}', errors='stop')
-        subtask_mod.Exec(command.get_cmdline() + sys.argv[1:]).run()
+                Exec(command.get_cmdline() + sys.argv[1:]).run()
+        command = Command(f'my{name}', errors='stop')
+        Exec(command.get_cmdline() + sys.argv[1:]).run()
 
         return 0
 

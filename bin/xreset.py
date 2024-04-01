@@ -13,8 +13,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -152,19 +152,17 @@ class Main:
         """
         options = Options()
 
-        xrandr = command_mod.Command('xrandr', errors='stop')
+        xrandr = Command('xrandr', errors='stop')
         dpi = '96'
         settings = options.get_settings()
 
-        subtask_mod.Batch(xrandr.get_cmdline() + ['-s', '0']).run()
-        subtask_mod.Batch(xrandr.get_cmdline() + ['--dpi', dpi]).run()
+        Batch(xrandr.get_cmdline() + ['-s', '0']).run()
+        Batch(xrandr.get_cmdline() + ['--dpi', dpi]).run()
 
         for device, mode in settings:
-            subtask_mod.Batch(
-                xrandr.get_cmdline() + ['--output', device, '--auto']).run()
-            subtask_mod.Batch(
-                xrandr.get_cmdline() +
-                ['--output', device, '--mode', mode]
+            Batch(xrandr.get_cmdline() + ['--output', device, '--auto']).run()
+            Batch(
+                xrandr.get_cmdline() + ['--output', device, '--mode', mode]
             ).run()
 
         return 0

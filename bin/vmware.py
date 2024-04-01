@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 from typing import BinaryIO, List, TextIO, Union
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background
 
 
 class Options:
@@ -27,7 +27,7 @@ class Options:
         """
         return self._pattern
 
-    def get_vmplayer(self) -> command_mod.Command:
+    def get_vmplayer(self) -> Command:
         """
         Return vmplayer Command class object.
         """
@@ -81,8 +81,7 @@ class Options:
         """
         Parse arguments
         """
-        self._vmplayer = command_mod.Command('vmplayer', errors='stop')
-        self._vmplayer.set_args(args[1:])
+        self._vmplayer = Command('vmplayer', args=args[1:], errors='stop')
         self._pattern = ': Gtk-WARNING |: g_bookmark_file_get_size|^Fontconfig'
         self._config()
 
@@ -122,8 +121,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Background(options.get_vmplayer().get_cmdline()).run(
-            pattern=options.get_pattern())
+        Background(
+            options.get_vmplayer().get_cmdline()
+        ).run(pattern=options.get_pattern())
 
         return 0
 

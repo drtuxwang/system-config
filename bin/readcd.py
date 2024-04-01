@@ -13,13 +13,13 @@ import time
 from pathlib import Path
 from typing import List
 
-import command_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
+from subtask_mod import Batch, Task
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -179,20 +179,20 @@ class Main:
 
     @staticmethod
     def _cdspeed(device: str, speed: str) -> None:
-        cdspeed = command_mod.Command('cdspeed', errors='ignore')
+        cdspeed = Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
                 cdspeed.set_args([device, speed])
             # If CD/DVD spin speed change fails its okay
-            subtask_mod.Task(cdspeed.get_cmdline()).run()
+            Task(cdspeed.get_cmdline()).run()
         elif speed and Path('/sbin/hdparm').is_file():
-            hdparm = command_mod.Command('/sbin/hdparm', errors='ignore')
+            hdparm = Command('/sbin/hdparm', errors='ignore')
             hdparm.set_args(['-E', speed, device])
-            subtask_mod.Batch(hdparm.get_cmdline()).run()
+            Batch(hdparm.get_cmdline()).run()
 
     @staticmethod
     def _dao(device: str, speed: str, file: str) -> None:
-        cdrdao = command_mod.Command('cdrdao', errors='stop')
+        cdrdao = Command('cdrdao', errors='stop')
 
         cdrdao.set_args(['read-cd', '--device', device, '--read-raw'])
         if speed:
@@ -202,8 +202,8 @@ class Main:
         else:
             cdrdao.extend_args(['--datafile', file, file + '.toc'])
 
-        nice = command_mod.Command('nice', args=['-20'], errors='stop')
-        task = subtask_mod.Task(nice.get_cmdline() + cdrdao.get_cmdline())
+        nice = Command('nice', args=['-20'], errors='stop')
+        task = Task(nice.get_cmdline() + cdrdao.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -220,16 +220,16 @@ class Main:
             print(f"  {key:10s}  {value}")
 
     def _tao(self, device: str, file: str) -> None:
-        isoinfo = command_mod.Command('isoinfo', errors='stop')
+        isoinfo = Command('isoinfo', errors='stop')
 
-        command = command_mod.Command('dd', errors='stop')
+        command = Command('dd', errors='stop')
         command.set_args([
             f'if={device}',
             f'bs={2048*4096}',
             'count=1',
             f'of={file}',
         ])
-        task = subtask_mod.Batch(command.get_cmdline())
+        task = Batch(command.get_cmdline())
         task.run()
         if task.get_error()[0].endswith('Permission denied'):
             raise SystemExit(
@@ -247,7 +247,7 @@ class Main:
             )
 
         isoinfo.set_args(['-d', '-i', file])
-        task = subtask_mod.Batch(isoinfo.get_cmdline())
+        task = Batch(isoinfo.get_cmdline())
         task.run(pattern='^Volume size is: ')
         if not task.has_output():
             raise SystemExit(
@@ -261,7 +261,7 @@ class Main:
             )
         blocks = int(task.get_output()[0].split()[-1])
 
-        task2 = subtask_mod.Task(isoinfo.get_cmdline())
+        task2 = Task(isoinfo.get_cmdline())
         task2.run(pattern=' id: $')
         if task2.get_exitcode():
             raise SystemExit(
@@ -277,8 +277,8 @@ class Main:
             f'of={file}',
         ])
 
-        nice = command_mod.Command('nice', args=['-20'], errors='stop')
-        task2 = subtask_mod.Task(nice.get_cmdline() + command.get_cmdline())
+        nice = Command('nice', args=['-20'], errors='stop')
+        task2 = Task(nice.get_cmdline() + command.get_cmdline())
         task2.run(pattern='Input/output error| records (in|out)$')
 
         if not Path(file).is_file():
@@ -373,9 +373,9 @@ class Main:
             else:
                 self._tao(device, file)
             time.sleep(1)
-            eject = command_mod.Command('eject', errors='ignore')
+            eject = Command('eject', errors='ignore')
             if eject.is_found():
-                task = subtask_mod.Batch(eject.get_cmdline())
+                task = Batch(eject.get_cmdline())
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(

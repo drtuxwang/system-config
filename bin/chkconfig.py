@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import config_mod
+from config_mod import Data, ReadConfigError
 
 
 class Options:
@@ -83,10 +83,10 @@ class Main:
         Start program
         """
         options = Options()
-        data = config_mod.Data()
+        data = Data()
         error = 0
 
-        types = config_mod.Data.TYPES
+        types = Data.TYPES
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
                 print(f"{path}: Cannot find file", file=sys.stderr)
@@ -98,7 +98,7 @@ class Main:
                 print(f'Checking "{path}" {file_type.upper()} file...')
                 try:
                     data.read(path, check=True)
-                except config_mod.ReadConfigError as exception:
+                except ReadConfigError as exception:
                     print(f"{path}: {exception}", file=sys.stderr)
                     error = 1
 

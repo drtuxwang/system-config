@@ -9,9 +9,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Exec
 
 
 class Main:
@@ -62,7 +62,7 @@ class Main:
         )
         if not config_dir.is_dir():
             config_dir.mkdir(parents=True)
-        tmpdir = file_mod.FileUtil.tmpdir('.cache/teams')
+        tmpdir = FileUtil.tmpdir('.cache/teams')
         for name in ('Cookies', 'desktop-config.json'):
             link = Path(tmpdir, name)
             if not link.is_symlink():
@@ -83,12 +83,12 @@ class Main:
         """
         Start program
         """
-        teams = command_mod.Command('teams', errors='stop')
+        teams = Command('teams', errors='stop')
         teams.set_args(sys.argv[1:])
 
         cls._config_teams()
 
-        subtask_mod.Exec(teams.get_cmdline()).run()
+        Exec(teams.get_cmdline()).run()
 
         return 0
 

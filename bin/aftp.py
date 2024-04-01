@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -23,7 +23,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_ftp(self) -> command_mod.Command:
+    def get_ftp(self) -> Command:
         """
         Return ftp Command class object.
         """
@@ -63,7 +63,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._ftp = command_mod.Command('ftp', errors='stop')
+        self._ftp = Command('ftp', errors='stop')
         self._ftp.set_args(['-i', self._args.host[0]])
 
         self._netrc(self._args.host[0])
@@ -104,7 +104,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_ftp().get_cmdline()).run()
+        Exec(options.get_ftp().get_cmdline()).run()
 
         return 0
 

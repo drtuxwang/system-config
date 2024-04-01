@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -84,7 +84,7 @@ class Main:
         if directory_path.is_dir():
             try:
                 paths = list(directory_path.iterdir())
-                subtask_mod.Batch(
+                Batch(
                     self._touch.get_cmdline() + [str(x) for x in paths]
                 ).run()
                 for path in paths:
@@ -102,7 +102,7 @@ class Main:
         """
         options = Options()
 
-        self._touch = command_mod.Command('touch', args=['-a'], errors='stop')
+        self._touch = Command('touch', args=['-a'], errors='stop')
         for directory in options.get_directories():
             self._toucher(Path(directory))
 

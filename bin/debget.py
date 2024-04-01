@@ -19,14 +19,14 @@ from typing import List
 
 import pyzstd
 
-import command_mod
-import file_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from logging_mod import ColoredFormatter
+from subtask_mod import Task
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -130,7 +130,7 @@ class Main:
     @staticmethod
     @functools.lru_cache(maxsize=4)
     def _get_cmdline(name: str) -> List[str]:
-        command = command_mod.Command(name, errors='stop')
+        command = Command(name, errors='stop')
 
         return command.get_cmdline()
 
@@ -147,7 +147,7 @@ class Main:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot unpack "{path}" package file.',
             )
-        subtask_mod.Task(cmdline).run(directory=path.parent)
+        Task(cmdline).run(directory=path.parent)
 
     @staticmethod
     def _show_times(old_utime: float, new_utime: float) -> None:
@@ -163,12 +163,7 @@ class Main:
             new_utc.strftime('%Y-%m-%d-%H:%M:%S'),
         )
 
-    def _get_packages(
-        self,
-        data: dict,
-        wget: command_mod.Command,
-        url: str,
-    ) -> dict:
+    def _get_packages(self, data: dict, wget: Command, url: str) -> dict:
         for _ in range(8):  # Workaround some mirrors down
             try:
                 with urllib.request.urlopen(url, timeout=0.2) as conn:
@@ -187,9 +182,7 @@ class Main:
             self._show_times(data['time'], url_time)
             archive_path = Path(self.tmpdir, Path(url).name)
             self._remove()
-            task = subtask_mod.Task(
-                wget.get_cmdline() + ['-O', archive_path, url]
-            )
+            task = Task(wget.get_cmdline() + ['-O', archive_path, url])
             for _ in range(3):
                 task.run()
                 if task.get_exitcode() == 0:
@@ -271,16 +264,13 @@ class Main:
         """
         Start program
         """
-        self.tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'debget'))
+        self.tmpdir = FileUtil.tmpdir(Path('.cache', 'debget'))
         os.umask(0o022)
 
         options = Options()
 
-        wget = command_mod.Command(
-            'wget',
-            args=['--timestamping', '--connect-timeout=1'],
-            errors='stop'
-        )
+        wget = Command('wget', errors='stop')
+        wget.set_args(['--timestamping', '--connect-timeout=1'])
 
         for dist_path in [Path(x) for x in options.get_distribution_files()]:
             if dist_path.suffix == '.dist':

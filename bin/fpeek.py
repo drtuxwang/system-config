@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import file_mod
+from file_mod import FileStat
 
 
 class Options:
@@ -130,7 +130,7 @@ class Main:
             try:
                 with path.open('rb') as ifile:
                     print(f"\nFile: {path}")
-                    file_stat = file_mod.FileStat(path)
+                    file_stat = FileStat(path)
                     if options.get_all_flag() or file_stat.get_size() < 128:
                         for position in range(1, file_stat.get_size() + 1, 16):
                             print(

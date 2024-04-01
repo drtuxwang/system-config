@@ -6,8 +6,8 @@ Shuts down WINE and all Windows applications
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Main:
@@ -37,10 +37,9 @@ class Main:
         """
         Start program
         """
-        wineserver = command_mod.Command(
-            'wineserver', args=['-k'], errors='stop')
+        wineserver = Command('wineserver', args=['-k'], errors='stop')
 
-        subtask_mod.Task(wineserver.get_cmdline()).run()
+        Task(wineserver.get_cmdline()).run()
 
         return 0
 

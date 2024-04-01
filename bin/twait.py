@@ -9,9 +9,9 @@ import sys
 import time
 from typing import List
 
-import command_mod
-import subtask_mod
-import task_mod
+from command_mod import Command
+from subtask_mod import Exec
+from task_mod import Tasks
 
 
 class Options:
@@ -23,7 +23,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command(self) -> command_mod.Command:
+    def get_command(self) -> Command:
         """
         Return command Command class object.
         """
@@ -93,7 +93,7 @@ class Options:
         except ValueError:
             self._pname = self._args.task[0]
 
-        self._command = command_mod.Command(
+        self._command = Command(
             self._args.command[0],
             args=args[3:],
             errors='stop'
@@ -133,13 +133,13 @@ class Main:
         pname = options.get_pname()
 
         if pname:
-            while task_mod.Tasks.factory(user).haspname(pname):
+            while Tasks.factory(user).haspname(pname):
                 time.sleep(1)
         else:
             pid = options.get_pid()
-            while pid in task_mod.Tasks.factory(user).get_pids():
+            while pid in Tasks.factory(user).get_pids():
                 time.sleep(1)
-        subtask_mod.Exec(options.get_command().get_cmdline()).run()
+        Exec(options.get_command().get_cmdline()).run()
 
         return 0
 

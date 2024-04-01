@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -45,14 +45,14 @@ class Main:
         """
         Start program
         """
-        golang = command_mod.Command(Path('bin', 'go'), errors='stop')
+        golang = Command(Path('bin', 'go'), errors='stop')
         golang.extend_args(sys.argv[1:])
 
         goroot = Path(golang.get_file()).parents[1]
         if Path(goroot, 'pkg').is_dir():
             os.environ['GOROOT'] = str(goroot)
 
-        subtask_mod.Exec(golang.get_cmdline()).run()
+        Exec(golang.get_cmdline()).run()
 
         return 0
 

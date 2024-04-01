@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Main:
@@ -53,7 +53,7 @@ class Main:
 
         if not Path(sound).is_file():
             raise SystemExit(f'{sys.argv[0]}: Cannot find "{sound}" file.')
-        bell = command_mod.Command('vlc', args=[
+        bell = Command('vlc', args=[
             '--intf',
             'dummy',
             '--quiet',
@@ -64,7 +64,7 @@ class Main:
             '--play-and-exit',
         ], errors='ignore')
         if not bell.is_found():
-            bell = command_mod.Command('ogg123', errors='ignore')
+            bell = Command('ogg123', errors='ignore')
             if not bell.is_found():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find required '
@@ -72,7 +72,7 @@ class Main:
                 )
         bell.append_arg(sound)
 
-        subtask_mod.Batch(bell.get_cmdline()).run()
+        Batch(bell.get_cmdline()).run()
 
         return 0
 

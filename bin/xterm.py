@@ -13,9 +13,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import desktop_mod
-import subtask_mod
+from command_mod import Command
+from desktop_mod import Desktop
+from subtask_mod import Background, Batch, Exec
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#009900'
@@ -67,12 +67,12 @@ class Options:
             if args[1] == '-i':
                 invis_flag = True
             else:
-                xterm = command_mod.Command(
+                xterm = Command(
                     'xterm',
                     args=args[1:],
                     errors='stop'
                 )
-                subtask_mod.Exec(xterm.get_cmdline()).run()
+                Exec(xterm.get_cmdline()).run()
             args = args[1:]
 
         terminals = {
@@ -83,7 +83,7 @@ class Options:
             'mate': MateTerminal,
             'xfce': XfceTerminal,
         }
-        desktop = 'invisible' if invis_flag else desktop_mod.Desktop.detect()
+        desktop = 'invisible' if invis_flag else Desktop.detect()
         self._terminal = terminals.get(desktop, Xterm)(self)
 
         self._hosts = (
@@ -105,7 +105,7 @@ class Terminal:
         self._config()
 
     def _config(self) -> None:
-        self._command: command_mod.Command = None
+        self._command: Command = None
 
     @staticmethod
     def get_label_flags(host: str) -> List[str]:
@@ -134,7 +134,7 @@ class Iterm(Terminal):
     """
 
     def _config(self) -> None:
-        self._command = command_mod.Command('iterm', errors='stop')
+        self._command = Command('iterm', errors='stop')
 
     @staticmethod
     def get_label_flags(host: str) -> List[str]:
@@ -156,7 +156,7 @@ class Iterm(Terminal):
         """
         for _ in self._options.get_hosts():
             cmdline = self._command.get_cmdline()
-            subtask_mod.Background(cmdline).run(pattern=self._pattern)
+            Background(cmdline).run(pattern=self._pattern)
 
 
 class Xterm(Terminal):
@@ -165,8 +165,8 @@ class Xterm(Terminal):
     """
 
     def _config(self) -> None:
-        self._command = command_mod.Command('xterm', errors='stop')
-        task = subtask_mod.Batch(self._command.get_cmdline() + ['-h'])
+        self._command = Command('xterm', errors='stop')
+        task = Batch(self._command.get_cmdline() + ['-h'])
         task.run()
         self._command.set_args([
             '-s',
@@ -239,7 +239,7 @@ class Xterm(Terminal):
             if host != self._myhost:
                 cmdline.append(self.get_run_flag())
                 if not ssh:
-                    ssh = command_mod.Command('ssh', errors='stop')
+                    ssh = Command('ssh', errors='stop')
                     ssh.set_args([
                         '-X',
                         '-o',
@@ -249,7 +249,7 @@ class Xterm(Terminal):
                     ])
                     self._ssh()
                 cmdline.extend(ssh.get_cmdline() + [host])
-            subtask_mod.Background(cmdline).run(pattern=self._pattern)
+            Background(cmdline).run(pattern=self._pattern)
 
 
 class XtermInvisible(Xterm):
@@ -261,12 +261,12 @@ class XtermInvisible(Xterm):
         ssh = None
         for host in self._options.get_hosts():
             if host == self._myhost:
-                task = subtask_mod.Background(
+                task = Background(
                     self._command.get_cmdline() + self.get_label_flags(host))
                 task.run(pattern=self._pattern)
             else:
                 if not ssh:
-                    ssh = command_mod.Command('ssh', errors='stop')
+                    ssh = Command('ssh', errors='stop')
                     ssh.set_args([
                         '-X',
                         '-o',
@@ -284,8 +284,7 @@ class XtermInvisible(Xterm):
                         ssh.append_arg(f'"{arg}"')
                     else:
                         ssh.append_arg(arg)
-                subtask_mod.Background(
-                    ssh.get_cmdline()).run(pattern=self._pattern)
+                Background(ssh.get_cmdline()).run(pattern=self._pattern)
 
 
 class GnomeTerminal(Xterm):
@@ -294,7 +293,7 @@ class GnomeTerminal(Xterm):
     """
 
     def _config(self) -> None:
-        self._command = command_mod.Command('gnome-terminal', errors='stop')
+        self._command = Command('gnome-terminal', errors='stop')
         self._command.set_args([
             f'--geometry={self._options.get_columns()}x24',
         ])
@@ -321,7 +320,7 @@ class Konsole(GnomeTerminal):
     """
 
     def _config(self) -> None:
-        self._command = command_mod.Command('konsole', errors='stop')
+        self._command = Command('konsole', errors='stop')
         self._command.set_args([
             f'--geometry={self._options.get_columns()}x24',
         ])
@@ -340,7 +339,7 @@ class MateTerminal(Konsole):
     """
 
     def _config(self) -> None:
-        self._command = command_mod.Command('mate-terminal', errors='stop')
+        self._command = Command('mate-terminal', errors='stop')
         self._command.set_args([
             f'--geometry={self._options.get_columns()}x24',
         ])
@@ -371,20 +370,11 @@ class XfceTerminal(GnomeTerminal):
         except OSError:
             pass
 
-        self._command = command_mod.Command(
-            'xfce4-terminal',
-            errors='ignore'
-        )
+        self._command = Command('xfce4-terminal', errors='ignore')
         if not self._command.is_found():
-            self._command = command_mod.Command(
-                'gnome-terminal',
-                errors='ignore'
-            )
+            self._command = Command('gnome-terminal', errors='ignore')
             if not self._command.is_found():
-                self._command = command_mod.Command(
-                    'xfce4-terminal',
-                    errors='stop'
-                )
+                self._command = Command('xfce4-terminal', errors='stop')
 
         self._command.set_args([
             f'--geometry={self._options.get_columns()}x24',

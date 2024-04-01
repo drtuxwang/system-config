@@ -11,9 +11,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Batch, Exec
 
 
 class Options:
@@ -30,7 +30,7 @@ class Options:
         """
         return self._mode
 
-    def get_rpm(self) -> command_mod.Command:
+    def get_rpm(self) -> Command:
         """
         Return rpm Command class object.
         """
@@ -40,10 +40,10 @@ class Options:
         """
         Parse arguments
         """
-        self._rpm = command_mod.Command('rpm', errors='stop')
+        self._rpm = Command('rpm', errors='stop')
         if len(args) == 1 or args[1] != '-l':
             self._rpm.set_args(sys.argv[1:])
-            subtask_mod.Exec(self._rpm.get_cmdline()).run()
+            Exec(self._rpm.get_cmdline()).run()
 
         self._mode = 'show_packages_info'
 
@@ -90,7 +90,7 @@ class Main:
     def _read_rpm_status(options: Options) -> dict:
         rpm = options.get_rpm()
         rpm.set_args(['-a', '-q', '-i'])
-        task = subtask_mod.Batch(rpm.get_cmdline())
+        task = Batch(rpm.get_cmdline())
         task.run()
         name = ''
         packages = {}
@@ -130,7 +130,7 @@ class Main:
         Start program
         """
         # Send ".rpmdb" to tmpfs
-        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'rpmdb'))
+        tmpdir = FileUtil.tmpdir(Path('.cache', 'rpmdb'))
         path = Path(Path.home(), '.rpmdb')
         if not path.is_symlink():
             try:

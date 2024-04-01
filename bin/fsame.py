@@ -12,12 +12,12 @@ import sys
 from pathlib import Path
 from typing import List
 
-import logging_mod
-import command_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -181,9 +181,7 @@ class Main:
                 sorted_paths = sorted(paths)
                 logger.warning(
                     "Identical: %s",
-                    command_mod.Command.args2cmd([
-                        str(x) for x in sorted_paths
-                    ])
+                    Command.args2cmd([str(x) for x in sorted_paths]),
                 )
                 if options.get_remove_flag():
                     self._remove(sorted_paths[1:])

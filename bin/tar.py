@@ -12,9 +12,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat
+from subtask_mod import Batch, Exec, Task
 
 
 class Options:
@@ -108,10 +108,10 @@ class Main:
         archive: str,
         files: List[str],
     ) -> None:
-        task: subtask_mod.Task
+        task: Task
 
-        tar = command_mod.Command('tar', errors='stop')
-        task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
+        tar = Command('tar', errors='stop')
+        task = Batch(tar.get_cmdline() + ['--help'])
         task.run(pattern='--owner|--numeric-owner|--xattrs')
         cmdline = tar.get_cmdline() + ['cf', '-'] + files
         if getpass.getuser() == 'root':
@@ -125,7 +125,7 @@ class Main:
         path_tmp = Path(f'{archive}.part')
         name = archive.replace('-new', '')
         if name.endswith(('.tar.7z', 't7z')):
-            cmdline.extend(['|'] + command_mod.Command('7z', args=[
+            cmdline.extend(['|'] + Command('7z', args=[
                 'a',
                 '-m0=lzma2',
                 '-mmt=2',
@@ -140,11 +140,11 @@ class Main:
                 path_tmp,
             ], errors='stop').get_cmdline())
         else:
-            monitor = command_mod.Command('pv', errors='ignore')
+            monitor = Command('pv', errors='ignore')
             if monitor.is_found():
                 cmdline.extend(['|'] + monitor.get_cmdline())
             if name.endswith(('.tar.xz', '.txz')):
-                cmdline.extend(['|'] + command_mod.Command('xz', args=[
+                cmdline.extend(['|'] + Command('xz', args=[
                     '-9',
                     '-e',
                     '--x86',
@@ -153,7 +153,7 @@ class Main:
                     '--verbose',
                 ], errors='stop').get_cmdline())
             elif name.endswith(('.tar.lzma', '.tlz')):
-                cmdline.extend(['|'] + command_mod.Command('xz', args=[
+                cmdline.extend(['|'] + Command('xz', args=[
                     '-9',
                     '-e',
                     '--format=lzma',
@@ -161,25 +161,25 @@ class Main:
                     '--verbose',
                 ], errors='stop').get_cmdline())
             elif name.endswith(('.tar.zst', '.tar.zstd', '.tzs', '.tzst')):
-                cmdline.extend(['|'] + command_mod.Command(
+                cmdline.extend(['|'] + Command(
                     'zstd',
                     args=['--ultra', '-22', '-T0'],
                     errors='stop',
                 ).get_cmdline())
             elif name.endswith(('.tar.bz2', '.tbz')):
-                cmdline.extend(['|'] + command_mod.Command(
+                cmdline.extend(['|'] + Command(
                     'bzip2',
                     args=['-9'],
                     errors='stop',
                 ).get_cmdline())
             elif name.endswith(('.tar.gz', '.tgz')):
-                cmdline.extend(['|'] + command_mod.Command(
+                cmdline.extend(['|'] + Command(
                     'gzip',
                     args=['-9'],
                     errors='stop',
                 ).get_cmdline())
             elif name.endswith(('.tar')):
-                cmdline.extend(['|'] + command_mod.Command(
+                cmdline.extend(['|'] + Command(
                     'cat',
                     errors='stop',
                 ).get_cmdline())
@@ -189,7 +189,7 @@ class Main:
                 )
             cmdline.extend(['>', f'{archive}.part'])
 
-        task = subtask_mod.Task(cmdline)
+        task = Task(cmdline)
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())
@@ -204,7 +204,7 @@ class Main:
 
     @staticmethod
     def _check_tar(path: Path) -> None:
-        size = file_mod.FileStat(path).get_size()
+        size = FileStat(path).get_size()
         if size % 1024:
             raise SystemExit(f'{sys.argv[0]}: Truncated tar file: {path}')
 
@@ -223,8 +223,8 @@ class Main:
         options = Options()
 
         if os.name == 'nt':
-            tar = command_mod.Command('tar_py.py', errors='stop')
-            subtask_mod.Exec(tar.get_cmdline() + sys.argv[1:]).run()
+            tar = Command('tar_py.py', errors='stop')
+            Exec(tar.get_cmdline() + sys.argv[1:]).run()
 
         os.umask(0o022)
         cls._pack(options.get_archive(), options.get_files())

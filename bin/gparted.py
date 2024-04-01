@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background
 
 
 class Main:
@@ -45,11 +45,10 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('gparted', errors='stop')
-        command.set_args(sys.argv[1:])
+        command = Command('gparted', args=sys.argv[1:], errors='stop')
 
         pattern = "^$|: dbind-WARNING"
-        subtask_mod.Background(command.get_cmdline()).run(pattern=pattern)
+        Background(command.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

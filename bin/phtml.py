@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import Generator, List
 
-import file_mod
-import config_mod
+from config_mod import Config
+from file_mod import FileStat
 
 
 class Options:
@@ -80,7 +80,7 @@ class Gallery:
     def __init__(self, path: Path, height: int) -> None:
         self._path = path
         self._height = height
-        images_extensions = config_mod.Config().get('image_extensions')
+        images_extensions = Config().get('image_extensions')
 
         try:
             self._files = [
@@ -197,7 +197,7 @@ class Xhtml:
 
     @staticmethod
     def generate(
-        file_stats: List[file_mod.FileStat],
+        file_stats: List[FileStat],
     ) -> Generator[str, None, None]:
         """
         Generate XHTML index file
@@ -251,7 +251,7 @@ class Xhtml:
         for path in self._find():
             gallery = Gallery(path, self._height)
             if gallery.create():
-                file_stats.append(file_mod.FileStat(path))
+                file_stats.append(FileStat(path))
         file_stats = sorted(
             file_stats,
             key=lambda s: s.get_time(),

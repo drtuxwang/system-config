@@ -13,12 +13,12 @@ import time
 from pathlib import Path
 from typing import Any, List
 
-import file_mod
-import logging_mod
+from logging_mod import ColoredFormatter
+from file_mod import FileStat
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -253,7 +253,7 @@ class Main:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{target_path}" link.',
             ) from exception
-        file_stat = file_mod.FileStat(source_path, follow_symlinks=False)
+        file_stat = FileStat(source_path, follow_symlinks=False)
         file_time = file_stat.get_time()
         try:
             os.utime(
@@ -273,8 +273,8 @@ class Main:
                     f'{sys.argv[0]}: Cannot remove "{target_path}" link.',
                 ) from exception
         elif target_path.is_file():
-            source_stat = file_mod.FileStat(source_path)
-            target_stat = file_mod.FileStat(target_path)
+            source_stat = FileStat(source_path)
+            target_stat = FileStat(target_path)
             if source_stat.get_size() == target_stat.get_size():
                 # Allow FAT16/FAT32/NTFS 1h daylight saving
                 # and 1 sec rounding error
@@ -363,7 +363,7 @@ class Main:
             try:
                 if path2.is_symlink():
                     path2.unlink()
-                path2.mkdir(mode=file_mod.FileStat(path1).get_mode())
+                path2.mkdir(mode=FileStat(path1).get_mode())
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{path2}" directory.',

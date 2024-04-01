@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Daemon, Exec
 
 
 class Main:
@@ -45,9 +45,9 @@ class Main:
         """
         Start program
         """
-        inkscape = network_mod.Sandbox('inkscape', errors='stop')
+        inkscape = Sandbox('inkscape', errors='stop')
         if Path(f'{inkscape.get_file()}.py').is_file():
-            subtask_mod.Exec(inkscape.get_cmdline() + sys.argv[1:]).run()
+            Exec(inkscape.get_cmdline() + sys.argv[1:]).run()
 
         # "os.getcwd()" returns realpath instead
         work_dir = Path(os.environ['PWD'])
@@ -78,7 +78,7 @@ class Main:
 
         inkscape.sandbox(configs)
 
-        subtask_mod.Daemon(inkscape.get_cmdline()).run()
+        Daemon(inkscape.get_cmdline()).run()
 
         return 0
 

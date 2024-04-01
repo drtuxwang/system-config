@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -101,8 +101,8 @@ class Main:
     """
     Main class
     """
-    zcat = command_mod.Command('zcat', errors='stop')
-    grep = command_mod.Command('grep', errors='stop')
+    zcat = Command('zcat', errors='stop')
+    grep = Command('grep', errors='stop')
 
     def __init__(self) -> None:
         try:
@@ -132,7 +132,7 @@ class Main:
         cmdline = cls.zcat.get_cmdline() + [file, '|'] + grep
         if prefix:
             cmdline.extend(['|', 'sed', '-e', f's@^@{prefix}@'])
-        subtask_mod.Task(cmdline).run()
+        Task(cmdline).run()
 
     @classmethod
     def run(cls) -> int:

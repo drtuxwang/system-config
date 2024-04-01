@@ -9,8 +9,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background
 
 
 class Main:
@@ -68,11 +68,10 @@ class Main:
         """
         Start program
         """
-        pidgin = command_mod.Command('pidgin', errors='stop')
-        pidgin.set_args(sys.argv[1:])
+        pidgin = Command('pidgin', args=sys.argv[1:], errors='stop')
         self._config()
 
-        subtask_mod.Background(pidgin.get_cmdline()).run()
+        Background(pidgin.get_cmdline()).run()
 
         return 0
 

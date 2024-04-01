@@ -14,10 +14,10 @@ from typing import List
 
 import gtts  # type: ignore
 
-import command_mod
-import file_mod
-import subtask_mod
-import task_mod
+from command_mod import Command, CommandFile
+from file_mod import FileUtil
+from subtask_mod import Batch, Task
+from task_mod import Tasks
 
 
 class Options:
@@ -78,15 +78,15 @@ class Options:
     @staticmethod
     def _xclip() -> List[str]:
         isxclip = re.compile(os.sep + 'python.*[/ ]say(.py)? .*-xclip')
-        tasks = task_mod.Tasks.factory()
+        tasks = Tasks.factory()
         for pid in tasks.get_pids():
             if pid != os.getpid():
                 if isxclip.search(tasks.get_process(pid)['COMMAND']):
                     # Kill old say.py instances
                     tasks.killpids([pid] + tasks.get_descendant_pids(pid))
-        xclip = command_mod.Command('xclip', errors='stop')
+        xclip = Command('xclip', errors='stop')
         xclip.set_args(['-out', '-selection', '-c', 'test'])
-        task = subtask_mod.Batch(xclip.get_cmdline())
+        task = Batch(xclip.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -101,7 +101,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        tmpdir = file_mod.FileUtil.tmpdir('.cache/say')
+        tmpdir = FileUtil.tmpdir('.cache/say')
         self._tmp_path = Path(tmpdir, f"{os.getpid()}.mp3")
 
         if self._args.xclip_flag:
@@ -150,13 +150,13 @@ class Main:
         if options.get_run_flag():
             start_time = time.time()
             command = (
-                command_mod.CommandFile(args[0])
+                CommandFile(args[0])
                 if Path(args[0]).is_file()
-                else command_mod.Command(args[0], errors='ignore')
+                else Command(args[0], errors='ignore')
             )
             if command.is_found():
                 command.set_args(args[1:])
-                task = subtask_mod.Task(command.get_cmdline())
+                task = Task(command.get_cmdline())
                 task.run()
                 exitcode = task.get_exitcode()
                 if exitcode:
@@ -170,7 +170,7 @@ class Main:
             print(f"Elapsed time (s): {elapsed_time:5.3f}")
 
         tmpfile = options.get_tmpfile()
-        player = command_mod.Command('vlc', errors='stop')
+        player = Command('vlc', errors='stop')
         player.set_args([
             '--intf',
             'dummy',
@@ -185,7 +185,7 @@ class Main:
             if phrase.strip():
                 tts = gtts.gTTS(phrase)
                 tts.save(tmpfile)
-                subtask_mod.Batch(player.get_cmdline()).run()
+                Batch(player.get_cmdline()).run()
         try:
             Path(tmpfile).unlink()
         except FileNotFoundError:

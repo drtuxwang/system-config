@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -23,7 +23,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -68,18 +68,15 @@ class Options:
         self._parse_args(args[1:])
 
         if os.name == 'nt':
-            self._archiver = command_mod.Command(
-                'pkzip32.exe',
-                errors='ignore'
-            )
+            self._archiver = Command('pkzip32.exe', errors='ignore')
             if not self._archiver.is_found():
-                self._archiver = command_mod.Command('unzip', errors='stop')
+                self._archiver = Command('unzip', errors='stop')
         else:
-            self._archiver = command_mod.Command('unzip', errors='stop')
+            self._archiver = Command('unzip', errors='stop')
 
         if args[1] in ('view', 'test'):
             self._archiver.set_args(args[1:])
-            subtask_mod.Exec(self._archiver.get_cmdline()).run()
+            Exec(self._archiver.get_cmdline()).run()
 
         if Path(self._archiver.get_file()).name == 'pkzip32.exe':
             if self._args.view_flag:
@@ -134,7 +131,7 @@ class Main:
 
         cmdline = options.get_archiver().get_cmdline()
         for archive in options.get_archives():
-            task = subtask_mod.Task(cmdline + [archive])
+            task = Task(cmdline + [archive])
             task.run()
             if task.get_exitcode():
                 print(

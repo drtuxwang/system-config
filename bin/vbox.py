@@ -8,8 +8,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -103,7 +103,7 @@ class Main:
     def _poweroff(self, machines: List[str]) -> None:
         for machine in machines:
             self._vboxmanage.set_args(['controlvm', machine, 'poweroff'])
-            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task = Task(self._vboxmanage.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -115,7 +115,7 @@ class Main:
         for machine in machines:
             self._vboxmanage.set_args(
                 ['controlvm', machine, 'acpipowerbutton'])
-            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task = Task(self._vboxmanage.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -127,7 +127,7 @@ class Main:
         for machine in machines:
             self._vboxmanage.set_args(
                 ['startvm', machine, '--type', 'headless'])
-            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task = Task(self._vboxmanage.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -137,12 +137,12 @@ class Main:
 
     def _view(self) -> None:
         self._vboxmanage.set_args(['list', 'vms'])
-        task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+        task = Task(self._vboxmanage.get_cmdline())
         task.run(pattern='^".*"')
         if task.has_output():
             lines = sorted(task.get_output())
             self._vboxmanage.set_args(['list', 'runningvms'])
-            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task = Task(self._vboxmanage.get_cmdline())
             task.run(pattern='^".*"')
             for line in lines:
                 if line in task.get_output():
@@ -156,7 +156,7 @@ class Main:
         """
         options = Options()
 
-        self._vboxmanage = command_mod.Command('VBoxManage', errors='stop')
+        self._vboxmanage = Command('VBoxManage', errors='stop')
         mode = options.get_mode()
         machines = options.get_machines()
 

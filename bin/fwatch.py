@@ -9,8 +9,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -22,7 +22,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_inotifywait(self) -> command_mod.Command:
+    def get_inotifywait(self) -> Command:
         """
         Return inotifywait Command class object.
         """
@@ -48,7 +48,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._inotifywait = command_mod.Command('inotifywait', errors='stop')
+        self._inotifywait = Command('inotifywait', errors='stop')
         self._inotifywait.set_args([
             '-e',
             'attrib,create,modify,move,delete',
@@ -85,7 +85,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_inotifywait().get_cmdline()).run()
+        Exec(options.get_inotifywait().get_cmdline()).run()
 
         return 0
 

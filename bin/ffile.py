@@ -13,10 +13,10 @@ from typing import List
 
 import magic  # type: ignore
 
-import command_mod
-import config_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from logging_mod import Message
+from subtask_mod import Batch
 
 
 class Options:
@@ -57,9 +57,9 @@ class Main:
     """
     Main class
     """
-    _ffprobe = command_mod.Command('ffprobe', errors='ignore')
+    _ffprobe = Command('ffprobe', errors='ignore')
     _isjunk = re.compile(r'( \[SAR[^,]*)?, (\d* kb/s|\d+.\d+ fps),.*')
-    _video_extensions = config_mod.Config().get('video_extensions')
+    _video_extensions = Config().get('video_extensions')
 
     def __init__(self) -> None:
         try:
@@ -80,7 +80,7 @@ class Main:
 
     @classmethod
     def _get_media_info(cls, path: Path, info: str) -> str:
-        task = subtask_mod.Batch(cls._ffprobe.get_cmdline() + [path])
+        task = Batch(cls._ffprobe.get_cmdline() + [path])
         task.run(error2output=True)
         length = 0
         size = '?x?'
@@ -103,7 +103,7 @@ class Main:
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
-        width = max(logging_mod.Message(x).width() for x in files)
+        width = max(Message(x).width() for x in files)
         with magic.Magic() as checker:
             for file in files:
                 info = checker.id_filename(file)
@@ -113,7 +113,7 @@ class Main:
                     cls._ffprobe.is_found()
                 ):
                     info = cls._get_media_info(path, info)
-                print(f"{logging_mod.Message(file).get(width)}  {info}")
+                print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:

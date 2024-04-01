@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Task
 
 
 class Main:
@@ -47,7 +47,7 @@ class Main:
         """
         name = Path(sys.argv[0]).stem
 
-        wesnoth = network_mod.Sandbox(name, errors='stop')
+        wesnoth = Sandbox(name, errors='stop')
         wesnoth.set_args(sys.argv[1:])
 
         if not Path(f'{wesnoth.get_file()}.py').is_file():
@@ -69,7 +69,7 @@ class Main:
             wesnoth.sandbox(configs)
 
         pattern = 'deprecation:'
-        subtask_mod.Task(wesnoth.get_cmdline()).run(pattern=pattern)
+        Task(wesnoth.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

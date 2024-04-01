@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from subtask_mod import Daemon
 
 
 class Options:
@@ -23,7 +23,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command(self) -> command_mod.Command:
+    def get_command(self) -> Command:
         """
         Return command Command class object.
         """
@@ -71,14 +71,14 @@ class Options:
         return args[len(my_args):]
 
     @staticmethod
-    def _get_command(directory: str, command: str) -> command_mod.Command:
+    def _get_command(directory: str, command: str) -> Command:
         if Path(command).is_file():
-            return command_mod.CommandFile(Path(command).resolve())
+            return CommandFile(Path(command).resolve())
 
         path = Path(directory, command)
         if path.is_file():
-            return command_mod.CommandFile(path)
-        return command_mod.Command(command)
+            return CommandFile(path)
+        return Command(command)
 
     def parse(self, args: List[str]) -> None:
         """
@@ -137,8 +137,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Daemon(options.get_command().get_cmdline()).run(
-            file=options.get_log_file())
+        Daemon(
+            options.get_command().get_cmdline()
+        ).run(file=options.get_log_file())
 
         return 0
 

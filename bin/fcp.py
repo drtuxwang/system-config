@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 from typing import Any, List
 
-import file_mod
+from file_mod import FileStat, FileUtil
 
 
 class Options:
@@ -131,7 +131,7 @@ class Main:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path2}" link.',
             ) from exception
-        file_stat = file_mod.FileStat(path1, follow_symlinks=False)
+        file_stat = FileStat(path1, follow_symlinks=False)
         file_time = file_stat.get_time()
         try:
             os.utime(path2, (file_time, file_time), follow_symlinks=False)
@@ -149,20 +149,17 @@ class Main:
         if not path2.is_dir():
             print(f'Creating "{path2}" directory...')
             try:
-                path2.mkdir(
-                    mode=file_mod.FileStat(path1).get_mode(),
-                    parents=True,
-                )
+                path2.mkdir(mode=FileStat(path1).get_mode(), parents=True)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{path2}" directory.',
                 ) from exception
         for path in paths:
             self._copy(path, Path(path2, path.name))
-        newest = file_mod.FileUtil.newest(list(path2.iterdir()))
+        newest = FileUtil.newest(list(path2.iterdir()))
         if not newest:
             newest = str(path1)
-        file_stat = file_mod.FileStat(newest, follow_symlinks=False)
+        file_stat = FileStat(newest, follow_symlinks=False)
         file_time = file_stat.get_time()
         os.utime(path2, (file_time, file_time))
 
@@ -239,7 +236,7 @@ class Main:
                     if not path.is_dir():
                         try:
                             path.mkdir(
-                                mode=file_mod.FileStat(source).get_mode(),
+                                mode=FileStat(source).get_mode(),
                                 parents=True,
                             )
                         except OSError as exception:

@@ -7,8 +7,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background
 
 
 class Options:
@@ -25,7 +25,7 @@ class Options:
         """
         return self._pattern
 
-    def get_gedit(self) -> command_mod.Command:
+    def get_gedit(self) -> Command:
         """
         Return gedit Command class object.
         """
@@ -35,7 +35,7 @@ class Options:
         """
         Parse arguments
         """
-        self._gedit = command_mod.Command('gedit', errors='stop')
+        self._gedit = Command('gedit', errors='stop')
         self._gedit.set_args(args[1:])
         self._pattern = (
             '^$|$HOME/.gnome|FAMOpen| DEBUG: |GEDIT_IS_PLUGIN|'
@@ -73,8 +73,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Background(options.get_gedit().get_cmdline(
-            )).run(pattern=options.get_pattern())
+        Background(
+            options.get_gedit().get_cmdline()
+        ).run(pattern=options.get_pattern())
 
         return 0
 

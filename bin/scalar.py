@@ -9,8 +9,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -49,11 +49,11 @@ class Main:
         """
         Start program
         """
-        scalar = command_mod.Command(Path('bin', 'scalar'), errors='stop')
+        scalar = Command(Path('bin', 'scalar'), errors='stop')
         scalar.set_args(sys.argv[1:])
 
         os.umask(0o022)
-        subtask_mod.Exec(scalar.get_cmdline()).run()
+        Exec(scalar.get_cmdline()).run()
 
         return 0
 

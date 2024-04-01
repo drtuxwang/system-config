@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -102,14 +102,14 @@ class Main:
         version = options.get_version()
 
         if version:
-            command = command_mod.Command(f'python{version}', errors='stop')
+            command = Command(f'python{version}', errors='stop')
             executable = command.get_file()
         else:
             executable = sys.executable
 
         for file in options.get_files():
             print(f"{Path(executable).name} -m compileall {file}")
-            subtask_mod.Task([executable, '-m', 'compileall', file]).run()
+            Task([executable, '-m', 'compileall', file]).run()
 
         return 0
 

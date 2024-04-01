@@ -9,9 +9,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command, Platform
+from file_mod import FileUtil
+from subtask_mod import Batch, Exec, Task
 
 
 class Main:
@@ -44,7 +44,7 @@ class Main:
 
     @staticmethod
     def _cache() -> None:
-        if command_mod.Platform.get_system() == 'macos':
+        if Platform.get_system() == 'macos':
             return
         helm2_directory = Path(Path.home(), '.helm')
         if helm2_directory.is_dir():
@@ -57,7 +57,7 @@ class Main:
             for cache in ('cache', 'repository/cache'):
                 link = Path(helm2_directory, cache)
 
-                directory = file_mod.FileUtil.tmpdir(Path(
+                directory = FileUtil.tmpdir(Path(
                     '.cache',
                     'helm',
                     cache.split(os.sep, 1)[0],
@@ -70,15 +70,13 @@ class Main:
                     except OSError:
                         pass
 
-        directory = file_mod.FileUtil.tmpdir(
-            Path('.cache', 'helm', 'repository')
-        )
+        directory = FileUtil.tmpdir(Path('.cache', 'helm', 'repository'))
         if not list(Path(directory).glob('*-index.yaml')):
-            helm = command_mod.Command('helm', errors='stop')
-            task = subtask_mod.Batch(helm.get_cmdline() + ['repo', 'list'])
+            helm = Command('helm', errors='stop')
+            task = Batch(helm.get_cmdline() + ['repo', 'list'])
             task.run(pattern='http')
             if task.has_output():
-                subtask_mod.Task(helm.get_cmdline() + ['repo', 'update']).run()
+                Task(helm.get_cmdline() + ['repo', 'update']).run()
 
     @classmethod
     def run(cls) -> int:
@@ -87,9 +85,9 @@ class Main:
         """
         cls._cache()
 
-        helm = command_mod.Command('helm', errors='stop')
+        helm = Command('helm', errors='stop')
         helm.set_args(sys.argv[1:])
-        subtask_mod.Exec(helm.get_cmdline()).run()
+        Exec(helm.get_cmdline()).run()
 
         return 0
 

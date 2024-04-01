@@ -9,9 +9,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import network_mod
-import subtask_mod
+from command_mod import Command
+from network_mod import NetNice
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -28,7 +28,7 @@ class Options:
         """
         return self._output
 
-    def get_wget(self) -> command_mod.Command:
+    def get_wget(self) -> Command:
         """
         Return wget Command class object.
         """
@@ -38,7 +38,7 @@ class Options:
         """
         Parse arguments
         """
-        self._wget = command_mod.Command('wget', errors='stop')
+        self._wget = Command('wget', errors='stop')
         if '--hsts-file=/dev/null' not in args:
             self._wget.append_arg('--hsts-file=/dev/null')
         if '--no-check-certificate' not in args:
@@ -109,12 +109,12 @@ class Main:
         wget = options.get_wget()
 
         cmdline = wget.get_cmdline()
-        netnice = network_mod.NetNice()
+        netnice = NetNice()
         if netnice.is_found():
             cmdline = netnice.get_cmdline() + cmdline
 
         if output:
-            task = subtask_mod.Task(cmdline)
+            task = Task(cmdline)
             task.run()
             path_tmp = Path(f'{output}.part')
             if (
@@ -130,7 +130,7 @@ class Main:
                     f'{sys.argv[0]}: Cannot create "{output}" output file.',
                 ) from exception
         else:
-            subtask_mod.Exec(cmdline).run()
+            Exec(cmdline).run()
 
         return 0
 

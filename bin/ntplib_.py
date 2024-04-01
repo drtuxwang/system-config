@@ -17,10 +17,10 @@ from typing import Generator, List
 import dns.resolver  # type: ignore
 import ntplib  # type: ignore
 
-import command_mod
-import file_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat, FileUtil
+from logging_mod import ColoredFormatter
+from subtask_mod import Task
 
 DNS_SERVERS = ['1.1.1.1', '8.8.8.8']
 NTP_SERVER = 'pool.ntp.org'
@@ -30,7 +30,7 @@ NTP_SYNC_REPEAT = 3600
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -110,18 +110,18 @@ class Main:
         Check clock and apply rough correction. Return retry time.
         """
         logger.info("Checking current clock...")
-        newest = file_mod.FileUtil.newest(glob.glob('/etc/*'))
-        time_stamp = file_mod.FileStat(newest).get_time()
+        newest = FileUtil.newest(glob.glob('/etc/*'))
+        time_stamp = FileStat(newest).get_time()
         if time_stamp - time.time() > 86400:
             logger.info("Updating: System clock setting...")
-            subtask_mod.Task(self._date.get_cmdline() + [
+            Task(self._date.get_cmdline() + [
                 '+%Y-%m-%d %H:%M:%S.%N%z',
                 '--set',
                 f'@{time_stamp:f}',
             ]).run()
             logger.info("Syncing:  Setting hardware clock...")
-            subtask_mod.Task(self._hwclock.get_cmdline() + ['--systohc']).run()
-            subtask_mod.Task(self._hwclock.get_cmdline() + ['--show']).run()
+            Task(self._hwclock.get_cmdline() + ['--systohc']).run()
+            Task(self._hwclock.get_cmdline() + ['--show']).run()
             return 10
 
         return 60
@@ -186,15 +186,15 @@ class Main:
         Check clock and apply rough correction. Return retry time.
         """
         logger.info("Updating: System clock with offset...")
-        subtask_mod.Task(self._date.get_cmdline() + [
+        Task(self._date.get_cmdline() + [
             '+%Y-%m-%d %H:%M:%S.%N%z',
             '--set',
             f'{offset} sec',
         ]).run()
 
         logger.info("Syncing:  Setting hardware clock...")
-        subtask_mod.Task(self._hwclock.get_cmdline() + ['--systohc']).run()
-        subtask_mod.Task(self._hwclock.get_cmdline() + ['--show']).run()
+        Task(self._hwclock.get_cmdline() + ['--systohc']).run()
+        Task(self._hwclock.get_cmdline() + ['--show']).run()
 
     def run(self) -> int:
         """
@@ -209,8 +209,8 @@ class Main:
             self.get_offset()
             return 0
 
-        self._date = command_mod.Command('date', errors='stop')
-        self._hwclock = command_mod.Command('hwclock', errors='stop')
+        self._date = Command('date', errors='stop')
+        self._hwclock = Command('hwclock', errors='stop')
         delay = self.check_clock()
 
         while True:

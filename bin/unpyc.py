@@ -13,8 +13,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -63,7 +63,7 @@ class Main:
     """
     Main class
     """
-    _pydisasm = command_mod.Command(
+    _pydisasm = Command(
         'pydisasm',
         args=['--format=bytes'],
         errors='stop',
@@ -106,12 +106,12 @@ class Main:
 
         # Run difference version of Python
         if sys.version_info[0:2] != version:
-            command = command_mod.Command(
+            command = Command(
                 f'python{version[0]}.{version[1]}',
                 args=[__file__, path],
                 errors='stop',
             )
-            task = subtask_mod.Task(command.get_cmdline())
+            task = Task(command.get_cmdline())
             task.run()
             return task.get_exitcode()
 
@@ -126,7 +126,7 @@ class Main:
 
     @classmethod
     def _disasm(cls, path: Path) -> int:
-        task = subtask_mod.Batch(cls._pydisasm.get_cmdline() + [path])
+        task = Batch(cls._pydisasm.get_cmdline() + [path])
         task.run(error2output=True)
         if task.get_exitcode():
             return cls._dis(path)

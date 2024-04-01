@@ -9,8 +9,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Exec
 
 
 class Main:
@@ -46,7 +46,7 @@ class Main:
         """
         Start program
         """
-        command = network_mod.Sandbox("0ad", errors='stop')
+        command = Sandbox("0ad", errors='stop')
         command.set_args(sys.argv[1:])
         if not Path(f'{command.get_file()}.py').is_file():
             configs = [
@@ -59,7 +59,7 @@ class Main:
                 configs.append('net')
             command.sandbox(configs)
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

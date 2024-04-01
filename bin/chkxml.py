@@ -12,8 +12,8 @@ import xml.sax
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -105,7 +105,7 @@ class Main:
     """
     Main class
     """
-    _xmllint = command_mod.Command('xmllint', args=['--noout'], errors='stop')
+    _xmllint = Command('xmllint', args=['--noout'], errors='stop')
 
     def __init__(self) -> None:
         try:
@@ -145,7 +145,7 @@ class Main:
                 )
 
             print(f'Checking "{path}" XML file...')
-            task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [path])
+            task = Batch(cls._xmllint.get_cmdline() + [path])
             task.run(pattern=": parser warning : Unsupported version '1.1'")
             errors = [
                 x

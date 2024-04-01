@@ -6,8 +6,8 @@ Wrapper for "gnomine" command
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -37,14 +37,14 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('gnome-mines', errors='ignore')
+        command = Command('gnome-mines', errors='ignore')
         if not command.is_found():
-            command = command_mod.Command('gnomine', errors='ignore')
+            command = Command('gnomine', errors='ignore')
             if not command.is_found():
-                command = command_mod.Command('gnome-mines', errors='stop')
+                command = Command('gnome-mines', errors='stop')
         command.set_args(sys.argv[1:])
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
         return 0
 

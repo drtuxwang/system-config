@@ -8,8 +8,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Exec
 
 
 class Options:
@@ -21,7 +21,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_sshfs(self) -> command_mod.Command:
+    def get_sshfs(self) -> Command:
         """
         Return sshfs Command class object.
         """
@@ -52,8 +52,8 @@ class Options:
         Parse arguments
         """
         if len(args) == 1:
-            mount = command_mod.Command('mount', errors='stop')
-            task = subtask_mod.Batch(mount.get_cmdline())
+            mount = Command('mount', errors='stop')
+            task = Batch(mount.get_cmdline())
             task.run(pattern='type fuse.sshfs ')
             if task.get_exitcode():
                 raise SystemExit(
@@ -66,7 +66,7 @@ class Options:
 
         self._parse_args(args[1:])
 
-        self._sshfs = command_mod.Command('sshfs', errors='stop')
+        self._sshfs = Command('sshfs', errors='stop')
         self._sshfs.set_args([
             '-o',
             'noatime,allow_root',
@@ -102,7 +102,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_sshfs().get_cmdline()).run()
+        Exec(options.get_sshfs().get_cmdline()).run()
 
         return 0
 

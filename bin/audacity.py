@@ -9,8 +9,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Background, Exec
 
 
 class Main:
@@ -42,7 +42,7 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _config(audacity: network_mod.Sandbox) -> Path:
+    def _config(audacity: Sandbox) -> Path:
         if Path(audacity.get_file()).name == 'tenacity':
             return Path(Path.home(), '.config', 'tenacity')
 
@@ -66,11 +66,11 @@ class Main:
         """
         Start program
         """
-        audacity = network_mod.Sandbox('tenacity', errors='ignore')
+        audacity = Sandbox('tenacity', errors='ignore')
         if not audacity.is_found():
-            audacity = network_mod.Sandbox('audacity', errors='stop')
+            audacity = Sandbox('audacity', errors='stop')
         if Path(f'{audacity.get_file()}.py').is_file():
-            subtask_mod.Exec(audacity.get_cmdline() + sys.argv[1:]).run()
+            Exec(audacity.get_cmdline() + sys.argv[1:]).run()
         config_dir = cls._config(audacity)
 
         # "os.getcwd()" returns realpath instead
@@ -109,7 +109,7 @@ class Main:
         )
 
         cmdline = audacity.get_cmdline()
-        subtask_mod.Background(cmdline).run(pattern=pattern)
+        Background(cmdline).run(pattern=pattern)
 
         return 0
 

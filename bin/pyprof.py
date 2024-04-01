@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command, CommandFile, CommandNotFoundError
+from subtask_mod import Task
 
 
 class Options:
@@ -114,16 +114,13 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _get_command(
-        module_file: str,
-        module_args: List[str],
-    ) -> command_mod.Command:
+    def _get_command(module_file: str, module_args: List[str]) -> Command:
         if Path(module_file).is_file():
-            return command_mod.CommandFile(module_file, args=module_args)
+            return CommandFile(module_file, args=module_args)
 
         try:
-            return command_mod.Command(module_file, args=module_args)
-        except command_mod.CommandNotFoundError as exception:
+            return Command(module_file, args=module_args)
+        except CommandNotFoundError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "{module_file}" module file',
             ) from exception
@@ -139,12 +136,12 @@ class Main:
                     f'{sys.argv[0]}: Cannot remove old "{stats_file}" file.',
                 ) from exception
 
-        python3 = command_mod.CommandFile(sys.executable)
+        python3 = CommandFile(sys.executable)
         python3.set_args(['-B', '-m', 'cProfile', '-o', stats_file])
 
         command = cls._get_command(module_file, module_args)
 
-        task = subtask_mod.Task(python3.get_cmdline() + command.get_cmdline())
+        task = Task(python3.get_cmdline() + command.get_cmdline())
         task.run()
 
         print(f"pyprof: {command.args2cmd([command.get_file()])}{module_args}")

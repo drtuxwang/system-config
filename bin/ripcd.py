@@ -12,8 +12,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from subtask_mod import Batch, Task
+from command_mod import Command
 
 
 class Options:
@@ -31,7 +31,7 @@ class Options:
         """
         return self._args.device[0]
 
-    def get_icedax(self) -> command_mod.Command:
+    def get_icedax(self) -> Command:
         """
         Return icedax Command class object.
         """
@@ -82,7 +82,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._icedax = command_mod.Command('icedax', errors='stop')
+        self._icedax = Command('icedax', errors='stop')
 
         if self._args.speed[0] < 1:
             raise SystemExit(
@@ -165,7 +165,7 @@ class Main:
             Path.open = _open  # type: ignore
 
     def _rip_tracks(self, ntracks: int) -> None:
-        tee = command_mod.Command('tee', errors='stop')
+        tee = Command('tee', errors='stop')
 
         for track in self._tracks:
             istrack = re.compile(f'^.* {track}[.]\\( *')
@@ -205,7 +205,7 @@ class Main:
 
             wav_path = Path(f'{track.zfill(2)}.wav')
             tee.set_args(['-a', log_path])
-            task = subtask_mod.Task(self._icedax.get_cmdline() + [
+            task = Task(self._icedax.get_cmdline() + [
                 'verbose-level=disable',
                 f'track={track}',
                 f'dev={self._device}',
@@ -298,7 +298,7 @@ class Main:
             f'dev={self._device}',
             f'speed={self._speed}',
         ])
-        task = subtask_mod.Batch(self._icedax.get_cmdline())
+        task = Batch(self._icedax.get_cmdline())
         task.run()
         self._toc = task.get_error(r'[.]\(.*:.*\)')
         if not self._toc:

@@ -15,12 +15,12 @@ import time
 from pathlib import Path
 from typing import Generator, List
 
-import command_mod
-import file_mod
-import subtask_mod
-import task_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Batch, Exec, ExecutableCallError, Task
+from task_mod import Tasks
 
-RELEASE = '6.2.0'
+RELEASE = '6.2.1'
 
 
 class Options:
@@ -161,15 +161,15 @@ class Options:
     @staticmethod
     def _xclip() -> List[str]:
         isxclip = re.compile(os.sep + 'python.*[/ ]zhspeak(.py)? .*-xclip')
-        tasks = task_mod.Tasks.factory()
+        tasks = Tasks.factory()
         for pid in tasks.get_pids():
             if pid != os.getpid():
                 if isxclip.search(tasks.get_process(pid)['COMMAND']):
                     # Kill old zhspeak clipboard
                     tasks.killpids([pid] + tasks.get_descendant_pids(pid))
-        xclip = command_mod.Command('xclip', errors='stop')
+        xclip = Command('xclip', errors='stop')
         xclip.set_args(['-out', '-selection', '-c', 'test'])
-        task = subtask_mod.Batch(xclip.get_cmdline())
+        task = Batch(xclip.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -189,7 +189,7 @@ class Options:
             'zhspeak-data',
         )
         if not self._speak_dir.is_dir():
-            zhspeak = command_mod.Command(
+            zhspeak = Command(
                 'zhspeak',
                 args=args[1:],
                 errors='ignore'
@@ -198,13 +198,13 @@ class Options:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "zhspeak-data" directory.',
                 )
-            subtask_mod.Exec(zhspeak.get_cmdline()).run()
+            Exec(zhspeak.get_cmdline()).run()
 
         if self._args.gui_flag:
-            zhspeaktcl = command_mod.Command('zhspeak.tcl', errors='stop')
-            subtask_mod.Exec(zhspeaktcl.get_cmdline()).run()
+            zhspeaktcl = Command('zhspeak.tcl', errors='stop')
+            Exec(zhspeaktcl.get_cmdline()).run()
 
-        tmpdir = file_mod.FileUtil.tmpdir('.cache/zhspeak')
+        tmpdir = FileUtil.tmpdir('.cache/zhspeak')
         self._tmp_path = Path(tmpdir, f'{os.getpid()}.wav')
 
         if self._args.xclip_flag:
@@ -423,7 +423,7 @@ class LibttsPico(Language):
         super().__init__(options)
 
         self._tmp_path = options.get_tmpfile()
-        self._command = command_mod.Command('pico2wave', errors='ignore')
+        self._command = Command('pico2wave', errors='ignore')
         self._command.set_args([
             f'--lang={options.get_dialect()}',
             f'--wave={self._tmp_path}'
@@ -446,7 +446,7 @@ class LibttsPico(Language):
         # Break at '.' and ','
         for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.'):
             if phrase.strip():
-                task = subtask_mod.Batch(cmdline + [phrase])
+                task = Batch(cmdline + [phrase])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
@@ -474,7 +474,7 @@ class Espeak(Language):
         super().__init__(options)
 
         self._options = options
-        self._command = command_mod.Command('espeak-ng', errors='ignore')
+        self._command = Command('espeak-ng', errors='ignore')
         self._command.set_args([
             '-a256',
             '-k30',
@@ -485,7 +485,7 @@ class Espeak(Language):
 
     @staticmethod
     def _show_sounds(cmdline: List[str], text: List[str]) -> None:
-        task = subtask_mod.Task(cmdline + ['-x', '-q', ' '.join(text)])
+        task = Task(cmdline + ['-x', '-q', ' '.join(text)])
         task.run(pattern=': Connection refused')
         if task.get_exitcode():
             raise SystemExit(
@@ -498,7 +498,7 @@ class Espeak(Language):
         # Break at '.' and ','
         for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.'):
             if phrase:
-                task = subtask_mod.Batch(cmdline + [phrase])
+                task = Batch(cmdline + [phrase])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
@@ -536,7 +536,7 @@ class AudioPlayer:
         return None
 
     def _config(self) -> None:
-        self._player: command_mod.Command = None
+        self._player: Command = None
 
     def has_player(self) -> bool:
         """
@@ -555,7 +555,7 @@ class AudioPlayer:
         Run player
         """
         cmdline = self._player.get_cmdline() + files
-        task = subtask_mod.Batch(cmdline)
+        task = Batch(cmdline)
         task.run(directory=self._directory)
         return task.get_exitcode()
 
@@ -566,7 +566,7 @@ class Vlc(AudioPlayer):
     """
 
     def _config(self) -> None:
-        self._player = command_mod.Command('vlc', errors='ignore')
+        self._player = Command('vlc', errors='ignore')
         self._player.set_args([
             '--intf',
             'dummy',
@@ -583,7 +583,7 @@ class Ffplay(AudioPlayer):
     """
 
     def _config(self) -> None:
-        self._player = command_mod.Command('ffplay', errors='ignore')
+        self._player = Command('ffplay', errors='ignore')
         self._player.set_args(['-nodisp', '-autoexit', '-i'])
 
     def run(self, files: List[str]) -> int:
@@ -591,7 +591,7 @@ class Ffplay(AudioPlayer):
         Run player
         """
         cmdline = self._player.get_cmdline() + [f"concat:{'|'.join(files)}"]
-        task = subtask_mod.Batch(cmdline)
+        task = Batch(cmdline)
         task.run(directory=self._directory)
         return task.get_exitcode()
 
@@ -602,7 +602,7 @@ class Avplay(Ffplay):
     """
 
     def _config(self) -> None:
-        self._player = command_mod.Command('ffplay', errors='ignore')
+        self._player = Command('ffplay', errors='ignore')
         self._player.set_args(['-nodisp', '-autoexit', '-i'])
 
 
@@ -644,7 +644,7 @@ class Main:
 
         try:
             options.get_language().text2speech(options.get_phrases())
-        except subtask_mod.ExecutableCallError as exception:
+        except ExecutableCallError as exception:
             raise SystemExit(exception) from exception
 
         return 0

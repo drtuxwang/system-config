@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Exec
 
 
 class Main:
@@ -45,13 +45,13 @@ class Main:
         """
         Start program
         """
-        wop = network_mod.Sandbox('wop.x86_64', errors='stop')
+        wop = Sandbox('wop.x86_64', errors='stop')
         wop.set_args(sys.argv[1:])
 
         configs = ['net', Path(Path.home(), '.padman')]
         wop.sandbox(configs)
 
-        subtask_mod.Exec(wop.get_cmdline()).run()
+        Exec(wop.get_cmdline()).run()
 
         return 0
 

@@ -8,8 +8,8 @@ import signal
 import sys
 from typing import Generator
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Exec
 
 
 class Main:
@@ -51,11 +51,11 @@ class Main:
             yield (seconds, name)
 
     @classmethod
-    def _filter_run(cls, command: command_mod.Command) -> None:
+    def _filter_run(cls, command: Command) -> None:
         """
         Remove buggy firmware & loader timings.
         """
-        task = subtask_mod.Batch(command.get_cmdline())
+        task = Batch(command.get_cmdline())
         task.run(error2output=True)
         for line in task.get_output():
             if line.startswith('Startup finished in '):
@@ -76,13 +76,13 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command(
+        command = Command(
             '/usr/bin/systemd-analyze',
             args=sys.argv[1:],
             errors='stop'
         )
         if sys.argv[1:] not in ([], ['time']):
-            subtask_mod.Exec(command.get_cmdline()).run()
+            Exec(command.get_cmdline()).run()
         cls._filter_run(command)
 
         return 0

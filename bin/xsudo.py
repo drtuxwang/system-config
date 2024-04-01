@@ -7,8 +7,8 @@ import os
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#009900'
@@ -39,7 +39,7 @@ class Main:
 
     @staticmethod
     def _powershell() -> None:
-        powershell = command_mod.Command('powershell.exe', errors='stop')
+        powershell = Command('powershell.exe', errors='stop')
         powershell.extend_args(['-command', 'start-process', 'cmd.exe'])
         if len(sys.argv) > 1:
             args = powershell.args2cmd(sys.argv[1:])
@@ -48,11 +48,11 @@ class Main:
                 powershell.args2cmd(['/r', args]),
             ])
         powershell.extend_args(['-verb', '-runas'])
-        subtask_mod.Exec(powershell.get_cmdline()).run()
+        Exec(powershell.get_cmdline()).run()
 
     @staticmethod
     def _xsudo() -> None:
-        xterm = command_mod.Command('xterm', errors='stop')
+        xterm = Command('xterm', errors='stop')
         xterm.set_args([
             '-fn',
             TEXT_FONT,
@@ -67,7 +67,7 @@ class Main:
             '-ut',
             '+sb'
         ])
-        sudo = command_mod.Command('sudo', errors='stop')
+        sudo = Command('sudo', errors='stop')
 
         if len(sys.argv) > 1:
             xterm.extend_args([
@@ -80,7 +80,7 @@ class Main:
             xterm.extend_args(['-T', 'sudo su', '-e'])
             sudo.set_args(['su', '-'])
 
-        subtask_mod.Exec(xterm.get_cmdline() + sudo.get_cmdline()).run()
+        Exec(xterm.get_cmdline() + sudo.get_cmdline()).run()
 
     @classmethod
     def run(cls) -> int:

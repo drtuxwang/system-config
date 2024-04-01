@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import config_mod
+from config_mod import Config
 
 
 class Options:
@@ -174,7 +174,7 @@ class Main:
         startdir = os.getcwd()
         reset_flag = options.get_reset_flag()
         number = options.get_start()
-        config = config_mod.Config()
+        config = Config()
         images_extensions = (
             config.get('image_extensions') + config.get('video_extensions')
         )

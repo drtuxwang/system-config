@@ -8,8 +8,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -21,7 +21,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_zstd(self) -> command_mod.Command:
+    def get_zstd(self) -> Command:
         """
         Return zstd Command class object.
         """
@@ -47,7 +47,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._zstd = command_mod.Command('zstd', errors='stop')
+        self._zstd = Command('zstd', errors='stop')
         self._zstd.set_args(['--ultra', '-22', '-T0'] + self._args.files)
 
 
@@ -80,7 +80,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_zstd().get_cmdline()).run()
+        Exec(options.get_zstd().get_cmdline()).run()
 
         return 0
 

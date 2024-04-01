@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat
+from subtask_mod import Batch
 
 
 class Options:
@@ -30,14 +30,14 @@ class Options:
         """
         return self._args.archives
 
-    def get_command(self) -> command_mod.Command:
+    def get_command(self) -> Command:
         """
         Return xz Command class object.
         """
         return self._command
 
     @staticmethod
-    def _set_libraries(command: command_mod.Command) -> None:
+    def _set_libraries(command: Command) -> None:
         libdir = Path(Path(command.get_file()).parent, 'lib')
         if Path(libdir).is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
@@ -68,8 +68,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._command = command_mod.Command('xz', errors='stop')
-        self._command.set_args(['-d', '--stdout'])
+        self._command = Command('xz', args=['-d', '--stdout'], errors='stop')
         self._set_libraries(self._command)
 
 
@@ -114,14 +113,14 @@ class Main:
                 print(f"{path}:")
 
                 output = path.stem
-                task = subtask_mod.Batch(cmdline + [path])
+                task = Batch(cmdline + [path])
                 task.run(file=output)
                 if task.get_exitcode():
                     for line in task.get_error():
                         print(line, file=sys.stderr)
                     raise SystemExit(1)
 
-                file_stat = file_mod.FileStat(path)
+                file_stat = FileStat(path)
                 os.chmod(output, file_stat.get_mode())
                 file_time = file_stat.get_time()
                 os.utime(output, (file_time, file_time))

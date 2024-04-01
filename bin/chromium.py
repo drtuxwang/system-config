@@ -16,10 +16,10 @@ import sys
 from pathlib import Path
 from typing import Any, List
 
-import command_mod
-import file_mod
-import subtask_mod
-import task_mod
+from command_mod import Command, Platform
+from file_mod import FileUtil
+from subtask_mod import Background, Daemon, Exec
+from task_mod import Tasks
 
 
 class Options:
@@ -36,7 +36,7 @@ class Options:
         """
         return self._pattern
 
-    def get_browser(self) -> command_mod.Command:
+    def get_browser(self) -> Command:
         """
         Return browser Command class object.
         """
@@ -44,7 +44,7 @@ class Options:
 
     @staticmethod
     def _get_profiles_dir() -> Path:
-        if command_mod.Platform.get_system() == 'macos':
+        if Platform.get_system() == 'macos':
             return Path('Library', 'Application Support', 'Chromium')
         return Path('.config', 'google-chrome')
 
@@ -120,8 +120,8 @@ class Options:
             self._clean_junk_files(path)
 
     def _copy(self) -> None:
-        task = task_mod.Tasks.factory()
-        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        task = Tasks.factory()
+        tmpdir = FileUtil.tmpdir('.cache')
         for path in Path(tmpdir).glob('chromium.*'):
             try:
                 if not task.pgid2pids(int(path.suffix)):
@@ -140,7 +140,7 @@ class Options:
         mypid = os.getpid()
         os.setpgid(mypid, mypid)  # New PGID
 
-        newhome = file_mod.FileUtil.tmpdir(Path(tmpdir, f'chromium.{mypid}'))
+        newhome = FileUtil.tmpdir(Path(tmpdir, f'chromium.{mypid}'))
         print(f'Creating copy of Chromium profile in "{newhome}"...')
         if not Path(newhome).is_dir():
             try:
@@ -203,12 +203,12 @@ class Options:
                 path.readlink()  # type: ignore
                 # pylint: enable=no-member
             ).split('-')[1])
-            task_mod.Tasks.factory().killpids([pid])
+            Tasks.factory().killpids([pid])
         except (IndexError, OSError):
             pass
 
     @staticmethod
-    def _set_libraries(command: command_mod.Command) -> None:
+    def _set_libraries(command: Command) -> None:
         path = Path(Path(command.get_file()).parent, 'lib')
         if path.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
@@ -220,13 +220,13 @@ class Options:
                     os.environ['LD_LIBRARY_PATH'] = str(path)
 
     @staticmethod
-    def _locate() -> command_mod.Command:
+    def _locate() -> Command:
         commands = ['chromium-browser', 'chromium']
         for command in commands:
-            browser = command_mod.Command(command, errors='ignore')
+            browser = Command(command, errors='ignore')
             if browser.is_found():
                 return browser
-        return command_mod.Command('chromium', errors='stop')
+        return Command('chromium', errors='stop')
 
     def parse(self, args: List[str]) -> None:
 
@@ -238,7 +238,7 @@ class Options:
         if len(args) > 1:
             if args[1] == '-version':
                 self._browser.set_args(['-version'])
-                subtask_mod.Exec(self._browser.get_cmdline()).run()
+                Exec(self._browser.get_cmdline()).run()
             elif args[1] == '-copy':
                 self._copy()
             elif args[1] == '-reset':
@@ -253,9 +253,10 @@ class Options:
         # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if (ppid != 1 and
-                    'exo-helper' in
-                    task_mod.Tasks.factory().get_process(ppid)['COMMAND']):
+            if (
+                ppid != 1 and
+                'exo-helper' in Tasks.factory().get_process(ppid)['COMMAND']
+            ):
                 raise SystemExit
 
         if '--disable-background-mode' not in self._browser.get_args():
@@ -326,16 +327,16 @@ class Main:
         options = Options()
 
         cmdline = options.get_browser().get_cmdline()
-        subtask_mod.Background(cmdline).run(pattern=options.get_pattern())
+        Background(cmdline).run(pattern=options.get_pattern())
 
         # Kill filtering process after start up to avoid hang
-        tkill = command_mod.Command(
+        tkill = Command(
             'tkill',
             args=['-delay', '60', '-f', f'python3.* {cmdline[0]} '],
             errors='ignore'
         )
         if tkill.is_found():
-            subtask_mod.Daemon(tkill.get_cmdline()).run()
+            Daemon(tkill.get_cmdline()).run()
 
         return 0
 

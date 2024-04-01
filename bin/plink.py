@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import config_mod
-import file_mod
+from config_mod import Config
+from file_mod import FileStat
 
 
 class Options:
@@ -110,7 +110,7 @@ class Main:
         """
         options = Options()
         depth = options.get_depth()
-        config = config_mod.Config()
+        config = Config()
         images_extensions = (
             config.get('image_extensions') + config.get('video_extensions')
         )
@@ -132,7 +132,7 @@ class Main:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Cannot create "{link}" link.',
                             ) from exception
-                        file_stat = file_mod.FileStat(file)
+                        file_stat = FileStat(file)
                         file_time = file_stat.get_time()
                         try:
                             os.utime(

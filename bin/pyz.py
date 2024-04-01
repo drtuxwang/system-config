@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import BinaryIO, List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return self._args.archive
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -62,10 +62,7 @@ class Options:
         self._parse_args(args[1:])
 
         if os.name == 'nt':
-            self._archiver = command_mod.Command(
-                'pkzip32.exe',
-                errors='ignore'
-            )
+            self._archiver = Command('pkzip32.exe', errors='ignore')
             if self._archiver.is_found():
                 self._archiver.set_args([
                     '-add',
@@ -75,13 +72,13 @@ class Options:
                     self._args.archive[0] + '-zip'
                 ])
             else:
-                self._archiver = command_mod.Command(
+                self._archiver = Command(
                     'zip',
                     args=['-r', '-9', self._args.archive[0] + '-zip'],
                     errors='stop'
                 )
         else:
-            self._archiver = command_mod.Command(
+            self._archiver = Command(
                 'zip',
                 args=['-r', '-9', self._args.archive[0] + '-zip'],
                 errors='stop'
@@ -159,7 +156,7 @@ class Main:
         options = Options()
         archiver = options.get_archiver()
 
-        task = subtask_mod.Task(archiver.get_cmdline())
+        task = Task(archiver.get_cmdline())
         task.run()
         if task.get_exitcode():
             print(

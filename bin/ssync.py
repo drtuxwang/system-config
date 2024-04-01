@@ -9,8 +9,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -22,7 +22,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_rsync(self) -> command_mod.Command:
+    def get_rsync(self) -> Command:
         """
         Return rsync Command class object.
         """
@@ -71,8 +71,8 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        ssh = command_mod.Command('ssh', errors='stop')
-        self._rsync = command_mod.Command('rsync', errors='stop')
+        ssh = Command('ssh', errors='stop')
+        self._rsync = Command('rsync', errors='stop')
 
         sudo_user = None
         if self._args.user:
@@ -147,7 +147,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Task(options.get_rsync().get_cmdline()).run(pattern='^$')
+        Task(options.get_rsync().get_cmdline()).run(pattern='^$')
 
         return 0
 

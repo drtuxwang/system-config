@@ -10,8 +10,8 @@ import sys
 
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -23,7 +23,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -61,7 +61,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._archiver = command_mod.Command('jar', errors='stop')
+        self._archiver = Command('jar', errors='stop')
         if self._args.view_flag:
             self._archiver.set_args(['tfv'])
         else:
@@ -102,7 +102,7 @@ class Main:
         cmdline = options.get_archiver().get_cmdline()
 
         for archive in options.get_archives():
-            task = subtask_mod.Task(cmdline + [archive])
+            task = Task(cmdline + [archive])
             task.run()
             if task.get_exitcode():
                 raise SystemExit(

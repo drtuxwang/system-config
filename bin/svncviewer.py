@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import network_mod
-import subtask_mod
+from command_mod import Command
+from network_mod import Sandbox
+from subtask_mod import Batch, Daemon, Task
 
 
 class Options:
@@ -24,30 +24,30 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_vncviewer(self) -> network_mod.Sandbox:
+    def get_vncviewer(self) -> Sandbox:
         """
         Return vncviewer Command class object.
         """
         return self._vncviewer
 
     def _getport(self, remote_host: str, remote_port: str) -> str:
-        command = command_mod.Command('ss', args=['-lpnt'], errors='ignore')
+        command = Command('ss', args=['-lpnt'], errors='ignore')
         pattern = '[::1]:5901 '
         if not command.is_found():
-            command = command_mod.Command(
+            command = Command(
                 'lsof',
                 args=['-i', 'tcp:5901-5999'],
                 errors='ignore'
             )
             pattern = ''
             if not command.is_found():
-                command = command_mod.Command('ss', errors='stop')
+                command = Command('ss', errors='stop')
 
-        task = subtask_mod.Batch(command.get_cmdline())
+        task = Batch(command.get_cmdline())
         task.run(pattern=pattern)
         for local_port in range(5901, 6000):
             if not task.is_match_output(f':{local_port}[ -]'):
-                ssh = command_mod.Command('ssh', errors='stop')
+                ssh = Command('ssh', errors='stop')
                 if self._args.ssh_port:
                     ssh.extend_args(['-p', self._args.ssh_port[0]])
                 ssh.extend_args([
@@ -62,7 +62,7 @@ class Options:
                     f'Starting "ssh" port forwarding from "localhost:'
                     f'{local_port}" to "{remote_host}:{remote_port}"...',
                 )
-                subtask_mod.Task(ssh.get_cmdline()).run()
+                Task(ssh.get_cmdline()).run()
                 return str(local_port)
         raise SystemExit(
             f'{sys.argv[0]}: Cannot find unused local port in range 5901-5999.'
@@ -107,7 +107,7 @@ class Options:
                 'for port number.',
             ) from exception
 
-        self._vncviewer = network_mod.Sandbox('vncviewer', errors='stop')
+        self._vncviewer = Sandbox('vncviewer', errors='stop')
         configs = [
             Path(Path.home(), '.config/ibus'),
             Path(Path.home(), '.vnc'),
@@ -164,7 +164,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Daemon(options.get_vncviewer().get_cmdline()).run()
+        Daemon(options.get_vncviewer().get_cmdline()).run()
 
         return 0
 

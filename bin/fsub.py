@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import file_mod
+from file_mod import FileStat
 
 
 class Options:
@@ -138,7 +138,7 @@ class Main:
                 print(f"{path}: {nchange} line changed.")
 
             try:
-                os.chmod(path_new, file_mod.FileStat(path).get_mode())
+                os.chmod(path_new, FileStat(path).get_mode())
                 path_new.replace(path)
             except OSError as exception:
                 self._remove(path_new)

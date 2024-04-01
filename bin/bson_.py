@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import config_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import ConfigError, Data, ReadConfigError
+from subtask_mod import Task
 
 
 class Options:
@@ -94,25 +94,25 @@ class Main:
     @staticmethod
     def _check(paths: List[Path]) -> None:
         if paths:
-            command = command_mod.Command('chkconfig', errors='stop')
-            task = subtask_mod.Task(command.get_cmdline() + paths)
+            command = Command('chkconfig', errors='stop')
+            task = Task(command.get_cmdline() + paths)
             task.run()
             if task.get_exitcode():
                 raise SystemExit(1)
 
     @staticmethod
     def _convert(paths: List[Path]) -> None:
-        data = config_mod.Data()
+        data = Data()
 
         for path in paths:
             try:
                 data.read(path)
-            except config_mod.ReadConfigError as exception:
+            except ReadConfigError as exception:
                 raise SystemExit(f"{path}: {exception}") from exception
             bson_path = path.with_suffix('.bson')
             try:
                 old_bson = bson_path.read_bytes()
-            except (config_mod.ConfigError, OSError):
+            except (ConfigError, OSError):
                 old_bson = None
             new_bson = data.encode(config='BSON')
             if new_bson != old_bson:
@@ -140,7 +140,7 @@ class Main:
             if not path.exists():
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
-        types = config_mod.Data.TYPES
+        types = Data.TYPES
         if check:
             cls._check([x for x in paths if types.get(x.suffix) == 'BSON'])
         else:

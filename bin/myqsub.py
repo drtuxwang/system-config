@@ -12,12 +12,12 @@ import time
 from pathlib import Path
 from typing import Generator, List
 
-import command_mod
-import logging_mod
-import subtask_mod
-import task_mod
+from command_mod import Command, CommandFile
+from logging_mod import Message
+from subtask_mod import Task
+from task_mod import Tasks
 
-RELEASE = '3.1.2'
+RELEASE = '3.1.3'
 
 
 class Options:
@@ -188,7 +188,7 @@ class Main:
                         except (OSError, ValueError):
                             pass
                         else:
-                            if not task_mod.Tasks.factory().haspid(pid):
+                            if not Tasks.factory().haspid(pid):
                                 path.unlink()
                 except OSError as exception:
                     raise SystemExit(
@@ -215,7 +215,7 @@ class Main:
                 except (OSError, ValueError):
                     pass
                 else:
-                    if task_mod.Tasks.factory().haspid(pid):
+                    if Tasks.factory().haspid(pid):
                         return True
                     path.unlink()
         except OSError:
@@ -239,7 +239,7 @@ class Main:
                     pass
 
         for cmdline in cmdlines:
-            command = command_mod.Command.args2cmd(cmdline)
+            command = Command.args2cmd(cmdline)
             if command not in commands:
                 commands.add(command)
                 yield cmdline
@@ -257,11 +257,11 @@ class Main:
             cmdlines = list(self._new_jobs(cmdlines))
 
         for cmdline in cmdlines:
-            command: command_mod.Command
+            command: Command
             if Path(cmdline[0]).is_file():
-                command = command_mod.CommandFile(cmdline[0])
+                command = CommandFile(cmdline[0])
             else:
-                command = command_mod.Command(cmdline[0], errors='ignore')
+                command = Command(cmdline[0], errors='ignore')
                 if not command.is_found():
                     print(f'MyQS cannot find "{cmdline[0]}" command.')
                     return
@@ -271,7 +271,7 @@ class Main:
 
             jobid = self._lastjob()
             job_command = command.args2cmd(cmdline)
-            if logging_mod.Message(job_command).width() <= 45:
+            if Message(job_command).width() <= 45:
                 job_name = job_command
             elif len(cmdline) == 2 and not os.access(cmdline[1], os.X_OK):
                 job_name = Path(cmdline[1]).name
@@ -325,8 +325,8 @@ class Main:
         lock_path.unlink()
 
         if not self._has_myqsd():
-            myqsd = command_mod.Command('myqsd', args=['1'], errors='stop')
-            subtask_mod.Task(myqsd.get_cmdline()).run()
+            myqsd = Command('myqsd', args=['1'], errors='stop')
+            Task(myqsd.get_cmdline()).run()
 
         return 0
 

@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -91,11 +91,11 @@ class Main:
         options = Options()
 
         directories = options.get_directories()
-        mount = command_mod.Command('mount', errors='stop')
-        fusermount = command_mod.Command('fusermount', errors='stop')
+        mount = Command('mount', errors='stop')
+        fusermount = Command('fusermount', errors='stop')
 
         for directory in directories:
-            task = subtask_mod.Batch(mount.get_cmdline())
+            task = Batch(mount.get_cmdline())
             task.run(pattern=f' {directory} type fuse.sshfs ')
             if not task.has_output():
                 raise SystemExit(
@@ -107,7 +107,7 @@ class Main:
                     f'received from "{task.get_file()}".',
                 )
             fusermount.set_args(['-u', directory])
-            subtask_mod.Task(fusermount.get_cmdline()).run()
+            Task(fusermount.get_cmdline()).run()
 
         return 0
 

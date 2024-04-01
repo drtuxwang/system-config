@@ -9,8 +9,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -22,7 +22,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -66,10 +66,10 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._archiver = command_mod.Command('unrar', errors='stop')
+        self._archiver = Command('unrar', errors='stop')
         if args[1] in ('l', 't', 'x'):
             self._archiver.set_args(args[1:])
-            subtask_mod.Exec(self._archiver.get_cmdline()).run()
+            Exec(self._archiver.get_cmdline()).run()
 
         if self._args.view_flag:
             self._archiver.set_args(['l', '-std'])
@@ -112,7 +112,7 @@ class Main:
         archiver = options.get_archiver()
 
         for archive in options.get_archives():
-            task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+            task = Task(archiver.get_cmdline() + [archive])
             task.run()
             if task.get_exitcode():
                 print(

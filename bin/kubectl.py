@@ -9,9 +9,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Exec
 
 
 class Main:
@@ -53,7 +53,7 @@ class Main:
 
         for cache in ('cache', 'http-cache'):
             link = Path(kube_directory, cache)
-            directory = file_mod.FileUtil.tmpdir(Path('.cache', 'kube', cache))
+            directory = FileUtil.tmpdir(Path('.cache', 'kube', cache))
             if not link.is_symlink():
                 try:
                     if link.exists():
@@ -69,9 +69,9 @@ class Main:
         """
         cls._cache()
 
-        kubectl = command_mod.Command('kubectl', errors='stop')
+        kubectl = Command('kubectl', errors='stop')
         kubectl.set_args(sys.argv[1:])
-        subtask_mod.Exec(kubectl.get_cmdline()).run()
+        Exec(kubectl.get_cmdline()).run()
 
         return 0
 

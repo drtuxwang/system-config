@@ -13,13 +13,13 @@ import sys
 from pathlib import Path
 from typing import Generator, List, Tuple
 
-import command_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
+from subtask_mod import Batch
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -115,8 +115,8 @@ class Media:
         self._length = '0'
         self._stream = {}
         self._type = 'Unknown'
-        ffprobe = command_mod.Command('ffprobe', args=[file], errors='stop')
-        task = subtask_mod.Batch(ffprobe.get_cmdline())
+        ffprobe = Command('ffprobe', args=[file], errors='stop')
+        task = Batch(ffprobe.get_cmdline())
         task.run(error2output=True)
         number = 0
 
@@ -236,17 +236,14 @@ class Main:
 
     @staticmethod
     def _play(mode: str, files: List[str]) -> None:
-        vlc = command_mod.Command(
-            'vlc',
-            args=['--no-repeat', '--no-loop'] + files,
-            errors='stop',
-        )
+        vlc = Command('vlc', errors='stop')
+        vlc.set_args(['--no-repeat', '--no-loop'] + files)
         if mode == 'audio':
             vlc.append_arg('--novideo')
         elif mode == 'video':
             vlc.append_arg('--noaudio')
 
-        task = subtask_mod.Batch(vlc.get_cmdline())
+        task = Batch(vlc.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -256,21 +253,15 @@ class Main:
 
     @staticmethod
     def _ytplay(mode: str, file: str) -> None:
-        vlc = command_mod.Command(
-            'vlc',
-            args=['--no-repeat', '--no-loop'],
-            errors='stop',
-        )
+        vlc = Command('vlc', args=['--no-repeat', '--no-loop'], errors='stop')
         if mode == 'audio':
             vlc.append_arg('--novideo')
         elif mode == 'video':
             vlc.append_arg('--noaudio')
 
-        ytdlp = command_mod.Command('yt-dlp', errors='stop')
+        ytdlp = Command('yt-dlp', errors='stop')
         ytdlp.set_args(['--get-url', '--format=best', file])
-        task = subtask_mod.Batch(
-            ytdlp.get_cmdline() + ['|'] + vlc.get_cmdline() + ['-']
-        )
+        task = Batch(ytdlp.get_cmdline() + ['|'] + vlc.get_cmdline() + ['-'])
         task.run()
         if task.get_exitcode():
             raise SystemExit(

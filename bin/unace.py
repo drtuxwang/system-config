@@ -9,8 +9,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -22,7 +22,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -65,12 +65,12 @@ class Options:
         Parse arguments
         """
         if os.name == 'nt':
-            self._archiver = command_mod.Command('unace32.exe', errors='stop')
+            self._archiver = Command('unace32.exe', errors='stop')
         else:
-            self._archiver = command_mod.Command('unace', errors='stop')
+            self._archiver = Command('unace', errors='stop')
 
         if len(args) > 1 and args[1] in ('v', 't', 'x'):
-            subtask_mod.Exec(self._archiver.get_cmdline() + args[1:]).run()
+            Exec(self._archiver.get_cmdline() + args[1:]).run()
 
         self._parse_args(args[1:])
 
@@ -117,7 +117,7 @@ class Main:
         archiver = options.get_archiver()
 
         for archive in options.get_archives():
-            task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+            task = Task(archiver.get_cmdline() + [archive])
             task.run()
             if task.get_exitcode():
                 print(

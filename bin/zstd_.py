@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -45,12 +45,12 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('zstd', errors='stop')
+        command = Command('zstd', errors='stop')
         if len(sys.argv) > 1 and Path(sys.argv[1]).is_file():
             command.set_args(['--ultra', '-22', '-T0'])
         command.extend_args(sys.argv[1:])
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
         return 0
 

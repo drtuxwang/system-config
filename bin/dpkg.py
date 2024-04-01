@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -54,9 +54,9 @@ class Main:
 
         name = Path(sys.argv[0]).stem
 
-        command = command_mod.Command(name, errors='stop')
+        command = Command(name, errors='stop')
         command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
         return 0
 

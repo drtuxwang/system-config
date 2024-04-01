@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 VERBOSE_SIZE = 134217728
 
@@ -47,13 +47,13 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('grpcurl', errors='stop')
+        command = Command('grpcurl', errors='stop')
         if len(sys.argv) == 2 and ':' in sys.argv[1]:
             command.set_args(['--plaintext', sys.argv[1], 'describe'])
         else:
             command.set_args(sys.argv[1:])
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
         return 0
 

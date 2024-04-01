@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -92,9 +92,9 @@ class Main:
         """
         options = Options()
 
-        xclip = command_mod.Command('xclip', errors='stop')
+        xclip = Command('xclip', errors='stop')
         xclip.set_args(['-out', '-selection', '-c', 'test'])
-        task = subtask_mod.Batch(xclip.get_cmdline())
+        task = Batch(xclip.get_cmdline())
         task.run()
 
         path = Path(os.path.expandvars(''.join(task.get_output())))

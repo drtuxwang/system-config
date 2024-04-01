@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Background
 
 
 class Main:
@@ -45,7 +45,7 @@ class Main:
         """
         Start program
         """
-        command = network_mod.Sandbox(
+        command = Sandbox(
             '/usr/games/swell-foop',
             args=sys.argv[1:],
             errors='stop'
@@ -60,7 +60,7 @@ class Main:
             ]
             command.sandbox(configs)
 
-        subtask_mod.Background(command.get_cmdline()).run()
+        Background(command.get_cmdline()).run()
 
         return 0
 

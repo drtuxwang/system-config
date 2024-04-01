@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -120,7 +120,7 @@ class Main:
                 '.txz',
                 '.t7z',
             )):
-                command = command_mod.Command('untar', errors='stop')
+                command = Command('untar', errors='stop')
             elif suffix in (
                 '.ace',
                 '.deb',
@@ -130,17 +130,17 @@ class Main:
                 '.zst',
                 '.zstd',
             ):
-                command = command_mod.Command(f'un{suffix[1:]}', errors='stop')
+                command = Command(f'un{suffix[1:]}', errors='stop')
             elif suffix in ('.pyc', 'unsqlite'):
-                command = command_mod.Command(f'un{suffix[1:]}', errors='stop')
+                command = Command(f'un{suffix[1:]}', errors='stop')
                 args = [path]
             elif suffix == 'initr':
-                command = command_mod.Command('uninitrd', errors='stop')
+                command = Command('uninitrd', errors='stop')
             else:
-                command = command_mod.Command('un7z', errors='stop')
+                command = Command('un7z', errors='stop')
             cmdline = command.get_cmdline() + args
             print(f"\nRunning: {command.args2cmd(cmdline)}")
-            task = subtask_mod.Task(cmdline)
+            task = Task(cmdline)
             task.run()
             if task.get_exitcode():
                 raise SystemExit(

@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -84,12 +84,10 @@ class Main:
         """
         options = Options()
 
-        command = command_mod.Command('_7z.py', errors='stop')
+        command = Command('_7z.py', errors='stop')
         for path in [Path(x) for x in options.get_files()]:
             if path.is_file():
-                task = subtask_mod.Task(
-                    command.get_cmdline() + [f'{path}.7z', path],
-                )
+                task = Task(command.get_cmdline() + [f'{path}.7z', path])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(task.get_exitcode())

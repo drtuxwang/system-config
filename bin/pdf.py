@@ -10,10 +10,10 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import config_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from file_mod import FileUtil
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -111,14 +111,11 @@ class Main:
     def _image(self, path: Path) -> str:
         for command in ('identify', 'convert'):
             if command not in self._cache:
-                self._cache[command] = command_mod.Command(
-                    command,
-                    errors='stop'
-                )
+                self._cache[command] = Command(command, errors='stop')
 
         # Get size
         identify = self._cache['identify']
-        task = subtask_mod.Batch(identify.get_cmdline() + [path])
+        task = Batch(identify.get_cmdline() + [path])
         task.run(pattern=f'^{path} [^ ]+ \\d+x\\d+ ', error2output=True)
         if not task.has_output():
             raise SystemExit(
@@ -146,7 +143,7 @@ class Main:
             cmdline.extend(['-rotate', '270'])
         cmdline.extend([path, f'pdf:{self._tmpfile}'])
 
-        task = subtask_mod.Batch(cmdline)
+        task = Batch(cmdline)
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -207,7 +204,7 @@ class Main:
     def _soffice(self, path: Path) -> str:
         path_tmp = Path(self._tmpfile).parent
         if 'soffice' not in self._cache:
-            self._cache['soffice'] = command_mod.Command(
+            self._cache['soffice'] = Command(
                 'soffice',
                 args=[
                     '--headless',
@@ -220,7 +217,7 @@ class Main:
             )
         soffice = self._cache['soffice']
 
-        task = subtask_mod.Batch(soffice.get_cmdline() + [path.name])
+        task = Batch(soffice.get_cmdline() + [path.name])
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -232,7 +229,7 @@ class Main:
 
     def _paps(self, path: Path) -> str:
         if 'papss' not in self._cache:
-            self._cache['paps'] = command_mod.Command('paps', errors='stop')
+            self._cache['paps'] = Command('paps', errors='stop')
             self._cache['paps'].set_args([
                 '--paper=A4',
                 '--header',
@@ -240,7 +237,7 @@ class Main:
                 '--right-margin=36',
                 '--font=Monospace 8.670',
             ])
-            self._cache['ps2pdf'] = command_mod.Command(
+            self._cache['ps2pdf'] = Command(
                 'ps2pdf',
                 args=['-'],
                 errors='stop',
@@ -248,9 +245,7 @@ class Main:
         paps = self._cache['paps']
         ps2pdf = self._cache['ps2pdf']
 
-        task = subtask_mod.Batch(
-            paps.get_cmdline() + [path, '|'] + ps2pdf.get_cmdline()
-        )
+        task = Batch(paps.get_cmdline() + [path, '|'] + ps2pdf.get_cmdline())
         task.run(file=self._tmpfile)
         if task.get_exitcode():
             raise SystemExit(
@@ -266,9 +261,9 @@ class Main:
         options = Options()
         self._cache: dict = {}
 
-        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        tmpdir = FileUtil.tmpdir('.cache')
         tmp_path = Path(tmpdir, f'pdf.tmp{os.getpid()}')
-        command = command_mod.Command('gs', errors='stop')
+        command = Command('gs', errors='stop')
         command.set_args([
             '-q',
             '-dNOPAUSE',
@@ -278,7 +273,7 @@ class Main:
             '-sPAPERSIZE=a4',
         ])
 
-        images_extensions = config_mod.Config().get('image_extensions')
+        images_extensions = Config().get('image_extensions')
 
         args: list = [
             f'-sOutputFile={options.get_archive()}',
@@ -314,10 +309,10 @@ class Main:
                 self._tempfiles.append(self._tmpfile)
                 args.extend(['-f', self._tmpfile])
             if not options.get_archive():
-                subtask_mod.Task(command.get_cmdline() + args).run()
+                Task(command.get_cmdline() + args).run()
             print("Packing", info)
         if options.get_archive():
-            subtask_mod.Task(command.get_cmdline() + args).run()
+            Task(command.get_cmdline() + args).run()
 
         return 0
 

@@ -7,8 +7,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -25,7 +25,7 @@ class Options:
         """
         return self._pattern
 
-    def get_meld(self) -> command_mod.Command:
+    def get_meld(self) -> Command:
         """
         Return meld Command class object.
         """
@@ -35,8 +35,7 @@ class Options:
         """
         Parse arguments
         """
-        self._meld = command_mod.Command('meld', errors='stop')
-        self._meld.set_args(args[1:])
+        self._meld = Command('meld', args=args[1:], errors='stop')
         self._pattern = (
             ': Gtk-WARNING |: GtkWarning: | self.recent_manager =| gtk.main()|'
             'accessibility bus address:|: GLib-GIO-CRITICAL|: dconf-CRITICAL|'
@@ -73,7 +72,7 @@ class Main:
         """
         options = Options()
 
-        task = subtask_mod.Task(options.get_meld().get_cmdline())
+        task = Task(options.get_meld().get_cmdline())
         task.run(pattern=options.get_pattern())
         return task.get_exitcode()
 

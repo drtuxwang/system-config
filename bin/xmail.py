@@ -6,9 +6,9 @@ Start E-mail using web browser
 import signal
 import sys
 
-import command_mod
-import config_mod
-import subtask_mod
+from config_mod import Config
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -38,10 +38,10 @@ class Main:
         """
         Start program
         """
-        url = config_mod.Config().get('web_mail')
+        url = Config().get('web_mail')
 
-        command = command_mod.Command('open', args=[url], errors='stop')
-        subtask_mod.Exec(command.get_cmdline()).run()
+        command = Command('open', args=[url], errors='stop')
+        Exec(command.get_cmdline()).run()
 
         return 0
 

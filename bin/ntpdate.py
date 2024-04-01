@@ -8,15 +8,15 @@ import signal
 import sys
 import time
 
-import command_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
+from subtask_mod import Exec, Task
 
 RELEASE = 20230122
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -48,16 +48,12 @@ class Main:
         """
         Start program
         """
-        ntpdate = command_mod.Command(
-            'ntpdate',
-            pathextra=['/usr/sbin'],
-            errors='stop'
-        )
+        ntpdate = Command('ntpdate', pathextra=['/usr/sbin'], errors='stop')
         if len(sys.argv) != 3 or sys.argv[1] != '-b':
-            subtask_mod.Exec(ntpdate.get_cmdline() + sys.argv[1:]).run()
+            Exec(ntpdate.get_cmdline() + sys.argv[1:]).run()
 
-        task = subtask_mod.Task(ntpdate.get_cmdline() + sys.argv[1:])
-        hwclock = command_mod.Command('hwclock', errors='stop')
+        task = Task(ntpdate.get_cmdline() + sys.argv[1:])
+        hwclock = Command('hwclock', errors='stop')
         if int(time.strftime('%Y%m%d')) < RELEASE:
             logger.info(time.strftime(
                 "Current clock is to old (Please check CMOS battery)",
@@ -71,8 +67,8 @@ class Main:
             task.run()
             date = int(time.strftime('%Y%m%d'))
             if task.get_exitcode() == 0 and date >= RELEASE:
-                subtask_mod.Task(hwclock.get_cmdline() + ['--systohc']).run()
-                subtask_mod.Task(hwclock.get_cmdline()).run()
+                Task(hwclock.get_cmdline() + ['--systohc']).run()
+                Task(hwclock.get_cmdline()).run()
                 logger.info('System & HWClock time updated!')
                 break
 

@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -21,7 +21,7 @@ class Options:
     def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_vncserver(self) -> command_mod.Command:
+    def get_vncserver(self) -> Command:
         """
         Return vncserver Command class object.
         """
@@ -72,7 +72,7 @@ class Options:
         """
         Parse arguments
         """
-        self._vncserver = command_mod.Command(
+        self._vncserver = Command(
             'tigervncserver',
             pathextra=['/usr/bin'],
             errors='stop'
@@ -127,7 +127,7 @@ class Main:
         options = Options()
 
         pattern = 'Cannot write random bytes:|RAND_write_file'
-        task = subtask_mod.Task(options.get_vncserver().get_cmdline())
+        task = Task(options.get_vncserver().get_cmdline())
         task.run(directory=os.getenv('HOME', '/'), pattern=pattern)
 
         return 0

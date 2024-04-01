@@ -13,9 +13,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Daemon
 
 
 class Options:
@@ -26,7 +26,7 @@ class Options:
     def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_gqview(self) -> command_mod.Command:
+    def get_gqview(self) -> Command:
         """
         Return gqview Command class object.
         """
@@ -81,7 +81,7 @@ class Options:
         """
         Select file/directory randomly
         """
-        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        tmpdir = FileUtil.tmpdir('.cache')
         path = Path(tmpdir, 'gqview.json')
         config = Configuration(path)
         config.set_choices(selections)
@@ -99,11 +99,11 @@ class Options:
         """
         Parse arguments
         """
-        self._gqview = command_mod.Command('geeqie', errors='ignore')
+        self._gqview = Command('geeqie', errors='ignore')
         if self._gqview.is_found():
             self._config_geeqie()
         else:
-            self._gqview = command_mod.Command('gqview', errors='stop')
+            self._gqview = Command('gqview', errors='stop')
         paths = [Path(x) for x in args[1:]]
         for path in paths:
             if not path.exists():
@@ -215,7 +215,7 @@ class Main:
         """
         options = Options()
         # Geeqie hangs with filter/background
-        subtask_mod.Daemon(options.get_gqview().get_cmdline()).run()
+        Daemon(options.get_gqview().get_cmdline()).run()
 
         return 0
 

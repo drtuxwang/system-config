@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return self._archive
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -59,28 +59,21 @@ class Options:
         Parse arguments
         """
         if os.name == 'nt':
-            self._archiver = command_mod.Command(
-                'pkzip32.exe',
-                errors='ignore'
-            )
+            self._archiver = Command('pkzip32.exe', errors='ignore')
             if self._archiver.is_found():
                 self._archiver.set_args(
                     ['-add', '-maximum', '-recurse', '-path'])
             else:
-                self._archiver = command_mod.Command(
+                self._archiver = Command(
                     'zip',
                     args=['-r', '-9'],
                     errors='stop'
                 )
         else:
-            self._archiver = command_mod.Command(
-                'zip',
-                args=['-r', '-9'],
-                errors='stop'
-            )
+            self._archiver = Command('zip', args=['-r', '-9'], errors='stop')
 
         if len(args) > 1 and args[1] in ('-add', '-r'):
-            subtask_mod.Exec(self._archiver.get_cmdline() + args[1:]).run()
+            Exec(self._archiver.get_cmdline() + args[1:]).run()
 
         self._parse_args(args[1:])
 
@@ -136,7 +129,7 @@ class Main:
         options = Options()
         archive = options.get_archive()
 
-        task = subtask_mod.Exec(options.get_archiver().get_cmdline())
+        task = Exec(options.get_archiver().get_cmdline())
         task.run()
         try:
             if task.get_exitcode():

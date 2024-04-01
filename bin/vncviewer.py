@@ -6,8 +6,8 @@ Wrapper for "vncviewer" command
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from subtask_mod import Daemon
+from command_mod import Command
 
 
 class Main:
@@ -37,12 +37,8 @@ class Main:
         """
         Start program
         """
-        vncviewer = command_mod.Command(
-            'vncviewer',
-            args=sys.argv[1:],
-            errors='stop'
-        )
-        subtask_mod.Daemon(vncviewer.get_cmdline()).run()
+        vncviewer = Command('vncviewer', args=sys.argv[1:], errors='stop')
+        Daemon(vncviewer.get_cmdline()).run()
 
         return 0
 

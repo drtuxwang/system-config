@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -99,8 +99,8 @@ class Main:
         """
         options = Options()
 
-        dmg2img = command_mod.Command('dmg2img', errors='stop')
-        unpacker = command_mod.Command('7z', errors='stop')
+        dmg2img = Command('dmg2img', errors='stop')
+        unpacker = Command('7z', errors='stop')
         if options.get_view_flag():
             unpacker.set_args(['l'])
         else:
@@ -112,12 +112,10 @@ class Main:
                     f'{sys.argv[0]}: Cannot find "{path}" disk file.',
                 )
             print(f"{path}:")
-            task = subtask_mod.Task(
-                dmg2img.get_cmdline() + [path, 'dmg2img.img']
-            )
+            task = Task(dmg2img.get_cmdline() + [path, 'dmg2img.img'])
             task.run()
 
-            task = subtask_mod.Task(unpacker.get_cmdline() + ['dmg2img.img'])
+            task = Task(unpacker.get_cmdline() + ['dmg2img.img'])
             task.run()
             try:
                 os.remove('dmg2img.img')

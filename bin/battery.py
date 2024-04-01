@@ -8,7 +8,7 @@ import signal
 import sys
 from typing import List
 
-import power_mod
+from power_mod import Battery
 
 
 class Options:
@@ -70,7 +70,7 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _show_battery(battery: power_mod.Battery) -> None:
+    def _show_battery(battery: Battery) -> None:
         model = (
             f'{battery.get_oem()} {battery.get_name()} {battery.get_type()} '
             f'{battery.get_capacity_max()}mAh/{battery.get_voltage()}mV'
@@ -105,7 +105,7 @@ class Main:
         print(f"{model} = {battery.get_capacity()}mAh [{state}]", sep="")
 
     @staticmethod
-    def _show_summary(batteries: List[power_mod.Battery]) -> None:
+    def _show_summary(batteries: List[Battery]) -> None:
         capacity = 0
         rate = 0
         for battery in batteries:
@@ -127,7 +127,7 @@ class Main:
         Start program
         """
         options = Options()
-        batteries = power_mod.Battery.factory()
+        batteries = Battery.factory()
 
         if options.get_summary_flag():
             self._show_summary(batteries)

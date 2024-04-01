@@ -13,8 +13,8 @@ import types
 from pathlib import Path
 from typing import Any, Callable, List, Union
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -202,10 +202,10 @@ class Main:
 
     @staticmethod
     def _eject() -> None:
-        eject = command_mod.Command('eject', errors='ignore')
+        eject = Command('eject', errors='ignore')
         if eject.is_found():
             time.sleep(1)
-            task = subtask_mod.Batch(eject.get_cmdline())
+            task = Batch(eject.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -222,7 +222,7 @@ class Main:
             print(f"  {key:10s}  {value}")
 
     def _disk_at_once_data(self, options: Options) -> None:
-        cdrdao = command_mod.Command('cdrdao', errors='stop')
+        cdrdao = Command('cdrdao', errors='stop')
         if options.get_erase_flag():
             cdrdao.set_args([
                 'blank',
@@ -233,7 +233,7 @@ class Main:
                 '--speed',
                 str(self._speed)
             ])
-            task = subtask_mod.Task(cdrdao.get_cmdline())
+            task = Task(cdrdao.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
@@ -247,7 +247,7 @@ class Main:
             cdrdao.extend_args([self._image[:-4]+'.toc'])
         else:
             cdrdao.extend_args([self._image[:-4]+'.cue'])
-        task = subtask_mod.Task(cdrdao.get_cmdline())
+        task = Task(cdrdao.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -259,7 +259,7 @@ class Main:
     def _track_at_once_audio(self) -> None:
         files = sorted([str(x) for x in Path(self._image).glob('*.wav')])
 
-        wodim = command_mod.Command('wodim', errors='stop')
+        wodim = Command('wodim', errors='stop')
         print(
             "If your media is a rewrite-able CD/DVD its contents "
             "will be deleted."
@@ -279,7 +279,7 @@ class Main:
             f'speed={self._speed}',
             'driveropts=burnfree'
         ] + files)
-        task = subtask_mod.Task(wodim.get_cmdline())
+        task = Task(wodim.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -288,7 +288,7 @@ class Main:
             )
 
         time.sleep(1)
-        icedax = command_mod.Command('icedax', errors='ignore')
+        icedax = Command('icedax', errors='ignore')
         if icedax.is_found():
             icedax.set_args([
                 '-info-only',
@@ -297,7 +297,7 @@ class Main:
                 f'dev={self._device}',
                 f'speed={self._speed}',
             ])
-            task2 = subtask_mod.Batch(icedax.get_cmdline())
+            task2 = Batch(icedax.get_cmdline())
             task2.run()
             toc = task2.get_error(r'[.]\(.*:.*\)|^CD')
             if not toc:
@@ -317,7 +317,7 @@ class Main:
     def _track_at_once_data(self, options: Options) -> None:
         file = options.get_image()
 
-        wodim = command_mod.Command('wodim', errors='stop')
+        wodim = Command('wodim', errors='stop')
         print(
             'If your media is a rewrite-able CD/DVD its contents will '
             'be deleted.'
@@ -338,7 +338,7 @@ class Main:
             'driveropts=burnfree',
             file,
         ])
-        task = subtask_mod.Task(wodim.get_cmdline())
+        task = Task(wodim.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(

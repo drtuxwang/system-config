@@ -12,8 +12,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#009900'
@@ -31,7 +31,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_xterm(self) -> command_mod.Command:
+    def get_xterm(self) -> Command:
         """
         Return xterm Command class object.
         """
@@ -147,10 +147,10 @@ class Options:
             cmdline = args[2]
             if '"' not in cmdline:
                 cmdline = cmdline.replace("'", '"').replace('\n', ' ')
-            args[1:] = command_mod.Command.cmd2args(cmdline)
+            args[1:] = Command.cmd2args(cmdline)
 
-        command = command_mod.Command.args2cmd(self._generate_cmd(args[1:]))
-        self._xterm = command_mod.Command('xterm', errors='stop')
+        command = Command.args2cmd(self._generate_cmd(args[1:]))
+        self._xterm = Command('xterm', errors='stop')
         self._xterm.set_args([
             '-fn',
             TEXT_FONT,
@@ -207,7 +207,7 @@ class Main:
         options = Options()
 
         xterm = options.get_xterm()
-        subtask_mod.Background(xterm.get_cmdline()).run()
+        Background(xterm.get_cmdline()).run()
 
         return 0
 

@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileUtil
+from subtask_mod import Exec
 
 
 class Main:
@@ -42,7 +42,7 @@ class Main:
             Path.open = _open  # type: ignore
 
         # Send ".hardinfo" to tmpfs
-        newhome = file_mod.FileUtil.tmpdir(Path('.cache', 'hardinfo'))
+        newhome = FileUtil.tmpdir(Path('.cache', 'hardinfo'))
         os.environ['HOME'] = newhome
 
     @staticmethod
@@ -50,13 +50,13 @@ class Main:
         """
         Start program
         """
-        hardinfo = command_mod.Command(
+        hardinfo = Command(
             Path('bin', 'hardinfo'),
             errors='stop',
             args=sys.argv[1:],
         )
 
-        subtask_mod.Exec(hardinfo.get_cmdline()).run()
+        Exec(hardinfo.get_cmdline()).run()
 
         return 0
 

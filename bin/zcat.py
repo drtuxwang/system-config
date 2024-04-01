@@ -9,8 +9,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec, Task
 
 
 class Main:
@@ -46,8 +46,8 @@ class Main:
         Start program
         """
         if len(sys.argv) > 1 and sys.argv[1].startswith('-'):
-            command = command_mod.Command('zcat', errors='stop')
-            subtask_mod.Exec(command.get_cmdline() + sys.argv[1:]).run()
+            command = Command('zcat', errors='stop')
+            Exec(command.get_cmdline() + sys.argv[1:]).run()
 
         for path in [Path(x) for x in sys.argv[1:]]:
             if not path.is_file():
@@ -56,26 +56,26 @@ class Main:
             args = ['-d', '-c', path]
             suffix = path.suffix
             if suffix == '.7z':
-                command = command_mod.Command('7z', errors='stop')
+                command = Command('7z', errors='stop')
                 args = ['x', '-so', path]
             elif suffix in ('.lzma', '.xz'):
-                command = command_mod.Command('xz', errors='stop')
+                command = Command('xz', errors='stop')
             elif suffix in ('.zst', '.zstd'):
-                command = command_mod.Command('zstd', errors='stop')
+                command = Command('zstd', errors='stop')
             elif suffix == '.bz2':
-                command = command_mod.Command('bzip2', errors='stop')
+                command = Command('bzip2', errors='stop')
             elif suffix == '.gz':
-                command = command_mod.Command('gzip', errors='stop')
+                command = Command('gzip', errors='stop')
             else:
                 with gzip.open(path, 'r') as ifile:
                     try:
                         ifile.read(1)
-                        command = command_mod.Command('gzip', errors='stop')
+                        command = Command('gzip', errors='stop')
                     except OSError:
-                        command = command_mod.Command('fcat', errors='stop')
+                        command = Command('fcat', errors='stop')
                         args = [path]
 
-            task = subtask_mod.Task(command.get_cmdline() + args)
+            task = Task(command.get_cmdline() + args)
             task.run()
             if task.get_exitcode():
                 raise SystemExit(

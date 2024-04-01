@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import file_mod
+from file_mod import FileStat
 
 
 class Options:
@@ -139,7 +139,7 @@ class Main:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create "{target_path}" link.',
                     ) from exception
-                file_stat = file_mod.FileStat(path)
+                file_stat = FileStat(path)
                 file_time = file_stat.get_time()
                 try:
                     os.utime(

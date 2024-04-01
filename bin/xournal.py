@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command, Platform
+from subtask_mod import Background
 
 
 class Main:
@@ -47,10 +47,10 @@ class Main:
         """
         pathextra = (
             ['/Applications/Xournal++.app/Contents/MacOS']
-            if command_mod.Platform.get_system() == 'macos'
+            if Platform.get_system() == 'macos'
             else []
         )
-        xournal = command_mod.Command(
+        xournal = Command(
             'xournalpp',
             pathextra=pathextra,
             args=sys.argv[1:],
@@ -62,7 +62,7 @@ class Main:
             ': TEXTDOMAINDIR|: Plugin| does not exist|: No such file|'
             r'No device found|not finding devices!| defaults\['
         )
-        subtask_mod.Background(xournal.get_cmdline()).run(pattern=pattern)
+        Background(xournal.get_cmdline()).run(pattern=pattern)
 
         return 0
 

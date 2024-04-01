@@ -34,7 +34,7 @@ from typing import List, Tuple
 
 import requests  # type: ignore
 
-import config_mod
+from config_mod import Config
 
 # Maximum number of repositories (bug in Registry v2 returns only 100)
 # Effects Go array size and huge number can crash Registry
@@ -116,7 +116,7 @@ class DockerRegistry:
 
     def __init__(self, server: str) -> None:
         self._server = server
-        config = config_mod.Config()
+        config = Config()
         self._user_agent = config.get('user_agent')
         self._config()
 

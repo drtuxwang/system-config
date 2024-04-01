@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -30,7 +30,7 @@ class Options:
         """
         return self._args.device[0]
 
-    def get_vlc(self) -> command_mod.Command:
+    def get_vlc(self) -> Command:
         """
         Return vlc Command class object.
         """
@@ -82,7 +82,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._vlc = command_mod.Command('vlc', errors='stop')
+        self._vlc = Command('vlc', errors='stop')
 
         if self._args.speed[0] < 1:
             raise SystemExit(
@@ -165,16 +165,16 @@ class Main:
 
     @staticmethod
     def _cdspeed(device: str, speed: int) -> None:
-        cdspeed = command_mod.Command('cdspeed', errors='ignore')
+        cdspeed = Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
                 cdspeed.set_args([device, speed])
             # If CD/DVD spin speed change fails its okay
-            subtask_mod.Task(cdspeed.get_cmdline()).run()
+            Task(cdspeed.get_cmdline()).run()
         elif speed and Path('/sbin/hdparm').is_file():
-            hdparm = command_mod.Command('/sbin/hdparm', errors='ignore')
+            hdparm = Command('/sbin/hdparm', errors='ignore')
             hdparm.set_args(['-E', speed, device])
-            subtask_mod.Batch(hdparm.get_cmdline()).run()
+            Batch(hdparm.get_cmdline()).run()
 
     def _rip(self) -> None:
         file = f'title-{str(self._title).zfill(2)}.mpg'
@@ -186,7 +186,7 @@ class Main:
             '--no-loop',
             '--play-and-exit',
         ])
-        subtask_mod.Task(self._vlc.get_cmdline()).run()
+        Task(self._vlc.get_cmdline()).run()
 
     @staticmethod
     def _scan() -> None:

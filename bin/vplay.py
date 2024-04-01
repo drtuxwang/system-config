@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import Any, List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -116,7 +116,7 @@ class Main:
         """
         options = Options()
 
-        play = command_mod.Command('play', errors='stop')
+        play = Command('play', errors='stop')
         if options.get_view_flag():
             play.set_args(['-v'])
         for directory in options.get_directories():
@@ -130,7 +130,7 @@ class Main:
                 random.shuffle(files)
             play.extend_args(files)
 
-        task = subtask_mod.Task(play.get_cmdline())
+        task = Task(play.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(

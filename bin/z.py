@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -116,11 +116,11 @@ class Main:
             '.txz',
             '.t7z',
         )):
-            command = command_mod.Command('tar.py', errors='stop')
+            command = Command('tar.py', errors='stop')
         elif name.endswith('.zip'):
-            command = command_mod.Command('zip', errors='stop')
+            command = Command('zip', errors='stop')
         elif name.endswith(('.7z', '.exe')) or path.is_dir():
-            command = command_mod.Command('7z', errors='stop')
+            command = Command('7z', errors='stop')
         else:
             raise SystemExit(
                 f"{sys.argv[0]}: Unable to make unsupported archive format:"
@@ -128,7 +128,7 @@ class Main:
             )
 
         command.set_args([path] + options.get_files())
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

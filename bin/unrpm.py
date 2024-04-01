@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -29,13 +29,13 @@ class Options:
         """
         return self._args.archives
 
-    def get_cpio(self) -> command_mod.Command:
+    def get_cpio(self) -> Command:
         """
         Return cpio Command class object.
         """
         return self._cpio
 
-    def get_rpm2cpio(self) -> command_mod.Command:
+    def get_rpm2cpio(self) -> Command:
         """
         Return rpm2cpio Command class object.
         """
@@ -67,8 +67,8 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._rpm2cpio = command_mod.Command('rpm2cpio', errors='stop')
-        self._cpio = command_mod.Command('cpio', errors='stop')
+        self._rpm2cpio = Command('rpm2cpio', errors='stop')
+        self._cpio = Command('cpio', errors='stop')
         if self._args.view_flag:
             self._cpio.set_args(['-idmt', '--no-absolute-filenames'])
         else:
@@ -121,7 +121,7 @@ class Main:
                     f'{sys.argv[0]}: Cannot find "{archive}" archive file.',
                 )
             print(f"{archive}:")
-            task = subtask_mod.Task(rpm2cpio.get_cmdline() + [
+            task = Task(rpm2cpio.get_cmdline() + [
                 str(archive),
                 '|',
             ] + cpio.get_cmdline())

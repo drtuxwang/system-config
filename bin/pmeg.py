@@ -11,9 +11,9 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-import command_mod
-import config_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from subtask_mod import Batch
 
 
 class Options:
@@ -25,7 +25,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_convert(self) -> command_mod.Command:
+    def get_convert(self) -> Command:
         """
         Return convert Command class object.
         """
@@ -70,7 +70,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._convert = command_mod.Command('convert', errors='stop')
+        self._convert = Command('convert', errors='stop')
 
         if self._args.megs[0] < 1:
             raise SystemExit(
@@ -116,7 +116,7 @@ class Main:
 
     def _imagesize(self, path: Path) -> Tuple[int, int]:
         self._convert.set_args(['-verbose', path, '/dev/null'])
-        task = subtask_mod.Batch(self._convert.get_cmdline())
+        task = Batch(self._convert.get_cmdline())
         task.run(pattern='=>', error2output=True)
         if not task.has_output():
             raise SystemExit(
@@ -138,7 +138,7 @@ class Main:
         options = Options()
         self._convert = options.get_convert()
         megs = options.get_megs()
-        images_extensions = config_mod.Config().get('image_extensions')
+        images_extensions = Config().get('image_extensions')
 
         for directory in options.get_directories():
             for path in sorted(Path(directory).glob('*')):
@@ -171,7 +171,7 @@ class Main:
                             path,
                             path,
                         ])
-                        task = subtask_mod.Batch(self._convert.get_cmdline())
+                        task = Batch(self._convert.get_cmdline())
                         task.run()
                         if task.get_exitcode():
                             raise SystemExit(

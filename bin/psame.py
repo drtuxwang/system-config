@@ -17,14 +17,14 @@ import imagehash  # type: ignore
 import PIL  # type: ignore
 import pybktree  # type: ignore
 
-import command_mod
-import logging_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
 
 MAX_DISTANCE_IDENTICAL = 6
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -164,10 +164,7 @@ class Main:
         matched_images = self._match(image_phash)
 
         for images in sorted(matched_images):
-            logger.warning(
-                "Identical: %s",
-                command_mod.Command.args2cmd(sorted(images)),
-            )
+            logger.warning("Identical: %s", Command.args2cmd(sorted(images)))
         return bool(matched_images)
 
 

@@ -7,8 +7,8 @@ import os
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -40,12 +40,8 @@ class Main:
         """
         Start program
         """
-        vncpasswd = command_mod.Command(
-            'vncpasswd',
-            args=sys.argv[1:],
-            errors='stop'
-        )
-        subtask_mod.Exec(vncpasswd.get_cmdline()).run()
+        vncpasswd = Command('vncpasswd', args=sys.argv[1:], errors='stop')
+        Exec(vncpasswd.get_cmdline()).run()
 
         return 0
 

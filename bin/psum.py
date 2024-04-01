@@ -18,15 +18,15 @@ import PIL  # type: ignore
 import pybktree  # type: ignore
 import pyzstd
 
-import command_mod
-import file_mod
-import logging_mod
+from command_mod import Command
+from file_mod import FileStat
+from logging_mod import ColoredFormatter
 
 MAX_DISTANCE_IDENTICAL = 6
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -179,7 +179,7 @@ class Main:
                     except PermissionError:
                         pass
             elif path.is_file():
-                file_stat = file_mod.FileStat(path)
+                file_stat = FileStat(path)
                 key = (str(path), file_stat.get_size(), file_stat.get_time())
                 if key in phashes:
                     phash = phashes[key]
@@ -223,7 +223,7 @@ class Main:
             for images in sorted(matched_images):
                 logger.warning(
                     "Identical: %s",
-                    command_mod.Command.args2cmd(sorted(images)),
+                    Command.args2cmd(sorted(images)),
                 )
             raise SystemExit(1)
 

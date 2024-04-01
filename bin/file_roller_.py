@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background, Task
 
 
 class Main:
@@ -55,13 +55,9 @@ class Main:
         os.environ['LC_PAPER'] = os.environ.get('LC_PAPER', 'en_GB.UTF-8')
 
         if 'PRINTER' not in os.environ:
-            lpstat = command_mod.Command(
-                'lpstat',
-                args=['-d'],
-                errors='ignore'
-            )
+            lpstat = Command('lpstat', args=['-d'], errors='ignore')
             if lpstat.is_found():
-                task = subtask_mod.Background(lpstat.get_cmdline())
+                task = Background(lpstat.get_cmdline())
                 task.run(pattern='^system default destination: ')
                 if task.has_output():
                     os.environ['PRINTER'] = task.get_output()[0].split()[-1]
@@ -70,23 +66,15 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command(
-            'engrampa',
-            args=sys.argv[1:],
-            errors='ignore'
-        )
+        command = Command('engrampa', args=sys.argv[1:], errors='ignore')
         if not command.is_found():
-            command = command_mod.Command(
-                'file-roller',
-                args=sys.argv[1:],
-                errors='stop'
-            )
+            command = Command('file-roller', args=sys.argv[1:], errors='stop')
 
         pattern = '^$|dbind-WARNING|Gtk-WARNING'
         self._config()
         self._setenv()
 
-        task = subtask_mod.Task(command.get_cmdline())
+        task = Task(command.get_cmdline())
         task.run(pattern=pattern)
         return task.get_exitcode()
 

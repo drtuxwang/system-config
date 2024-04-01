@@ -11,15 +11,15 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
+from subtask_mod import Task
 
 IGNORE_SUFFIXES = ('.fsum', '.md5', '.md5sum', '.par2')
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -39,7 +39,7 @@ class Options:
         """
         return [os.path.expandvars(x) for x in self._args.files]
 
-    def get_par2(self) -> command_mod.Command:
+    def get_par2(self) -> Command:
         """
         Return par2 Command class object.
         """
@@ -61,7 +61,7 @@ class Options:
         """
         Parse arguments
         """
-        self._par2 = command_mod.Command('par2', errors='stop')
+        self._par2 = Command('par2', errors='stop')
         self._par2.set_args(['c', '-q', '-n1', '-r1'])
 
         self._parse_args(args[1:])
@@ -162,9 +162,7 @@ class Main:
                     if par1_path.exists():
                         par1_path.unlink()
                     size = path.stat().st_size // 400 * 4 + 4
-                    task = subtask_mod.Task(
-                        cmdline + [f'-s{size}', par0_path, path]
-                    )
+                    task = Task(cmdline + [f'-s{size}', par0_path, path])
                     cls._create_3dot_directory(fpar_path)
                     task.run(pattern='^$', replace=(
                         'Opening: ',

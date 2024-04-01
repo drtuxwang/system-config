@@ -6,8 +6,8 @@ Wrapper for "ftp" command
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -37,10 +37,10 @@ class Main:
         """
         Start program
         """
-        ftp = command_mod.Command('ftp', errors='stop')
+        ftp = Command('ftp', errors='stop')
         ftp.set_args(sys.argv[1:])
 
-        subtask_mod.Exec(ftp.get_cmdline()).run()
+        Exec(ftp.get_cmdline()).run()
 
         return 0
 

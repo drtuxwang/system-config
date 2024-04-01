@@ -9,9 +9,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import network_mod
-import subtask_mod
+from command_mod import Command
+from network_mod import Sandbox
+from subtask_mod import Background, Task
 
 
 class Main:
@@ -57,13 +57,13 @@ class Main:
         os.environ['LC_PAPER'] = os.environ.get('LC_PAPER', 'en_GB.UTF-8')
 
         if 'PRINTER' not in os.environ:
-            lpstat = command_mod.Command(
+            lpstat = Command(
                 'lpstat',
                 args=['-d'],
                 errors='ignore'
             )
             if lpstat.is_found():
-                task = subtask_mod.Background(lpstat.get_cmdline())
+                task = Background(lpstat.get_cmdline())
                 task.run(pattern='^system default destination: ')
                 if task.has_output():
                     os.environ['PRINTER'] = task.get_output()[0].split()[-1]
@@ -72,13 +72,9 @@ class Main:
         """
         Start program
         """
-        command = network_mod.Sandbox('atril', errors='ignore')
+        command = Sandbox('atril', errors='ignore')
         if not command.is_found():
-            command = network_mod.Sandbox(
-                'evince',
-                args=sys.argv[1:],
-                errors='stop'
-            )
+            command = Sandbox('evince', args=sys.argv[1:], errors='stop')
 
         work_path = Path(os.environ['PWD'])
         if work_path == Path.home():
@@ -122,7 +118,7 @@ class Main:
         self._config()
         self._setenv()
 
-        task = subtask_mod.Task(command.get_cmdline())
+        task = Task(command.get_cmdline())
         task.run(pattern=pattern)
         return task.get_exitcode()
 

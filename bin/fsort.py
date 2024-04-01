@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
+from command_mod import LooseVersion
 
 
 class Options:
@@ -130,7 +130,7 @@ class Main:
             lines = sorted(
                 lines,
                 key=lambda  # pylint: disable=unnecessary-lambda
-                s: command_mod.LooseVersion(s),
+                s: LooseVersion(s),
             )
         else:
             lines = sorted(lines)

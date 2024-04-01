@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Task
 
 
 class Main:
@@ -47,7 +47,7 @@ class Main:
         """
         name = Path(sys.argv[0]).stem
 
-        hearts = network_mod.Sandbox(name, errors='stop')
+        hearts = Sandbox(name, errors='stop')
         hearts.set_args(sys.argv[1:])
 
         if not Path(f'{hearts.get_file()}.py').is_file():
@@ -62,7 +62,7 @@ class Main:
             hearts.sandbox(configs)
 
         pattern = 'deprecation:'
-        subtask_mod.Task(hearts.get_cmdline()).run(pattern=pattern)
+        Task(hearts.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

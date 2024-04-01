@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Daemon, Exec
 
 
 class Main:
@@ -45,9 +45,9 @@ class Main:
         """
         Start program
         """
-        shotcut = network_mod.Sandbox('shotcut', errors='stop')
+        shotcut = Sandbox('shotcut', errors='stop')
         if Path(f'{shotcut.get_file()}.py').is_file():
-            subtask_mod.Exec(shotcut.get_cmdline() + sys.argv[1:]).run()
+            Exec(shotcut.get_cmdline() + sys.argv[1:]).run()
 
         home = str(Path.home())
         home_videos = Path(Path.home(), '.config/Meltytech/Videos')
@@ -83,7 +83,7 @@ class Main:
 
         shotcut.sandbox(configs)
 
-        subtask_mod.Daemon(shotcut.get_cmdline()).run()
+        Daemon(shotcut.get_cmdline()).run()
 
         return 0
 

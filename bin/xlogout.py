@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import task_mod
+from task_mod import Tasks
 
 
 class Options:
@@ -102,7 +102,7 @@ class Main:
             except KeyboardInterrupt:
                 sys.exit(114)
 
-        task_mod.Tasks.factory().killpids([self._pid])
+        Tasks.factory().killpids([self._pid])
 
         return 0
 

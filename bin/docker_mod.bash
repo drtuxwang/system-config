@@ -5,8 +5,9 @@
 # Copyright GPL v2: 2018-2024 By Dr Colin Kong
 #
 
-
 set -u
+
+IMAGE_SED="s/^REPOSITORY:TAG .*/REPOSITORY:TAG IMAGE ID CREATED AT       SIZE/"
 
 
 #
@@ -69,17 +70,17 @@ options() {
 docker_list() {
     PATTERN="$(echo "$@" | sed -e "s/ /|/g")"
 
-    docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
+    (echo "REPOSITORY:TAG IMAGE ID CREATED AT       SIZE"; docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2) |  column -t
     echo
-    docker volume ls
+    docker volume ls | sed -e "s/^DRIVER .*/DRIVER VOLUME_NAME/" | column -t
     echo
-    docker ps
+    docker ps | sed -e "s/^CONTAINER ID /CONTAINER_ID/" | column -t
     echo
     docker system df
     echo
-    df /var/lib/docker
+    df /var/lib/docker | sed -e "s/Mounted *on$/Mounted_on/" | column -t
     echo
-    docker network ls
+    docker network ls | sed -e "s/^NETWORK ID/NETWORK_ID/" | column -t
 }
 
 
@@ -89,11 +90,12 @@ docker_list() {
 docker_images() {
     if [ $# = 0 ]
     then
-        docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
+        (echo "REPOSITORY:TAG IMAGE ID CREATED AT       SIZE"; docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2) |  column -t
     else
-        docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep -E "^REPOSITORY:TAG|$(echo "$@" | sed -e "s/ /|/g")" | sort
+        (echo "REPOSITORY:TAG IMAGE ID CREATED AT       SIZE"; docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep -E "^REPOSITORY:TAG|$(echo "$@" | sed -e "s/ /|/g")" | tail -n +2 | sort) |  column -t
     fi
 }
+
 
 
 #

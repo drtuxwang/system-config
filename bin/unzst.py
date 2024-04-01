@@ -8,8 +8,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -21,7 +21,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_bzstd(self) -> command_mod.Command:
+    def get_bzstd(self) -> Command:
         """
         Return bzstd Command class object.
         """
@@ -53,7 +53,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._bzstd = command_mod.Command('zstd', errors='stop')
+        self._bzstd = Command('zstd', errors='stop')
 
         if self._args.test_flag:
             self._bzstd.set_args(['-t'])
@@ -91,7 +91,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_bzstd().get_cmdline()).run()
+        Exec(options.get_bzstd().get_cmdline()).run()
 
         return 0
 

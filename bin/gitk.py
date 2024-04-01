@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import Dict, List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return self._env
 
-    def get_gitk(self) -> command_mod.Command:
+    def get_gitk(self) -> Command:
         """
         Return gitk Command class object.
         """
@@ -53,7 +53,7 @@ class Options:
         """
         Parse arguments
         """
-        self._gitk = command_mod.Command(Path('bin', 'gitk'), errors='stop')
+        self._gitk = Command(Path('bin', 'gitk'), errors='stop')
         self._gitk.set_args(args[1:])
 
         self._env = {}
@@ -108,8 +108,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(
-            options.get_gitk().get_cmdline()).run(env=options.get_env())
+        Exec(options.get_gitk().get_cmdline()).run(env=options.get_env())
 
         return 0
 

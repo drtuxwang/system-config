@@ -7,8 +7,8 @@ import signal
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command, Platform
+from subtask_mod import Background
 
 
 class Options:
@@ -25,7 +25,7 @@ class Options:
         """
         return self._pattern
 
-    def get_gimp(self) -> command_mod.Command:
+    def get_gimp(self) -> Command:
         """
         Return gimp Command class object.
         """
@@ -37,14 +37,9 @@ class Options:
         """
         pathextra = (
             ['/Applications/GIMP-2.10.app/Contents/MacOS']
-            if command_mod.Platform.get_system() == 'macos'
-            else []
+            if Platform.get_system() == 'macos' else []
         )
-        self._gimp = command_mod.Command(
-            'gimp',
-            pathextra=pathextra,
-            errors='stop',
-        )
+        self._gimp = Command('gimp', pathextra=pathextra, errors='stop')
         self._gimp.set_args(['--no-splash'] + args[1:])
         self._pattern = (
             '^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
@@ -90,8 +85,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Background(options.get_gimp(
-            ).get_cmdline()).run(pattern=options.get_pattern())
+        Background(
+           options.get_gimp().get_cmdline()
+        ).run(pattern=options.get_pattern())
 
         return 0
 

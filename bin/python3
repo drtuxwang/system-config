@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
+[ "$PYTHON_VERSION" ] && exec "$PYTHON_VERSION" "$@"
 PYLD_EXE=${0##*/}
 source "${0%/*}/pyld_mod.bash"

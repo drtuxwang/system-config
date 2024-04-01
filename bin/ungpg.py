@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return self._args.files
 
-    def get_gpg(self) -> command_mod.Command:
+    def get_gpg(self) -> Command:
         """
         Return gpg Command class object.
         """
@@ -54,7 +54,7 @@ class Options:
             del os.environ['DISPLAY']
 
     @staticmethod
-    def _set_libraries(command: command_mod.Command) -> None:
+    def _set_libraries(command: Command) -> None:
         libdir = Path(Path(command.get_file()).parent, 'lib')
         if libdir.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
@@ -92,9 +92,9 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._gpg = command_mod.Command('gpg2', errors='ignore')
+        self._gpg = Command('gpg2', errors='ignore')
         if not self._gpg.is_found():
-            self._gpg = command_mod.Command('gpg', errors='stop')
+            self._gpg = Command('gpg', errors='stop')
 
         self._config()
         self._set_libraries(self._gpg)
@@ -137,22 +137,20 @@ class Main:
         view_flag = options.get_view_flag()
         gpg = options.get_gpg()
 
-        task: subtask_mod.Task
+        task: Task
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
             if view_flag:
-                task = subtask_mod.Batch(
-                    gpg.get_cmdline() + ['--list-packets', path]
-                )
+                task = Batch(gpg.get_cmdline() + ['--list-packets', path])
                 task.run(env={'GPG_TTY': None})
                 print(f"\n{path}:")
                 for line in task.get_output():
                     print(line)
                 continue
 
-            task = subtask_mod.Task(gpg.get_cmdline() + [path])
+            task = Task(gpg.get_cmdline() + [path])
             task.run()
             if task.get_exitcode():
                 raise SystemExit(

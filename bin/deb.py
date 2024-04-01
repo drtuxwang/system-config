@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Exec
 
 
 class Options:
@@ -36,7 +36,7 @@ class Options:
         """
         return self._arch_sub
 
-    def get_dpkg(self) -> command_mod.Command:
+    def get_dpkg(self) -> Command:
         """
         Return dpkg Command class object.
         """
@@ -141,9 +141,9 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._dpkg = command_mod.Command('dpkg', errors='stop')
+        self._dpkg = Command('dpkg', errors='stop')
         self._dpkg.set_args(['--print-architecture'])
-        task = subtask_mod.Batch(self._dpkg.get_cmdline())
+        task = Batch(self._dpkg.get_cmdline())
         task.run()
         if len(task.get_output()) != 1:
             raise SystemExit(
@@ -159,7 +159,7 @@ class Options:
         elif self._args.option:
             self._dpkg.set_args([self._args.option] + self._args.args)
         elif self._args.args and self._args.args[0].endswith('.deb'):
-            self._dpkg = command_mod.Command('dpkg-deb', errors='stop')
+            self._dpkg = Command('dpkg-deb', errors='stop')
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
         elif self._args.args:
             raise SystemExit(
@@ -402,7 +402,7 @@ class Main:
         elif mode == 'nodepends':
             self._show_nodependent_packages()
         else:
-            subtask_mod.Exec(self._options.get_dpkg().get_cmdline()).run()
+            Exec(self._options.get_dpkg().get_cmdline()).run()
 
         return 0
 

@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background
 
 
 class Options:
@@ -27,7 +27,7 @@ class Options:
         """
         return self._pattern
 
-    def get_nautilus(self) -> command_mod.Command:
+    def get_nautilus(self) -> Command:
         """
         Return nautilus Command class object.
         """
@@ -122,7 +122,7 @@ class Options:
         """
         Parse arguments
         """
-        self._nautilus = command_mod.Command('nautilus', errors='stop')
+        self._nautilus = Command('nautilus', errors='stop')
         if len(args) == 1:
             if 'DESKTOP_STARTUP_ID' not in os.environ:
                 self._nautilus.set_args([os.getcwd()])
@@ -170,8 +170,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Background(options.get_nautilus().get_cmdline()).run(
-            pattern=options.get_pattern())
+        Background(
+            options.get_nautilus().get_cmdline()
+        ).run(pattern=options.get_pattern())
 
         return 0
 

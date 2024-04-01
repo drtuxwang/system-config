@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -87,11 +87,8 @@ class Main:
         directories = options.get_directories()
 
         errors = []
-        jpeginfo = command_mod.Command(
-            'jpeginfo',
-            args=['--info', '--check'],
-            errors='stop'
-        )
+        jpeginfo = Command('jpeginfo', errors='stop')
+        jpeginfo.set_args(['--info', '--check'])
         for directory_path in [Path(x) for x in directories]:
             if directory_path.is_dir():
                 paths = []
@@ -99,7 +96,7 @@ class Main:
                     if path.suffix.lower() in ('.jpg', '.jpeg'):
                         paths.append(path)
                 if paths:
-                    task = subtask_mod.Batch(jpeginfo.get_cmdline() + paths)
+                    task = Batch(jpeginfo.get_cmdline() + paths)
                     task.run()
                     for line in task.get_output():
                         if '[ERROR]' in line:

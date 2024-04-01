@@ -15,9 +15,9 @@ import urllib.request
 from pathlib import Path
 from typing import List, Tuple
 
-import config_mod
-import file_mod
-import task_mod
+from config_mod import Config
+from file_mod import FileStat
+from task_mod import Tasks
 
 
 class Options:
@@ -104,7 +104,7 @@ class Main:
         """
         Check existing file and return True if already downloaded.
         """
-        file_stat = file_mod.FileStat(file)
+        file_stat = FileStat(file)
         if file_stat.get_size() == size and file_stat.get_time() >= mtime:
             return True
         return False
@@ -156,7 +156,7 @@ class Main:
 
             if (
                 host == socket.gethostname().split('.')[0].lower() and
-                task_mod.Tasks.factory().haspid(pid)
+                Tasks.factory().haspid(pid)
             ):
                 return 'skip'
             if json_data['fget']['data'] == data:
@@ -211,7 +211,7 @@ class Main:
             tmpsize = Path(f'{file}.part').stat().st_size
             req = urllib.request.Request(url, headers={
                 'Range': 'bytes='+str(tmpsize)+'-',
-                'User-Agent': config_mod.Config().get('user_agent'),
+                'User-Agent': Config().get('user_agent'),
             })
             # pylint: disable=consider-using-with
             conn = urllib.request.urlopen(req)

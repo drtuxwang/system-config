@@ -10,8 +10,8 @@ import socket
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import ExecutableCallError, Task
 
 
 class Main:
@@ -47,7 +47,7 @@ class Main:
         """
         Start program
         """
-        sudo = command_mod.Command('sudo', errors='stop')
+        sudo = Command('sudo', errors='stop')
         if '-p' not in sys.argv:
             hostname = socket.gethostname().split('.')[0].lower()
             username = getpass.getuser()
@@ -58,19 +58,19 @@ class Main:
             if sys.argv[1:] == ['su']:  # Workaround hanging
                 sys.argv[1] = '-s'
             elif not sys.argv[1].startswith('-'):
-                command = command_mod.Command(sys.argv[1], errors='ignore')
+                command = Command(sys.argv[1], errors='ignore')
                 if command.is_found():
                     sys.argv[1] = command.get_file()
             sudo.extend_args(sys.argv[1:])
 
         # Run and remove sudo credentials
-        task = subtask_mod.Task(sudo.get_cmdline())
+        task = Task(sudo.get_cmdline())
         try:
             task.run()
-        except subtask_mod.ExecutableCallError:
+        except ExecutableCallError:
             pass
         sudo.set_args(['-k'])
-        subtask_mod.Task(sudo.get_cmdline()).run()
+        Task(sudo.get_cmdline()).run()
 
         return task.get_exitcode()
 

@@ -10,7 +10,7 @@ import sys
 import time
 from typing import List
 
-import task_mod
+from task_mod import Tasks
 
 
 class Options:
@@ -100,7 +100,7 @@ class Main:
     @staticmethod
     def _filter(options: Options) -> List[int]:
         pids = []
-        task = task_mod.Tasks.factory()
+        task = Tasks.factory()
         for keyword in options.get_keywords():
             if keyword.isdigit():
                 if task.haspid(int(keyword)):
@@ -132,7 +132,7 @@ class Main:
 
     @staticmethod
     def _ykill(options: Options, pids: List[int]) -> None:
-        task = task_mod.Tasks.factory()
+        task = Tasks.factory()
         mypid = os.getpid()
         apids = task.get_ancestor_pids(mypid)
         for pid in pids:

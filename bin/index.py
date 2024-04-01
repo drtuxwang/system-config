@@ -12,14 +12,14 @@ import sys
 from pathlib import Path
 from typing import Any, List
 
-import command_mod
-import file_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat, FileUtil
+from logging_mod import ColoredFormatter
+from subtask_mod import Batch
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -58,14 +58,14 @@ class Main:
 
     @classmethod
     def _checksum(cls) -> None:
-        fsum = command_mod.Command('fsum', errors='stop')
+        fsum = Command('fsum', errors='stop')
         files = glob.glob('*')
         if 'index.fsum' in files:
             files.remove('index.fsum')
             fsum.set_args(['-R', '-update=index.fsum'] + files)
         else:
             fsum.set_args(['-R'] + files)
-        task = subtask_mod.Batch(fsum.get_cmdline())
+        task = Batch(fsum.get_cmdline())
 
         task.run()
         cls._write_fsums(task.get_output())
@@ -137,8 +137,8 @@ class Main:
         paths = list(directory_path.iterdir())
         for path in paths:
             if path.is_symlink():
-                link_stat = file_mod.FileStat(path, follow_symlinks=False)
-                file_stat = file_mod.FileStat(path)
+                link_stat = FileStat(path, follow_symlinks=False)
+                file_stat = FileStat(path)
                 file_time = file_stat.get_time()
                 if file_time != link_stat.get_time():
                     try:
@@ -153,10 +153,10 @@ class Main:
                 cls._set_time(path)
 
         if paths:
-            newest = file_mod.FileUtil.newest([str(x) for x in paths])
-            file_stat = file_mod.FileStat(newest)
+            newest = FileUtil.newest([str(x) for x in paths])
+            file_stat = FileStat(newest)
             file_time = file_stat.get_time()
-            if file_time != file_mod.FileStat(directory_path).get_time():
+            if file_time != FileStat(directory_path).get_time():
                 try:
                     os.utime(directory_path, (file_time, file_time))
                 except PermissionError:

@@ -9,10 +9,10 @@ import sys
 import time
 from pathlib import Path
 
-import desktop_mod
-import command_mod
-import subtask_mod
-import task_mod
+from command_mod import Command
+from desktop_mod import Desktop
+from subtask_mod import Background
+from task_mod import Tasks
 
 
 class ScreenLocker:
@@ -21,8 +21,8 @@ class ScreenLocker:
     """
 
     def __init__(self) -> None:
-        self._daemon: command_mod.Command = None
-        self._command: command_mod.Command = None
+        self._daemon: Command = None
+        self._command: Command = None
         self._setup()
 
     def _setup(self) -> None:
@@ -61,13 +61,13 @@ class ScreenLocker:
         Run screen locker.
         """
         if self._daemon:
-            tasks = task_mod.Tasks.factory()
+            tasks = Tasks.factory()
             cmdline = self._daemon.get_cmdline()
             if not tasks.haspname(Path(cmdline[0]).name):
-                subtask_mod.Background(cmdline).run()
+                Background(cmdline).run()
                 time.sleep(1)
 
-        subtask_mod.Background(self._command.get_cmdline()).run()
+        Background(self._command.get_cmdline()).run()
 
 
 class CinnamonLocker(ScreenLocker):
@@ -76,11 +76,8 @@ class CinnamonLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._daemon = command_mod.Command(
-            'cinnamon-screensaver',
-            errors='ignore',
-        )
-        self._command = command_mod.Command(
+        self._daemon = Command('cinnamon-screensaver', errors='ignore')
+        self._command = Command(
             'cinnamon-screensaver-command',
             args=['--lock'],
             errors='ignore',
@@ -93,11 +90,8 @@ class GnomeLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._daemon = command_mod.Command(
-            'gnome-screensaver',
-            errors='ignore',
-        )
-        self._command = command_mod.Command(
+        self._daemon = Command('gnome-screensaver', errors='ignore')
+        self._command = Command(
             'gnome-screensaver-command',
             args=['--lock'],
             errors='ignore',
@@ -110,7 +104,7 @@ class KdeLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._command = command_mod.Command(
+        self._command = Command(
             'qdbus',
             args=['org.freedesktop.ScreenSaver', '/ScreenSaver', 'Lock'],
             errors='ignore',
@@ -123,11 +117,8 @@ class LightLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._daemon = command_mod.Command(
-            'light-locker',
-            errors='ignore',
-        )
-        self._command = command_mod.Command(
+        self._daemon = Command('light-locker', errors='ignore')
+        self._command = Command(
             'light-locker-command',
             args=['--lock'],
             errors='ignore',
@@ -140,7 +131,7 @@ class MacLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._command = command_mod.Command(
+        self._command = Command(
             'pmset',
             args=['displaysleepnow'],
             errors='ignore',
@@ -153,11 +144,8 @@ class MateLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._daemon = command_mod.Command(
-            'mate-screensaver',
-            errors='ignore',
-        )
-        self._command = command_mod.Command(
+        self._daemon = Command('mate-screensaver', errors='ignore')
+        self._command = Command(
             'mate-screensaver-command',
             args=['--lock'],
             errors='ignore',
@@ -170,7 +158,7 @@ class XfceLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._command = command_mod.Command('xflock4', errors='ignore')
+        self._command = Command('xflock4', errors='ignore')
 
 
 class Xlock(ScreenLocker):
@@ -179,7 +167,7 @@ class Xlock(ScreenLocker):
     """
 
     def _setup(self) -> None:
-        self._command = command_mod.Command('xlock', errors='ignore')
+        self._command = Command('xlock', errors='ignore')
         args = sys.argv[1:]
         if args:
             self._command.set_args(args)
@@ -234,7 +222,7 @@ class Main:
         """
         Start program
         """
-        desktop = desktop_mod.Desktop.detect()
+        desktop = Desktop.detect()
         locker = ScreenLocker.factory(desktop)
         locker.run()
 

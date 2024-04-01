@@ -12,13 +12,13 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import logging_mod
-import subtask_mod
+from command_mod import Command
+from logging_mod import ColoredFormatter
+from subtask_mod import Batch, Task
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging_mod.ColoredFormatter())
+console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
@@ -38,7 +38,7 @@ class Options:
         """
         return self._args.directory[0]
 
-    def get_genisoimage(self) -> command_mod.Command:
+    def get_genisoimage(self) -> Command:
         """
         Return genisoimage Command class object.
         """
@@ -50,7 +50,7 @@ class Options:
         """
         return self._image
 
-    def get_isoinfo(self) -> command_mod.Command:
+    def get_isoinfo(self) -> Command:
         """
         Return isoinfo Command class object.
         """
@@ -98,9 +98,8 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._genisoimage = command_mod.Command('genisoimage', errors='stop')
-        task = subtask_mod.Batch(
-            self._genisoimage.get_cmdline() + ['-version'])
+        self._genisoimage = Command('genisoimage', errors='stop')
+        task = Batch(self._genisoimage.get_cmdline() + ['-version'])
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -120,7 +119,7 @@ class Options:
         if self._args.follow_flag:
             self._genisoimage.append_arg('-follow-links')
 
-        self._isoinfo = command_mod.Command('isoinfo', errors='stop')
+        self._isoinfo = Command('isoinfo', errors='stop')
 
         if not Path(self._args.directory[0]).is_dir():
             raise SystemExit(
@@ -251,14 +250,14 @@ class Main:
         if os.name == 'nt':
             self._genisoimage.extend_args(['-file-mode', '444'])
         else:
-            command = command_mod.Command(
+            command = Command(
                 'df',
                 args=[options.get_directory()],
                 errors='ignore'
             )
-            mount = command_mod.Command('mount', errors='ignore')
+            mount = Command('mount', errors='ignore')
             if command.is_found() and mount.is_found():
-                task = subtask_mod.Batch(command.get_cmdline())
+                task = Batch(command.get_cmdline())
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
@@ -266,7 +265,7 @@ class Main:
                         f'received from "{task.get_file()}".',
                     )
                 if len(task.get_output()) > 1:
-                    task2 = subtask_mod.Batch(mount.get_cmdline())
+                    task2 = Batch(mount.get_cmdline())
                     task2.run(
                         pattern=(
                             f'^{task.get_output()[1].split()[0]} '
@@ -314,7 +313,7 @@ class Main:
         self._genisoimage.extend_args([
             '-volid', re.sub(r'[^\w,.+-]', '_', options.get_volume())[:32],
             '-o', image, options.get_directory()])
-        task = subtask_mod.Task(self._genisoimage.get_cmdline())
+        task = Task(self._genisoimage.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -326,7 +325,7 @@ class Main:
             print()
             isoinfo = options.get_isoinfo()
             isoinfo.set_args(['-d', '-i', image])
-            task = subtask_mod.Task(isoinfo.get_cmdline())
+            task = Task(isoinfo.get_cmdline())
             task.run(pattern=' id: $')
             if task.get_exitcode():
                 raise SystemExit(

@@ -10,8 +10,8 @@ import socket
 import sys
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Exec
 
 
 class Options:
@@ -22,7 +22,7 @@ class Options:
     def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_tmux(self) -> command_mod.Command:
+    def get_tmux(self) -> Command:
         """
         Return tmux Command class object.
         """
@@ -43,7 +43,7 @@ class Options:
 
     def _select(self) -> None:
         self._tmux.set_args(['list-sessions'])
-        task = subtask_mod.Batch(self._tmux.get_cmdline())
+        task = Batch(self._tmux.get_cmdline())
         task.run(pattern=r'\(created')
         sessions = []
         print("\nTMUX terminal multiplexer (sessions):")
@@ -67,11 +67,11 @@ class Options:
         """
         Parse arguments
         """
-        self._tmux = command_mod.Command('tmux', errors='stop')
+        self._tmux = Command('tmux', errors='stop')
 
         if len(args) > 1:
             self._tmux.set_args(args[1:])
-            subtask_mod.Exec(self._tmux.get_cmdline()).run()
+            Exec(self._tmux.get_cmdline()).run()
         elif os.environ.get('TERM') == 'screen':
             raise SystemExit(
                 'sessions should be nested with care, '
@@ -109,7 +109,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_tmux().get_cmdline()).run()
+        Exec(options.get_tmux().get_cmdline()).run()
 
         return 0
 

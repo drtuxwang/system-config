@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -47,12 +47,12 @@ class Main:
         """
         name = Path(sys.argv[0]).stem
 
-        command = command_mod.Command(Path('bin', name), errors='ignore')
+        command = Command(Path('bin', name), errors='ignore')
         path = Path(sys.argv[0]).absolute().parents[1]
         if not command.is_found() or str(path) not in command.get_file():
-            command = command_mod.Command(name, errors='stop')
+            command = Command(name, errors='stop')
         command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

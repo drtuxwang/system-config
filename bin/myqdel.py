@@ -11,9 +11,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import task_mod
+from task_mod import Tasks
 
-RELEASE = '3.1.0'
+RELEASE = '3.1.1'
 
 
 class Options:
@@ -142,7 +142,7 @@ class Main:
         if info.get('COMMAND'):
             if self._force_flag:
                 try:
-                    task_mod.Tasks.factory().killpgid(
+                    Tasks.factory().killpgid(
                         int(info.get('PGID', '')),
                         signame='TERM',
                     )

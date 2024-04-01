@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat
+from subtask_mod import Task
 
 
 class Options:
@@ -24,7 +24,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_clamscan(self) -> command_mod.Command:
+    def get_clamscan(self) -> Command:
         """
         Return clamscan Command class object.
         """
@@ -50,7 +50,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._clamscan = command_mod.Command('clamscan', errors='stop')
+        self._clamscan = Command('clamscan', errors='stop')
         self._clamscan.set_args(['-r'] + self._args.files)
 
 
@@ -90,7 +90,7 @@ class Main:
         options = Options()
         clamscan = options.get_clamscan()
 
-        task = subtask_mod.Task(clamscan.get_cmdline())
+        task = Task(clamscan.get_cmdline())
         task.run()
         print("---------- VIRUS DATABASE ----------")
         if os.name == 'nt':
@@ -101,7 +101,7 @@ class Main:
         else:
             directory_path = Path('/var/lib/clamav')
         for path in sorted(directory_path.glob('*c[lv]d')):
-            file_stat = file_mod.FileStat(path)
+            file_stat = FileStat(path)
             print(
                 f"{file_stat.get_size():10d} "
                 f"[{file_stat.get_time_local()}] "

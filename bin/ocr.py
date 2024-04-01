@@ -10,10 +10,10 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import config_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from file_mod import FileUtil
+from subtask_mod import Task
 
 
 class Options:
@@ -25,7 +25,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_convert(self) -> command_mod.Command:
+    def get_convert(self) -> Command:
         """
         Return convert Command class object.
         """
@@ -37,7 +37,7 @@ class Options:
         """
         return self._args.files
 
-    def get_tesseract(self) -> command_mod.Command:
+    def get_tesseract(self) -> Command:
         """
         Return tesseract Command class object.
         """
@@ -63,8 +63,8 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._convert = command_mod.Command('convert', errors='stop')
-        self._tesseract = command_mod.Command('tesseract', errors='stop')
+        self._convert = Command('convert', errors='stop')
+        self._tesseract = Command('tesseract', errors='stop')
         self._tesseract.set_args(['--psm', '11', '-l', 'eng'])
 
 
@@ -97,7 +97,7 @@ class Main:
             Path.open = _open  # type: ignore
 
     def _ocr(self, path: Path, name: str) -> None:
-        task = subtask_mod.Task(self._tesseract.get_cmdline() + [path, name])
+        task = Task(self._tesseract.get_cmdline() + [path, name])
         task.run(pattern='^Tesseract')
         if task.get_exitcode():
             raise SystemExit(
@@ -114,10 +114,10 @@ class Main:
         self._tesseract = options.get_tesseract()
         convert = options.get_convert()
 
-        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        tmpdir = FileUtil.tmpdir('.cache')
         tmp_path = Path(tmpdir, f'ocr.tmp{os.getpid()}')
 
-        images_extensions = config_mod.Config().get('image_extensions')
+        images_extensions = Config().get('image_extensions')
 
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
@@ -127,8 +127,7 @@ class Main:
             ext = path.suffix.lower()
             if ext in images_extensions:
                 print(f'Converting "{path}" to "{path.stem}.txt"...')
-                task = subtask_mod.Task(
-                    convert.get_cmdline() + [path, tmp_path])
+                task = Task(convert.get_cmdline() + [path, tmp_path])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(

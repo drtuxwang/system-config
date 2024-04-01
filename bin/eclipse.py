@@ -8,8 +8,8 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background
 
 
 class Main:
@@ -45,9 +45,9 @@ class Main:
         """
         Start program
         """
-        eclipse = command_mod.Command('eclipse', errors='stop')
+        eclipse = Command('eclipse', errors='stop')
         if len(sys.argv) == 1:
-            java = command_mod.Command(Path('bin', 'java'), errors='stop')
+            java = Command(Path('bin', 'java'), errors='stop')
             args = [
                 '-vm',
                 java.get_file(),
@@ -62,9 +62,7 @@ class Main:
             args = sys.argv[1:]
 
         pattern = "^$|: dbind-WARNING|: Ignoring option"
-        subtask_mod.Background(eclipse.get_cmdline() + args).run(
-            pattern=pattern
-        )
+        Background(eclipse.get_cmdline() + args).run(pattern=pattern)
 
         return 0
 

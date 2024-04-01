@@ -9,8 +9,8 @@ import sys
 import time
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Background, Task
 
 
 class Options:
@@ -115,10 +115,10 @@ class Main:
 
         if options.get_run_flag():
             start_time = time.time()
-            command = command_mod.Command(args[0], errors='ignore')
+            command = Command(args[0], errors='ignore')
             if command.is_found():
                 command.set_args(args[1:])
-                task = subtask_mod.Task(command.get_cmdline())
+                task = Task(command.get_cmdline())
                 task.run()
                 exitcode = task.get_exitcode()
 
@@ -138,13 +138,13 @@ class Main:
         delay = 60 * options.get_time_delay()
         time.sleep(delay)
 
-        bell = command_mod.Command('bell', errors='ignore')
+        bell = Command('bell', errors='ignore')
         if bell.is_found():
-            subtask_mod.Background(bell.get_cmdline()).run()
+            Background(bell.get_cmdline()).run()
 
-        pop = command_mod.Command('notify-send', errors='stop')
+        pop = Command('notify-send', errors='stop')
         pop.set_args(['--expire-time', '10000', '--'] + args)
-        task = subtask_mod.Task(pop.get_cmdline())
+        task = Task(pop.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(

@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat, FileUtil
+from subtask_mod import Batch, Task
 
 
 class Options:
@@ -24,7 +24,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -73,9 +73,9 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._archiver = command_mod.Command('7zz', errors='ignore')
+        self._archiver = Command('7zz', errors='ignore')
         if not self._archiver.is_found():
-            self._archiver = command_mod.Command('7z', errors='stop')
+            self._archiver = Command('7z', errors='stop')
 
         if self._args.view_flag:
             self._archiver.set_args(['l'])
@@ -122,8 +122,8 @@ class Main:
         """
         for path in [Path(x) for x in files]:
             if path.is_symlink():
-                link_stat = file_mod.FileStat(path, follow_symlinks=False)
-                file_stat = file_mod.FileStat(path)
+                link_stat = FileStat(path, follow_symlinks=False)
+                file_stat = FileStat(path)
                 file_time = file_stat.get_time()
                 if file_time != link_stat.get_time():
                     try:
@@ -136,12 +136,12 @@ class Main:
                         pass
 
             elif path.is_dir():
-                newest = file_mod.FileUtil.newest(list(path.iterdir()))
+                newest = FileUtil.newest(list(path.iterdir()))
                 if not newest:
                     newest = path.name
-                file_stat = file_mod.FileStat(newest)
+                file_stat = FileStat(newest)
                 file_time = file_stat.get_time()
-                if file_time != file_mod.FileStat(path).get_time():
+                if file_time != FileStat(path).get_time():
                     os.utime(path, (file_time, file_time))
 
     @classmethod
@@ -156,7 +156,7 @@ class Main:
 
         if os.name == 'nt':
             for archive in options.get_archives():
-                task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+                task = Task(archiver.get_cmdline() + [archive])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
@@ -165,7 +165,7 @@ class Main:
                     )
         else:
             for archive in options.get_archives():
-                task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+                task = Task(archiver.get_cmdline() + [archive])
                 task.run(replace=('\\', '/'))
                 if task.get_exitcode():
                     raise SystemExit(
@@ -174,7 +174,7 @@ class Main:
                     )
 
         archiver.set_args(['l'])
-        task = subtask_mod.Batch(archiver.get_cmdline() + [archive])
+        task = Batch(archiver.get_cmdline() + [archive])
         task.run(pattern=r"\d\d:\d\d:\d\d (D....|....A) ")
         files = [line[53:] for line in task.get_output()]
         files.reverse()

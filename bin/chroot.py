@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 from typing import Any, List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -34,17 +34,13 @@ class Options:
         Parse arguments
         """
         if len(args) != 2 or not Path(args[1]).is_dir():
-            chroot = command_mod.Command(
-                'chroot',
-                args=args[1:],
-                errors='stop'
-            )
-            subtask_mod.Exec(chroot.get_cmdline()).run()
+            chroot = Command('chroot', args=args[1:], errors='stop')
+            Exec(chroot.get_cmdline()).run()
         elif getpass.getuser() != 'root':
             hostname = socket.gethostname().split('.')[0].lower()
             username = getpass.getuser()
             prompt = f'[sudo] password for {hostname}@{username}: '
-            sudo = command_mod.Command('sudo', errors='stop')
+            sudo = Command('sudo', errors='stop')
             sudo.set_args([
                 '-p',
                 prompt,
@@ -52,7 +48,7 @@ class Options:
                 __file__,
                 Path(args[1]).resolve(),
             ])
-            subtask_mod.Exec(sudo.get_cmdline()).run()
+            Exec(sudo.get_cmdline()).run()
         if not Path(args[1], 'bin', 'bash').is_file():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "/bin/bash" in chroot directory.',
@@ -66,10 +62,10 @@ class Chroot:
     """
 
     def __init__(self, path: Path) -> None:
-        self._chroot = command_mod.Command('/usr/sbin/chroot', errors='stop')
+        self._chroot = Command('/usr/sbin/chroot', errors='stop')
         self._chroot.set_args([path, '/usr/bin/env', 'bash', '-l'])
         self._path = path
-        self._mount = command_mod.Command('mount', errors='stop')
+        self._mount = Command('mount', errors='stop')
 
         self._mountpoints: List[str] = []
         self.mount_dir(
@@ -117,7 +113,7 @@ class Chroot:
         Mount directory
         """
         self._mount.set_args(list(args))
-        subtask_mod.Task(self._mount.get_cmdline()).run()
+        Task(self._mount.get_cmdline()).run()
         self._mountpoints.append(args[-1])
 
     def run(self) -> None:
@@ -125,13 +121,13 @@ class Chroot:
         Start session
         """
         print(f'Chroot "{self._path}" starting...')
-        subtask_mod.Task(self._chroot.get_cmdline()).run()
-        umount = command_mod.Command(
+        Task(self._chroot.get_cmdline()).run()
+        umount = Command(
             'umount',
             args=['-l'] + self._mountpoints,
             errors='stop'
         )
-        subtask_mod.Task(umount.get_cmdline()).run()
+        Task(umount.get_cmdline()).run()
         print(f'Chroot "{self._path}" finished!')
 
 

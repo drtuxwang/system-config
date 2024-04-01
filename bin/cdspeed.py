@@ -14,8 +14,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from subtask_mod import Batch
 
 
 class Options:
@@ -27,7 +27,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_hdparm(self) -> command_mod.Command:
+    def get_hdparm(self) -> Command:
         """
         Return hdparm Command class object.
         """
@@ -104,10 +104,8 @@ class Options:
         if self._speed == 0:
             raise SystemExit(0)
 
-        self._hdparm = command_mod.CommandFile(
-            '/sbin/hdparm',
-            args=['-E', self._speed, self._device],
-        )
+        self._hdparm = CommandFile('/sbin/hdparm')
+        self._hdparm.set_args(['-E', self._speed, self._device])
         print("Setting CD/DVD drive speed to ", self._speed, "X", sep="")
 
 
@@ -190,7 +188,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Batch(options.get_hdparm().get_cmdline()).run()
+        Batch(options.get_hdparm().get_cmdline()).run()
 
         return 0
 

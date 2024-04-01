@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import BinaryIO, List
 
-import command_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from file_mod import FileStat
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -24,7 +24,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self) -> command_mod.Command:
+    def get_archiver(self) -> Command:
         """
         Return archiver Command class object.
         """
@@ -90,13 +90,13 @@ class Options:
         """
         Parse arguments
         """
-        self._archiver = command_mod.Command('7zz', errors='ignore')
+        self._archiver = Command('7zz', errors='ignore')
         if not self._archiver.is_found():
-            self._archiver = command_mod.Command('7z', errors='stop')
+            self._archiver = Command('7z', errors='stop')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
             self._archiver.set_args(args[1:])
-            subtask_mod.Exec(self._archiver.get_cmdline()).run()
+            Exec(self._archiver.get_cmdline()).run()
 
         self._parse_args(args[1:])
 
@@ -153,14 +153,10 @@ class Main:
             ofile.write(chunk)
 
     @classmethod
-    def _make_exe(cls, archiver: command_mod.Command, path: Path) -> None:
-        command = command_mod.Command(
-            '7z.sfx',
-            platform='windows-x86',
-            errors='ignore'
-        )
+    def _make_exe(cls, archiver: Command, path: Path) -> None:
+        command = Command('7z.sfx', platform='windows-x86', errors='ignore')
         if not command.is_found():
-            command = command_mod.Command(
+            command = Command(
                 '7z.sfx',
                 directory=Path(archiver.get_file()).parent,
                 platform='windows-x86',
@@ -168,13 +164,12 @@ class Main:
             )
         sfx_path = Path(command.get_file())
         if not sfx_path.is_file():
-            archiver = command_mod.Command(
-                archiver.get_file(), args=sys.argv[1:], errors='ignore')
+            archiver = Command(archiver.get_file(), errors='ignore')
             if not archiver.is_found():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{sfx_path}" SFX file.',
                 )
-            subtask_mod.Exec(archiver.get_cmdline()).run()
+            Exec(archiver.get_cmdline() + sys.argv[1:]).run()
 
         print("Adding SFX code")
         path_new = Path(f'{path}-sfx')
@@ -189,7 +184,7 @@ class Main:
             with path.open('rb') as ifile:
                 cls._copy(ifile, ofile)
 
-        file_stat = file_mod.FileStat(path)
+        file_stat = FileStat(path)
         os.utime(path_new, (file_stat.get_time(), file_stat.get_time()))
         try:
             path_new.chmod(0o755)
@@ -223,7 +218,7 @@ class Main:
         archiver = options.get_archiver()
         archive = options.get_archive()
 
-        task = subtask_mod.Task(archiver.get_cmdline())
+        task = Task(archiver.get_cmdline())
         task.run()
         if task.get_exitcode():
             print(

@@ -8,8 +8,8 @@ import signal
 import sys
 from typing import Generator, List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch, Task
 
 MAX_VOLUME = 200
 
@@ -31,8 +31,8 @@ class Options:
 
     @staticmethod
     def _getvol() -> Generator[tuple, None, None]:
-        pacmd = command_mod.Command('pacmd', errors='stop')
-        task = subtask_mod.Batch(pacmd.get_cmdline() + ['list-sinks'])
+        pacmd = Command('pacmd', errors='stop')
+        task = Batch(pacmd.get_cmdline() + ['list-sinks'])
         task.run(pattern='index:|\tvolume:.*%')
         index = '0'
         try:
@@ -125,11 +125,11 @@ class Main:
         """
         options = Options()
 
-        pactl = command_mod.Command('pactl', errors='stop')
+        pactl = Command('pactl', errors='stop')
         for index, settings in sorted(options.get_settings().items()):
             print(f"Output {index}: {settings[0]}% => {settings[1]}%")
             pactl.set_args(['set-sink-volume', f'{index}', f'{settings[1]}%'])
-            subtask_mod.Task(pactl.get_cmdline()).run()
+            Task(pactl.get_cmdline()).run()
 
         return 0
 

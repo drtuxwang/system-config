@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import config_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Config
+from subtask_mod import Task
 
 
 class Main:
@@ -47,7 +47,7 @@ class Main:
         if path.is_file():
             return str(path)
 
-        return config_mod.Config().get('homepage')
+        return Config().get('homepage')
 
     @staticmethod
     def _get_tabs() -> int:
@@ -64,13 +64,13 @@ class Main:
         """
         Start program
         """
-        browser, *flags = config_mod.Config().get_app('web_browser')[0]
-        command = command_mod.Command(browser, args=flags, errors='stop')
+        browser, *flags = Config().get_app('web_browser')[0]
+        command = Command(browser, args=flags, errors='stop')
         if len(sys.argv) > 1:
             command.set_args(sys.argv[1:])
         else:
             command.set_args([cls._get_default()] * cls._get_tabs())
-        subtask_mod.Task(command.get_cmdline()).run()
+        Task(command.get_cmdline()).run()
 
         return 0
 

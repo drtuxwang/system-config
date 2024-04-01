@@ -12,8 +12,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -30,7 +30,7 @@ class Options:
         """
         return self._env
 
-    def get_git(self) -> command_mod.Command:
+    def get_git(self) -> Command:
         """
         Return git Command class object.
         """
@@ -54,7 +54,7 @@ class Options:
         """
         Parse arguments
         """
-        self._git = command_mod.Command(Path('bin', 'git'), errors='stop')
+        self._git = Command(Path('bin', 'git'), errors='stop')
         self._git.set_args(args[1:])
 
         self._env = {}
@@ -110,9 +110,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_git().get_cmdline()).run(
-            env=options.get_env()
-        )
+        Exec(options.get_git().get_cmdline()).run(env=options.get_env())
 
         return 0
 

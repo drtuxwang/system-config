@@ -8,9 +8,9 @@ import signal
 import sys
 from pathlib import Path
 
-import command_mod
-import network_mod
-import subtask_mod
+from command_mod import Command
+from network_mod import NetNice
+from subtask_mod import Exec
 
 
 class Main:
@@ -42,7 +42,7 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _set_libraries(command: command_mod.Command) -> None:
+    def _set_libraries(command: Command) -> None:
         libdir = Path(Path(command.get_file()).parent, 'lib')
         if libdir.is_dir():
             if os.name != 'nt' and os.uname()[0] == 'Linux':
@@ -57,7 +57,7 @@ class Main:
         """
         Start program
         """
-        aria2c = command_mod.Command('aria2c', errors='stop')
+        aria2c = Command('aria2c', errors='stop')
         self._set_libraries(aria2c)
         args = sys.argv[1:]
         if '--remote-time=true' not in args:
@@ -66,10 +66,10 @@ class Main:
             aria2c.set_args(args)
 
         cmdline = aria2c.get_cmdline()
-        netnice = network_mod.NetNice()
+        netnice = NetNice()
         if netnice.is_found():
             cmdline = netnice.get_cmdline() + cmdline
-        subtask_mod.Exec(cmdline).run()
+        Exec(cmdline).run()
 
         return 0
 

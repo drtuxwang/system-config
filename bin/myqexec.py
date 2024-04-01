@@ -12,10 +12,10 @@ import time
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command, CommandFile
+from subtask_mod import Batch, Exec, Task
 
-RELEASE = '3.1.1'
+RELEASE = '3.1.2'
 
 
 class Options:
@@ -107,12 +107,12 @@ class Main:
         return info
 
     @staticmethod
-    def _get_command(command: str) -> command_mod.Command:
-        cmdline = command_mod.Command.cmd2args(command)
+    def _get_command(command: str) -> Command:
+        cmdline = Command.cmd2args(command)
         path = Path(cmdline[0])
         if path.is_file():
-            return command_mod.CommandFile(path.resolve(), args=cmdline[1:])
-        return command_mod.Command(path, errors='stop', args=cmdline[1:])
+            return CommandFile(path.resolve(), args=cmdline[1:])
+        return Command(path, errors='stop', args=cmdline[1:])
 
     def _spawn(self) -> None:
         mypid = os.getpid()
@@ -154,7 +154,7 @@ class Main:
         os.environ['TIMEFORMAT'] = (
             ' [ time(s)  -  real: %2R  user: %2U  sys: %2S  cpu: %P%% ]'
         )
-        subtask_mod.Exec(cmdline).run()
+        Exec(cmdline).run()
 
     def _start(self) -> None:
         path = Path(self._myqsdir, f'{self._jobid}.r')
@@ -172,15 +172,12 @@ class Main:
         else:
             os.chdir(Path.home())
 
-        myqexec = command_mod.CommandFile(
-            __file__,
-            args=['-spawn', self._jobid]
-        )
-        task = subtask_mod.Task(myqexec.get_cmdline())
+        myqexec = CommandFile(__file__, args=['-spawn', self._jobid])
+        task = Task(myqexec.get_cmdline())
         task.run()
 
-        myqstat = command_mod.Command('myqstat', args=[self._jobid])
-        task = subtask_mod.Batch(myqstat.get_cmdline())
+        myqstat = Command('myqstat', args=[self._jobid])
+        task = Batch(myqstat.get_cmdline())
         task.run()
         output = json.dumps(task.get_output()[-2:], ensure_ascii=False)
         try:

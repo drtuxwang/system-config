@@ -7,8 +7,8 @@ import os
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Main:
@@ -53,16 +53,16 @@ class Main:
         Start program
         """
         if cls._is_windows():
-            command = command_mod.Command('tracert.exe', errors='stop')
+            command = Command('tracert.exe', errors='stop')
         else:
-            command = command_mod.Command('tcptraceroute', errors='ignore')
+            command = Command('tcptraceroute', errors='ignore')
             if not command.is_found():
-                command = command_mod.Command(
+                command = Command(
                     'traceroute',
                     pathextra=['/usr/sbin', '/usr/etc'],
                     errors='stop'
                 )
-        subtask_mod.Exec(command.get_cmdline() + sys.argv[1:]).run()
+        Exec(command.get_cmdline() + sys.argv[1:]).run()
 
         return 0
 

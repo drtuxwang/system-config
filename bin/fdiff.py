@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import file_mod
+from file_mod import FileStat
 
 
 class Options:
@@ -145,8 +145,8 @@ class Main:
 
     @staticmethod
     def _diff_file(path1: Path, path2: Path, time_flag: bool = False) -> None:
-        file_stat1 = file_mod.FileStat(path1)
-        file_stat2 = file_mod.FileStat(path2)
+        file_stat1 = FileStat(path1)
+        file_stat2 = FileStat(path2)
 
         if file_stat1.get_size() != file_stat2.get_size():
             print(f"diff  {path1}  {path2}")

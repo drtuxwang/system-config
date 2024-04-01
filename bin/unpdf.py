@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Task
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return self._args.files
 
-    def get_gs(self) -> command_mod.Command:
+    def get_gs(self) -> Command:
         """
         Return gs Command class object.
         """
@@ -79,7 +79,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._gs = command_mod.Command('gs', errors='stop')
+        self._gs = Command('gs', errors='stop')
         self._gs.set_args([
             '-dNOPAUSE',
             '-dBATCH',
@@ -135,7 +135,7 @@ class Main:
             prefix = path.stem
             print(f'Unpacking "{prefix}-page*.jpg" file...')
             file = '/dev/null' if view_flag else f'{prefix}-page%02d.jpg'
-            task = subtask_mod.Task(command.get_cmdline() + [
+            task = Task(command.get_cmdline() + [
                 f'-sOutputFile={file}',
                 '-c',
                 'save',

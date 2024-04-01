@@ -10,8 +10,8 @@ import signal
 import sys
 from pathlib import Path
 
-import network_mod
-import subtask_mod
+from network_mod import Sandbox
+from subtask_mod import Background, Exec
 
 
 class Main:
@@ -86,7 +86,7 @@ class Main:
         """
         Start program
         """
-        self._soffice = network_mod.Sandbox(
+        self._soffice = Sandbox(
             Path('program', 'soffice'),
             args=['--nologo'],
             errors='stop',
@@ -95,7 +95,7 @@ class Main:
             Path(f'{self._soffice.get_file()}.py').is_file() or
             sys.argv[1:] == ['--version']
         ):
-            subtask_mod.Exec(self._soffice.get_cmdline() + sys.argv[1:]).run()
+            Exec(self._soffice.get_cmdline() + sys.argv[1:]).run()
 
         work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
         home = str(Path.home())
@@ -140,7 +140,7 @@ class Main:
         self._setenv()
 
         cmdline = self._soffice.get_cmdline()
-        subtask_mod.Background(cmdline).run(pattern=self._pattern)
+        Background(cmdline).run(pattern=self._pattern)
 
         return 0
 

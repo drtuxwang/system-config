@@ -12,10 +12,10 @@ from typing import List
 
 import jinja2  # type: ignore
 
-import command_mod
-import config_mod
-import file_mod
-import subtask_mod
+from command_mod import Command
+from config_mod import Data
+from file_mod import FileUtil
+from subtask_mod import Background
 
 
 class Options:
@@ -92,7 +92,7 @@ class Menu:
             else self._config_file
         )
 
-        data = config_mod.Data()
+        data = Data()
         data.read(file)
         self._config = next(data.get())
 
@@ -137,8 +137,8 @@ class Menu:
         """
         Open menus
         """
-        wish = command_mod.Command('wish', errors='stop')
-        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'menu'))
+        wish = Command('wish', errors='stop')
+        tmpdir = FileUtil.tmpdir(Path('.cache', 'menu'))
 
         for menu in self._menus:
             path = Path(tmpdir, f'{menu}.tcl')
@@ -153,9 +153,7 @@ class Menu:
                     f'{sys.argv[0]}: Cannot create "{path}" file.',
                 ) from exception
 
-            subtask_mod.Background(wish.get_cmdline() + [path]).run(
-                directory=Path.home()
-            )
+            Background(wish.get_cmdline() + [path]).run(directory=Path.home())
 
         if self._menus == ['main']:
             self.update(self._config_file, self._status_file)
@@ -165,7 +163,7 @@ class Menu:
         """
         Update status file
         """
-        data = config_mod.Data()
+        data = Data()
         data.read(config_file)
         config = next(data.get())
 

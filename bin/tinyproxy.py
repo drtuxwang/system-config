@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Exec
 
 
 class Options:
@@ -22,7 +22,7 @@ class Options:
     def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_tinyproxy(self) -> command_mod.Command:
+    def get_tinyproxy(self) -> Command:
         """
         Return tinyproxy Command class object.
         """
@@ -63,7 +63,7 @@ class Options:
         """
         Parse arguments
         """
-        self._tinyproxy = command_mod.Command('tinyproxy', errors='stop')
+        self._tinyproxy = Command('tinyproxy', errors='stop')
         if len(args) > 1:
             self._tinyproxy.set_args(args[1:])
         elif getpass.getuser() != 'root':
@@ -107,7 +107,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_tinyproxy().get_cmdline()).run()
+        Exec(options.get_tinyproxy().get_cmdline()).run()
 
         return 0
 

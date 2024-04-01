@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-import command_mod
-import subtask_mod
+from command_mod import Command
+from subtask_mod import Batch
 
 
 class Options:
@@ -29,7 +29,7 @@ class Options:
         """
         return [os.path.expandvars(x) for x in self._args.files]
 
-    def get_ffmpeg(self) -> command_mod.Command:
+    def get_ffmpeg(self) -> Command:
         """
         Return ffmpeg Command class object.
         """
@@ -68,7 +68,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._ffmpeg = command_mod.Command('ffmpeg', errors='stop')
+        self._ffmpeg = Command('ffmpeg', errors='stop')
 
 
 class Main:
@@ -113,7 +113,7 @@ class Main:
             'wav',
             path_new
         ])
-        task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
+        task = Batch(self._ffmpeg.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
@@ -132,7 +132,7 @@ class Main:
         self._ffmpeg.set_args(
             ['-i', path, "-af", "volumedetect", "-f", "null", "/dev/null"]
         )
-        task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
+        task = Batch(self._ffmpeg.get_cmdline())
         task.run(pattern=' (mean|max)_volume: .* dB$', error2output=True)
         if len(task.get_output()) != 2:
             raise SystemExit(
