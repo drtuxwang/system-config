@@ -61,7 +61,6 @@ options() {
     esac
 }
 
-
 #
 # Function to show git difference against origin default branch
 #
@@ -69,7 +68,6 @@ git_diff() {
     DEFAULT=$(git branch -r --list 'origin/HEAD' 2> /dev/null | awk '/ -> origin\// {print $NF}')
     git difftool --tool=meld --dir-diff $DEFAULT
 }
-
 
 #
 # Function to run aggressive Git garbage collection"
@@ -87,7 +85,6 @@ git_gc() {
         --aggressive
     du -s "$DIR"/.git
 }
-
 
 #
 # Function to Reset Git branch to origin/branch"

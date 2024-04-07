@@ -3,10 +3,11 @@
 # docker-compose virtualenv
 #
 
-PYTHON="python3.9"                # >= 3.10 still not supported
-PACKAGE="docker-compose==1.28.6"
-DEPENDS="PyYAML==5.4.1"           # >=6 still not supported
-POSTINST=
+virtualenv_setup() {
+    VENV_PYTHON="python3.9"                # >= 3.10 still not supported
+    VENV_PACKAGE="docker-compose==1.28.6"
+    VENV_DEPENDS="PyYAML==5.4.1"           # >=6 still not supported
+}
+
 
 source "${0%/*}/venv_mod.bash"
-exec "${0##*/}" "$@"

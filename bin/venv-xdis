@@ -3,10 +3,10 @@
 # xdis virtualenv (for disassembling Python bytecode)
 #
 
-PYTHON="python3.10"    # >= 3.11 still not supported
-PACKAGE="xdis==6.0.5"
-DEPENDS=""
-POSTINST=
+virtualenv_setup() {
+    VENV_PYTHON="python3.10"    # >= 3.11 still not supported
+    VENV_PACKAGE="xdis==6.0.5"
+}
+
 
 source "${0%/*}/venv_mod.bash"
-exec "${0##*/}" "$@"

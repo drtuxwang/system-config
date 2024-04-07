@@ -32,8 +32,7 @@ class Options:
         else:
             commas = [' ']
 
-        for comma in itertools.cycle(commas):
-            yield comma
+        yield from itertools.cycle(commas)
 
     def get_numbers(self) -> Generator[str, None, None]:
         """

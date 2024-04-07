@@ -75,7 +75,6 @@ options() {
     drives="$drives $*"
 }
 
-
 #
 # Function to become root user
 #
@@ -85,7 +84,6 @@ become_root() {
     exec sudo "$0" $args_list
 }
 
-
 #
 # Function to create QEMU drive snapshot image
 #
@@ -94,7 +92,6 @@ snapshot_drive() {
     echo -e "\nqemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2"
     qemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2
 }
-
 
 #
 # Function to mount QEMU drive image partitions
@@ -132,7 +129,6 @@ mount_image() {
     done
 }
 
-
 #
 # Function to unmount QEMU drive image partitions
 #
@@ -153,7 +149,6 @@ unmount_image() {
     qemu-nbd --disconnect $device
 }
 
-
 #
 # Function to trim QEMU drive image partitions
 #
@@ -171,7 +166,6 @@ trim_image() {
     esac
 }
 
-
 #
 # Function to compress QEMU drive image
 #
@@ -188,7 +182,6 @@ compress_image() {
         ;;
     esac
 }
-
 
 #
 # Function to show mounted QEMU drive image partitions

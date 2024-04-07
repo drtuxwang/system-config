@@ -3,11 +3,10 @@
 # django virtualenv
 #
 
-PYTHON="python3.11"
-PACKAGE="Django==4.2.10"
-DEPENDS=
-POSTINST=
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="Django==4.2.11"
+}
 
 
 source "${0%/*}/venv_mod.bash"
-exec "${0##*/}" "$@"

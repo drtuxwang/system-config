@@ -20,8 +20,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.3.1'
-VERSION = 20230506
+RELEASE = '2.3.2'
+VERSION = 20240405
 
 
 class Data:
@@ -49,8 +49,7 @@ class Data:
         """
         Yield de-serialized data blocks.
         """
-        for block in self._blocks:
-            yield block
+        yield from self._blocks
 
     def set(self, blocks: List[dict]) -> None:
         """

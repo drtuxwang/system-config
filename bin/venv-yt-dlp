@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# yt-dlp virtualenv (for downloading vidoes)
+# yt-dlp virtualenv (for downloading videos)
 #
 
-PYTHON="python3.11"
-PACKAGE="yt-dlp==2023.12.30"
-DEPENDS=""
-POSTINST=
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="yt-dlp==2024.3.10"
+}
+
 
 source "${0%/*}/venv_mod.bash"
-exec "${0##*/}" "$@"

@@ -3,10 +3,11 @@
 # appimage-builder virtualenv
 #
 
-PYTHON="python3.11"
-PACKAGE="appimage-builder==1.1.0"
-DEPENDS=
-POSTINST=
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="appimage-builder==1.1.0"
+    VENV_CLEAN=no
+}
+
 
 source "${0%/*}/venv_mod.bash" -noclean
-exec "${0##*/}" "$@"

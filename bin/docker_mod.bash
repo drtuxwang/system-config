@@ -63,7 +63,6 @@ options() {
     esac
 }
 
-
 #
 # Function to list Docker images/volumes/containers/networks
 #
@@ -83,7 +82,6 @@ docker_list() {
     docker network ls | sed -e "s/^NETWORK ID/NETWORK_ID/" | column -t
 }
 
-
 #
 # Function to show Docker images with optional filter
 #
@@ -95,8 +93,6 @@ docker_images() {
         (echo "REPOSITORY:TAG IMAGE ID CREATED AT       SIZE"; docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep -E "^REPOSITORY:TAG|$(echo "$@" | sed -e "s/ /|/g")" | tail -n +2 | sort) |  column -t
     fi
 }
-
-
 
 #
 # Pull Docker images
@@ -110,7 +106,6 @@ docker_pull() {
     done
 }
 
-
 #
 # Push Docker images
 #
@@ -122,7 +117,6 @@ docker_push() {
         shift
     done
 }
-
 
 #
 # Load Docker image archives "tar|tar.gz|tar.bz2|tar.xz|t[bgx]z"
@@ -144,7 +138,6 @@ docker_load() {
         shift
     done
 }
-
 
 #
 # Save images as "tar.7z" archives
@@ -170,7 +163,6 @@ docker_save() {
         shift
     done
 }
-
 
 #
 # Function to run prune to remove unused Docker data

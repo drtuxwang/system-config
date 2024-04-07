@@ -33,7 +33,6 @@ temp_dotfiles() {
     esac
 }
 
-
 #
 # Function to locate Python command
 #
@@ -113,7 +112,6 @@ locate_python() {
     echo "$LOCATE"
 }
 
-
 #
 # Function to return location of program
 #
@@ -129,7 +127,6 @@ which() {
         fi
     done
 }
-
 
 #
 # Function to locate Python tool
@@ -149,7 +146,6 @@ locate_python_tool() {
         fi
     done
 }
-
 
 #
 # Execute Python or Python tool
@@ -247,6 +243,7 @@ exec_python() {
     fi
     exec $(which "$PYLD_MAIN") "$@"
 }
+
 
 temp_dotfiles "$@"
 exec_python "$@"

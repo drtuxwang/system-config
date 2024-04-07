@@ -3,10 +3,11 @@
 # poetry virtualenv (Python packaging and dependency management tool)
 #
 
-PYTHON="python3.11"
-PACKAGE="poetry==1.7.1"
-DEPENDS="poetry-core==1.8.1 poetry-plugin-export==1.6.0"
-POSTINST=
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="poetry==1.7.1"
+    VENV_DEPENDS="poetry-core==1.8.1 poetry-plugin-export==1.6.0"
+}
+
 
 source "${0%/*}/venv_mod.bash"
-exec "${0##*/}" "$@"

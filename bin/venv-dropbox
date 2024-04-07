@@ -3,10 +3,10 @@
 # dropbox virtualenv
 #
 
-PYTHON="python3.11"
-PACKAGE="dropbox==11.35.0"
-DEPENDS=
-POSTINST=
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="dropbox==11.35.0"
+}
+
 
 source "${0%/*}/venv_mod.bash"
-exec "${0##*/}" "$@"

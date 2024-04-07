@@ -3,12 +3,11 @@
 # awscli virtualenv
 #
 
-PYTHON="python3.11"
-PACKAGE="awscli==1.31.13"
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="awscli==1.31.13"
+    VENV_DEPENDS="PyYAML==5.4.1"  # >=6 still not supported
+}
 
-DEPENDS="PyYAML==5.4.1"  # >=6 still not supported
-DEPENDS=
-POSTINST=
 
 source "${0%/*}/venv_mod.bash"
-exec "${0##*/}" "$@"

@@ -1,35 +1,21 @@
 [my:children]
 my_local_hosts
-my_local_vhosts
-my_vm_vhosts
+my_vm_hosts
 
 [my_local_hosts]
-hotdog.local           ansible_user=admin
-koko.local             ansible_user=admin
 netbook.local          ansible_user=admin
 netty.local            ansible_user=admin
-ryzen.local            ansible_user=admin
-snoopy.local           ansible_user=admin
-viva.local             ansible_user=admin
-webtv.local            ansible_user=admin
 wolfdale.local         ansible_user=admin
 xiaobear.local         ansible_user=admin
+webtv.local            ansible_user=admin
+hotdog.local           ansible_user=admin
+snoopy.local           ansible_user=admin
+viva.local             ansible_user=admin
+koko.local             ansible_user=admin
+ryzen.local            ansible_user=admin
+ryson.local            ansible_user=admin
 
-[my_local_vhosts]
-debian4.local          ansible_user=admin
-debian5.local          ansible_user=admin
-debian6.local          ansible_user=admin
-debian7.local          ansible_user=admin
-debian8.local          ansible_user=admin
-debian9.local          ansible_user=admin
-debian10.local         ansible_user=admin
-debian10-32.local      ansible_user=admin
-debian11.local         ansible_user=admin
-debian12.local         ansible_user=admin
-debian12-arm.local     ansible_user=admin
-debianmac.local        ansible_user=admin
-
-[my_vm_vhosts]
+[my_vm_hosts]
 debian4.vm             ansible_user=admin
 debian5.vm             ansible_user=admin
 debian6.vm             ansible_user=admin

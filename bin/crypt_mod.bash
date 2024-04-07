@@ -72,7 +72,6 @@ options() {
     esac
 }
 
-
 #
 # Function to become root user
 #
@@ -81,7 +80,6 @@ become_root() {
     echo -e "\033[33mSwitch root@$hostname: sudo \"$0\"\033[0m"
     exec sudo "$0" $args_list
 }
-
 
 #
 # Function to mount LUKS encrypted partition
@@ -119,7 +117,6 @@ mount_crypt() {
     exit 1
 }
 
-
 #
 # Function to unmount LUKS encrypted partition
 #
@@ -144,7 +141,6 @@ unmount_crypt() {
         /sbin/cryptsetup luksClose /dev/mapper/luks-$uuid
     fi
 }
-
 
 #
 # Function to show mounted encrypted partitions

@@ -4,8 +4,8 @@
 #
 # 1996-2023 By Dr Colin Kong
 #
-VERSION=20231215
-RELEASE="2.6.48-1"
+VERSION=20240405
+RELEASE="2.6.48-2"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -60,7 +60,6 @@ which() {
     done
 }
 
-
 #
 # Set to Unknown if not set
 #
@@ -72,7 +71,6 @@ isitset() {
         echo "$@"
     fi
 }
-
 
 #
 # Show software info if found
@@ -86,7 +84,6 @@ show_software() {
         fi
     fi
 }
-
 
 #
 # Function to scan system bus (Linux only)
@@ -402,7 +399,6 @@ scanbus() {
         fi
     done
 }
-
 
 #
 # Function to detect configurations
@@ -1200,7 +1196,6 @@ EOF
         echo
     fi
 }
-
 
 #
 # Function to write output

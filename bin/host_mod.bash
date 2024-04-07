@@ -73,14 +73,12 @@ options() {
     done
 }
 
-
 #
 # Function to show local hosts
 #
 show_local() {
     avahi-browse --all --terminate 2> /dev/null | grep Workstation | awk '{printf("%s:%s %s.%s %s\n", $2, $3, $4, $7, $5)}' | sort
 }
-
 
 #
 # Function to run command on remote hosts
@@ -103,7 +101,6 @@ run_host() {
       shift
    done
 }
-
 
 #
 # Function to add SSH private key for hosts to authentication agent
@@ -128,7 +125,6 @@ keys_host() {
     ssh-add -l
 }
 
-
 #
 # Function to setup remote hosts
 #
@@ -147,7 +143,6 @@ setup_host() {
     done
 }
 
-
 #
 # Function to fix host mounts by removing broken sshfs mounts
 #
@@ -159,14 +154,12 @@ fix_mounts() {
     rmdir $smount_dir/* 2> /dev/null
 }
 
-
 #
 # Function to show host mounts
 #
 show_mounts() {
     mount | grep "$smount_dir"
 }
-
 
 #
 # Function to mount remote host file system
@@ -187,7 +180,6 @@ mount_host() {
     done
 }
 
-
 #
 # Function to unmount remote host file system
 #
@@ -201,7 +193,6 @@ unmount_host() {
         sumount $remdir
     done
 }
-
 
 #
 # Function to show mounted QEMU drive image partitions
