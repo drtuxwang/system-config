@@ -40,7 +40,7 @@ pycodestyle==2.7.0
 pyflakes==2.3.1
 Pygments                     # ==2.14.0 (last compatible version)
 pylint==2.13.9
-pymongo==3.13.0
+pymongo                      # ==3.13.0 (last compatible version)
 pyOpenSSL                    # ==23.2.0 (last compatible version)
 requests                     # ==2.27.1 (last compatible version)
 rich==None
