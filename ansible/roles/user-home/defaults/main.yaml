@@ -1,5 +1,6 @@
 cmdline_apps: false
 gui_apps: false
+vncserver: false
 
 download_rate: null
 htop_ver: 3
