@@ -2,6 +2,8 @@
   file:
     path: '{{ home_directory }}/.vnc'
     state: directory
+    owner: '{{ user }}'
+    group: '{{ group }}'
     mode: '0700'
   tags:
   - user-home
