@@ -19,7 +19,7 @@ decorator==5.1.1             #   (required by ipdb/ipython)
 dicttoxml==1.7.16            # Convert Python dict to XML
 dill==0.3.8                  #   (required by pylint)
 distlib==0.3.8               #   (required by humpty/virtualenv)
-dnspython==2.5.0             # DNS client
+dnspython==2.6.1             # DNS client
 EditorConfig==0.12.4         #   (required by jsbeautifier)
 executing==1.2.0             #   (required by stack-data)
 filelock==3.12.4             #   (required by virtualenv)
