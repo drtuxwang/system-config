@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 #
-# qemu-img create -f qcow2 debianmac.vm.vda.qcow2 8M  # Boot disk
-# qemu-img create -f qcow2 debianmac.vm.vdb.qcow2 16G
-# qemu-img create -f qcow2 debianmac.vm.vdc.qcow2 128G
+# Debian Mac x86 VM
 #
 
 qemu_settings() {

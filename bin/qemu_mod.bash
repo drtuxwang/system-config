@@ -117,15 +117,24 @@ mount_image() {
     for part in $(lsblk -list -o NAME | grep "^${device}p" | sed -e "s/${device}p//")
     do
         local mount="/mnt/qemu${device#nbd}p$part"
+        local fstype=$(lsblk -list -o "NAME,FSTYPE" | awk '/'${device}p$part' / {print $NF}')
         mkdir -p $mount
-        if [ "$(lsblk -list -o "NAME,FSTYPE" | grep -E "${device}p$part  *(vfat|ntfs)")" ]
-        then
-            echo "mount -o uid=$mount_user,gid=$(id -gn $mount_user),umask=022,fmask=133 /dev/${device}p$part $mount"
-            mount -o uid=$mount_user,gid=$(id -gn $mount_user),umask=022,fmask=133 /dev/${device}p$part $mount
-        else
-            echo "mount /dev/${device}p$part $mount"
-            mount /dev/${device}p$part $mount
-        fi
+        case $fstype in
+        f2fs)
+            local options="-t f2fs -o lazytime,gc_merge,atgc"
+            ;;
+        ext4)
+            local options="-t ext4 -o noatime,errors=remount-ro,commit=60"
+            ;;
+        vfat|ntfs)
+            local options="mount -o uid=$mount_user,gid=$(id -gn $mount_user),umask=022,fmask=133"
+            ;;
+        *)
+            local options=
+            ;;
+        esac
+        echo "mount $options /dev/${device}p$part $mount"
+        mount $options /dev/${device}p$part $mount
     done
 }
 
@@ -172,13 +181,17 @@ trim_image() {
 compress_image() {
    case "$1" in
     *.qcow2)
-        echo "qemu-img convert -f qcow2 \"$1\" -O qcow2 -c -o compression_type=zstd \"$1.part\""
-        qemu-img convert -f qcow2 "$1" -O qcow2 -c -o compression_type=zstd "$1.part"
+        IMAGE=${1##*/}
+        echo "qemu-img convert -f qcow2 \"$1\" -O qcow2 -c -o compression_type=zstd \"$IMAGE.part\""
+        qemu-img convert -f qcow2 "$1" -O qcow2 -c -o compression_type=zstd "$IMAGE.part"
         [ $? = 0 ] || continue
-        echo "mv \"$1\" \"$1.orig\""
-        mv "$1" "$1.orig" || continue
-        echo "mv \"$1.part\" \"$1\""
-        mv "$1.part" "$1"
+        if [ -f "$IMAGE" ]
+        then
+            echo "mv \"$1\" \"$1-orig\""
+            mv "$1" "$1-orig" || continue
+        fi
+        echo "mv \"$IMAGE.part\" \"$IMAGE\""
+        mv "$IMAGE.part" "$IMAGE"
         ;;
     esac
 }

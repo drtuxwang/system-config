@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# qemu-img create -f qcow2 debian4.vm.vda.qcow2 8M  # Boot disk
-# qemu-img create -f qcow2 debian4.vm.vdb.qcow2 1536M
+# Debian 4 x86 VM
 #
 
 qemu_settings() {

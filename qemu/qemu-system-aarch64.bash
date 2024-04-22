@@ -9,9 +9,9 @@
 #   mount -t 9p -o uid=owner,gid=users,msize=131072 Shared /mnt/host &
 #   ssh 192.168.56.2
 # Images:
-#   qemu-img create -f qcow2 name.vda.qcow2 8M
-#   qemu-img create -f qcow2 name.vdb.qcow2 8192M
-#   qemu-img create -F qcow2 -b name.vdb-base.qcow2 -f qcow2 name.vdb.qcow2
+#   qemu-img create -f qcow2 name.boot.qcow2 8M
+#   qemu-img create -f qcow2 name.os-base.qcow2 8192M
+#   qemu-img create -F qcow2 -b name.base.qcow2 -f qcow2 name.driv.qcow2
 #   qemu-img convert -p -f vdi file1.vdi -O qcow2 file2.qcow2
 #   qemu-img convert -p -f qcow2 file1.qcow2 -O qcow2 -c -o compression_type=zstd file2.qcow2
 #
@@ -27,8 +27,6 @@ defaults_settings() {
     MACHINE_BIOS=$(ls -1t /usr/share/qemu-efi-aarch64/QEMU_EFI.fd /usr/local/Cellar/qemu/*/share/qemu/*aarch64*.fd 2> /dev/null | head -1)
     DRIVE_INTERFACE=virtio
     DRIVE_FILES=
-    DRIVE_ROLLBACK=no
-    DRIVE_SNAPSHOT=no
     DRIVE_TMPDIR="/tmp/qemu-$(id -un)"
     CONNECT_DISPLAY=yes
     CONNECT_NETWORK=no
@@ -52,8 +50,6 @@ show_settings() {
     echo "Debug: MACHINE_BIOS=$MACHINE_BIOS"
     echo "Debug: DRIVE_INTERFACE=$DRIVE_INTERFACE"
     echo "Debug: DRIVE_FILES=$DRIVE_FILES"
-    echo "Debug: DRIVE_ROLLBACK=$DRIVE_ROLLBACK"
-    echo "Debug: DRIVE_SNAPSHOT=$DRIVE_SNAPSHOT"
     echo "Debug: DRIVE_TMPDIR=$DRIVE_TMPDIR"
     echo "Debug: CONNECT_DISPLAY=$CONNECT_DISPLAY"
     echo "Debug: CONNECT_NETWORK=$CONNECT_NETWORK"
@@ -76,9 +72,8 @@ parse_options() {
             echo "  -net        Connect VM to network"
             echo "  -nonet      Disable network (internet)"
             echo "  -novirt     Disable virtualisation (use full emulation)"
+            echo "  -x          Enable GUI display"
             echo "  -nox        Disable GUI display"
-            echo "  -rollback   Rollback drives to base snapshot"
-            echo "  -snap       Snapshot drives and auto rollback after execution"
             echo "  -v          Show debug info"
             echo "  -test       Show debug info without starting QEMU"
             echo "  file.qcow2  Attach disk image file"
@@ -94,14 +89,11 @@ parse_options() {
         -novirt)
             MACHINE_ACCEL=no
            ;;
+        -x)
+            CONNECT_DISPLAY=yes
+            ;;
         -nox)
             CONNECT_DISPLAY=no
-            ;;
-        -rollback)
-            DRIVE_ROLLBACK=yes
-            ;;
-        -snap)
-            DRIVE_SNAPSHOT=yes
             ;;
         -v)
             VERBOSE=yes
@@ -120,22 +112,13 @@ parse_options() {
          esac
          shift
     done
-    DRIVE_FILES="$(ls -1 ${0%/*}/$MACHINE_NAME.vd[a-z].qcow2 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
+    DRIVE_FILES="$(ls -1 ${0%/*}/$MACHINE_NAME.*.qcow2 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
 }
 
 snapshot_drive() {
-   [ -f "$2" ] && return
+   [ "$(ls -1t "$(realpath $1)" "$2" 2> /dev/null | head -1)" = "$2" ] && continue
    echo -e "\nqemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2"
    qemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2
-}
-
-
-rollback_drives() {
-    for FILE in $(ls -1 ${0%/*}/$MACHINE_NAME.vd[a-z]-base.qcow2 2> /dev/null | sed -e "s/-base.qcow2$/.qcow2/")
-    do
-        rm -f $FILE
-        snapshot_drive $BASE ${BASE//-base/}
-    done
 }
 
 add_args() {
@@ -170,32 +153,18 @@ setup_machine() {
 }
 
 setup_drives() {
-    for BASE in $(ls -1 ${0%/*}/$MACHINE_NAME.vd[a-z]-base.qcow2 2> /dev/null)
-    do
-        snapshot_drive $BASE ${BASE//-base/}
-    done
-    [ "$DRIVE_ROLLBACK" = yes ] && rollback_drives
-
     mkdir -p "$DRIVE_TMPDIR/$MACHINE_NAME" && chmod go= "$DRIVE_TMPDIR"
     for FILE in $DRIVE_FILES
     do
-        MOUNT_DEV=$(realpath "$FILE")
+        MOUNT_DEV="$FILE"
         MOUNT_OPT="if=$DRIVE_INTERFACE,discard=unmap"
         case ${FILE##*/} in
         *.iso)
             MOUNT_OPT="if=$DRIVE_INTERFACE,media=cdrom"
             ;;
-        *base*)
-            MOUNT_DEV="$DRIVE_TMPDIR/${FILE##*/}"
-            snapshot_drive $FILE $MOUNT_DEV
-            ;;
-        *)
-            if [ "$DRIVE_SNAPSHOT" = yes ]
-            then
-                MOUNT_DEV="$DRIVE_TMPDIR/$MACHINE_NAME/${FILE##*/}"
-                snapshot_drive $FILE $MOUNT_DEV
-            fi
-            ;;
+        *base*.qcow2)
+           MOUNT_DEV="${FILE//base/driv}"
+           snapshot_drive $FILE $MOUNT_DEV
         esac
         add_args "-drive file=$MOUNT_DEV,$MOUNT_OPT" || continue
         [ "$VERBOSE" = yes ] && echo -e "\nqemu-img info $MOUNT_DEV" && qemu-img info $MOUNT_DEV

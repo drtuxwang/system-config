@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# qemu-img create -f qcow2 debian12-arm.vm.vda.qcow2 8M  # Boot disk
-# qemu-img create -f qcow2 debian12-arm.vm.vdb.qcow2 2048M
+# Debian 12 arm64 VM
 #
 
 qemu_settings() {
