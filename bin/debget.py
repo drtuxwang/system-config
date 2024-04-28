@@ -156,11 +156,11 @@ class Main:
             old_utc = datetime.datetime.fromtimestamp(old_utime)
             logger.warning(
                 "[%s] packages metadata stored is out of date",
-                old_utc.strftime('%Y-%m-%d-%H:%M:%S'),
+                old_utc.strftime('%Y-%m-%dT%H:%M:%S%z'),
             )
         logger.info(
             "[%s] packages metadata new file data fetching",
-            new_utc.strftime('%Y-%m-%d-%H:%M:%S'),
+            new_utc.strftime('%Y-%m-%dT%H:%M:%S%z'),
         )
 
     def _get_packages(self, data: dict, wget: Command, url: str) -> dict:

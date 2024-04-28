@@ -110,7 +110,7 @@ class Main:
 
                 file_stat = FileStat(path)
                 os.chmod(output, file_stat.get_mode())
-                file_time = file_stat.get_time()
+                file_time = file_stat.get_mtime()
                 os.utime(output, (file_time, file_time))
 
         return 0

@@ -2,7 +2,7 @@
 """
 Python file handling utility module
 
-Copyright GPL v2: 2006-2023 By Dr Colin Kong
+Copyright GPL v2: 2006-2024 By Dr Colin Kong
 """
 
 import getpass
@@ -11,8 +11,8 @@ import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.6.1'
-VERSION = 20230122
+RELEASE = '2.7.0'
+VERSION = 20240421
 
 
 class FileStat:
@@ -34,7 +34,7 @@ class FileStat:
         size = Override file size (useful for zero sizing links)
         """
         self._file = str(file)
-        self._stat = {}
+        self._stat: dict = {}
         if file:
             path = Path(file)
             try:
@@ -42,16 +42,16 @@ class FileStat:
                     file_stat = path.lstat()
                 else:
                     file_stat = path.stat()
-                self._stat['mode'] = file_stat.st_mode
-                self._stat['inode'] = file_stat.st_ino
                 self._stat['device'] = file_stat.st_dev
+                self._stat['inode'] = file_stat.st_ino
                 self._stat['nlink'] = file_stat.st_nlink
+                self._stat['mode'] = file_stat.st_mode
                 self._stat['userid'] = file_stat.st_uid
                 self._stat['groupid'] = file_stat.st_gid
                 self._stat['size'] = file_stat.st_size
-                self._stat['atime'] = int(file_stat.st_atime)
-                self._stat['mtime'] = int(file_stat.st_mtime)
-                self._stat['ctime'] = int(file_stat.st_ctime)
+                self._stat['atime'] = file_stat.st_atime
+                self._stat['mtime'] = file_stat.st_mtime
+                self._stat['ctime'] = file_stat.st_ctime
             except (OSError, TypeError) as exception:
                 if path.exists() and not path.is_symlink():
                     raise FileStatNotFoundError(
@@ -109,38 +109,88 @@ class FileStat:
         """
         return self._stat.get('size', 0)
 
-    def get_time_access(self) -> int:
-        """
-        Return time of last access
-        """
-        return self._stat.get('atime', 0)
-
-    def get_time(self) -> int:
-        """
-        Return time of last modification
-        """
-        return self._stat.get('mtime', 0)
-
     def get_date_local(self) -> str:
         """
         Return date of last modification in ISO local date format
         (ie '2011-12-31')
         """
-        return time.strftime('%Y-%m-%d', time.localtime(self.get_time()))
+        return time.strftime('%Y-%m-%d', time.localtime(self.get_mtime()))
 
-    def get_time_local(self) -> str:
+    def get_atime(self) -> float:
         """
-        Return time of last modification in full ISO local time format
-        (ie '2011-12-31-12:30:28')
+        Return time of last access
+        """
+        return self._stat.get('atime', 0.)
+
+    def get_atime_local(self) -> str:
+        """
+        Return time of last access in ISO8601 format
+        (ie '2011-12-31T12:30:28.123+0100')
         """
         return time.strftime(
-            '%Y-%m-%d-%H:%M:%S', time.localtime(self.get_time()))
+            f'%Y-%m-%dT%H:%M:%S.{f"{int(self.get_atime() % 1 * 1000):03d}"}%z',
+            time.localtime(self.get_atime())
+        )
 
-    def get_time_change(self) -> int:
+    def get_mtime(self) -> float:
+        """
+        Return time of last access
+        """
+        return self._stat.get('mtime', 0.)
+
+    def get_mtime_local(self) -> str:
+        """
+        Return time of last modification in ISO8601 format
+        (ie '2011-12-31T12:30:28.123+0100')
+        """
+        return time.strftime(
+            f'%Y-%m-%dT%H:%M:%S.{f"{int(self.get_mtime() % 1 * 1000):03d}"}%z',
+            time.localtime(self.get_mtime())
+        )
+
+    def get_ctime(self) -> float:
         """
         Return time of last meta data change.
         """
-        return self._stat.get('ctime', 0)
+        return self._stat.get('ctime', 0.)
+
+    def get_ctime_local(self) -> str:
+        """
+        Return time of last meta data change in ISO8601 format
+        (ie '2011-12-31T12:30:28.123+0100')
+        """
+        return time.strftime(
+            f'%Y-%m-%dT%H:%M:%S.{f"{int(self.get_ctime() % 1 * 1000):03d}"}%z',
+            time.localtime(self.get_ctime())
+        )
+
+    def get_time_local(self) -> str:
+        """
+        Return time of last modification in full ISO format (deprecated)
+        (ie '2011-12-31-12:30:28')
+        """
+        return time.strftime(
+            '%Y-%m-%d-%H:%M:%S',
+            time.localtime(self.get_mtime())
+        )
+
+    def get_time_access(self) -> int:
+        """
+        Return time of last access in seconds (deprecated)
+        """
+        return int(self.get_atime())
+
+    def get_time(self) -> int:
+        """
+        Return time of last modification in seconds (deprecated)
+        """
+        return int(self.get_mtime())
+
+    def get_time_change(self) -> int:
+        """
+        Return time of last meta data change in seconds (deprecated)
+        """
+        return int(self.get_ctime())
 
 
 class FileUtil:
@@ -159,7 +209,7 @@ class FileUtil:
         new_time = -1.
         paths = [Path(x) for x in files]
         for path in [x for x in paths if x.exists() and not x.is_symlink()]:
-            file_time = int(path.stat().st_mtime)
+            file_time = path.stat().st_mtime
             if file_time > new_time:
                 path_new = path
                 new_time = file_time
@@ -177,7 +227,7 @@ class FileUtil:
         new_time = float('inf')
         paths = [Path(x) for x in files]
         for path in [x for x in paths if x.exists() and not x.is_symlink()]:
-            file_time = int(path.stat().st_mtime)
+            file_time = path.stat().st_mtime
             if file_time < new_time:
                 path_new = path
                 new_time = file_time

@@ -10,8 +10,8 @@ import re
 import unicodedata
 from typing import List
 
-RELEASE = '1.2.1'
-VERSION = 20240330
+RELEASE = '1.3.0'
+VERSION = 20240421
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 
@@ -33,6 +33,7 @@ class ColoredFormatter(logging.Formatter):
         logging.Formatter.__init__(
             self,
             f"\x1b[1;3{ColoredFormatter.GREEN}m{msg}\x1b[0m",
+            datefmt='%Y-%m-%dT%H:%M:%S%z',
         )
 
     def format(self, record: logging.LogRecord) -> str:

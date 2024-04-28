@@ -157,8 +157,8 @@ class Main:
                 file_stats.append(FileStat(path))
         for file_stat in self._sorted(options, file_stats):
             print(
-                f"{file_stat.get_size():10d} "
-                f"[{file_stat.get_time_local()}] "
+                f"{file_stat.get_size():10d}  "
+                f"{file_stat.get_mtime_local()}  "
                 f"{file_stat.get_file()}",
             )
             if (
@@ -177,9 +177,9 @@ class Main:
     ) -> Union[Iterator[FileStat], List[FileStat]]:
         order = options.get_order()
         if order == 'ctime':
-            file_stats = sorted(file_stats, key=lambda s: s.get_time_change())
+            file_stats = sorted(file_stats, key=lambda s: s.get_ctime())
         elif order == 'mtime':
-            file_stats = sorted(file_stats, key=lambda s: s.get_time())
+            file_stats = sorted(file_stats, key=lambda s: s.get_mtime())
         elif order == 'size':
             file_stats = sorted(file_stats, key=lambda s: s.get_size())
         elif order == 'version':

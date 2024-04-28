@@ -116,7 +116,7 @@ class Main:
                         f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                         f'received from "{task.get_file()}".',
                     )
-                file_time = FileStat(path).get_time()
+                file_time = FileStat(path).get_mtime()
                 os.utime(path_tmp, (file_time, file_time))
                 path_tmp.replace(path)
 

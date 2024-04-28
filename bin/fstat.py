@@ -21,6 +21,12 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
+    def get_local_flag(self) -> bool:
+        """
+        Return local flag.
+        """
+        return self._args.local_flag
+
     def get_files(self) -> List[str]:
         """
         Return list of files.
@@ -30,6 +36,12 @@ class Options:
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description="Display file status.")
 
+        parser.add_argument(
+            '-l',
+            dest='local_flag',
+            action='store_true',
+            help="Show dates using local time zone.",
+        )
         parser.add_argument(
             'files',
             nargs='+',
@@ -74,19 +86,25 @@ class Main:
         Start program
         """
         options = Options()
+        local_flag = options.get_local_flag()
 
         for file in options.get_files():
             file_stat = FileStat(file)
-            print(f'"{file}".mode  =', oct(file_stat.get_mode()))
-            print(f'"{file}".ino   =', file_stat.get_inode_number())
-            print(f'"{file}".dev   =', file_stat.get_inode_device())
-            print(f'"{file}".nlink =', file_stat.get_number_links())
-            print(f'"{file}".uid   =', file_stat.get_userid())
-            print(f'"{file}".gid   =', file_stat.get_groupid())
-            print(f'"{file}".size  =', file_stat.get_size())
-            print(f'"{file}".atime =', file_stat.get_time_access())
-            print(f'"{file}".mtime =', file_stat.get_time())
-            print(f'"{file}".ctime =', file_stat.get_time_change())
+            print(f'"{file}".dev   = {file_stat.get_inode_device()}')
+            print(f'"{file}".inode = {file_stat.get_inode_number()}')
+            print(f'"{file}".nlink = {file_stat.get_number_links()}')
+            print(f'"{file}".mode  = {oct(file_stat.get_mode())}')
+            print(f'"{file}".uid   = {file_stat.get_userid()}')
+            print(f'"{file}".gid   = {file_stat.get_groupid()}')
+            print(f'"{file}".size  = {file_stat.get_size()}')
+            if local_flag:
+                print(f'"{file}".atime = {file_stat.get_atime_local()}')
+                print(f'"{file}".mtime = {file_stat.get_mtime_local()}')
+                print(f'"{file}".ctime = {file_stat.get_ctime_local()}')
+            else:
+                print(f'"{file}".atime = {file_stat.get_atime():.7f}')
+                print(f'"{file}".mtime = {file_stat.get_mtime():.7f}')
+                print(f'"{file}".ctime = {file_stat.get_ctime():.7f}')
 
         return 0
 

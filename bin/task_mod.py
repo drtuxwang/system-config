@@ -2,7 +2,7 @@
 """
 Python task handling utility module
 
-Copyright GPL v2: 2006-2023 By Dr Colin Kong
+Copyright GPL v2: 2006-2024 By Dr Colin Kong
 """
 
 import functools

@@ -148,7 +148,7 @@ class Main:
         while options.get_repeat_flag():
             test = self._ping(options)
             if test != stat:
-                print(f"{time.strftime('%Y-%m-%d-%H:%M:%S')}: {test}")
+                print(f"{time.strftime('%Y-%m-%dT%H:%M:%S%z')}: {test}")
                 stat = test
             time.sleep(5)
         print(self._ping(options))

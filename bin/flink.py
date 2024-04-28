@@ -139,8 +139,7 @@ class Main:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create "{target_path}" link.',
                     ) from exception
-                file_stat = FileStat(path)
-                file_time = file_stat.get_time()
+                file_time = FileStat(path).get_mtime()
                 try:
                     os.utime(
                         target_path,

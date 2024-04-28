@@ -43,12 +43,9 @@ exec \"\${0%/*}\"/python$VERSION \"\$@\""
     ;;
 esac
 
-# Fix pip Segmentation fault
-sed -i "s/  double dummy;/  long double dummy;/" Include/objimpl.h
-sed -i "s/#define ALIGNMENT               8/#define ALIGNMENT               16/" Objects/obmalloc.c
-sed -i "s/#define ALIGNMENT_SHIFT         3/#define ALIGNMENT_SHIFT         4/" Objects/obmalloc.c
-
 CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared --with-lto"
+# Enable PGO (except old gcc)
+[ "$(gcc --version 2>&1 | grep "gcc .* [1-8][.]")" ] || CONFIGURE="$CONFIGURE --enable-optimizations"
 
 $CONFIGURE
 make
@@ -65,12 +62,7 @@ then
         mv install/bin/python$MAJOR_VER install/bin/python$VERSION
         echo "$WRAPPER" > install/bin/python$MAJOR_VER
         chmod 755 install/bin/python$MAJOR_VER
-        [ -x install/bin/python${VERSION}m ] && ln -sf python${VERSION} install/bin/python${VERSION}m
     fi
-
-    # Fix pip
-    [ ! -f get-pip.py ] && wget https://bootstrap.pypa.io/pip/$VERSION/get-pip.py
-    cat get-pip.py | install/bin/python$MAJOR_VER
 
     # Make relocatable scripts
     for FILE in $(cd install/bin; ls -1 | grep -v "*.py$")
@@ -86,7 +78,7 @@ exec \"\$MYDIR/python$MAJOR_VER\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$F
             chmod 755 "install/bin/$FILE"
         fi
     done
-    sed -i "s@^prefix_build=.*@prefix_build=\${0%/*/*}@;s@\".*/install/lib@\"\$prefix_build/lib@" install/bin/python*-config
+    sed -i "s@^prefix=.*@prefix=\${0%/*/*}@;s@\".*/install/lib@\"\$prefix/lib@" "install/bin/python$MAJOR_VER-config"
 
     # Fix for porting on Ubuntu and running on RHEL
     [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so

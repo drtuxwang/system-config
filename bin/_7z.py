@@ -108,8 +108,9 @@ class Options:
         self._archiver.extend_args([
             '-mx=9',
             '-myx=9',
-            '-md=128m',
-            '-mfb=256',
+            '-md=256m',
+            '-mfb=273',
+            '-mqs=on',
             '-ms=on',
             '-snh',
             '-snl',
@@ -184,8 +185,8 @@ class Main:
             with path.open('rb') as ifile:
                 cls._copy(ifile, ofile)
 
-        file_stat = FileStat(path)
-        os.utime(path_new, (file_stat.get_time(), file_stat.get_time()))
+        file_time = FileStat(path).get_mtime()
+        os.utime(path_new, (file_time, file_time))
         try:
             path_new.chmod(0o755)
             path_new.replace(path)

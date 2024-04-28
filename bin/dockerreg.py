@@ -180,10 +180,12 @@ class DockerRegistry:
         tags = [tag for tag in digests if fnmatch.fnmatch(tag, tag_match)]
 
         for tag in tags:
-            info[tag]['digest'] = digests[tag]
-            info[tag]['image_id'] = digests[tag]
-            info[tag]['timestamp'] = '????-??-??T??:??:??'
-            info[tag]['size'] = 0
+            info[tag] = {
+                'digest': digests[tag],
+                'image_id': digests[tag],
+                'timestamp': '????-??-??T??:??:??',
+                'size': 0,
+            }
 
         return info
 
@@ -280,22 +282,26 @@ class DockerRegistry2(DockerRegistry):
         tags = response.json()['tags']
         if tags:
             for tag in [x for x in tags if fnmatch.fnmatch(x, tag_match)]:
-                info[tag] = {}
                 url = f'{self._server}/v2/{repository}/manifests/{tag}'
                 try:
                     response = self._get_url(url)
                 except Exception as exception:
                     raise SystemExit(str(exception)) from exception
                 if response.status_code != 200:
+                    if response.status_code == 404:
+                        print(f"WARNING 404: {url}", file=sys.stderr)
+                        continue
                     raise SystemExit(
                         f'Requests "{url}" response code: '
                         f'{response.status_code}',
                     )
                 data = response.json()
-                info[tag]['digest'] = response.headers['docker-content-digest']
-                info[tag]['image_id'] = data['config']['digest']
-                info[tag]['timestamp'] = self.get_time(repository, tag)
-                info[tag]['size'] = sum(x['size'] for x in data['layers'])
+                info[tag] = {
+                    'digest': response.headers['docker-content-digest'],
+                    'image_id': data['config']['digest'],
+                    'timestamp': self.get_time(repository, tag),
+                    'size': sum(x['size'] for x in data['layers']),
+                }
 
         return info
 

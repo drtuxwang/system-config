@@ -43,6 +43,37 @@ export PYTHONPATH=
 export PIP_BREAK_SYSTEM_PACKAGES=1  # Fix >= 3.11
 
 
+get_pip() {
+    case $MAJOR_VER in
+    2.[67]|3.[3456])
+        GETPIP="https://bootstrap.pypa.io/pip/$MAJOR_VER/get-pip.py"
+        ;;
+    *)
+        GETPIP="https://bootstrap.pypa.io/pip/get-pip.py"
+        ;;
+    esac
+    echo "curl --location --progress-bar $GETPIP | $PYTHON"
+    curl --location --progress-bar $GETPIP | $PYTHON 2>&1 | grep -v "'root' user"
+    return ${PIPESTATUS[0]}
+}
+
+pip_list() {
+    $PYTHON -m pip list "$@" 2> /dev/null | \
+        awk 'NR>=3 {printf("%s==%s\n", $1, $2)}' | sed -e "s/_/-/g"
+    return ${PIPESTATUS[0]}
+}
+
+pip_install() {
+    $PYTHON -m pip install "$@" --no-deps 2>&1 | \
+        grep -Ev "'root' user|pip version|consider upgrading"
+    return ${PIPESTATUS[0]}
+}
+
+pip_uninstall() {
+    $PYTHON -m pip uninstall "$@" 2>&1 | grep -v "'root' user"
+    return ${PIPESTATUS[0]}
+}
+
 read_requirements() {
     if [ -f "$1" ]
     then
@@ -63,7 +94,7 @@ read_requirements() {
 
 check_packages() {
     ERROR=
-    PACKAGES=$($LIST | awk 'NR>=3 {printf("%s==%s\n", $1, $2)}' | sed -e "s/_/-/g")
+    PACKAGES=$(pip_list)
     for PACKAGE in $PACKAGES
     do
         NAME=${PACKAGE%==*}
@@ -77,7 +108,7 @@ check_packages() {
             fi
         elif [ "$MODE" = "uninstall" ]
         then
-            echo y | $UNINSTALL $PACKAGE 2>&1 | grep -v "'root' user"
+            echo y | pip_uninstall $PACKAGE
             echo -e "\033[33mUninstalled!\033[0m"
         else
             echo $PACKAGE | awk '{printf("%-27s  # Requirement not found\n", $1)}'
@@ -118,28 +149,17 @@ check_packages() {
 
 install_packages() {
     MODE=${1:-}
-    case $VERSION in
-    2.[67]|3.[3456])
-        GETPIP="https://bootstrap.pypa.io/pip/$VERSION/get-pip.py"
-        ;;
-    *)
-        GETPIP="https://bootstrap.pypa.io/pip/get-pip.py"
-        ;;
-    esac
     if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
     then
-        echo "curl --location --progress-bar $GETPIP | $PYTHON"
-        curl --location --progress-bar $GETPIP | $PYTHON 2>&1 | grep -v "'root' user"
-        [ ${PIPESTATUS[0]} = 0 ] || exit 1
+        get_pip || exit 1
         echo -e "\033[33mInstalled!\033[0m"
     fi
 
     PACKAGES=$(check_packages | grep -v "not found" | awk '/ # Requirement / {print $NF}')
     for PACKAGE in $(echo "$PACKAGES" | grep -E "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
-        echo "$INSTALL $PACKAGE"
-        $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"
-        [ ${PIPESTATUS[0]} = 0 ] || exit 1
+        echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
+        pip_install "$PACKAGE" || exit 1
         echo -e "\033[33mInstalled!\033[0m"
     done
     [ "$MODE" = "piponly" ] && return
@@ -147,22 +167,22 @@ install_packages() {
     export CRYPTOGRAPHY_DONT_BUILD_RUST=1
     for PACKAGE in $(echo "$PACKAGES" | grep -E -v "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
-        echo "$INSTALL $PACKAGE"
-        $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"
-        [ ${PIPESTATUS[0]} = 0 ] || continue
+        echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
+        pip_install "$PACKAGE" || continue
         echo -e "\033[33minstalled!\033[0m"
     done
 
     PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
     find "$PYTHON_DIR/lib"/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+    find "$PYTHON_DIR"/*doc* -type d 2> /dev/null | xargs rm -rfv
 
     if [ -w "$PY_EXE" ]
     then
         IFS=$'\n'
-        for FILE in $(grep "^#!/.*[/ ]python" ${PY_EXE%/*}/* 2> /dev/null | grep -v ":#!/usr/bin/env python$VERSION" | sed -e "s@:#!/.*@@")
+        for FILE in $(grep "^#!/.*[/ ]python" ${PY_EXE%/*}/* 2> /dev/null | grep -v ":#!/usr/bin/env python$MAJOR_VER" | sed -e "s@:#!/.*@@")
         do
-            echo "$FILE: #!/usr/bin/env python$VERSION"
-            sed -i "s@^#!/.*[/ ]python.*@#!/usr/bin/env python$VERSION@" "$FILE"
+            echo "$FILE: #!/usr/bin/env python$MAJOR_VER"
+            sed -i "s@^#!/.*[/ ]python.*@#!/usr/bin/env python$MAJOR_VER@" "$FILE"
         done
         unset IFS
     fi
@@ -170,14 +190,11 @@ install_packages() {
 
 
 umask 022
-LIST="$PYTHON -m pip list --no-python-version-warning --disable-pip-version-check"
-INSTALL="$PYTHON -m pip install --no-python-version-warning --disable-pip-version-check --no-warn-script-location --no-deps"
-UNINSTALL="$PYTHON -m pip uninstall --no-python-version-warning --disable-pip-version-check"
-[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || INSTALL="$INSTALL --user"
 
-VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
+MAJOR_VER=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
 PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
 PY_INC=$($PY_EXE-config --includes 2> /dev/null)  # "Python.h" etc
+[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || PIP_INSTALL="$PIP_INSTALL --user"
 if [ "$(uname)" = Darwin ]
 then
     # Homebrew
@@ -194,11 +211,11 @@ then
     read_requirements "$REQUIREMENT"
 else
     read_requirements "${0%/*}/python-requirements.txt"
-    read_requirements "${0%/*}/python-requirements_$VERSION.txt"
+    read_requirements "${0%/*}/python-requirements_$MAJOR_VER.txt"
     case $(uname) in
     Darwin)
         read_requirements "${0%/*}/python-requirements_mac.txt"
-        read_requirements "${0%/*}/python-requirements_${VERSION}mac.txt"
+        read_requirements "${0%/*}/python-requirements_${MAJOR_VER}mac.txt"
         ;;
     esac
 fi

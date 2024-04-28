@@ -163,7 +163,7 @@ class SecureShell:
             )
             with Path(f'{self._host}.txt').open('a') as ofile:
                 print(
-                    time.strftime('%Y-%m-%d-%H:%M:%S: connected'),
+                    time.strftime('%Y-%m-%dT%H:%M:%S%z: connected'),
                     file=ofile
                 )
                 for line in stdout:
@@ -287,7 +287,7 @@ class Main:
     def _config_logging() -> None:
         formatter = logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s',
-            datefmt='%Y-%m-%d-%H:%M:%S'
+            datefmt='%Y-%m-%dT%H:%M:%S%z'
         )
         handler = logging.handlers.RotatingFileHandler(
             'cluster.log', maxBytes=5242880, backupCount=3)

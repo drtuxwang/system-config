@@ -4,7 +4,7 @@ Python configuration module (uses "config_mod.yaml")
 
 Supports BSON, multi-JSON, XML, multi-YAML files.
 
-Copyright GPL v2: 2017-2023 By Dr Colin Kong
+Copyright GPL v2: 2017-2024 By Dr Colin Kong
 """
 
 import json

@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.8.0'
-VERSION = 20240330
+RELEASE = '6.9.0'
+VERSION = 20240420
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -439,7 +439,7 @@ class Detect:
         """
         Show banner.
         """
-        timestamp = time.strftime('%Y-%m-%d-%H:%M:%S')
+        timestamp = time.strftime('%Y-%m-%dT%H:%M:%S%z')
         print(f"\n{self._author} - System configuration detection tool")
         print(f"\n*** Detected at {timestamp} ***")
 
@@ -1501,7 +1501,7 @@ class LinuxSystem(PosixSystem):
             except IndexError:
                 pass
             file_stat = FileStat('/var/lib/dpkg/info')
-            if file_stat.get_time():
+            if file_stat.get_mtime():
                 info['OS Patch'] = file_stat.get_date_local()
         elif Path('/etc/DISTRO_SPECS').is_file():
             try:

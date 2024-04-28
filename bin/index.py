@@ -138,9 +138,8 @@ class Main:
         for path in paths:
             if path.is_symlink():
                 link_stat = FileStat(path, follow_symlinks=False)
-                file_stat = FileStat(path)
-                file_time = file_stat.get_time()
-                if file_time != link_stat.get_time():
+                file_time = FileStat(path).get_mtime()
+                if file_time != link_stat.get_mtime():
                     try:
                         os.utime(
                             path,
@@ -154,9 +153,8 @@ class Main:
 
         if paths:
             newest = FileUtil.newest([str(x) for x in paths])
-            file_stat = FileStat(newest)
-            file_time = file_stat.get_time()
-            if file_time != FileStat(directory_path).get_time():
+            file_time = FileStat(newest).get_mtime()
+            if file_time != FileStat(directory_path).get_mtime():
                 try:
                     os.utime(directory_path, (file_time, file_time))
                 except PermissionError:

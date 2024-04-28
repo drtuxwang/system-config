@@ -15,7 +15,7 @@ from typing import List
 from command_mod import Command, CommandFile
 from subtask_mod import Batch, Exec, Task
 
-RELEASE = '3.1.2'
+RELEASE = '3.1.3'
 
 
 class Options:
@@ -146,7 +146,7 @@ class Main:
         print(f"MyQS NCPUS SLOTS = {info['NCPUS']}")
         print(f"MyQS DIRECTORY   = {info['DIRECTORY']}")
         print(f"MyQS COMMAND     = {info['COMMAND']}")
-        print(f"MyQS START       = {time.strftime('%Y-%m-%d-%H:%M:%S')}")
+        print(f"MyQS START       = {time.strftime('%Y-%m-%dT%H:%M:%S%z')}")
         print(f"MyQS PGID        = {mypid}")
         print(f"MyQS EXECUTE     = {bash_command}")
         print("-"*80)

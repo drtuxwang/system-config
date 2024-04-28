@@ -105,7 +105,7 @@ class Main:
         Check existing file and return True if already downloaded.
         """
         file_stat = FileStat(file)
-        if file_stat.get_size() == size and file_stat.get_time() >= mtime:
+        if file_stat.get_size() == size and file_stat.get_mtime() >= mtime:
             return True
         return False
 

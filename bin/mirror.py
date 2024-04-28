@@ -253,8 +253,7 @@ class Main:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{target_path}" link.',
             ) from exception
-        file_stat = FileStat(source_path, follow_symlinks=False)
-        file_time = file_stat.get_time()
+        file_time = FileStat(source_path, follow_symlinks=False).get_mtime()
         try:
             os.utime(
                 target_path,
@@ -279,7 +278,7 @@ class Main:
                 # Allow FAT16/FAT32/NTFS 1h daylight saving
                 # and 1 sec rounding error
                 if int(
-                    abs(source_stat.get_time() - target_stat.get_time())
+                    abs(source_stat.get_mtime() - target_stat.get_mtime())
                 ) in (0, 1, 3599, 3600, 3601):
                     if source_stat.get_mode() != target_stat.get_mode():
                         logger.info(

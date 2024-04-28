@@ -178,10 +178,9 @@ class Main:
     @staticmethod
     def _setmod_link(path: Path) -> None:
         link_stat = FileStat(path, follow_symlinks=False)
-        file_stat = FileStat(path)
-        file_time = file_stat.get_time()
+        file_time = FileStat(path).get_mtime()
 
-        if file_time != link_stat.get_time():
+        if file_time != link_stat.get_mtime():
             print(f"<utime>: {path} -> {path.readlink()}")  # type: ignore
             try:
                 os.utime(path, (file_time, file_time), follow_symlinks=False)
@@ -203,8 +202,8 @@ class Main:
             file_stat = FileStat(FileUtil.newest(
                 [str(x) for x in paths]
             ))
-            file_time = file_stat.get_time()
-            if file_time != FileStat(path).get_time():
+            file_time = file_stat.get_mtime()
+            if file_time != FileStat(path).get_mtime():
                 print(f"<utime>: {path}/")
                 try:
                     os.utime(path, (file_time, file_time))

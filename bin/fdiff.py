@@ -150,7 +150,7 @@ class Main:
 
         if file_stat1.get_size() != file_stat2.get_size():
             print(f"diff  {path1}  {path2}")
-        elif file_stat1.get_time() != file_stat2.get_time():
+        elif abs(file_stat1.get_mtime() - file_stat2.get_mtime()) < 1.:
             if time_flag:
                 print(f"time  {path1}  {path2}")
                 return

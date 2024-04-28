@@ -2,7 +2,7 @@
 """
 Python debugging tools module
 
-Copyright GPL v2: 2015-2023 By Dr Colin Kong
+Copyright GPL v2: 2015-2024 By Dr Colin Kong
 """
 
 import os
@@ -14,8 +14,8 @@ from pathlib import Path
 import jsonpickle  # type: ignore
 
 
-RELEASE = '2.3.2'
-VERSION = 20230122
+RELEASE = '2.3.3'
+VERSION = 20240420
 
 
 class Dump:
@@ -55,8 +55,10 @@ class Dump:
         message = Debug message
         file = Optional output file to append
         """
-        cls.output(time.strftime(
-            'Debug: %Y-%m-%d-%H:%M:%S: ') + message, file=file)
+        cls.output(
+            time.strftime('Debug: %Y-%m-%dT%H:%M:%S%z: ') + message,
+            file=file,
+        )
 
     @classmethod
     def list(

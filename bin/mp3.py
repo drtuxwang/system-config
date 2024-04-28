@@ -422,7 +422,7 @@ class Encoder:
         else:
             self._multi()
         newest = FileUtil.newest(self._options.get_files())
-        file_time = FileStat(newest).get_time()
+        file_time = FileStat(newest).get_mtime()
         os.utime(self._options.get_file_new(), (file_time, file_time))
 
 

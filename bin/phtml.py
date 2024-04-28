@@ -254,7 +254,7 @@ class Xhtml:
                 file_stats.append(FileStat(path))
         file_stats = sorted(
             file_stats,
-            key=lambda s: s.get_time(),
+            key=lambda s: s.get_mtime(),
             reverse=True
         )
 

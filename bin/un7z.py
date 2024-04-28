@@ -124,8 +124,8 @@ class Main:
             if path.is_symlink():
                 link_stat = FileStat(path, follow_symlinks=False)
                 file_stat = FileStat(path)
-                file_time = file_stat.get_time()
-                if file_time != link_stat.get_time():
+                file_time = file_stat.get_mtime()
+                if file_time != link_stat.get_mtime():
                     try:
                         os.utime(
                             path,
@@ -140,8 +140,8 @@ class Main:
                 if not newest:
                     newest = path.name
                 file_stat = FileStat(newest)
-                file_time = file_stat.get_time()
-                if file_time != FileStat(path).get_time():
+                file_time = file_stat.get_mtime()
+                if file_time != FileStat(path).get_mtime():
                     os.utime(path, (file_time, file_time))
 
     @classmethod

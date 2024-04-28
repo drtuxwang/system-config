@@ -69,7 +69,7 @@ options() {
 docker_list() {
     PATTERN="$(echo "$@" | sed -e "s/ /|/g")"
 
-    (echo "REPOSITORY:TAG IMAGE ID CREATED AT       SIZE"; docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2) |  column -t
+    docker_images
     echo
     docker volume ls | sed -e "s/^DRIVER .*/DRIVER VOLUME_NAME/" | column -t
     echo
@@ -86,12 +86,9 @@ docker_list() {
 # Function to show Docker images with optional filter
 #
 docker_images() {
-    if [ $# = 0 ]
-    then
-        (echo "REPOSITORY:TAG IMAGE ID CREATED AT       SIZE"; docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2) |  column -t
-    else
-        (echo "REPOSITORY:TAG IMAGE ID CREATED AT       SIZE"; docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep -E "^REPOSITORY:TAG|$(echo "$@" | sed -e "s/ /|/g")" | tail -n +2 | sort) |  column -t
-    fi
+    IMAGES=$(docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2 | sed -e "s/ \([0-9][0-9]:[0-9][0-9]:[0-9][0-9]\)/T\1 /" | awk '{printf("%s %s %s%s %s\n", $1, $2, $3, $4, $6)}' )
+    [ $# != 0 ] && IMAGES=$(echo "$IMAGES" | grep -E "$(echo "$@" | sed -e "s/ /|/g")")
+    (echo "REPOSITORY:TAG IMAGE ID CREATED AT SIZE"; echo "$IMAGES") | sort | column -t
 }
 
 #

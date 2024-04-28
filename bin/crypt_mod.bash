@@ -67,7 +67,7 @@ options() {
       help 1
       ;;
     ?*)
-        uuids=$(lsblk -list -o NAME,FSTYPE,UUID 2> /dev/null | awk '/^'"($(echo "$@" | sed -e "s/ /|/g"))"' *crypto_LUKS/ {print $3; exit}')
+        uuids=$(lsblk -list -o NAME,FSTYPE,UUID 2> /dev/null | awk '/^'"($(echo "$@" | sed -e "s@/@\/@g;s/ /|/g"))"' *crypto_LUKS/ {print $3; exit}')
         ;;
     esac
 }
@@ -94,23 +94,27 @@ mount_crypt() {
     echo -e "\033[33mLuksOpen on $hostname: UUID=$uuid ($device)\033[0m"
     /sbin/cryptsetup luksOpen UUID=$uuid luks-$uuid || exit 1
     local info=$(lsblk -list -o NAME,FSTYPE,LABEL 2> /dev/null | awk '/^luks-'$uuid'/ {print $2, $3}')
-    local fstype=${info% *}
     local mount="/media/$mount_user/${info#* }"
+    local fstype=${info% *}
     mkdir -p $mount
     chown $mount_user:$(id -gn $mount_user) ${mount%/*}
 
-    echo "Mounting on $hostname: /dev/mapper/luks-$uuid => $mount ($device)"
     case $fstype in
     f2fs)
-        mount -t f2fs -o atgc,gc_merge,lazytime /dev/mapper/luks-$uuid $mount
+        local options="-t f2fs -o lazytime,gc_merge,atgc"
         ;;
     ext4)
-        mount -t ext4 -o noatime,errors=remount-ro,commit=60 /dev/mapper/luks-$uuid $mount
+        local options="-t ext4 -o noatime,errors=remount-ro,commit=60"
         ;;
-    ?*)
-        mount /dev/mapper/luks-$uuid $mount
+    vfat|ntfs)
+        local options="mount -o uid=$mount_user,gid=$(id -gn $mount_user),umask=022,fmask=133"
+        ;;
+    *)
+        local options=
         ;;
     esac
+    echo "mount $options /dev/mapper/luks-$uuid $mount"
+    mount $options /dev/mapper/luks-$uuid $mount
 
     [ "$(lsblk -list -o NAME,MOUNTPOINT | awk '/^luks-'$uuid'/ {print $2}')" ] && return
     echo "Error: Cannot find \"$hostname:$mount/$mount_user ($mount)\" failed..."

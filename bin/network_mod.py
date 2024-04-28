@@ -2,7 +2,7 @@
 """
 Python network handling utility module
 
-Copyright GPL v2: 2015-2023 By Dr Colin Kong
+Copyright GPL v2: 2015-2024 By Dr Colin Kong
 """
 
 import getpass

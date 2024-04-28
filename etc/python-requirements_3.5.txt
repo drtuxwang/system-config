@@ -56,7 +56,7 @@ PyNaCl                       # ==1.4.0 (last compatible version)
 pyOpenSSL==None
 pyparsing                    # ==2.4.7 (required by packaging for 3.5)
 python-slugify==4.0.1
-PyYAML                       # ==5.3.1 (last compatible version)
+PyYAML==None
 pyzstd==None
 questionary==None
 requests                     # ==2.25.1 (last compatible version)

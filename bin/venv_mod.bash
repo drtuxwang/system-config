@@ -30,14 +30,43 @@ show_virtualenvs() {
 create_virtualenv() {
     echo -e "\033[33mCreating Python VirtualEnv: $VIRTUAL_ENV\033[0m"
     umask 022
+
+    VERSION=$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')
+    case $(uname) in
+    Darwin)
+        WRAPPER="#!/usr/bin/env bash
+
+export DYLD_LIBRARY_PATH=\"$PYTHON_DIR/bin:\$DYLD_LIBRARY_PATH\"
+exec \"\${0%/*}\"/python$VERSION \"\$@\""
+        ;;
+    *)
+        WRAPPER="#!/usr/bin/env bash
+
+export LD_LIBRARY_PATH=\"$PYTHON_DIR/lib:\$LD_LIBRARY_PATH\"
+export LDFLAGS=\"-L$PYTHON_DIR/lib\"
+exec \"\${0%/*}\"/python$VERSION \"\$@\""
+        ;;
+    esac
+
     if [ ! -d "$VIRTUAL_ENV" ]
     then
         $VENV_PYTHON -m virtualenv "$VIRTUAL_ENV" || exit 1
         rm -f "$VIRTUAL_ENV/.gitignore"
     fi
 
-    "$VIRTUAL_ENV/bin/$VENV_PYTHON" -m pip install $VENV_PACKAGE $VENV_DEPENDS || exit 1
-    [ "VENV_CLEAN" != "yes" ] && find "$VIRTUAL_ENV/lib" -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+    rm -f "$VIRTUAL_ENV/bin"/python$VERSION "$VIRTUAL_ENV/bin"/python${VERSION%%.*} "$VIRTUAL_ENV/bin"/python${VERSION%.*}
+    mv "$VIRTUAL_ENV/bin/python" "$VIRTUAL_ENV/bin"/python$VERSION
+    echo "$WRAPPER" > "$VIRTUAL_ENV/bin"/python${VERSION%.*}
+    chmod 755 "$VIRTUAL_ENV/bin"/python${VERSION%.*}
+    ln -s python${VERSION%.*} "$VIRTUAL_ENV/bin"/python${VERSION%%.*}
+    ln -s python${VERSION%.*} "$VIRTUAL_ENV/bin"/python
+
+    for VENV_DEPEND in $VENV_DEPENDS
+    do
+          "$VIRTUAL_ENV/bin/$VENV_PYTHON" -m pip install $VENV_DEPEND || exit 1
+    done
+    "$VIRTUAL_ENV/bin/$VENV_PYTHON" -m pip install $VENV_PACKAGE || exit 1
+    [ "$VENV_CLEAN" = "yes" ] && find "$VIRTUAL_ENV/lib" -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
     IFS=$'\n'
     for FILE in $(grep "^#!/.*/python" "$VIRTUAL_ENV/bin"/* 2> /dev/null | grep -v ":#!/usr/bin/env " | sed -e "s@:#!/.*@@")
     do

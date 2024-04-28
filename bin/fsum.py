@@ -184,9 +184,11 @@ class Main:
             elif path.is_file() and not path.is_symlink():
                 file_stat = FileStat(path)
                 try:
-                    checksum = self._cache[
-                        (str(path), file_stat.get_size(), file_stat.get_time())
-                    ]
+                    checksum = self._cache[(
+                        str(path),
+                        file_stat.get_size(),
+                        int(file_stat.get_mtime()),
+                    )]
                 except KeyError:
                     checksum = self._sha512sum(path)
                 if not checksum:
@@ -196,7 +198,7 @@ class Main:
                 print(
                     f"{checksum}/"
                     f"{file_stat.get_size():010d}/"
-                    f"{file_stat.get_time()}  "
+                    f"{int(file_stat.get_mtime())}  "
                     f"{path}",
                 )
                 if options.get_create_flag():
@@ -206,15 +208,12 @@ class Main:
                             print(
                                 f"{checksum}/"
                                 f"{file_stat.get_size():010d}/"
-                                f"{file_stat.get_time()}  "
+                                f"{int(file_stat.get_mtime())}  "
                                 f"{path.name}",
                                 file=ofile,
                             )
-                        file_stat = FileStat(path)
-                        os.utime(
-                            fsum_path,
-                            (file_stat.get_time(), file_stat.get_time())
-                        )
+                        file_time = file_stat.get_mtime()
+                        os.utime(fsum_path, (file_time, file_time))
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot create '
@@ -254,7 +253,7 @@ class Main:
                             elif size != file_stat.get_size():
                                 print(f'{file} # FAILED checksize')
                                 nfail += 1
-                            elif mtime != file_stat.get_time():
+                            elif mtime != int(file_stat.get_mtime()):
                                 print(f'{file} # FAILED checkdate')
                                 nfail += 1
                             elif self._isdiff(checksum, Path(file)):

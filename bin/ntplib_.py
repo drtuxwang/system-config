@@ -111,13 +111,13 @@ class Main:
         """
         logger.info("Checking current clock...")
         newest = FileUtil.newest(glob.glob('/etc/*'))
-        time_stamp = FileStat(newest).get_time()
-        if time_stamp - time.time() > 86400:
+        mtime = FileStat(newest).get_mtime()
+        if mtime - time.time() > 86400:
             logger.info("Updating: System clock setting...")
             Task(self._date.get_cmdline() + [
-                '+%Y-%m-%d %H:%M:%S.%N%z',
+                '+%Y-%m-%dT%H:%M:%S.%N%z',
                 '--set',
-                f'@{time_stamp:f}',
+                f'@{mtime:f}',
             ]).run()
             logger.info("Syncing:  Setting hardware clock...")
             Task(self._hwclock.get_cmdline() + ['--systohc']).run()
@@ -187,7 +187,7 @@ class Main:
         """
         logger.info("Updating: System clock with offset...")
         Task(self._date.get_cmdline() + [
-            '+%Y-%m-%d %H:%M:%S.%N%z',
+            '+%Y-%m-%dT%H:%M:%S.%N%z',
             '--set',
             f'{offset} sec',
         ]).run()

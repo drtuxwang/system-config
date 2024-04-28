@@ -131,8 +131,7 @@ class Main:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path2}" link.',
             ) from exception
-        file_stat = FileStat(path1, follow_symlinks=False)
-        file_time = file_stat.get_time()
+        file_time = FileStat(path1, follow_symlinks=False).get_mtime()
         try:
             os.utime(path2, (file_time, file_time), follow_symlinks=False)
         except NotImplementedError:
@@ -159,8 +158,7 @@ class Main:
         newest = FileUtil.newest(list(path2.iterdir()))
         if not newest:
             newest = str(path1)
-        file_stat = FileStat(newest, follow_symlinks=False)
-        file_time = file_stat.get_time()
+        file_time = FileStat(newest, follow_symlinks=False).get_mtime()
         os.utime(path2, (file_time, file_time))
 
     @staticmethod

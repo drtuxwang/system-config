@@ -17,7 +17,7 @@ virtualenv_setup() {
 }
 
 install_collections() {
-    CLASS=$($VENV_PYTHON --version | sed -e "s/Python //;s/[.][^.]*$//")
+    CLASS=$($VENV_PYTHON --version | sed -e "s/Python /python/;s/[.][^.]*$//")
     export DEFAULT_MODULE_PATH="$VIRTUAL_ENV/lib/$CLASS/site-packages"
     "$VIRTUAL_ENV/bin/ansible-galaxy" collection install ansible.posix -p "$DEFAULT_MODULE_PATH"
     "$VIRTUAL_ENV/bin/ansible-galaxy" collection install community.general -p "$DEFAULT_MODULE_PATH"
@@ -25,7 +25,7 @@ install_collections() {
 }
 
 activate_collections() {
-    CLASS=$($VENV_PYTHON --version | sed -e "s/Python //;s/[.][^.]*$//")
+    CLASS=$($VENV_PYTHON --version | sed -e "s/Python /python/;s/[.][^.]*$//")
     export DEFAULT_MODULE_PATH="$VIRTUAL_ENV/lib/$CLASS/site-packages"
 }
 

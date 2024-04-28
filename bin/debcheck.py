@@ -57,7 +57,7 @@ class Package:
     Package class
     """
     file: str
-    time: int
+    time: float
     version: str
 
 
@@ -87,12 +87,12 @@ class Main:
             file_stat = FileStat(path)
             version = path.name.split('_')[1]
             if name in packages:
-                if file_stat.get_time() > packages[name].time:
+                if file_stat.get_mtime() > packages[name].time:
                     print(f"rm {packages[name].file}")
                     print(f"#  {path}")
                     packages[name] = Package(
                         str(path),
-                        file_stat.get_time(),
+                        file_stat.get_mtime(),
                         version
                     )
                 else:
@@ -101,7 +101,7 @@ class Main:
             else:
                 packages[name] = Package(
                     str(path),
-                    file_stat.get_time(),
+                    file_stat.get_mtime(),
                     version,
                 )
         return packages
