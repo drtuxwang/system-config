@@ -192,13 +192,25 @@
   - user-home
   - terminal
 
-- name: Cron entry for updating "{{ home_directory }}/software/web-data/pages" web pages
+- name: Template file to "{{ home_directory }}/.config/bootstart.bash"
   when: user == "owner"
-  cron:
-    name: Update "{{ home_directory }}/software/web-data/pages" web pages
-    user: '{{ user }}'
-    special_time: reboot
-    job: sleep 300 && $HOME/software/scripts/pull-web
+  template:
+    src: bootstart.bash
+    dest: '{{ home_directory }}/.config/bootstart.bash'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0700'
   tags:
   - user-home
-  - web-data
+  - bootstart
+
+- name: Cron entry for starting "{{ home_directory }}/.config/bootstart.bash"
+  when: user == "owner"
+  cron:
+    name: Start "{{ home_directory }}/.config/bootstart.bash"
+    user: '{{ user }}'
+    special_time: reboot
+    job: 'sleep 20 && SHELL=/bin/bash {{ home_directory }}/.config/bootstart.bash'
+  tags:
+  - user-home
+  - bootstart

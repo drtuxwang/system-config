@@ -73,16 +73,9 @@
   tags:
   - user-home
   - autostart
+  - bootstart
   - mimeapps
   - geeqie
   - terminal
   - thunar
   - vlc
-  - web-data
-
-- name: Include "vncserver.yaml" tasks
-  when: vncserver and user == "owner"
-  include_tasks: vncserver.yaml
-  tags:
-  - user-home
-  - vncserver

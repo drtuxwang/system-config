@@ -195,27 +195,20 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     # Platform specific
     switch (`uname`)
     case Darwin:
-        if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
-            alias ls "ls -C --time-style=long-iso --color=auto"
+        if ( "`\ls --help |& \grep '^ *--color'`" != "" ) then
+            alias ls "ls -C --color=auto"
             alias grep "grep --color=auto"
         else
             alias ls "ls -C -G"
         endif
         breaksw
-
-    case HP-UX:
-        alias df "bdf"
-        breaksw
-
     case Linux:
     case *NT*:
-        if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
-            alias ls "ls -C --time-style=long-iso --color=auto"
+        if ( "`\ls --help |& \grep '^ *--color'`" != "" ) then
+            alias ls "ls -C --color=auto"
+            alias grep "grep --color=auto"
         else
             alias ls "ls -C --color=auto"
-        endif
-        if ( "`\grep --help |& \grep ' --color'`" != "" ) then
-            alias grep "grep --color=auto"
         endif
         setenv LS_COLORS ""
         breaksw

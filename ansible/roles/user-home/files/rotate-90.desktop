@@ -17,4 +17,4 @@ X-Geeqie-Menu-Path=EditMenu/OrientationMenu
 # It can be made verbose
 # X-Geeqie-Verbose=true
 
-MimeType=image/jpeg;
+MimeType=image/jpeg;image/png;image/webp;

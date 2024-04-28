@@ -398,9 +398,9 @@ then
     # Platform specific
     case `uname` in
     Darwin)
-        if [ "`\ls --help 2>&1 | \grep ' --time-style'`" ]
+        if [ "`\ls --help 2>&1 | \grep ' --color'`" ]
         then
-            alias ls="ls -C --time-style=long-iso --color=auto"
+            alias ls="ls -C --color=auto"
             alias grep="grep --color=auto"
         else
             alias ls="ls -C -G"
@@ -414,15 +414,12 @@ then
         ;;
 
     Linux|*NT*)
-        if [ "`\ls --help 2>&1 | \grep ' --time-style'`" ]
+        if [ "`\ls --help 2>&1 | \grep ' --color'`" ]
         then
-            alias ls="ls -C --time-style=long-iso --color=auto"
-        else
             alias ls="ls -C --color=auto"
-        fi
-        if [ "`\grep --help 2>&1 | \grep ' --color' 2> /dev/null`" ]
-        then
             alias grep="grep --color=auto"
+        else
+            alias ls="ls -C"
         fi
         # Defend against stubborn Linux distributions
         if [ -f /etc/ksh.kshrc ]

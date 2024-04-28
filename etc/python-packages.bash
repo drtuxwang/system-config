@@ -58,19 +58,17 @@ get_pip() {
 }
 
 pip_list() {
-    $PYTHON -m pip list "$@" 2> /dev/null | \
-        awk 'NR>=3 {printf("%s==%s\n", $1, $2)}' | sed -e "s/_/-/g"
+    $PIP_LIST "$@" 2> /dev/null | awk 'NR>=3 {printf("%s==%s\n", $1, $2)}' | sed -e "s/_/-/g"
     return ${PIPESTATUS[0]}
 }
 
 pip_install() {
-    $PYTHON -m pip install "$@" --no-deps 2>&1 | \
-        grep -Ev "'root' user|pip version|consider upgrading"
+    $PIP_INSTALL "$@" --no-deps 2>&1 | grep -Ev "'root' user|pip version|consider upgrading"
     return ${PIPESTATUS[0]}
 }
 
 pip_uninstall() {
-    $PYTHON -m pip uninstall "$@" 2>&1 | grep -v "'root' user"
+    $PIP_UNINSTALL "$@" 2>&1 | grep -v "'root' user"
     return ${PIPESTATUS[0]}
 }
 
@@ -194,7 +192,11 @@ umask 022
 MAJOR_VER=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
 PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
 PY_INC=$($PY_EXE-config --includes 2> /dev/null)  # "Python.h" etc
+PIP_LIST="$PYTHON -m pip list"
+PIP_INSTALL="$PYTHON -m pip install"
+PIP_UNINSTALL="$PYTHON -m pip uninstall"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || PIP_INSTALL="$PIP_INSTALL --user"
+
 if [ "$(uname)" = Darwin ]
 then
     # Homebrew
