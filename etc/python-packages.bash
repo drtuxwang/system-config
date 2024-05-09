@@ -63,7 +63,7 @@ pip_list() {
 }
 
 pip_install() {
-    $PIP_INSTALL "$@" --no-deps 2>&1 | grep -Ev "'root' user|pip version|consider upgrading"
+    $PIP_INSTALL "$@" --no-deps 2>&1 | grep -Ev "'root' user|pip version|consider upgrading|^DEPRECATION:|[notice]"
     return ${PIPESTATUS[0]}
 }
 
@@ -167,7 +167,7 @@ install_packages() {
     do
         echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
         pip_install "$PACKAGE" || continue
-        echo -e "\033[33minstalled!\033[0m"
+        echo -e "\033[33mInstalled!\033[0m"
     done
 
     PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
