@@ -74,23 +74,23 @@ locate_python() {
         GLIBC_VER=$(strings "$GLIBC" 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}')
         case $(uname -m) in
         x86_64)
-            LOCATE=$((ls -1t $LOCAL/*/linux64_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*/*linux64_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         i*86)
-            LOCATE=$((ls -1t $LOCAL/*/linux_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*/*linux_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         ppc*)
-            LOCATE=$((ls -1t $LOCAL/*/linux_*-power*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*/*linux_*-power*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         sparc*)
-            LOCATE=$((ls -1t $LOCAL/*/linux_*-sparc*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*/*linux_*-sparc*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         esac
         if [ ! "$LOCATE" ]
         then
             case $(uname -m) in
             ia64|x86_64)
-                LOCATE=$(ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1)
+                LOCATE=$(ls -1t $LOCAL/*/*linux_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1)
                 ;;
             esac
         fi
@@ -100,11 +100,11 @@ locate_python() {
         PYLD_EXE="$PYLD_EXE.exe"
         if  [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
         then
-            LOCATE=$(ls -1t $LOCAL/*/windows64_*-x86*/$PYLD_EXE 2> /dev/null | head -1)
+            LOCATE=$(ls -1t $LOCAL/*/*windows64_*-x86*/$PYLD_EXE 2> /dev/null | head -1)
         fi
         if [ ! "$LOCATE" ]
         then
-            LOCATE=$(ls -1t $LOCAL/*/windows_*-x86*/$PYLD_EXE 2> /dev/null | head -1)
+            LOCATE=$(ls -1t $LOCAL/*/*windows_*-x86*/$PYLD_EXE 2> /dev/null | head -1)
         fi
         ;;
     esac

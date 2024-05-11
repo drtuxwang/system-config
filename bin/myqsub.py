@@ -17,7 +17,7 @@ from logging_mod import Message
 from subtask_mod import Task
 from task_mod import Tasks
 
-RELEASE = '3.1.3'
+RELEASE = '3.1.4'
 
 
 class Options:
@@ -276,7 +276,7 @@ class Main:
             elif len(cmdline) == 2 and not os.access(cmdline[1], os.X_OK):
                 job_name = Path(cmdline[1]).name
             else:
-                job_name = Path(cmdline[0]).name
+                job_name = Message(job_command).get(45)
             try:
                 with path_new.open('w') as ofile:
                     print(f"JOBID={jobid}", file=ofile)

@@ -18,7 +18,7 @@ from logging_mod import Message
 from subtask_mod import Exec, Task
 from task_mod import Tasks
 
-RELEASE = '3.1.2'
+RELEASE = '3.1.3'
 
 
 class Options:
@@ -46,6 +46,15 @@ class Options:
         Return watch flag.
         """
         return self._args.watch_flag
+
+    def get_width(self) -> int:
+        """
+        Return stdout width.
+        """
+        try:
+            return os.get_terminal_size().columns
+        except OSError:  # stdout closed
+            return int(os.environ['COLUMNS'])
 
     def get_jobids(self) -> List[int]:
         """
@@ -219,10 +228,9 @@ class Main:
 
         return info
 
-    @staticmethod
-    def _get_lines(info: dict, full: bool) -> List[str]:
+    def _get_lines(self, info: dict, options: Options) -> List[str]:
         lines = []
-        if full:
+        if options.get_full_flag():
             lines.append(f"\x1b[1;35mMyQS DIRECTORY   = {info['DIRECTORY']}")
             lines.append(f"MyQS COMMAND     = {info['COMMAND']}\x1b[0m")
             if 'LOGFILE' in info:
@@ -233,8 +241,11 @@ class Main:
                 lines.append(
                     f"\x1b[1;35mMyQS PGID        = {info['PGID']}\x1b[0m"
                 )
-        for line in info['LINES']:
-            lines.append(f"\x1b[1;34m{line}\x1b[0m")
+
+        for message in [Message(x) for x in info['LINES']]:
+            if message.width() > options.get_width():
+                message = message.get(options.get_width(), lcut=True)
+            lines.append(f"\x1b[1;34m{message}\x1b[0m")
         return lines
 
     def _showjobs(self, options: Options) -> None:
@@ -267,7 +278,7 @@ class Main:
                             f"{jobid:5d}  {info.get('QUEUE', ''):7s} "
                             f"{job_name}        "
                             f"{mode:5s}{info.get('ETIME'):>6s}"
-                        ] + self._get_lines(info, options.get_full_flag())
+                        ] + self._get_lines(info, options)
                     )
                     continue
             info = self._get_info(Path(self._myqsdir, f'{jobid}.r'))
@@ -284,7 +295,7 @@ class Main:
                                 f"{info.get('QUEUE', ''):7s}"
                                 f" {job_name}  {info.get('NCPUS', 1):>3s}   "
                                 "STOP      -\x1b[0m"
-                            ] + self._get_lines(info, options.get_full_flag())
+                            ] + self._get_lines(info, options)
                         )
                         continue
                 status.add(
@@ -293,7 +304,7 @@ class Main:
                         f"\x1b[1;33m{jobid:5d}  {info.get('QUEUE', ''):7s} "
                         f"{job_name}  {info.get('NCPUS', 1):>3s}   RUN  "
                         f"{info.get('ETIME'):>6s}\x1b[0m"
-                    ] + self._get_lines(info, options.get_full_flag())
+                    ] + self._get_lines(info, options)
                 )
         status.show()
 
@@ -308,9 +319,13 @@ class Main:
         Start program
         """
         options = Options()
-
         if options.get_watch_flag():
             self._watch()
+
+        try:
+            self.width = os.get_terminal_size().columns
+        except OSError:
+            self.width = int(os.environ['COLUMNS'])  # stdout closed
 
         host = socket.gethostname().split('.')[0].lower()
         self._myqsdir = Path(Path.home(), '.config', 'myqs', host)

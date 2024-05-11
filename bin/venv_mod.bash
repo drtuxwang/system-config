@@ -36,15 +36,18 @@ create_virtualenv() {
     Darwin)
         WRAPPER="#!/usr/bin/env bash
 
-export DYLD_LIBRARY_PATH=\"$PYTHON_DIR/bin:\$DYLD_LIBRARY_PATH\"
-exec \"\${0%/*}\"/python$VERSION \"\$@\""
+PYTHON_LIB=\$(realpath \"\${0%/*}/python$VERSION\" | sed -e \"s,bin/[^/]*$,lib,\")
+export DYLD_LIBRARY_PATH=\"\$PYTHON_LIB:\$DYLD_LIBRARY_PATH\"
+export LDFLAGS=\"-L\$PYTHON_LIB\"
+exec \"\${0%/*}/python$VERSION\" \"\$@\""
         ;;
     *)
         WRAPPER="#!/usr/bin/env bash
 
-export LD_LIBRARY_PATH=\"$PYTHON_DIR/lib:\$LD_LIBRARY_PATH\"
-export LDFLAGS=\"-L$PYTHON_DIR/lib\"
-exec \"\${0%/*}\"/python$VERSION \"\$@\""
+PYTHON_LIB=\$(realpath \"\${0%/*}/python$VERSION\" | sed -e \"s,bin/[^/]*$,lib,\")
+export LD_LIBRARY_PATH=\"\$PYTHON_LIB:\$LD_LIBRARY_PATH\"
+export LDFLAGS=\"-L\$PYTHON_LIB\"
+exec \"\${0%/*}/python$VERSION\" \"\$@\""
         ;;
     esac
 
@@ -74,6 +77,7 @@ exec \"\${0%/*}\"/python$VERSION \"\$@\""
         sed -i "s@^#!/.*@#!/usr/bin/env $VENV_PYTHON@" "$FILE"
     done
     unset IFS
+    [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV/lib
 
     $VENV_POSTINST
 }
@@ -87,7 +91,7 @@ defaults_settings
 virtualenv_setup
 
 PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$VENV_PYTHON")
-VIRTUAL_ENV="$PYTHON_DIR-venv/${VENV_PACKAGE/==/-}"
+VIRTUAL_ENV="$PYTHON_DIR-${VENV_PACKAGE/==/_}/virtualenv"
 [ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/$($VENV_PYTHON --version 2>&1 | sed -e "s/ /-/g")-venv/${VENV_PACKAGE/==/-}"
 FLAGS="${1:-}"
 export VIRTUAL_ENV

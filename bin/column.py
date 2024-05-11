@@ -98,7 +98,7 @@ class Main:
                     cell = row[col]
                     row[col] = cell.get(width, lpad=cell[:1].isdigit())
             for row in rows:
-                print("  ".join(row))
+                print("  ".join(row).rstrip())
 
     def run(self) -> int:
         """

@@ -114,7 +114,7 @@ parse_options() {
 }
 
 snapshot_drive() {
-   [ "$(ls -1t "$(realpath $1)" "$2" 2> /dev/null | head -1)" = "$2" ] && continue
+   [ "$(ls -1t "$(realpath $1)" "$2" 2> /dev/null | head -1)" = "$2" ] && return
    echo -e "\nqemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2"
    qemu-img create -F qcow2 -b $(realpath $1) -f qcow2 $2
 }

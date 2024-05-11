@@ -109,7 +109,10 @@ class Menu:
             if Path(check).is_file() or Path(path, check).is_file():
                 return True
             for directory in os.environ.get('PATH', '').split(os.pathsep):
-                if list(Path(directory).parent.glob(f'*/*/{check}')):
+                if (
+                    list(Path(directory).parent.glob(f'*/{check}')) +
+                    list(Path(directory).parent.glob(f'*/*/{check}'))
+                ):
                     return True
         return False
 

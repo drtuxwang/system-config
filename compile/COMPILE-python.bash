@@ -23,9 +23,10 @@ Darwin)
 
     WRAPPER="#!/usr/bin/env bash
 
-export DYLD_LIBRARY_PATH=\"\$(realpath \"\${0%/*}/../lib\"):\$DYLD_LIBRARY_PATH\"
-export LDFLAGS=\"-L\$(realpath \"\${0%/*}/../lib\")\"
-exec \"\${0%/*}\"/python$VERSION \"\$@\""
+PYTHON_LIB=\$(realpath \"\${0%/*}/../lib\" | sed -e \"s,bin/[^/]*$,lib,\")
+export DYLD_LIBRARY_PATH=\"\$PYTHON_LIB:\$DYLD_LIBRARY_PATH\"
+export LDFLAGS=\"-L\$PYTHON_LIB\"
+exec \"\${0%/*}/python$VERSION\" \"\$@\""
     ;;
 *)
     if [[ ${0##/*} =~ COMPILE32* ]]
@@ -37,15 +38,20 @@ exec \"\${0%/*}\"/python$VERSION \"\$@\""
 
     WRAPPER="#!/usr/bin/env bash
 
-export LD_LIBRARY_PATH=\"\$(realpath \"\${0%/*}/../lib\"):\$LD_LIBRARY_PATH\"
-export LDFLAGS=\"-L\$(realpath \"\${0%/*}/../lib\")\"
-exec \"\${0%/*}\"/python$VERSION \"\$@\""
+PYTHON_LIB=\$(realpath \"\${0%/*}/../lib\" | sed -e \"s,bin/[^/]*$,lib,\")
+export LD_LIBRARY_PATH=\"\$PYTHON_LIB:\$LD_LIBRARY_PATH\"
+export LDFLAGS=\"-L\$PYTHON_LIB\"
+exec \"\${0%/*}/python$VERSION\" \"\$@\""
     ;;
 esac
+# Missing realpath on old operating systems
+realpath --version || WRAPPER=$(echo "$WRAPPER" | sed -e "s/realpath/readlink -e/")
 
-CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared --with-lto"
-# Enable PGO (except old gcc)
+CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
+# Enable profile-guided optimization (PGO) except old gcc
 [ "$(gcc --version 2>&1 | grep "gcc .* [1-8][.]")" ] || CONFIGURE="$CONFIGURE --enable-optimizations"
+# Enable link time optimizations (LTO) except old gcc
+[ "$(gcc --version 2>&1 | grep "gcc .* [1-4][.]")" ] || CONFIGURE="$CONFIGURE --with-lto"
 
 $CONFIGURE
 make

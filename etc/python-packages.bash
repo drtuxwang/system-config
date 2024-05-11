@@ -63,7 +63,7 @@ pip_list() {
 }
 
 pip_install() {
-    $PIP_INSTALL "$@" --no-deps 2>&1 | grep -Ev "'root' user|pip version|consider upgrading|^DEPRECATION:|[notice]"
+    $PIP_INSTALL "$@" --no-deps 2>&1 | grep -Ev "^$|'root' user|pip version|consider upgrading|^DEPRECATION:|[notice]"
     return ${PIPESTATUS[0]}
 }
 

@@ -90,6 +90,9 @@ class Main:
 
     @staticmethod
     def _dis(path: Path) -> int:
+        """
+        Disassemble using dis
+        """
         with path.open('rb') as ifile:
             magic = struct.unpack('h', ifile.read(2))[0]
         # Lib/importlib/_bootstrap_external.py
@@ -126,10 +129,13 @@ class Main:
 
     @classmethod
     def _disasm(cls, path: Path) -> int:
+        """
+        Disassemble using xdis
+        """
         task = Batch(cls._pydisasm.get_cmdline() + [path])
         task.run(error2output=True)
         if task.get_exitcode():
-            return cls._dis(path)
+            return cls._dis(path)  # fallback method
 
         print(f"\n# Disassembling: {path}")
         for line in task.get_output():

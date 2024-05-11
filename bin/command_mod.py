@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.6.3'
-VERSION = 20230121
+RELEASE = '2.7.0'
+VERSION = 20240509
 
 
 class Command:
@@ -78,7 +78,7 @@ class Command:
         if directory_path.name == 'bin':
             directory_path = directory_path.parent
             path = cls._search_ports(
-                str(directory_path),
+                directory_path,
                 _platform,
                 program,
                 extensions,
@@ -133,7 +133,7 @@ class Command:
     @classmethod
     def _search_ports(
         cls,
-        directory: str,
+        path: Path,
         _platform: str,
         program: str,
         extensions: List[str],
@@ -141,9 +141,10 @@ class Command:
         paths = []
         for port_glob in _System.get_port_globs(_platform):
             for extension in extensions:
-                paths = list(Path(directory).glob(
-                    f'*/{port_glob}/{program}{extension}'
-                ))
+                paths = (
+                    list(path.glob(f'*/*{port_glob}/{program}{extension}')) +
+                    list(path.glob(f'*{port_glob}/{program}{extension}'))
+                )
                 if _platform.startswith('linux'):
                     paths = cls._check_glibc(paths)
                 if paths:
@@ -151,10 +152,13 @@ class Command:
 
         # Search directories with 4 or more char as fall back for local port
         if not paths:
+            isport = re.compile('-.*_.*-.*_')
             for extension in extensions:
-                paths = list(Path(directory).glob(
-                    f'????*/{program}{extension}'
-                ))
+                paths = [
+                    x
+                    for x in path.glob(f'????*/{program}{extension}')
+                    if not isport.search(str(x))
+                ]
                 if paths:
                     break
         if paths:
@@ -598,7 +602,7 @@ class Platform:
     def get_platform(cls) -> str:
         """
         Return platform
-       (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
+        (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
         """
         return f'{cls.get_system()}-{cls.get_arch()}'
 
@@ -640,13 +644,13 @@ class _System(Platform):
         """
         mapping = {
             'linux-x86_64': ('linux64_*-x86*', 'linux_*-x86*'),
-            'linux-x86': ('linux_*-x86*'),
+            'linux-x86': ('linux_*-x86*',),
             'linux-sparc64': ('linux64_*-sparc64*', 'linux_*-sparc*'),
             'linux-power64': ('linux64_*-power64*', 'linux_*-power*'),
             'macos-x86_64': ('macos64_*-x86*', 'macos_*-x86*'),
-            'macos-x86': ('macos_*-x86*'),
+            'macos-x86': ('macos_*-x86*',),
             'windows-x86_64': ('windows64_*-x86*', 'windows_*-x86*'),
-            'windows-x86': ('windows_*-x86*')
+            'windows-x86': ('windows_*-x86*',)
         }
 
         return mapping.get(_platform, [])

@@ -23,8 +23,9 @@ Darwin)
 
     WRAPPER="#!/usr/bin/env bash
 
-export DYLD_LIBRARY_PATH=\"\$(realpath \"\${0%/*}/../lib\"):\$DYLD_LIBRARY_PATH\"
-export LDFLAGS=\"-L\$(realpath \"\${0%/*}/../lib\")\"
+PYTHON_LIB=\$(realpath \"\${0%/*}/../lib\" | sed -e \"s,bin/[^/]*$,lib,\")
+export DYLD_LIBRARY_PATH=\"\$PYTHON_LIB:\$DYLD_LIBRARY_PATH\"
+export LDFLAGS=\"-L\$PYTHON_LIB\"
 exec \"\${0%/*}\"/python$VERSION \"\$@\""
     ;;
 *)
@@ -37,18 +38,23 @@ exec \"\${0%/*}\"/python$VERSION \"\$@\""
 
     WRAPPER="#!/usr/bin/env bash
 
-export LD_LIBRARY_PATH=\"\$(realpath \"\${0%/*}/../lib\"):\$LD_LIBRARY_PATH\"
-export LDFLAGS=\"-L\$(realpath \"\${0%/*}/../lib\")\"
+PYTHON_LIB=\$(realpath \"\${0%/*}/../lib\" | sed -e \"s,bin/[^/]*$,lib,\")
+export LD_LIBRARY_PATH=\"\$PYTHON_LIB:\$LD_LIBRARY_PATH\"
+export LDFLAGS=\"-L\$PYTHON_LIB\"
 exec \"\${0%/*}\"/python$VERSION \"\$@\""
     ;;
 esac
+# Missing realpath on old operating systems
+realpath --version || WRAPPER=$(echo "$WRAPPER" | sed -e "s/realpath/readlink -e/")
 
 # Fix pip Segmentation fault
 sed -i "s/  double dummy;/  long double dummy;/" Include/objimpl.h
 sed -i "s/#define ALIGNMENT               8/#define ALIGNMENT               16/" Objects/obmalloc.c
 sed -i "s/#define ALIGNMENT_SHIFT         3/#define ALIGNMENT_SHIFT         4/" Objects/obmalloc.c
 
-CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared --with-lto"
+CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
+# Enable link time optimizations (LTO) except old gcc
+[ "$(gcc --version 2>&1 | grep "gcc .* [1-4][.]")" ] || CONFIGURE="$CONFIGURE --with-lto"
 
 $CONFIGURE
 make
