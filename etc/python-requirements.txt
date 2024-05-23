@@ -73,7 +73,7 @@ python-dateutil==2.8.2       #   (required by bson)
 python-slugify==6.1.2        #   (required by cookiecutter)
 PyYAML==6.0.1                # YAML parser/emitter
 pyzstd==0.15.10              # ZSTD compression/decompression
-requests==2.31.0             # Web client
+requests==2.32.2             # Web client
 rich==13.6.0                 #   (required by cookiecutter)
 setuptools==68.2.2           # Python package manager
 six==1.16.0                  # Python 2 and 3 compatibility utilities

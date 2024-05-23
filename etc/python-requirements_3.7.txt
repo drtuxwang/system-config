@@ -13,6 +13,7 @@ platformdirs==2.6.2
 pycodestyle==2.9.1
 pyflakes==2.5.0
 pylint                       # ==2.17.7 (last compatible version)
+requests                     # ==2.31.0 (last compatible version)
 setuptools                   # ==68.0.0 (last compatible version)
 tornado                      # ==6.2 (last compatible version)
 traitlets                    # ==5.9.0 (last compatible version)
