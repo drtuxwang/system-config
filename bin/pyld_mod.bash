@@ -202,7 +202,9 @@ exec_python() {
         PYTHON=$(which $PYLD_EXE)
         if [ ! "$PYTHON" ]
         then
-            echo "***ERROR*** Cannot find required \"${0##*/}\" software." 1>&2
+            LOCATE=$(which "${0##*/}")
+            [ "$LOCATE" ] && exec "$LOCATE" "$@"
+            echo "Error: Cannot locate python for \"${0##*/}\" software." 1>&2
             exit 1
         fi
     fi
@@ -239,7 +241,7 @@ exec_python() {
     fi
     if [ ! "$(which "$PYLD_MAIN")" ]
     then
-        echo "***ERROR*** Cannot find required \"$PYLD_MAIN\" software." 1>&2
+        echo "Error: Cannot find required \"$PYLD_MAIN\" software." 1>&2
     fi
     exec $(which "$PYLD_MAIN") "$@"
 }

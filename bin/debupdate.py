@@ -137,11 +137,14 @@ class Main:
         packages: dict = {}
         disable_deps = re.fullmatch(r'.*_\w+-\w+.json', str(path))
         name = ''
+        arch = ''
         package = Package()
         for line in lines:
             line = line.rstrip('\n')
             if line.startswith('Package: '):
                 name = line.replace('Package: ', '')
+            elif line.startswith('Architecture: '):
+                arch = line.replace('Architecture: ', '', 1)
             elif line.startswith('Version: '):
                 package.version = line.replace('Version: ', '').split(':')[-1]
             elif line.startswith('Depends: '):
@@ -154,7 +157,13 @@ class Main:
                 if name in packages and not package.is_newer(packages[name]):
                     continue
                 package.url = line[10:]
-                packages[name] = package
+                existing_package = packages.get(f'{name}:{arch}')
+                if (
+                    not existing_package or
+                    LooseVersion(existing_package.version) <
+                    LooseVersion(package.version)
+                ):
+                    packages[f'{name}:{arch}'] = package
                 package = Package()
         return packages
 
@@ -201,24 +210,25 @@ class Main:
         except OSError:
             return
 
-    def _check_distro_updates(self, distro: str, path: Path,) -> None:
+    def _read_distro_installed(self, path: Path) -> dict:
+        versions = {}
         try:
             with path.open(errors='replace') as ifile:
-                versions = {}
                 for line in ifile:
-                    if not line.startswith('#'):
-                        try:
-                            name, version = line.split()[:2]
-                        except ValueError as exception:
-                            raise SystemExit(
-                                f'{sys.argv[0]}: Format error in '
-                                f'"{Path(distro, path)}".',
-                            ) from exception
-                        versions[name] = version
+                    file = line.split('#')[0].strip().split()[0]
+                    try:
+                        name, version, arch = file[:-4].split('_')
+                    except IndexError:
+                        continue
+                    versions[f'{name}:{arch}'] = version
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
+        return versions
+
+    def _check_distro_updates(self, distro: str, path: Path,) -> None:
+        versions = self._read_distro_installed(path)
 
         url_path = Path(
             f"{Path(distro).name}{str(path).rsplit('.debs', 1)[-1]}.url"
@@ -242,6 +252,7 @@ class Main:
                             for dependency in sorted(self._depends(
                                 versions,
                                 self._packages[name].depends,
+                                name.split(':')[-1],
                             )):
                                 if dependency in self._packages:
                                     file = self._local(
@@ -257,18 +268,25 @@ class Main:
         if url_path.stat().st_size == 0:
             url_path.unlink()
 
-    def _depends(self, versions: dict, depends: List[str]) -> List[str]:
+    def _depends(
+        self,
+        versions: dict,
+        depends: List[str],
+        arch: str,
+    ) -> List[str]:
         names = []
         if depends:
             for name in depends:
-                if name not in versions:
-                    versions[name] = ''
-                    names.append(name)
-                    if name in self._packages:
-                        names.extend(self._depends(
-                            versions,
-                            self._packages[name].depends,
-                        ))
+                for depend in set([f'{name}:{arch}', f'{name}:all']):
+                    if depend not in versions:
+                        versions[depend] = ''
+                        names.append(depend)
+                        if depend in self._packages:
+                            names.extend(self._depends(
+                                versions,
+                                self._packages[depend].depends,
+                                arch,
+                            ))
         return names
 
     @staticmethod

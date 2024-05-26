@@ -14,8 +14,8 @@ import subprocess
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.4.0'
-VERSION = 20240217
+RELEASE = '2.4.1'
+VERSION = 20240516
 
 
 class Tasks:
@@ -247,7 +247,10 @@ class PosixTasks(Tasks):
             process['PRI'] = line.split()[4]
             process['NICE'] = line.split()[5]
             process['TTY'] = line.split()[6]
-            process['MEMORY'] = int(line.split()[7])
+            try:
+                process['MEMORY'] = int(line.split()[7])
+            except ValueError:
+                continue
             process['CPUTIME'] = line.split()[8]
             process['ETIME'] = line.split()[9]
             process['COMMAND'] = ' '.join(line.split()[10:])

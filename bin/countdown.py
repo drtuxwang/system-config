@@ -121,16 +121,19 @@ class Main:
             except ValueError:
                 if re.match(r'\d\d:\d\d$', answer):
                     now = datetime.datetime.now()
-                    alarm = datetime.datetime(
-                        now.year,
-                        now.month,
-                        now.day,
-                        int(answer[0:2]),
-                        int(answer[3:5]),
-                    )
-                    if alarm < now:
-                        alarm += datetime.timedelta(days=1)
-                    return (alarm - now).seconds
+                    try:
+                        alarm = datetime.datetime(
+                            now.year,
+                            now.month,
+                            now.day,
+                            int(answer[0:2]),
+                            int(answer[3:5]),
+                        )
+                        if alarm < now:
+                            alarm += datetime.timedelta(days=1)
+                        return (alarm - now).seconds
+                    except ValueError:
+                        print("Invalid HH:MM clock time")
 
     def run(self) -> int:
         """

@@ -22,7 +22,7 @@ options() {
         echo "host-umount - Unmount remote host file system"
         echo
         echo "Options:"
-        echo "  -h, --help  Show this help message and exit"
+        echo "  -h, --help  Show this help message and exit."
         echo "  host        Host name."
         echo "  cmdline     Command line and arguments."
         exit $1

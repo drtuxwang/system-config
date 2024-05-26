@@ -166,12 +166,14 @@ class Main:
 
         packages: dict = {}
         name = ''
+        arch = ''
         package = Package()
         for line in lines:
             line = line.rstrip('\n')
             if line.startswith('Package: '):
                 name = line.replace('Package: ', '')
-                name = line.replace('Package: ', '')
+            elif line.startswith('Architecture: '):
+                arch = line.replace('Architecture: ', '', 1)
             elif line.startswith('Version: '):
                 package.version = line.replace('Version: ', '').split(':')[-1]
             elif line.startswith('Depends: '):
@@ -184,7 +186,13 @@ class Main:
                 if name in packages and not package.is_newer(packages[name]):
                     continue
                 package.url = line[10:]
-                packages[name] = package
+                existing_package = packages.get(f'{name}:{arch}')
+                if (
+                    not existing_package or
+                    LooseVersion(existing_package.version) <
+                    LooseVersion(package.version)
+                ):
+                    packages[f'{name}:{arch}'] = package
                 package = Package()
         return packages
 
@@ -218,11 +226,13 @@ class Main:
         try:
             with Path(installed_file).open(errors='replace') as ifile:
                 for line in ifile:
-                    columns = line.split()
-                    name = columns[0]
-                    if not name.startswith('#'):
-                        if name in self._packages:
-                            self._packages[name].installed = True
+                    file = line.split('#')[0].strip().split()[0]
+                    try:
+                        name, _, arch = file[:-4].split('_')
+                    except IndexError:
+                        continue
+                    if f'{name}:{arch}' in self._packages:
+                        self._packages[f'{name}:{arch}'].installed = True
         except OSError:
             return
 
@@ -231,40 +241,53 @@ class Main:
         distro: str,
         ofile: TextIO,
         indent: str,
-        name: str,
+        package_name: str,
     ) -> None:
-        if name in self._packages:
-            self._packages[name].checked = True
-            if self._packages[name].installed:
+        if ':' not in package_name:
+            package_name = (
+                f'{package_name}:{self._arch}'
+                if f'{package_name}:{self._arch}' in self._packages
+                else f'{package_name}:all'
+            )
+
+        if package_name in self._packages:
+            _, arch = package_name.split(':')
+            self._packages[package_name].checked = True
+            if self._packages[package_name].installed:
                 logger.info(
                     "%s%s [Installed]",
                     indent,
-                    self._packages[name].url,
+                    self._packages[package_name].url,
                 )
             else:
                 pool = distro.replace('dist', 'pool')
-                file = self._local(pool, self._packages[name].url)
+                file = self._local(pool, self._packages[package_name].url)
                 logger.warning("%s%s", indent, file)
                 print(f"{indent}{file}", file=ofile)
-            for i in self._packages[name].depends:
-                if i in self._packages:
-                    if self._packages[i].installed:
+
+            for dep in [
+                f'{x}:{arch}'
+                if f'{x}:{arch}' in self._packages else f'{x}:{all}'
+                for x in self._packages[package_name].depends
+            ]:
+                if dep in self._packages:
+                    if self._packages[dep].installed:
                         logger.info(
                             "%s  %s [Installed]",
                             indent,
-                            self._packages[i].url,
+                            self._packages[dep].url,
                         )
                     elif (
-                        not self._packages[i].checked and
-                        not self._packages[name].installed
+                        not self._packages[dep].checked and
+                        not self._packages[package_name].installed
                     ):
                         self._check_package_install(
                             distro,
                             ofile,
                             f"{indent}  ",
-                            i,
+                            dep,
                         )
-                    self._packages[i].checked = True
+                    self._packages[dep].checked = True
 
     def _read_distro_deny_list(self, file: str) -> None:
         try:
@@ -287,14 +310,19 @@ class Main:
         self,
         distro: str,
         list_file: str,
-        names: List[str],
+        packages_names: List[str],
     ) -> None:
         path = Path(f"{Path(distro).name}{list_file.split('.debs')[-1]}.url")
         try:
             with path.open('w') as ofile:
                 indent = ''
-                for i in names:
-                    self._check_package_install(distro, ofile, indent, i)
+                for packages_name in packages_names:
+                    self._check_package_install(
+                        distro,
+                        ofile,
+                        indent,
+                        packages_name,
+                    )
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path}" file.',
@@ -315,20 +343,18 @@ class Main:
         """
         options = Options()
 
-        self._packages = self._read_distro_packages(
-            Path(f'{options.get_distro()}.json.zst')
-        )
-        self._read_distro_pin_packages(
-            Path(f'{options.get_distro()}.debs:select')
-        )
+        distro = options.get_distro()
+        self._packages = self._read_distro_packages(Path(f'{distro}.json.zst'))
+        self._read_distro_pin_packages(Path(f'{distro}.debs:select'))
         self._read_distro_installed(options.get_list_file())
+        self._arch = distro.split('_')[-1]
 
         ispattern = re.compile('[.]debs-?.*$')
         distro = ispattern.sub('', options.get_list_file())
         self._read_distro_deny_list(distro + '.debs:deny')
 
         self._check_distro_install(
-            options.get_distro(),
+            distro,
             options.get_list_file(),
             options.get_package_names()
         )

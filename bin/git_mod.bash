@@ -20,7 +20,7 @@ options() {
         echo "git-reset - Reset Git branch to origin/branch"
         echo
         echo "Options:"
-        echo "  -h, --help  Show this help message and exit"
+        echo "  -h, --help  Show this help message and exit."
         echo "  <directory> Optional git directory."
         exit $1
     }

@@ -23,8 +23,8 @@ options() {
         echo "crypt-umount - Unmmount LUKS encrypted partition"
         echo
         echo "Options:"
-        echo "  -h, --help  Show this help message and exit"
-        echo "  -a          Select all detected crypto_LUKS partitions"
+        echo "  -h, --help  Show this help message and exit."
+        echo "  -a          Select all detected crypto_LUKS partitions."
         echo "  <device>    Select crypto_LUKS partition (ie sdc1)."
         echo "              Default select crypto_LUKS partitions on root drive."
         exit $1

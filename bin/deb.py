@@ -6,6 +6,7 @@ Make a compressed archive in DEB format or query database/files.
 import argparse
 import dataclasses
 import os
+import re
 import signal
 import sys
 from pathlib import Path
@@ -29,12 +30,6 @@ class Options:
         Return sub architecture.
         """
         return self._arch
-
-    def get_arch_sub(self) -> str:
-        """
-        Return sub architecture.
-        """
-        return self._arch_sub
 
     def get_dpkg(self) -> Command:
         """
@@ -135,6 +130,19 @@ class Options:
 
         self._args = parser.parse_args(args)
 
+    @staticmethod
+    def _file2package(packages: List[str]) -> List[str]:
+        """
+        Convert deb file names to packages names
+        """
+        isfile = re.compile('_[^_]*_.*[.]deb')
+        return [
+            f"{x.split('_')[0]}:{x.split('.deb')[0].split('_')[-1]}"
+            if isfile.search(x)
+            else x
+            for x in packages
+        ]
+
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
@@ -152,12 +160,14 @@ class Options:
             )
         self._arch = task.get_output()[0]
 
-        if self._args.mode == 'list':
-            self._arch_sub = self._args.args[0] if self._args.args else ''
-        elif self._args.mode in ('depends', 'nodepends'):
-            self._package_names = self._args.args
+        if self._args.mode in 'depends':
+            self._package_names = self._file2package(self._args.args)
         elif self._args.option:
-            self._dpkg.set_args([self._args.option] + self._args.args)
+            self._dpkg.set_args([self._args.option] + (
+                self._file2package(self._args.args)
+                if self._args.option in ('-s', '-L', '-P')
+                else self._args.args
+            ))
         elif self._args.args and self._args.args[0].endswith('.deb'):
             self._dpkg = Command('dpkg-deb', errors='stop')
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
@@ -166,7 +176,7 @@ class Options:
                 f'{sys.argv[0]}: Invalid Debian package name '
                 f'"{self._args.args[0]}".',
             )
-        else:
+        elif self._args.mode not in ('list', 'nodepends'):
             self._parse_args(['-h'])
             raise SystemExit(1)
 
@@ -176,10 +186,10 @@ class Package:
     """
     Package class
     """
-    version: str
-    size: int
-    depends: List[str]
-    description: str
+    version: str = ''
+    size: int = -1
+    depends: List[str] = dataclasses.field(default_factory=list)
+    description: str = ''
 
     def append_depends(self, name: str) -> None:
         """
@@ -274,43 +284,29 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    @staticmethod
-    def _calc_dependencies(packages: dict, names_all: List[str]) -> None:
-        for name, value in packages.items():
-            if ':' in name:
-                depends = []
-                for depend in value.get_depends():
-                    if depend.split(':')[0] in names_all:
-                        depends.append(depend)
-                    else:
-                        depends.append(f"{depend}:{name.split(':')[-1]}")
-                packages[name].set_depends(depends)
-
     def _read_dpkg_status(self) -> dict:
-        names_all = []
-
         packages = {}
         name = ''
-        package = Package('', -1, [], '')
+        arch = ''
+        package = Package()
         try:
             with Path('/var/lib/dpkg/status').open(errors='replace') as ifile:
                 for line in ifile:
                     line = line.rstrip('\n')
                     if line.startswith('Package: '):
                         name = line.replace('Package: ', '', 1)
+                        arch = ''
                     elif line.startswith('Architecture: '):
                         arch = line.replace('Architecture: ', '', 1)
-                        if arch == 'all':
-                            names_all.append(name)
-                        elif arch != self._options.get_arch():
-                            name += f':{arch}'
                     elif line.startswith('Version: '):
                         package.set_version(
-                            line.replace('Version: ', '', 1).split(':')[-1])
+                            line.replace('Version: ', '', 1).split(':')[-1]
+                        )
                     elif line.startswith('Installed-Size: '):
                         try:
                             package.set_size(
-                                int(line.replace('Installed-Size: ', '', 1)))
+                                int(line.replace('Installed-Size: ', '', 1))
+                            )
                         except ValueError as exception:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Package "{name}" in '
@@ -322,83 +318,90 @@ class Main:
                     elif line.startswith('Description: '):
                         package.set_description(
                             line.replace('Description: ', '', 1))
-                        packages[name] = package
-                        package = Package('', -1, [], '')
+                        packages[f'{name}:{arch}'] = package
+                        package = Package()
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot read "/var/lib/dpkg/status" file.',
             ) from exception
 
-        self._calc_dependencies(packages, names_all)
-
         return packages
 
     def _show_packages_info(self) -> None:
-        for name, package in sorted(self._packages.items()):
-            if self._options.get_arch_sub():
-                if not name.endswith(self._options.get_arch_sub()):
-                    continue
-            elif ':' in name:
-                continue
+        for key, package in sorted(
+            self._packages.items(),
+            key=lambda s: s[0].split(':'),
+        ):
+            name, arch = key.split(':')
+            file = f'{name}_{package.get_version()}_{arch}.deb'
             print(
-                f"{name.split(':')[0]:35s} "
-                f"{package.get_version():15s} "
-                f"{package.get_size():5d}KB "
-                f"{package.get_description()}",
+                f"{file:50s}  # "
+                f"{package.get_size():5d} KB " f"{package.get_description()}",
             )
 
     def _show_dependent_packages(
         self,
-        names: List[str],
+        package_names: List[str],
         checked: List[str] = None,
         ident: str = '',
     ) -> None:
         if not checked:
             checked = []
         keys = sorted(self._packages)
-        for name in names:
-            if name in self._packages:
-                print(f"{ident}{name}")
-                for key in keys:
-                    if name in self._packages[key].get_depends():
-                        if key not in checked:
-                            checked.append(key)
+        for package_name in package_names:
+            if ':' in package_name:
+                name, arch = package_name.split(':')
+            else:
+                name = package_name
+                arch = (
+                    self._arch
+                    if f'{name}:{self._arch}' in self._packages
+                    else 'all'
+                )
+
+            if f'{name}:{arch}' in self._packages:
+                print(f"{ident}{name}:{arch}")
+                for dep in [
+                    x for x in keys if x.endswith((f':{arch}', ':all'))
+                ]:
+                    if name in self._packages[dep].get_depends():
+                        if dep not in checked:
+                            checked.append(dep)
                             self._show_dependent_packages(
-                                [key],
+                                [dep],
                                 checked,
-                                ident + '  '
+                                f'{ident}  '
                             )
 
     def _show_nodependent_packages(self) -> None:
-        keys = sorted(self._packages)
+        all_depends = set()
+        for package in self._packages.values():
+            all_depends.update(set(package.get_depends()))
 
-        for name in keys:
-            package = self._packages.get(name)
-            if package:
-                for key in keys:
-                    if name in self._packages[key].get_depends():
-                        break
-                else:
-                    print(
-                        f"{name.split(':')[0]:35s} "
-                        f"{package.get_version():15s} "
-                        f"{package.get_size():5d}KB "
-                        f"{package.get_description()}",
-                    )
+        for key, package in sorted(self._packages.items()):
+            name, arch = key.split(':')
+            if name in all_depends:
+                continue
+            file = f'{name}_{package.get_version()}_{arch}.deb'
+            print(
+                f"{file:50s}  # "
+                f"{package.get_size():5d} KB {package.get_description()}",
+            )
 
     def run(self) -> int:
         """
         Start program
         """
         self._options = Options()
+        self._arch = self._options.get_arch()
         self._packages = self._read_dpkg_status()
 
         mode = self._options.get_mode()
         if mode == 'list':
             self._show_packages_info()
         elif mode == 'depends':
-            for packagename in self._options.get_package_names():
-                self._show_dependent_packages([packagename], checked=[])
+            for package_name in self._options.get_package_names():
+                self._show_dependent_packages([package_name], checked=[])
         elif mode == 'nodepends':
             self._show_nodependent_packages()
         else:

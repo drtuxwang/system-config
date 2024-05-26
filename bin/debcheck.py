@@ -84,22 +84,24 @@ class Main:
         packages: dict = {}
         for path in paths:
             name = path.name.split('_')[0]
-            file_stat = FileStat(path)
             version = path.name.split('_')[1]
-            if name in packages:
-                if file_stat.get_mtime() > packages[name].time:
-                    print(f"rm {packages[name].file}")
+            arch = path.name.split('_')[-1].split('.')[0]
+            file_stat = FileStat(path)
+            package_name = f'{name}:{arch}'
+            if package_name in packages:
+                if file_stat.get_mtime() > packages[package_name].time:
+                    print(f"rm {packages[package_name].file}")
                     print(f"#  {path}")
-                    packages[name] = Package(
+                    packages[f'{name}:{arch}'] = Package(
                         str(path),
                         file_stat.get_mtime(),
                         version
                     )
                 else:
                     print(f"rm {path}")
-                    print(f"#  {packages[name].file}")
+                    print(f"#  {packages[package_name].file}")
             else:
-                packages[name] = Package(
+                packages[f'{name}:{arch}'] = Package(
                     str(path),
                     file_stat.get_mtime(),
                     version,
@@ -114,15 +116,13 @@ class Main:
             path = Path(f'{distribution}.debs')
             with path.open(errors='replace') as ifile:
                 for line in ifile:
+                    file = line.split('#')[0].strip().split()[0]
                     try:
-                        name, version = line.split()[:2]
-                    except ValueError as exception:
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot read corrupt '
-                            f'"{path}" package ".debs" list file.',
-                        ) from exception
-                    packages[name] = Package(
-                        f'{pool}/{name}_{version}_*.deb',
+                        name, version, arch = file[:-4].split('_')
+                    except IndexError:
+                        continue
+                    packages[f'{name}:{arch}'] = Package(
+                        f'{pool}/{name}_{version}_{arch}.deb',
                         -1,
                         version,
                     )
@@ -133,18 +133,16 @@ class Main:
             path = Path(f'{distribution}.debs:base')
             with path.open(errors='replace') as ifile:
                 for line in ifile:
+                    file = line.split('#')[0].strip().split()[0]
                     try:
-                        name, version = line.split()[:2]
-                    except ValueError as exception:
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot read corrupt '
-                            f'"{path}" package ".debs" list file.',
-                        ) from exception
-                    if name in packages:
-                        if packages[name].file == str(
-                            Path(pool, f'{name}_{version}_*.deb')
+                        name, version, arch = file[:-4].split('_')
+                    except IndexError:
+                        continue
+                    if f'{name}:{arch}' in packages:
+                        if packages[f'{name}:{arch}'].file == str(
+                            Path(pool, f'{name}_{version}_{arch}.deb')
                         ):
-                            del packages[name]
+                            del packages[f'{name}:{arch}']
         except OSError:
             pass
         return packages
@@ -177,9 +175,10 @@ class Main:
 
         for name in names_files:
             if name not in names_used:
-                if (name in names_allow_list and
-                        packages_allow[name] in
-                        ('*', packages_files[name])):
+                if (
+                    name in names_allow_list and
+                    packages_allow[name] in ('*', packages_files[name])
+                ):
                     continue
                 print("rm", packages_files[name].file, "# Unused")
             elif packages_files[name].version != packages_used[name].version:

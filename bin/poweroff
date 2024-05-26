@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+/sbin/poweroff &
+sleep 8
+
+# Sync all mounted filesystems
+echo s > /proc/sysrq-trigger 2> /dev/null
+sleep 1
+
+# Unmount filesystems and remount in read-only mode
+echo u > /proc/sysrq-trigger 2> /dev/null
+sleep 0.25
+
+# Power off the system
+echo o > /proc/sysrq-trigger 2> /dev/null

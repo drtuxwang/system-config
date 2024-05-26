@@ -29,7 +29,7 @@ options() {
         echo "qemu-compress - Compress QEMU drive image"
         echo
         echo "Options:"
-        echo "  -h, --help  Show this help message and exit"
+        echo "  -h, --help  Show this help message and exit."
         echo "  -a          Select all mounted drive image file."
         echo "  <device>    Select drive image file (ie file.qcow2)."
         exit $1
@@ -184,11 +184,11 @@ compress_image() {
         IMAGE=${1##*/}
         echo "qemu-img convert -f qcow2 \"$1\" -O qcow2 -c -o compression_type=zstd \"$IMAGE.part\""
         qemu-img convert -f qcow2 "$1" -O qcow2 -c -o compression_type=zstd "$IMAGE.part"
-        [ $? = 0 ] || continue
+        [ $? = 0 ] || return 1
         if [ -f "$IMAGE" ]
         then
             echo "mv \"$1\" \"$1-orig\""
-            mv "$1" "$1-orig" || continue
+            mv "$1" "$1-orig" || return 1
         fi
         echo "mv \"$IMAGE.part\" \"$IMAGE\""
         mv "$IMAGE.part" "$IMAGE"

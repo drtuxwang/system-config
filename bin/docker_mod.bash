@@ -26,7 +26,7 @@ options() {
         echo "docker-prune    - Run prune to remove unused Docker data"
         echo
         echo "Options:"
-        echo "  -h, --help  Show this help message and exit"
+        echo "  -h, --help  Show this help message and exit."
         echo "  <pattern>   Regular expression pattern for docker-images."
         echo "  <tar-file>  Image tar file for docker-load."
         echo "  <image>     Image name for docker-save and docker-save-new."

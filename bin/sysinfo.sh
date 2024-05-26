@@ -4,8 +4,8 @@
 #
 # 1996-2023 By Dr Colin Kong
 #
-VERSION=20240405
-RELEASE="2.6.48-2"
+VERSION=20240524
+RELEASE="2.6.49"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -493,54 +493,59 @@ detect() {
     Linux)
         MYOSTYPE="linux"
         MYOSNAME=
-        for FILE in `ls -1 /etc/*release 2> /dev/null | egrep -v "/etc/(lsb|os)-release"`
-        do
-            MYOSNAME="$MYOSNAME
-`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/ Linux / /\" -e \"s/release //\" -e \"s/[(].*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
-        done
-        MYOSNAME=`echo "$MYOSNAME" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
-        if [ ! "$MYOSNAME" ]
+        if [ "`dpkg --list 2> /dev/null | grep \"ii  mepis-auto\"`" ]
         then
-            if [ "`dpkg --list 2> /dev/null | grep \"ii  mepis-auto\"`" ]
+            MYOSNAME="MEPIS "`dpkg --list | grep "ii  mepis-auto" | head -1 | awk '{print $3}'`
+        elif [ "`grep \"^DISTRIB_DESCRIPTION=\" /etc/lsb-release 2> /dev/null`" ]
+        then
+            MYOSNAME=`grep "^DISTRIB_DESCRIPTION=" /etc/lsb-release | cut -f2 -d"=" | sed -e "s/\"//g"`
+        elif [ "`egrep \"^DISTRIB_ID=|^DISTRIB_RELEASE=\" /etc/lsb-release 2> /dev/null | wc -l | awk '{print $1}'`" = 2 ]
+        then
+            MYOSNAME="`grep \"^DISTRIB_ID=\" /etc/lsb-release | cut -f2 -d\"=\"` `grep \"^DISTRIB_RELEASE=\" /etc/lsb-release | cut -f2 -d\"=\"`"
+        elif [ -f /etc/kanotix-version ]
+        then
+            MYOSNAME="Kanotix `awk '{print $2}' /etc/kanotix-version`"
+        elif [ -f /etc/knoppix-version ]
+        then
+            MYOSNAME="Knoppix `awk '{print $1}' /etc/knoppix-version`"
+        elif [ -f /etc/DISTRO_SPECS ]
+        then
+            MYOSNAME="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/\'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
+        elif [ -f /etc/alpine-release ]
+        then
+            MYOSNAME="Alpine `cat /etc/alpine-release`"
+        elif [ "`dpkg --list 2> /dev/null | grep \"ii  knoppix\"`" ]
+        then
+            MYOSNAME="Knoppix "`dpkg --list | grep "ii  knoppix-g" | awk '{print $3}' | sed -e "s/-.*//"`
+        elif [ "`dpkg --list 2> /dev/null | grep \"ii  kernel.*MEPIS\"`" ]
+        then
+            MYOSNAME="MEPIS "`dpkg --list | grep "ii  kernel.*MEPIS" | head -1 | awk '{print $3}' | sed -e "s/MEPIS.//"`
+        elif [ -f "/etc/debian_version" ]
+        then
+            MYOSNAME="Debian `cat /etc/debian_version`"
+            MYOSPATCH=`stat /var/lib/dpkg/info 2> /dev/null | awk '/Modify/ {print $2}'`
+        elif [ "`dpkg --list 2> /dev/null`" ]
+        then
+            MYOSNAME="Debian "`dpkg --list | grep "ii  base-files" | awk '{print $3}'`
+        elif [ "`grep "^PRETTY_NAME=" /etc/os-release 2> /dev/null`" ]
+        then
+            MYOSNAME=`grep "^PRETTY_NAME=" /etc/os-release | cut -f2 -d'"' | sed -e "s/ *[(].*//"`
+        elif [ -f "/usr/share/clear/version" ]
+        then
+             MYOSNAME="Clear Linux `cat /usr/share/clear/version`"
+        elif [ -f "/usr/share/clear/version" ]
+        then
+             MYOSNAME="Clear Linux `cat /usr/share/clear/version`"
+        else
+            for FILE in `ls -1 /etc/*release 2> /dev/null | egrep -v "/etc/(lsb|os)-release"`
+            do
+                MYOSNAME="$MYOSNAME
+`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/ Linux / /\" -e \"s/release //\" -e \"s/[(].*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
+            done
+            MYOSNAME=`echo "$MYOSNAME" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
+            if [ ! "$MYOSNAME" ]
             then
-                MYOSNAME="MEPIS "`dpkg --list | grep "ii  mepis-auto" | head -1 | awk '{print $3}'`
-            elif [ "`grep \"^DISTRIB_DESCRIPTION=\" /etc/lsb-release 2> /dev/null`" ]
-            then
-                MYOSNAME=`grep "^DISTRIB_DESCRIPTION=" /etc/lsb-release | cut -f2 -d"=" | sed -e "s/\"//g"`
-            elif [ "`egrep \"^DISTRIB_ID=|^DISTRIB_RELEASE=\" /etc/lsb-release 2> /dev/null | wc -l | awk '{print $1}'`" = 2 ]
-            then
-                MYOSNAME="`grep \"^DISTRIB_ID=\" /etc/lsb-release | cut -f2 -d\"=\"` `grep \"^DISTRIB_RELEASE=\" /etc/lsb-release | cut -f2 -d\"=\"`"
-            elif [ -f /etc/kanotix-version ]
-            then
-                MYOSNAME="Kanotix `awk '{print $2}' /etc/kanotix-version`"
-            elif [ -f /etc/knoppix-version ]
-            then
-                MYOSNAME="Knoppix `awk '{print $1}' /etc/knoppix-version`"
-            elif [ -f /etc/DISTRO_SPECS ]
-            then
-                MYOSNAME="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/\'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
-            elif [ -f /etc/alpine-release ]
-            then
-                MYOSNAME="Alpine `cat /etc/alpine-release`"
-            elif [ "`dpkg --list 2> /dev/null | grep \"ii  knoppix\"`" ]
-            then
-                MYOSNAME="Knoppix "`dpkg --list | grep "ii  knoppix-g" | awk '{print $3}' | sed -e "s/-.*//"`
-            elif [ "`dpkg --list 2> /dev/null | grep \"ii  kernel.*MEPIS\"`" ]
-            then
-                MYOSNAME="MEPIS "`dpkg --list | grep "ii  kernel.*MEPIS" | head -1 | awk '{print $3}' | sed -e "s/MEPIS.//"`
-            elif [ -f "/etc/debian_version" ]
-            then
-                MYOSNAME="Debian `cat /etc/debian_version`"
-                MYOSPATCH=`stat /var/lib/dpkg/info 2> /dev/null | awk '/Modify/ {print $2}'`
-            elif [ "`dpkg --list 2> /dev/null`" ]
-            then
-                MYOSNAME="Debian "`dpkg --list | grep "ii  base-files" | awk '{print $3}'`
-            elif [ "`grep "^PRETTY_NAME=" /etc/os-release 2> /dev/null`" ]
-            then
-                MYOSNAME=`grep "^PRETTY_NAME=" /etc/os-release | cut -f2 -d'"' | sed -e "s/ *[(].*//"`
-            elif [ -f "/usr/share/clear/version" ]
-            then
-                MYOSNAME="Clear Linux `cat /usr/share/clear/version`"
+                MYOSNAME=Unknown
             fi
         fi
         MYOSKERNEL="`uname -r` (`uname -v | sed -e 's/ (.*)//g'`)"
