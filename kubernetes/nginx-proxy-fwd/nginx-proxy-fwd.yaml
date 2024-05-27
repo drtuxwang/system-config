@@ -16,7 +16,7 @@ spec:
         app: nginx-proxy-fwd
     spec:
       containers:
-      - image: drtuxwang/nginx:stable
+      - image: drtuxwang/nginx-proxy:stable
         imagePullPolicy: IfNotPresent
         name: nginx
         ports:

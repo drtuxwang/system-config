@@ -1,8 +1,7 @@
-BASE_IMAGE := drtuxwang/debian-dev:12-slim
-IMAGE := drtuxwang/debian-xfce:12-slim
-NAME := debian12-xfce
-HOSTNAME := debian12-xfce
-LOCALPORT ?= 2222
+BASE_IMAGE := drtuxwang/python:3.11-slim-bookworm
+IMAGE := drtuxwang/python-pip:3.11-slim-bookworm
+NAME := python311-pip
+HOSTNAME := python311-pip
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
@@ -15,12 +14,8 @@ DOCKER_RUN := docker run \
 	--cpu-shares=50000 \
 	--memory=2000m \
 	--memory-reservation=50m \
-	--publish $(LOCALPORT):22 \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
-	--env="DISPLAY" \
-	--volume="/tmp/.X11-unix:/tmp/.X11-unix" \
-	--volume="$(HOME)/.Xauthority:/root/.Xauthority:rw"
+	--hostname $(NAME)
 
 
 .PHONY: default
@@ -33,7 +28,7 @@ status:               # Status of Docker images
 .PHONY: build
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.bash init sudo tmux xfce
+	../../bin/create-rootfs.bash bash bin python3 vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
@@ -51,13 +46,21 @@ pull-stable:          # Pull stable Docker image
 .PHONY: run
 run:                  # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	xhost +SI:localuser:root
 	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+
+.PHONY: test
+test:                 # Run tests
+	docker run \
+		--rm \
+		--volume=$(shell realpath ../../..):/vol/app:ro \
+		--workdir=/vol/app \
+		$(IMAGE) \
+		make test
 
 .PHONY: version
 version:              # Check versions
-	@docker run --rm --entrypoint dpkg $(IMAGE) -s xfce4 | \
-		awk '/^Version: / {printf("'$(shell pwd)': Xfce %s\n", $$2)}'
+	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
+		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi
 rmi:                  # Remove Docker images

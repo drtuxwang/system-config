@@ -1,8 +1,7 @@
-BASE_IMAGE := drtuxwang/debian-dev:12-slim
-IMAGE := drtuxwang/debian-xfce:12-slim
-NAME := debian12-xfce
-HOSTNAME := debian12-xfce
-LOCALPORT ?= 2222
+BASE_IMAGE := debian:12-slim
+IMAGE := drtuxwang/debian-wine:12-slim
+NAME := debian12-wine
+HOSTNAME := debian12-wine
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
@@ -33,20 +32,7 @@ status:               # Status of Docker images
 .PHONY: build
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.bash init sudo tmux xfce
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf rootfs
-
-.PHONY: push-stable
-push-stable:          # Tag and push stable Docker images
-	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
-	docker push ${IMAGE}
-	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
-
-.PHONY: pull-stable
-pull-stable:          # Pull stable Docker image
-	docker pull ${IMAGE}
-	docker pull `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 
 .PHONY: run
 run:                  # Run Docker container

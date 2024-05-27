@@ -94,8 +94,8 @@ pipeline {
                                     cd system-config
                                     make --no-print-directory -C docker/python-${python_version} build
                                     make --no-print-directory -C docker/python-${python_version} version
-                                    make --no-print-directory -C docker/python-${python_version}/full build
-                                    make --no-print-directory -C docker/python-${python_version}/full version
+                                    make --no-print-directory -C docker/python-${python_version}/pip build
+                                    make --no-print-directory -C docker/python-${python_version}/pip version
                                 """
                             }
                         }
@@ -105,7 +105,7 @@ pipeline {
                             }
                             agent {
                                 docker {
-                                    image "${params.DOCKER_REG}/drtuxwang/python-full:${python_version}"
+                                    image "${params.DOCKER_REG}/drtuxwang/python-pip:${python_version}"
                                     reuseNode true
                                     alwaysPull false
                                     args "--entrypoint="

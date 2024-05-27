@@ -2,6 +2,8 @@ ARG BASE_IMAGE=python:latest
 
 FROM ${BASE_IMAGE}
 
+COPY rootfs/ /
 
-RUN apt-get update && \
-    apt-get clean
+# Configure start
+ENV HOME=/root
+WORKDIR /root

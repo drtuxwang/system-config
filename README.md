@@ -109,10 +109,10 @@ the years.
  * etc/setbin.ps1                  Windows Power shell initialization
  * kubernetes/Makefile
  * kubernetes/bin/
- * kubernetes/monitor-host/        Kubernetes: host monitoring (drtuxwang/debian-bash:stable)
+ * kubernetes/monitor-host/        Kubernetes: host monitoring (drtuxwang/debian-ops:stable)
  * kubernetes/nginx-proxy-fwd/     NGINX http/https proxy forwarding example
- * kubernetes/test-box/            Kubernetes: Test Box (drtuxwang/debian-bash:stable)
- * kubernetes/test-server/         Kubernetes: examples (drtuxwang/debian-bash:stable)
+ * kubernetes/test-box/            Kubernetes: Test Box (drtuxwang/debian-ops:stable)
+ * kubernetes/test-server/         Kubernetes: examples (drtuxwang/debian-ops:stable)
  * kubernetes/socat-fwd/           SOCAT forwarding example
  * kubernetes/test-cronjob/        Kubernetes: cronjob example (drtuxwang/busybox-bash:stable)
  * kubernetes/test-storage/        Kubernetes: Persistent Volume example
@@ -131,8 +131,8 @@ the years.
  * helm/prometheus/                Helm Chart: prometheus-community/prometheus 25.8.2 (app-2.37.8)
  * helm/pushgateway/               Helm Chart: prometheus-community/prometheus-pushgateway 2.4.2 (app-1.3.1)
  * helm/rabbitmq/                  Helm Chart: bitnami/rabbitmq 12.6.3 (app-3.10.25)
- * helm/test-box/                  Helm Chart: drtuxwang/test-box (drtuxwang/debian-bash:stable)
- * helm/test-server/               Helm Chart: drtuxwang/test-server (drtuxwang/debian-bash:stable)
+ * helm/test-box/                  Helm Chart: drtuxwang/test-box (drtuxwang/debian-ops:stable)
+ * helm/test-server/               Helm Chart: drtuxwang/test-server (drtuxwang/debian-ops:stable)
  * helm/xfce-server/               Helm Chart: drtuxwang/xfce-server (drtuxwang/debian-xfce:stable)
  * python/simple-cython/           Simple Cython example
  * python/simple-flask/            Simple Flask demo

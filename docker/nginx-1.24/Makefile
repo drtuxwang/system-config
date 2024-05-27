@@ -1,7 +1,7 @@
 BASE_IMAGE := nginx:1.24.0-bullseye
-IMAGE := drtuxwang/nginx:1.24.0-bullseye
-NAME := nginx-proxy
-HOSTNAME := nginx-proxy
+IMAGE := drtuxwang/nginx-proxy:1.24.0-bullseye
+NAME := nginx124-proxy
+HOSTNAME := nginx124-proxy
 LOCALPORT ?= 8080
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
@@ -24,9 +24,9 @@ DOCKER_RUN := docker run \
 default: build status # Default
 
 .PHONY: status
-status:               # Status of Docker image
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | \
-		grep -E "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
+status:               # Status of Docker images
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(BASE_IMAGE) " ||:
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGE) " ||:
 
 .PHONY: pull
 pull:                 # Pull Docker base image
@@ -34,7 +34,7 @@ pull:                 # Pull Docker base image
 	@make --no-print-directory status
 
 .PHONY: pull-save
-pull-save:            # Pull updated Docker images and save to tar archives
+pull-save:            # Pull updated Docker base image and save to tar archive
 	../bin/pull-save.bash $(BASE_IMAGE)
 
 .PHONY: save
@@ -42,14 +42,14 @@ save: pull            # Pull Docker base image and save to tar archive
 	../../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
-build:                # Build Docker images
+build:                # Build Docker image
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash bash2ash bin-sysinfo
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: push-stable
-push-stable:          # Tag and push stable Docker images
+push-stable:          # Tag and push stable Docker image
 	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 	docker push ${IMAGE}
 	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
@@ -65,16 +65,16 @@ run:                  # Run Docker container
 	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:              # Check versions
+version:              # Check version
 	@$(DOCKER_RUN) $(IMAGE) -v 2>&1 | grep "^nginx version:" | \
 		sed -e "s@.*/@$(shell pwd): Nginx @"
 
 .PHONY: rmi
-rmi:                  # Remove Docker images
+rmi:                  # Remove Docker image
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi         # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker image including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help

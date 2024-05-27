@@ -13,19 +13,10 @@ RUN yum install -y epel-release && \
         openssh-clients \
         pciutils \
         procps \
-        python38 \
         socat \
         traceroute \
         vim \
         wget && \
-    rpm -e --nodeps \
-        platform-python-setuptools \
-        python3-pip-wheel \
-        python3-setuptools-wheel \
-        python38-pip \
-        python38-pip-wheel \
-        python38-setuptools \
-        python38-setuptools-wheel && \
     yum clean all && \
     rm -rf /var/cache/yum && \
     rm -rf \
@@ -36,3 +27,34 @@ RUN yum install -y epel-release && \
         /root/.pki \
         /root/.tcshrc \
         /root/anaconda-ks.cfg
+
+# Install compiler & dev packages
+RUN yum install -y \
+        automake \
+        bison \
+        gcc-c++ \
+        gcc-gfortran \
+        make \
+        pkg-config \
+        bzip2-devel \
+        gdbm-devel \
+        libcurl-devel \
+        libdb-devel \
+        libevent-devel \
+        libffi-devel \
+        libsqlite3x-devel \
+        libuuid-devel \
+        ncurses-devel \
+        openssl-devel \
+        readline-devel \
+        xz-devel \
+        zlib-devel && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+COPY rootfs/ /
+
+# Configure start
+ENV HOME=/root
+WORKDIR /root
+CMD bash -l

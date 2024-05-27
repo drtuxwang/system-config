@@ -4,7 +4,7 @@ FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN apk update && \
-    apk add bash openssh-client python3 vim
+    apk add bash openssh-client vim
 
 COPY rootfs/ /
 

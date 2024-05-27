@@ -1,21 +1,30 @@
 BASE_IMAGE := oraclelinux:9-slim
-IMAGE := drtuxwang/oraclelinux:9-slim
-
+IMAGE := drtuxwang/oraclelinux-dev:9-slim
+NAME := oraclelinux9-dev
+HOSTNAME := oraclelinux9-dev
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
 endif
-
-BUILD_DIRS := bash dev
+DOCKER_RUN := docker run \
+	--rm \
+	--interactive \
+	--tty \
+	--cpu-quota=1000000 \
+	--cpu-shares=50000 \
+	--memory=2000m \
+	--memory-reservation=50m \
+	--name $(NAME) \
+	--hostname $(HOSTNAME)
 
 
 .PHONY: default
 default: build status # Default
 
 .PHONY: status
-status:               # Status of Docker image
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | \
-		grep -E "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
+status:               # Status of Docker images
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(BASE_IMAGE) " ||:
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGE) " ||:
 
 .PHONY: pull
 pull:                 # Pull Docker base image
@@ -23,40 +32,35 @@ pull:                 # Pull Docker base image
 	@make --no-print-directory status
 
 .PHONY: pull-save
-pull-save:            # Pull updated Docker images and save to tar archives
+pull-save:            # Pull updated Docker base image and save to tar archive
 	../bin/pull-save.bash $(BASE_IMAGE)
 
 .PHONY: save
 save: pull            # Pull Docker base image and save to tar archive
-	../../bin/docker-save $(BASE_IMAGE)
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
-build:                # Build Docker images
+build:                # Build Docker image
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	../bin/create-rootfs.bash bash bin python3 vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR build || exit 1; \
-	done
+	rm -rf rootfs
 
 .PHONY: run
 run:                  # Run Docker container
-	make --no-print-directory --directory bash run
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:              # Check versions
-	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR version ||:; \
-	done
+version:              # Check version
+	@docker run --rm $(IMAGE) /opt/software/bin/sysinfo -s | grep "OS Name:" | sed -e "s@.*: *@$(shell pwd): @"
 
 .PHONY: rmi
-rmi:                  # Remove Docker images
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR rmi; \
-	done
+rmi:                  # Remove Docker image
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi         # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker image including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help

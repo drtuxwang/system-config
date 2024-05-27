@@ -22,7 +22,7 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: drtuxwang/debian-bash:stable
+        image: drtuxwang/debian-ops:stable
         imagePullPolicy: IfNotPresent
         name: box
         resources:

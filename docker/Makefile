@@ -10,6 +10,7 @@ BUILD_DIRS := \
 	debian-11 \
 	i386-debian-11 \
 	debian-10 \
+	ubuntu-24.04 \
 	ubuntu-22.04 \
 	ubuntu-20.04 \
 	ubuntu-18.04 \
@@ -28,13 +29,10 @@ BUILD_DIRS := \
 	registry-2.6 \
 	scratch
 STABLE_DIRS := \
-	debian-12/bash \
-	debian-12/dev \
-	debian-12/docker \
+	debian-12/ops \
 	debian-12/xfce \
 	nginx-1.24 \
-	python-3.11/dev \
-	python-3.11/full \
+	python-3.11/pip \
 	scratch
 TEST_DIRS := \
 	python-3.11

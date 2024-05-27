@@ -20,7 +20,7 @@ spec:
         - socat
         - TCP-LISTEN:8080,fork,reuseaddr
         - TCP:www.bbc.co.uk:80
-        image: drtuxwang/debian-bash:stable
+        image: drtuxwang/debian-ops:stable
         imagePullPolicy: IfNotPresent
         name: socat
         ports:

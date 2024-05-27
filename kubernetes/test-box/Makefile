@@ -31,7 +31,7 @@ create:               # Create workload
 .PHONY: run
 run:                  # Run interactive pod
 	@echo "\n*** Running interactive pod ***"
-	kubectl --namespace=$(NAMESPACE) run -it --rm --restart='Never' --image drtuxwang/debian-bash $(NAME)
+	kubectl --namespace=$(NAMESPACE) run -it --rm --restart='Never' --image drtuxwang/debian-ops $(NAME)
 
 .PHONY: delete
 delete:               # Delete workload

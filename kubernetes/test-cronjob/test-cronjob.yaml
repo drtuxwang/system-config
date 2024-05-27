@@ -15,7 +15,7 @@ spec:
         spec:
           containers:
           - name: batch
-            image: drtuxwang/debian-bash:stable
+            image: drtuxwang/debian-ops:stable
             imagePullPolicy: IfNotPresent
             resources:
               limits:

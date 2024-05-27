@@ -5,7 +5,7 @@ app:
 image:
   pullPolicy: IfNotPresent
   registry: docker.io
-  repository: drtuxwang/debian-bash
+  repository: drtuxwang/debian-ops
   tag: stable
 
 resources: {}

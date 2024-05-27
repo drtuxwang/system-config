@@ -1,7 +1,7 @@
 BASE_IMAGE := scratch
-IMAGE := drtuxwang/scratch:latest
-NAME := scratch-bash
-HOSTNAME := scratch-bash
+IMAGE := drtuxwang/scratch:stable
+NAME := scratch
+HOSTNAME := scratch
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD= := docker build
@@ -27,31 +27,29 @@ DOCKER_RUN := docker run \
 default: build status # Default
 
 .PHONY: status
-status:               # Status of Docker image
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | \
-		grep -E "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
+status:               # Status of Docker images
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(BASE_IMAGE) " ||:
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGE) " ||:
 
 .PHONY: pull
 pull:                 # Pull Docker base image
 
 .PHONY: pull-save
-pull-save:            # Pull updated Docker images and save to tar archives
+pull-save:            # Pull updated Docker base image and save to tar archive
 
 .PHONY: save
 save: pull            # Pull Docker base image and save to tar archive
 
 .PHONY: build
-build:                # Build Docker images
+build:                # Build Docker image
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash tmux vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: push-stable
-push-stable:          # Tag and push stable Docker images
-	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+push-stable:          # Push stable Docker image
 	docker push ${IMAGE}
-	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 
 .PHONY: pull-stable
 pull-stable:          # Pull stable Docker image
@@ -64,15 +62,15 @@ run:                  # Run Docker container
 	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:              # Check versions
+version:              # Check version
 	@echo "$(shell pwd): scratch"
 
 .PHONY: rmi
-rmi:                  # Remove Docker images
+rmi:                  # Remove Docker image
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi         # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker image including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
