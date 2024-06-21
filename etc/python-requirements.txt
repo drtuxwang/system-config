@@ -1,12 +1,12 @@
 arrow==1.2.3                 #   (required by jinja2-time)
-astroid==3.1.0               #   (required by pylint)
+astroid==3.2.2               #   (required by pylint)
 asttokens==2.3.0             #   (required by stack-data)
 backcall==0.2.0              #   (required by ipython)
 bcrypt==3.2.2                #   (required by paramiko)
 beautifulsoup4==4.11.2       # HTML/XML parser/emitter
 binaryornot==0.4.4           #   (required by cookiecutter)
 bson==0.5.10                 # BSON parser/emitter
-certifi==2024.2.2            #   (required by requests)
+certifi==2024.6.2            #   (required by requests)
 cffi==1.15.1                 #   (required by cryptography)
 chardet==5.1.0               #   (required by binaryornot)
 charset-normalizer==3.2.0    #   (required by requests)
@@ -22,7 +22,7 @@ distlib==0.3.8               #   (required by humpty/virtualenv)
 dnspython==2.6.1             # DNS client
 EditorConfig==0.12.4         #   (required by jsbeautifier)
 executing==1.2.0             #   (required by stack-data)
-filelock==3.12.4             #   (required by virtualenv)
+filelock==3.13.4             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 flake8==6.1.0                # Python modular source code checker
 gitdb==4.0.11                #   (required by GitPython)
@@ -31,7 +31,7 @@ gTTS==2.5.1                  # Google Text-to-Speech
 humpty==0.2.1                # Convert whl to egg
 idna==3.7                    #   (required by requests)
 ipdb==0.13.13                # Interactive Python debugger
-ipython==8.22.2              #   (required by ipdb)
+ipython==8.24.0              #   (required by ipdb)
 isort==5.12.0                #   (required by pylint)
 jedi==0.18.2                 #   (required by ipython)
 jinja2-cli==0.8.2            # Jinja2 commandline
@@ -51,21 +51,22 @@ motor==3.3.2                 # Mongo async client
 mypy==1.9.0                  # Python type checker
 mypy-extensions==1.0.0       #   (required by mypy)
 ntplib==0.4.0                # NTP client
+packaging==23.2              #   (required by pipdeptree)
 paramiko==3.4.0              # SSH client
 parso==0.8.3                 #   (required by jedi)
 pexpect==4.8.0               #   (required by ipython)
 pickleshare==0.7.5           #   (required by ipython)
 pip==23.3.2                  # Python package manager
-pipdeptree==2.15.1           # Python package dependency tree
+pipdeptree==2.22.0           # Python package dependency tree
 platformdirs==3.11.0         #   (required by pylint/virtualenv)
-prompt-toolkit==3.0.43       #   (required by ipython)
+prompt-toolkit==3.0.46       #   (required by ipython)
 ptyprocess==0.6.0            #   (required by pexpect)
 pure-eval==0.2.2             #   (required by stack-data)
 pycodestyle==2.11.1          # Python style guide checker
 pycparser==2.21              #   (required by cffi)
 pyflakes==3.1.0              #   (required by flake8)
-Pygments==2.16.1             #   (required by ipython)
-pylint==3.1.0                # Python code static checker
+Pygments==2.17.2             #   (required by ipython)
+pylint==3.2.3                # Python code static checker
 pymongo==4.6.3               # MongoDB client
 PyNaCl==1.5.0                #   (required by paramiko)
 pyOpenSSL==23.3.0            # OpenSSL interface
@@ -75,7 +76,7 @@ PyYAML==6.0.1                # YAML parser/emitter
 pyzstd==0.15.10              # ZSTD compression/decompression
 requests==2.32.2             # Web client
 rich==13.6.0                 #   (required by cookiecutter)
-setuptools==68.2.2           # Python package manager
+setuptools==69.5.1           # Python package manager
 six==1.16.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.1                 #   (required by gitdb)
 soupsieve==2.4.1             #   (required by beautifulsoup4)
@@ -85,9 +86,9 @@ tomli==2.0.1                 #   (required by mypy)
 tomlkit==0.11.8              #   (required by pylint)
 tornado==6.4.1               # Web server framework
 traitlets==5.13.0            #   (required by ipython)
-typing-extensions==4.10.0    #   (required by mypy)
-urllib3==1.26.18             #   (required by requests)
-virtualenv==20.24.7          # Python Virtual Environments
+typing-extensions==4.12.2    #   (required by mypy)
+urllib3==2.2.2               #   (required by requests)
+virtualenv==20.25.3          # Python Virtual Environments
 wcwidth==0.2.13              #   (required by prompt-toolkit)
 wheel==0.42.0                # Python wheel packaging
 wrapt==1.15.0                #   (required by astroid)

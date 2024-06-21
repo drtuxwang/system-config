@@ -29,6 +29,7 @@ matplotlib-inline==None
 mccabe==0.6.1
 motor                        # ==2.5.1 (last compatible version)
 mypy==None
+packaging==None
 parso==None
 pip                          # ==20.2.4 (last compatible version)
 pipdeptree                   # ==2.2.1 (last compatible version)
@@ -54,6 +55,7 @@ tornado                      # ==6.1 (last compatible version)
 traitlets==None
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.6)
 typing-extensions            # ==4.1.1 (last compatible version)
+urllib3==1.26.18
 virtualenv                   # ==20.17.1 (last compatible version)
 wheel                        # ==0.37.1 (last compatible version)
 zipp==3.6.0                  #   (required by importlib-metadata for 3.7)

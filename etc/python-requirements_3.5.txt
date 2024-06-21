@@ -38,7 +38,7 @@ mccabe                       # ==0.6.1 (last compatible version)
 mdurl==None
 motor                        # ==2.5.1 (last compatible version)
 mypy==None
-packaging                    # ==20.9 (last compatible version)
+packaging==None
 paramiko                     # ==2.12.0 (last compatible version)
 parso==None
 pip                          # ==20.2.4 (last compatible version)
