@@ -20,6 +20,6 @@ tornado                      # ==6.2 (last compatible version)
 traitlets                    # ==5.9.0 (last compatible version)
 typing-extensions==4.4.0
 typed-ast                    # ==1.5.4 (last compatible version)
-urllib3==1.26.18
+urllib3==1.26.19
 virtualenv==20.15.1
 zipp==3.14.0                 #   (required by importlib-metadata for 3.7)
