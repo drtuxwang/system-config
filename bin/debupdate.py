@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import pyzstd
+import pyzstd  # type: ignore
 
 from command_mod import LooseVersion
 from logging_mod import ColoredFormatter
@@ -208,7 +208,7 @@ class Main:
                                 ):
                                     del self._packages[name]
         except OSError:
-            return
+            pass
 
     def _read_distro_installed(self, path: Path) -> dict:
         versions = {}

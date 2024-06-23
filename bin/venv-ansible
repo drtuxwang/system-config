@@ -10,7 +10,8 @@ virtualenv_setup() {
         VENV_PACKAGE="ansible==2.7.18"
     else
         VENV_PYTHON="python3"
-        VENV_PACKAGE="ansible-core==2.15.10"
+        VENV_PACKAGE="ansible-core==2.16.8"
+        VENV_DEPENDS="certifi"
         VENV_POSTINST="install_collections"
         VENV_PRERUN="activate_collections"
     fi
@@ -19,8 +20,8 @@ virtualenv_setup() {
 install_collections() {
     CLASS=$($VENV_PYTHON --version | sed -e "s/Python /python/;s/[.][^.]*$//")
     export DEFAULT_MODULE_PATH="$VIRTUAL_ENV/lib/$CLASS/site-packages"
-    "$VIRTUAL_ENV/bin/ansible-galaxy" collection install ansible.posix -p "$DEFAULT_MODULE_PATH"
-    "$VIRTUAL_ENV/bin/ansible-galaxy" collection install community.general -p "$DEFAULT_MODULE_PATH"
+    "$VIRTUAL_ENV/bin/ansible-galaxy" collection install --ignore-certs ansible.posix -p "$DEFAULT_MODULE_PATH"
+    "$VIRTUAL_ENV/bin/ansible-galaxy" collection install --ignore-certs community.general -p "$DEFAULT_MODULE_PATH"
     find "$VIRTUAL_ENV/lib" -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
 }
 

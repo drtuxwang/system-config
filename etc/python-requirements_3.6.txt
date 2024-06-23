@@ -28,7 +28,6 @@ mdurl==None
 matplotlib-inline==None
 mccabe==0.6.1
 motor                        # ==2.5.1 (last compatible version)
-mypy==None
 packaging==None
 parso==None
 pip                          # ==20.2.4 (last compatible version)
@@ -49,11 +48,11 @@ setuptools                   # ==59.6.0 (last compatible version)
 smmap                        # ==4.0.0 (last compatible version)
 soupsieve                    # ==2.3.2.post1 (last compatible version)
 stack-data==None
-tomli                        # ==1.2.3 (last compatible version)
+tomli                        # ==1.2.3 (last compatible version required by pylint for 3.7)
 tomlkit                      # ==0.11.6 (last compatible version)
 tornado                      # ==6.1 (last compatible version)
 traitlets==None
-typed-ast==1.4.3             #   (required by pylint/mypy for 3.6)
+typed-ast==1.4.3             #   (required by pylint for 3.6)
 typing-extensions            # ==4.1.1 (last compatible version)
 urllib3==1.26.19
 virtualenv                   # ==20.17.1 (last compatible version)

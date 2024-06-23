@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+MYUNAME=$(id -un)
+
+if [ "$MYUNAME" != root ]
+then
+    echo "Run \"poweroff\" as root to switch off."
+    exit 1
+fi
+
 /sbin/poweroff &
 sleep 8
 

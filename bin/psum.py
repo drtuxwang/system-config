@@ -16,7 +16,7 @@ from typing import List, Set, Tuple
 import imagehash  # type: ignore
 import PIL  # type: ignore
 import pybktree  # type: ignore
-import pyzstd
+import pyzstd  # type: ignore
 
 from command_mod import Command
 from file_mod import FileStat

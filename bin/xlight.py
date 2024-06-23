@@ -177,7 +177,7 @@ class Backlight:
                 brightness = min(self.get_brightness() + self._step, self._max)
             elif change == '-':
                 brightness = max(self.get_brightness()-self._step, 0)
-            elif change == '=':
+            else:
                 brightness = self._default
             self.set_brightness(brightness)
         else:

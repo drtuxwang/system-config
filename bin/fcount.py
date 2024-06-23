@@ -83,6 +83,7 @@ class Main:
         """
         options = Options()
 
+        lline = 0
         for path in [Path(x) for x in options.get_files()]:
             if path.is_file():
                 nlines = 0

@@ -91,8 +91,10 @@ defaults_settings
 virtualenv_setup
 
 PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$VENV_PYTHON")
-VIRTUAL_ENV="$PYTHON_DIR-${VENV_PACKAGE/==/_}/virtualenv"
-[ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/$($VENV_PYTHON --version 2>&1 | sed -e "s/ /-/g")-venv/${VENV_PACKAGE/==/-}"
+VENV_PACKAGE=${VENV_PACKAGE,,}
+VIRTUAL_ENV="$PYTHON_DIR-${VENV_PACKAGE/==/_}/${VENV_PACKAGE/==/_}"
+####VERSION=$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')
+[ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/python-$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')-${VENV_PACKAGE/==/-}/${VENV_PACKAGE/==/_}"
 FLAGS="${1:-}"
 export VIRTUAL_ENV
 export PATH="$VIRTUAL_ENV/bin:$PATH"

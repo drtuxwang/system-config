@@ -1,1 +1,2 @@
 exceptiongroup==1.1.3        #   (required by ipython for 3.10)
+tomli==2.0.1                 #   (required by pylint for 3.10)

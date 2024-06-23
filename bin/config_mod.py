@@ -233,6 +233,7 @@ class Data:
     def _reformat_yaml(text: str) -> str:
         lines = []
         block = ''
+        indent = 0
         for line in text.split('\n'):
             if not block:
                 if line.endswith('\\') and ': "' in line:

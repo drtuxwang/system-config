@@ -16,7 +16,7 @@ doc:                  # View README.md as HTML in browser
 	$(BROWSER) README.xhtml
 
 .PHONY: test
-test: check-makefile check-config check-packages check-python  # Run tests
+test: check-makefile check-config check-python  # Run tests
 	@echo "\n*** Tests all successfull ***"
 
 .PHONY: test-docker
@@ -28,16 +28,17 @@ test-all: test        # Run tests for all versions
 	@for VERSION in $(PYTHONS_VERSIONS); do \
 		case $$VERSION in \
 		3.[56]) \
-			PYTHON=python$$VERSION make --no-print-directory check-packages || exit 1; \
+			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
 			;; \
 		3.[7-9]|3.??) \
-			PYTHON=python$$VERSION make --no-print-directory check-packages || exit 1; \
-			PYTHON=python$$VERSION make --no-print-directory check-python || exit 1 \
+			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
+			PYTHON=python$$VERSION make --no-print-directory check-python-test || exit 1; \
+			PYTHON=python$$VERSION make --no-print-directory check-python-lint || exit 1 \
 			;; \
 		esac; \
 	done
 
-.PHONY: check-makefile-help
+.PHONY: check-makefile
 check-makefile:       # Check Makefile files
 	@echo "\n*** Running Makefile check ***"
 	find -name Makefile -exec grep -E -n "^[A-Za-z0-9_-]+:" {} + | grep -E -v ":[^:]*:.{20}...*#" && exit 1 ||:
@@ -48,18 +49,20 @@ check-config:         # Check all config files
 	@echo "\n*** Running BSON/JSON/YAML check ***"
 	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} + > /dev/null
 
-.PHONY: check-python-lint
-check-python-lint:    # Check Python code linting
-	@echo "\n*** Running \"${PYTHON}\" PYLINT checks ***"
-	${PYTHON} -m pylint --rcfile=.pylintrc bin/*.py
-
-.PHONY: check-python-types
-check-python-types:   # Check Python code types
-	@echo "*** Running \"${PYTHON}\" MYPY type checks ***"
-	${PYTHON} -m mypy --disallow-untyped-defs --no-strict-optional --follow-imports=error --cache-dir=/dev/null bin/*.py
-
 .PHONY: check-python
 check-python:         # Check Python code
+	@make --no-print-directory check-python-pip
+	@make --no-print-directory check-python-test
+	@make --no-print-directory check-python-lint
+	@make --no-print-directory check-python-types
+
+.PHONY: check-python-pip
+check-python-pip:     # Check python ackages
+	@echo "\n*** Running \"${PYTHON}\" package requirement checks ***"
+	etc/python-packages.bash -c ${PYTHON}
+
+.PHONY: check-python-test
+check-python-test:    # Check python tests
 	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
 	${PYTHON} -m unittest discover --buffer bin
 	@echo "\n*** Running \"${PYTHON}\" COOKIECUTTER check ***"
@@ -68,17 +71,16 @@ check-python:         # Check Python code
 	${PYTHON} -m flake8 bin/*.py
 	@echo "\n*** Running \"${PYTHON}\" PYCODESTYLE (PEP8) checks ***"
 	${PYTHON} -m pycodestyle --max-line-length=79 bin/*.py
-	@make --no-print-directory check-python-lint
-	@case ${PYTHON} in \
-	python3|python3.[789]|python3.1?) \
-		make --no-print-directory check-python-types \
-		;; \
-	esac
 
-.PHONY: check-packages
-check-packages:       # Check packages
-	@echo "\n*** Running \"${PYTHON}\" package requirement checks ***"
-	etc/python-packages.bash -c ${PYTHON}
+.PHONY: check-python-lint
+check-python-lint:    # Check Python code linting
+	@echo "\n*** Running \"${PYTHON}\" PYLINT checks ***"
+	${PYTHON} -m pylint --rcfile=.pylintrc bin/*.py
+
+.PHONY: check-python-types
+check-python-types:   # Check Python code types
+	@echo "*** Running \"${PYTHON}\" MYPY type checks ***"
+	mypy --disallow-untyped-defs --no-strict-optional --follow-imports=error --cache-dir=/dev/null bin/*.py
 
 .PHONY: install
 install:              # Install Python packages

@@ -6,7 +6,6 @@ flake8                       # ==5.0.4 (last compatible version)
 importlib-metadata==4.2.0    #   (< 4.3 required by flake8)
 ipython                      # ==7.34.0 (last compatible version)
 isort                        # ==5.11.5 (last compatible version)
-mypy                         # ==1.4.1 (last compatible version)
 packaging==None
 pip                          # ==21.3.1 (last compatible version)
 pipdeptree                   # ==2.9.6 (last compatible version)
@@ -16,6 +15,7 @@ pyflakes==2.5.0
 pylint                       # ==2.17.7 (last compatible version)
 requests                     # ==2.31.0 (last compatible version)
 setuptools                   # ==68.0.0 (last compatible version)
+tomli==2.0.1                 #   (required by pylint for 3.7)
 tornado                      # ==6.2 (last compatible version)
 traitlets                    # ==5.9.0 (last compatible version)
 typing-extensions==4.4.0

@@ -10,8 +10,8 @@ import re
 import unicodedata
 from typing import List
 
-RELEASE = '1.3.0'
-VERSION = 20240421
+RELEASE = '1.3.1'
+VERSION = 20240609
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 
@@ -22,7 +22,7 @@ class ColoredFormatter(logging.Formatter):
     """
     BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
     LOG_COLORS = {
-        'DEBUG': f'\x1b[1;3{CYAN}m"',
+        'DEBUG': f'\x1b[1;3{BLUE}m',
         'INFO': '\x1b[0m',
         'WARNING': f'\x1b[1;3{YELLOW}m',
         'ERROR': f'\x1b[1;3{RED}m',
@@ -121,3 +121,15 @@ class Message(str):
 
 if __name__ == '__main__':
     help(__name__)
+
+    logger = logging.getLogger(__name__)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(ColoredFormatter())
+    logger.addHandler(console_handler)
+    logger.setLevel(logging.DEBUG)
+
+    logger.debug('This is debug logging message example')
+    logger.info('This is info logging message example')
+    logger.warning('This is warning logging message example')
+    logger.error('This is error logging message example')
+    logger.critical('This is critical logging message example')

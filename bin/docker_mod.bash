@@ -86,7 +86,7 @@ docker_list() {
 # Function to show Docker images with optional filter
 #
 docker_images() {
-    IMAGES=$(docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2 | sed -e "s/ \([0-9][0-9]:[0-9][0-9]:[0-9][0-9]\)/T\1 /" | awk '{printf("%s %s %s%s %s\n", $1, $2, $3, $4, $6)}' )
+    IMAGES=$(docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2 | sed -e "s/ \([0-9][0-9]:[0-9][0-9]:[0-9][0-9]\)/T\1 /" | awk '{printf("%s %s %s%s %s\n", $1, $2, $3, $4, $6)}')
     [ $# != 0 ] && IMAGES=$(echo "$IMAGES" | grep -E "$(echo "$@" | sed -e "s/ /|/g")")
     (echo "REPOSITORY:TAG IMAGE ID CREATED AT SIZE"; echo "$IMAGES") | sort | column -t
 }

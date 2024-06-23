@@ -47,8 +47,6 @@ matplotlib-inline==None
 mccabe                       # ==0.6.1 (last compatible version)
 mdurl==None
 motor==2.1.0
-mypy-extensions==None
-mypy==None
 packaging==None
 paramiko                     # ==2.12.0 (last compatible version)
 parso==None
@@ -81,7 +79,6 @@ smmap2==3.0.1                #   (required by gitdb2 for 2.7)
 smmap==3.0.5                 #   (required by smmap2 for 2.7)
 soupsieve                    # ==1.9.6 (last compatible version)
 stack-data==None
-tomli==None
 tomlkit==None
 tornado                      # ==5.1.1 (last compatible version)
 traitlets==None

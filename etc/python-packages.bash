@@ -171,7 +171,10 @@ install_packages() {
     done
 
     PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
-    find "$PYTHON_DIR/lib"/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+    find "$PYTHON_DIR/lib"/python* -type f -name '*test*.py' | \
+        grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | \
+        grep -v "IPython/testing" | \
+        xargs rm -rfv
     find "$PYTHON_DIR"/*doc* -type d 2> /dev/null | xargs rm -rfv
 
     if [ -w "$PY_EXE" ]

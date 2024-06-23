@@ -16,7 +16,7 @@ from command_mod import Command, CommandFile
 from subtask_mod import Daemon
 from task_mod import Tasks
 
-RELEASE = '3.1.1'
+RELEASE = '3.1.2'
 PURGE_TIME = 604800
 
 
@@ -134,7 +134,7 @@ class Lock:
                         f"{sys.argv[0]}: MyQS cannot obtain lock: {self._path}"
                     )
         except OSError:
-            return
+            pass
 
     def remove(self) -> None:
         """

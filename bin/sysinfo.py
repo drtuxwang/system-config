@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.9.0'
-VERSION = 20240420
+RELEASE = '6.9.1'
+VERSION = 20240620
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -2202,6 +2202,7 @@ class WindowsSystem(OperatingSystem):
         info['OS Type'] = 'windows'
         info['OS Kernel X'] = 'NT'
         values = self._reg_read(
+            # pylint: disable=possibly-used-before-assignment
             winreg.HKEY_LOCAL_MACHINE,  # type: ignore
             r'SOFTWARE\Microsoft\Windows NT\CurrentVersion'
         )[1]

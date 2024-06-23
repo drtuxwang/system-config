@@ -5,7 +5,7 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="dropbox==11.35.0"
+    VENV_PACKAGE="dropbox==11.36.2"
 }
 
 

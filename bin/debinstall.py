@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 from typing import List, TextIO
 
-import pyzstd
+import pyzstd  # type: ignore
 
 from command_mod import LooseVersion
 from logging_mod import ColoredFormatter
@@ -72,7 +72,7 @@ class Options:
         """
         Return list of package names.
         """
-        return self._args.packageNames
+        return self._packages
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -109,6 +109,14 @@ class Options:
                 'installed ".debs" list filename.',
             )
         self._distro = ispattern.sub('', list_file)
+
+        isfile = re.compile('_[^_]*_.*[.]deb')
+        self._packages = [
+            f"{x.split('_')[0]}:{x.split('.deb')[0].split('_')[-1]}"
+            if isfile.search(x)
+            else x
+            for x in self._args.packageNames
+        ]
 
 
 class Main:
@@ -234,7 +242,7 @@ class Main:
                     if f'{name}:{arch}' in self._packages:
                         self._packages[f'{name}:{arch}'].installed = True
         except OSError:
-            return
+            pass
 
     def _check_package_install(
         self,
@@ -253,15 +261,13 @@ class Main:
         if package_name in self._packages:
             _, arch = package_name.split(':')
             self._packages[package_name].checked = True
+            pool = distro.replace('dist', 'pool')
+            file = self._local(pool, self._packages[package_name].url)
             if self._packages[package_name].installed:
-                logger.info(
-                    "%s%s [Installed]",
-                    indent,
-                    self._packages[package_name].url,
-                )
+                logger.warning("%s%s [Installed]", indent, file)
+                if not indent:
+                    print(f"{indent}{file}  # Reinstall", file=ofile)
             else:
-                pool = distro.replace('dist', 'pool')
-                file = self._local(pool, self._packages[package_name].url)
                 logger.warning("%s%s", indent, file)
                 print(f"{indent}{file}", file=ofile)
 
@@ -304,7 +310,7 @@ class Main:
                                 ):
                                     del self._packages[name]
         except OSError:
-            return
+            pass
 
     def _check_distro_install(
         self,

@@ -5,7 +5,7 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="Django==4.2.11"
+    VENV_PACKAGE="Django==4.2.13"
 }
 
 

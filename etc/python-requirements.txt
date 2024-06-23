@@ -48,8 +48,6 @@ matplotlib-inline==0.1.6     #   (required by ipython)
 mccabe==0.7.0                #   (required by flake8/pylint)
 mdurl==0.1.2                 #   (required by cookiecutter)
 motor==3.3.2                 # Mongo async client
-mypy==1.9.0                  # Python type checker
-mypy-extensions==1.0.0       #   (required by mypy)
 ntplib==0.4.0                # NTP client
 packaging==23.2              #   (required by pipdeptree)
 paramiko==3.4.0              # SSH client
@@ -82,11 +80,10 @@ smmap==5.0.1                 #   (required by gitdb)
 soupsieve==2.4.1             #   (required by beautifulsoup4)
 stack-data==0.5.1            #   (required by ipython)
 text-unidecode==1.3          #   (required by python-slugify)
-tomli==2.0.1                 #   (required by mypy)
 tomlkit==0.11.8              #   (required by pylint)
 tornado==6.4.1               # Web server framework
 traitlets==5.13.0            #   (required by ipython)
-typing-extensions==4.12.2    #   (required by mypy)
+typing-extensions==4.12.2    #   (required by ipython)
 urllib3==2.2.2               #   (required by requests)
 virtualenv==20.25.3          # Python Virtual Environments
 wcwidth==0.2.13              #   (required by prompt-toolkit)

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# glances virtualenv (system monitoring tool)
+# mypy virtualenv (for Python type checker)
 #
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="glances==3.4.0.5"
+    VENV_PACKAGE="mypy==1.10.0"
 }
 
 

@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import pyzstd
+import pyzstd  # type: ignore
 
 
 class Options:

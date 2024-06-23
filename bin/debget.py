@@ -17,7 +17,7 @@ import urllib.request
 from pathlib import Path
 from typing import List
 
-import pyzstd
+import pyzstd  # type: ignore
 
 from command_mod import Command
 from file_mod import FileUtil
