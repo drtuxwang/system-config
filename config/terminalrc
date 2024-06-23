@@ -27,17 +27,20 @@ MiscNewTabAdjacent=FALSE
 TitleMode=TERMINAL_TITLE_REPLACE
 CommandLoginShell=TRUE
 ScrollingLines=9999
-FontName=Monospace 11
-ColorForeground=#000099990000
-ColorBackground=#000000000000
-ColorPalette=rgb(51,51,51);rgb(255,85,85);rgb(85,255,85);rgb(255,255,85);rgb(85,85,255);rgb(255,85,255);rgb(85,255,255);rgb(255,255,255);rgb(51,51,51);rgb(255,85,85);rgb(85,255,85);rgb(255,255,85);rgb(85,85,255);rgb(255,85,255);rgb(85,255,255);rgb(255,255,255)
+ColorForeground=#000000000000
+ColorBackground=#fcfcfcfcdcdc
+ColorPalette=rgb(221,221,221);rgb(170,0,0);rgb(0,170,0);rgb(170,136,0);rgb(0,0,170);rgb(136,0,170);rgb(0,136,170);rgb(170,170,170);rgb(221,221,221);rgb(170,0,0);rgb(0,170,0);rgb(170,136,0);rgb(0,0,170);rgb(136,0,170);rgb(0,136,170);rgb(170,170,170)
 ColorCursorUseDefault=FALSE
-ColorCursor=#ffff00000000
-ColorCursorForeground=#ffffffff0000
+ColorCursor=#ffffaaaaffff
+ColorCursorForeground=#000000000000
 MiscSearchDialogOpacity=100
 MiscShowUnsafePasteDialog=FALSE
 ShortcutsNoHelpkey=TRUE
 ShortcutsNoMenukey=TRUE
 ShortcutsNoMnemonics=TRUE
 WordChars=-A-Za-z0-9,./?%&#:_=+@~–
+MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
+ColorSelectionUseDefault=FALSE
+ColorSelectionBackground=#ffffffff0000
+ColorSelection=#000000000000
 

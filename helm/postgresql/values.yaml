@@ -1,5 +1,5 @@
 nodeSelector:
   kubernetes.io/os: linux
-  ##kubernetes.io/hostname: ryzen.local
+  ##kubernetes.io/hostname: ryson.local
 persistence:
   enabled: false

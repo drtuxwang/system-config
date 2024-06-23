@@ -49,7 +49,6 @@ spec:
           name: shared
       nodeSelector:
         kubernetes.io/os: linux
-        ##kubernetes.io/hostname: ryzen.local
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:

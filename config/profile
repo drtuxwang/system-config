@@ -105,6 +105,17 @@ then
            [ $# = 1 ] && __ssh_keys "$1"
            \ssh "$@"; return $?
         }
+        __scp() {
+           for ARG in $*
+           do
+               case $ARG in
+               [a-z]*:*)
+                   __ssh_keys `echo $ARG | cut -f1 -d:`
+                   ;;
+               esac
+           done
+           \scp "$@"; return $?
+        }
         __xterm() {
            __ssh_keys "$@"
            \xterm "$@"; return $?
@@ -118,6 +129,7 @@ then
         MYSHELL="${0/-/}"
         PS1='\[\033[01;32m\][\t] \[\033[01;34m\]`pwd`\[\033[01;31m\]`__git_ps1``__kube_ps1``__venv_ps1`\n\[\033[01;32m\]'$MYUNAME'@'$MYHNAME'\[\033[00m\] $ '
         alias ssh=__ssh
+        alias scp=__scp
         alias xterm=__xterm
 
         # VM/Container detection
@@ -351,7 +363,6 @@ then
     fi
     alias df="df -k"
     alias du="du -k"
-    alias ftp="ftp -i -v"
     if [ "$BASH" ]
     then
         alias h="history 256"
@@ -367,22 +378,6 @@ then
     then
         alias vi="vim -N -n -i NONE -T xterm"
         rm -f $HOME/.viminfo
-    fi
-    if [ -x /usr/sbin/ping ]
-    then
-        alias ping="/usr/sbin/ping"
-    elif [ -x /usr/etc/ping ]
-    then
-        alias ping="/usr/etc/ping"
-    fi
-    if [ -f $HOME/.ssh/config ]
-    then
-        if [ "`ssh -version 2>&1 | grep \"^OpenSSH_\"`" ]
-        then
-            alias scp="scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
-        else
-            alias scp="scp -F $HOME/.ssh/config"
-        fi
     fi
     unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 

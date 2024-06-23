@@ -1,5 +1,5 @@
-BASE_IMAGE := i386/alpine:3.17
-IMAGE := drtuxwang/i386-alpine-dev:3.17
+BASE_IMAGE := i386/alpine:3.18
+IMAGE := drtuxwang/i386-alpine-dev:3.18
 NAME := alpine317-dev32
 HOSTNAME := alpine317-dev32
 DOCKER_BUILD := docker buildx build
@@ -23,8 +23,7 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(BASE_IMAGE) " ||:
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGE) " ||:
+	@../../bin/docker-images ^$(BASE_IMAGE) `echo $(IMAGE) | sed -e "s/-[^-:]*:/.*:/"` ||:
 
 .PHONY: pull
 pull:                 # Pull Docker base image

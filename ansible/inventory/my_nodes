@@ -16,15 +16,6 @@ ryzen.local            ansible_user=admin
 ryson.local            ansible_user=admin
 
 [my_vm_hosts]
-debian4.vm             ansible_user=admin
-debian5.vm             ansible_user=admin
-debian6.vm             ansible_user=admin
-debian7.vm             ansible_user=admin
-debian8.vm             ansible_user=admin
-debian9.vm             ansible_user=admin
-debian10.vm            ansible_user=admin
-debian10-32.vm         ansible_user=admin
 debian11.vm            ansible_user=admin
 debian12.vm            ansible_user=admin
-debian12-arm.vm        ansible_user=admin
 debianmac.vm           ansible_user=admin

@@ -162,25 +162,12 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     endif
     alias df "df -k"
     alias du "du -k"
-    alias ftp "ftp -i -v"
     alias h history 256
     alias ls "ls -C"
     alias quota "quota -v"
     if ( -x /usr/bin/vim ) then
         alias vi "vim -N -n -i NONE -T xterm"
         rm -f $HOME/.viminfo
-    endif
-    if ( -x /usr/sbin/ping ) then
-        alias ping "/usr/sbin/ping"
-    else if ( -x /usr/etc/ping ) then
-        alias ping "/usr/etc/ping"
-    endif
-    if ( -f "$HOME/.ssh/config" ) then
-        if ( "`\ssh -version |& \grep '^OpenSSH_'`" != "" ) then
-            alias scp "scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
-        else
-            alias scp "scp -F $HOME/.ssh/config"
-        endif
     endif
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 

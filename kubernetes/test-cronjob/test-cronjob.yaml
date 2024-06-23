@@ -30,6 +30,6 @@ spec:
             - date; echo Batch job on Kubernetes cluster
           nodeSelector:
             kubernetes.io/os: linux
-            ##kubernetes.io/hostname: ryzen.local
+            ##kubernetes.io/hostname: ryson.local
           restartPolicy: OnFailure
           terminationGracePeriodSeconds: 10

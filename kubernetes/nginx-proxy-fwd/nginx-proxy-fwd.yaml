@@ -35,7 +35,7 @@ spec:
           readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
-        ##kubernetes.io/hostname: ryzen.local
+        ##kubernetes.io/hostname: ryson.local
       volumes:
       - configMap:
           name: nginx-proxy-fwd-config

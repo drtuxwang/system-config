@@ -6,7 +6,7 @@ metadata:
     matchLabels: socat-fwd
   name: socat-fwd
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: socat-fwd
@@ -29,4 +29,4 @@ spec:
           protocol: TCP
       nodeSelector:
         kubernetes.io/os: linux
-        ##kubernetes.io/hostname: ryzen.local
+        ##kubernetes.io/hostname: ryson.local

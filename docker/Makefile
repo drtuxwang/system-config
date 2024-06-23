@@ -1,9 +1,9 @@
 IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
+	alpine-3.18 \
+	i386-alpine-3.18 \
 	alpine-3.17 \
-	i386-alpine-3.17 \
-	alpine-3.16 \
 	\
 	debian-12 \
 	i386-debian-12 \
@@ -43,7 +43,7 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGES):" | sort
+	../bin/docker-images
 	docker system df
 
 .PHONY: new
@@ -86,14 +86,14 @@ push-stable:          # Tag and push stable Docker images
 	for DIR in $(STABLE_DIRS); do \
 		make --no-print-directory --directory $$DIR push-stable || exit 1; \
 	done
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
+	../bin/docker-images "drtuxwang/.*:stable"
 
 .PHONY: pull
 pull-stable:          # Pull stable Docker images
 	for DIR in $(STABLE_DIRS); do \
 		make --no-print-directory --directory $$DIR pull-stable || exit 1; \
 	done
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
+	../bin/docker-images "drtuxwang/.*:stable"
 
 .PHONY: test
 test:                 # Run tests
@@ -114,7 +114,7 @@ prune:                # Prune Docker images/containers
 	df /var/lib/docker
 	docker system prune
 	@echo
-	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
+	../bin/docker-images
 	@echo
 	docker volume ls
 	@echo

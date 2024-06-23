@@ -24,11 +24,7 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(BASE_IMAGE) " ||:
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGE) " ||:
-	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR status; \
-	done
+	@../../bin/docker-images ^$(BASE_IMAGE) `echo $(IMAGE) | sed -e "s/-[^-:]*:/.*:/"` ||:
 
 .PHONY: pull
 pull:                 # Pull Docker base image

@@ -28,7 +28,7 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | grep "^$(IMAGE) " ||:
+	@make --no-print-directory --directory .. status
 
 .PHONY: build
 build:                # Build Docker images
