@@ -22,8 +22,6 @@ dnspython==None
 enum34==1.1.10               #   (required by astroid for 2.7)
 executing==None
 filelock==3.2.1
-flake8==3.9.2
-functools32==3.2.3.post2     #   (required by flake8 for 2.7)
 future==0.18.3               #   (required by legacy code)
 futures==3.3.0               #   (required by tornado for 2.7)
 gitdb2==2.0.6                #   (required by GitPython for 2.7)

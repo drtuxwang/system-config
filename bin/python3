@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
 PYLD_EXE="${PYTHON_VERSION:-${0##*/}}"
+PYLD_MAIN="$PYLD_EXE"
 source "${0%/*}/pyld_mod.bash"

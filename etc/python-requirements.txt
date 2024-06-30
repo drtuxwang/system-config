@@ -24,7 +24,6 @@ EditorConfig==0.12.4         #   (required by jsbeautifier)
 executing==1.2.0             #   (required by stack-data)
 filelock==3.13.4             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
-flake8==6.1.0                # Python modular source code checker
 gitdb==4.0.11                #   (required by GitPython)
 GitPython==3.1.43            # Library to interact with Git repositories
 gTTS==2.5.1                  # Google Text-to-Speech
@@ -45,7 +44,7 @@ markdown2==2.4.13            # Convert Markdown to HTML
 markdown-it-py==2.2.0        #   (required by rich)
 MarkupSafe==2.1.5            #   (required by Jinja2)
 matplotlib-inline==0.1.6     #   (required by ipython)
-mccabe==0.7.0                #   (required by flake8/pylint)
+mccabe==0.7.0                #   (required by pylint)
 mdurl==0.1.2                 #   (required by cookiecutter)
 motor==3.3.2                 # Mongo async client
 ntplib==0.4.0                # NTP client
@@ -62,7 +61,7 @@ ptyprocess==0.6.0            #   (required by pexpect)
 pure-eval==0.2.2             #   (required by stack-data)
 pycodestyle==2.11.1          # Python style guide checker
 pycparser==2.21              #   (required by cffi)
-pyflakes==3.1.0              #   (required by flake8)
+pyflakes==3.1.0              # Python source file checker 
 Pygments==2.17.2             #   (required by ipython)
 pylint==3.2.3                # Python code static checker
 pymongo==4.6.3               # MongoDB client

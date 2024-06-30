@@ -71,7 +71,10 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
     "$VIRTUAL_ENV/bin/$VENV_PYTHON" -m pip install $VENV_PACKAGE || exit 1
     [ "$VENV_CLEAN" = "yes" ] && find "$VIRTUAL_ENV/lib" -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
     IFS=$'\n'
-    for FILE in $(grep "^#!/.*/python" "$VIRTUAL_ENV/bin"/* 2> /dev/null | grep -v ":#!/usr/bin/env " | sed -e "s@:#!/.*@@")
+    for FILE in $(
+        grep "^#!/.*/python" "$VIRTUAL_ENV/bin"/* 2> /dev/null | grep -v ":#!/usr/bin/env " | sed -e "s@:#!/.*@@";
+        grep "'''exec'.*bin/python" "$VIRTUAL_ENV/bin"/* 2> /dev/null | sed -e "s/:'''.*//"
+    )
     do
         echo "$FILE: #!/usr/bin/env $VENV_PYTHON"
         sed -i "s@^#!/.*@#!/usr/bin/env $VENV_PYTHON@" "$FILE"

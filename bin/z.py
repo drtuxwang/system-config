@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from subtask_mod import Exec
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -29,11 +29,11 @@ class Options:
         """
         return self._args.archive[0]
 
-    def get_files(self) -> List[str]:
+    def get_files(self) -> List[Path]:
         """
         Return list of files.
         """
-        return self._args.files
+        return [Path(x) for x in self._args.files]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -97,6 +97,7 @@ class Main:
         """
         options = Options()
         path = Path(options.get_archive())
+        files = options.get_files()
 
         name = path.name.replace('-new', '')
         if name.endswith((
@@ -121,13 +122,23 @@ class Main:
             command = Command('zip', errors='stop')
         elif name.endswith(('.7z', '.exe')) or path.is_dir():
             command = Command('7z', errors='stop')
+            if not [x for x in files if not x.is_dir()]:
+                for directory in [path] + files:
+                    task = Task(command.get_cmdline() + [directory])
+                    task.run()
+                    if task.get_exitcode():
+                        raise SystemExit(
+                            f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                            f'received from "{task.get_file()}".',
+                        )
+                return
         else:
             raise SystemExit(
                 f"{sys.argv[0]}: Unable to make unsupported archive format:"
                 f"{name}"
             )
 
-        command.set_args([path] + options.get_files())
+        command.set_args([path] + files)
         Exec(command.get_cmdline()).run()
 
 

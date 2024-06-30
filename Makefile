@@ -68,7 +68,7 @@ check-python-test:    # Check python tests
 	@echo "\n*** Running \"${PYTHON}\" COOKIECUTTER check ***"
 	@make --no-print-directory --directory cookiecutter test
 	@echo "\n*** Running \"${PYTHON}\" PYFLAKES checks ***"
-	${PYTHON} -m flake8 bin/*.py
+	${PYTHON} -m pyflakes bin/*.py
 	@echo "\n*** Running \"${PYTHON}\" PYCODESTYLE (PEP8) checks ***"
 	${PYTHON} -m pycodestyle --max-line-length=79 bin/*.py
 

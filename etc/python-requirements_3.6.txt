@@ -10,7 +10,6 @@ dill                         # ==0.3.4 (last compatible version)
 dnspython                    # ==2.2.1 (last compatible version)
 executing==None
 filelock==3.4.1
-flake8==3.9.2
 gitdb                        # ==4.0.9 last compatible version)
 GitPython                    # ==3.1.20 (last compatible version)
 gTTS                         # ==2.2.4 (last compatible version)

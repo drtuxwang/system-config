@@ -93,8 +93,11 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _copy(source: str, target: str) -> None:
-        print(f'Copying to "{target}" file...')
+    def _copy(source: Path, target: Path) -> None:
+        if target.is_dir():
+            print(f'Copying to "{Path(target, source.name)}" file...')
+        else:
+            print(f'Copying to "{target}" file...')
         try:
             shutil.copy2(source, target)
         except shutil.Error as exception:
@@ -122,8 +125,8 @@ class Main:
         Start program
         """
         options = Options()
-        source = options.get_source()
-        for target in options.get_targets():
+        source = Path(options.get_source())
+        for target in [Path(x) for x in options.get_targets()]:
             self._copy(source, target)
 
         return 0
