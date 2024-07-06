@@ -6,7 +6,7 @@ bcrypt==3.2.2                #   (required by paramiko)
 beautifulsoup4==4.11.2       # HTML/XML parser/emitter
 binaryornot==0.4.4           #   (required by cookiecutter)
 bson==0.5.10                 # BSON parser/emitter
-certifi==2024.6.2            #   (required by requests)
+certifi==2024.7.4            #   (required by requests)
 cffi==1.15.1                 #   (required by cryptography)
 chardet==5.1.0               #   (required by binaryornot)
 charset-normalizer==3.2.0    #   (required by requests)
