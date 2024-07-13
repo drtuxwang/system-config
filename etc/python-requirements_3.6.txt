@@ -56,4 +56,4 @@ typing-extensions            # ==4.1.1 (last compatible version)
 urllib3==1.26.19
 virtualenv                   # ==20.17.1 (last compatible version)
 wheel                        # ==0.37.1 (last compatible version)
-zipp==3.6.0                  #   (required by importlib-metadata for 3.7)
+zipp                         # ==3.6.0 (required by importlib-metadata for 3.7)

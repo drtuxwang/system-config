@@ -86,4 +86,4 @@ urllib3==1.26.19
 virtualenv                   # ==20.15.1 (last compatible version)
 wheel                        # ==0.37.1 (last compatible version)
 whichcraft==0.6.1            #   (required by cookiecutter for 2.7)
-zipp==1.2.0                  #   (required by importlib-metadata/pep517 for 2.7)
+zipp                         # ==1.2.0 (required by importlib-metadata/pep517 for 2.7)
