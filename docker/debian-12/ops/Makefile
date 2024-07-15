@@ -43,7 +43,7 @@ build:                # Build Docker images
 
 .PHONY: push-stable
 push-stable:          # Tag and push stable Docker images
-	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+	../../../bin/docker-tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 	docker push ${IMAGE}
 	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 

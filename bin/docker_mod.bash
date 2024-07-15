@@ -20,8 +20,9 @@ options() {
         echo "docker-list     - List Docker images/volumes/containers/networks"
         echo "docker-images   - Show Docker images with optional filter"
         echo "docker-pull     - Pull Docker images"
+        echo "docker-tag      - Tag Docker image with name and add promoted label"
         echo "docker-push     - Push Docker images"
-        echo "docker-load     - Load Docker image archives \"tar|tar.gz|tar.bz2|tar.xz|t[bgx]z\""
+        echo "docker-load     - Load Docker image archives \"tar|tar.gz|tar.bz2|tar.xz|tar.7z|t[bgx7]z\""
         echo "docker-save     - Save images as \"tar.7z\" archives"
         echo "docker-prune    - Run prune to remove unused Docker data"
         echo
@@ -34,7 +35,11 @@ options() {
     }
 
     case "${0##*/}" in
-    *-list|*-images|*-pull|*-push|*-load|*-save|*-prune*)
+    *-list|*-images|*-pull|*-push|*-load|*-save|*-prune)
+        mode=${0##*-}
+        ;;
+    *-tag)
+        [ $# = 0 ] && help 1
         mode=${0##*-}
         ;;
     *)
@@ -67,7 +72,7 @@ options() {
 # Function to list Docker images/volumes/containers/networks
 #
 docker_list() {
-    PATTERN="$(echo "$@" | sed -e "s/ /|/g")"
+    PATTERN="$(echo "$@" | tr " " "|")"
 
     docker_images
     echo
@@ -87,7 +92,7 @@ docker_list() {
 #
 docker_images() {
     IMAGES=$(docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}" | tail -n +2 | sed -e "s/ \([0-9][0-9]:[0-9][0-9]:[0-9][0-9]\)/T\1 /" | awk '{printf("%s %s %s%s %s\n", $1, $2, $3, $4, $6)}')
-    [ $# != 0 ] && IMAGES=$(echo "$IMAGES" | grep -E "$(echo "$@" | sed -e "s/ /|/g")")
+    [ $# != 0 ] && IMAGES=$(echo "$IMAGES" | grep -E "$(echo "$@" | sed -e "s/ /|/g;s/||/ |/g;s/|$/ /")")
     (echo "REPOSITORY:TAG IMAGE ID CREATED AT SIZE"; echo "$IMAGES") | sort | column -t
 }
 
@@ -100,6 +105,22 @@ docker_pull() {
         echo "docker pull \"$1\""
         docker pull "$1" || exit 1
         shift
+    done
+}
+
+#
+# Tag Docker image with name and add promoted label
+#
+docker_tag() {
+    SOURCE=$1
+    shift
+    ${0%/*}/docker-images "^$SOURCE "
+    docker inspect "$SOURCE" | sed -n '/"Labels": {/,/}/p'
+    for TARGET in $*
+    do
+        echo "FROM $SOURCE" | docker build --label "promoted=$SOURCE" -t "$TARGET" -
+        ${0%/*}/docker-images "^$TARGET "
+        docker inspect "$TARGET" | sed -n '/"Labels": {/,/}/p'
     done
 }
 
@@ -143,8 +164,8 @@ docker_save() {
     umask 022
     for IMAGE in $*;
     do
-        CREATED=$(docker inspect "$IMAGE" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
-        FILE=$(echo $IMAGE | sed -e "s/\//-/g;s/:/_/")_$(echo $CREATED | sed -e "s/-//g;s/T.*//").tar
+        CREATED=$(docker inspect "$IMAGE" | tr '"' ' ' | sort -r | awk '/Created/ {print $3; exit}')
+        FILE=$(echo $IMAGE | tr "/:" "-_")_$(echo $CREATED | sed -e "s/-//g;s/T.*//").tar
         if [ -f "$FILE.7z" ]
         then
             echo "Skipping existing file: $(realpath $FILE.7z)"

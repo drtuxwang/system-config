@@ -25,7 +25,7 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@../../bin/docker-images ^$(BASE_IMAGE) `echo $(IMAGE) | sed -e "s/-[^-:]*:/.*:/"` ||:
+	@../../bin/docker-images "^$(BASE_IMAGE) " "`echo $(IMAGE) | sed -e 's/-[^-:]*:/.*:/'` " ||:
 
 .PHONY: pull
 pull:                 # Pull Docker base image
@@ -49,7 +49,7 @@ build:                # Build Docker image
 
 .PHONY: push-stable
 push-stable:          # Tag and push stable Docker image
-	docker tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+	../../bin/docker-tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 	docker push ${IMAGE}
 	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 

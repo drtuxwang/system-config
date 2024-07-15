@@ -4,17 +4,24 @@
 #
 
 virtualenv_setup() {
-    if [ "${ANSIBLE_PYTHON27:-}" ]
-    then
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="ansible-core==2.16.8"
+    VENV_DEPENDS="certifi"
+    VENV_POSTINST="install_collections"
+    VENV_PRERUN="activate_collections"
+
+    case ${ANSIBLE_VERSION:-} in
+    2.7)
         VENV_PYTHON="python2.7"
         VENV_PACKAGE="ansible==2.7.18"
-    else
-        VENV_PYTHON="python3"
-        VENV_PACKAGE="ansible-core==2.16.8"
-        VENV_DEPENDS="certifi"
-        VENV_POSTINST="install_collections"
-        VENV_PRERUN="activate_collections"
-    fi
+        VENV_DEPENDS=
+        VENV_POSTINST=
+        VENV_PRERUN=
+        ;;
+    2.12)
+        VENV_PACKAGE="ansible-core==2.12.10"
+        ;;
+    esac
 }
 
 install_collections() {

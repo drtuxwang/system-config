@@ -127,7 +127,7 @@ mount_image() {
             local options="-t ext4 -o noatime,errors=remount-ro,commit=60"
             ;;
         vfat|ntfs)
-            local options="mount -o uid=$mount_user,gid=$(id -gn $mount_user),umask=022,fmask=133"
+            local options="-o uid=$mount_user,gid=$(id -gn $mount_user),umask=022,fmask=133"
             ;;
         *)
             local options=

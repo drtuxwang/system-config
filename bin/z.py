@@ -122,9 +122,15 @@ class Main:
             command = Command('zip', errors='stop')
         elif name.endswith(('.7z', '.exe')) or path.is_dir():
             command = Command('7z', errors='stop')
-            if not [x for x in files if not x.is_dir()]:
+            if files and all(x.is_dir() for x in files):
                 for directory in [path] + files:
-                    task = Task(command.get_cmdline() + [directory])
+                    if directory.is_absolute() or len(directory.parts) < 1:
+                        task = Task(command.get_cmdline() + [directory])
+                    else:
+                        task = Task(command.get_cmdline() + [
+                            f"../{'-'.join(directory.parts)}.7z",
+                            directory,
+                        ])
                     task.run()
                     if task.get_exitcode():
                         raise SystemExit(

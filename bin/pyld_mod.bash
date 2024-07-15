@@ -118,14 +118,16 @@ locate_python() {
 which() {
     PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@")
 
-    for CDIR in $(echo $PATH | sed -e "s/ /%20/g;s/:/ /g")
+    IFS=:
+    for CDIR in $PATH
     do
-        CMD=$(echo "$CDIR/$1" | sed -e "s/%20/ /g")
+        CMD="$CDIR/$1"
         if [ -x "$CMD" -a ! -d "$CMD" ]
         then
             echo "$CMD" | sed -e "s@//*@/@g"; return
         fi
     done
+    unset IFS
 }
 
 #

@@ -86,7 +86,7 @@ push-stable:          # Tag and push stable Docker images
 	for DIR in $(STABLE_DIRS); do \
 		make --no-print-directory --directory $$DIR push-stable || exit 1; \
 	done
-	../bin/docker-images "drtuxwang/.*:stable"
+	../bin/docker-images "^drtuxwang/.*:stable "
 
 .PHONY: pull
 pull-stable:          # Pull stable Docker images

@@ -24,7 +24,7 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@../../bin/docker-images ^$(BASE_IMAGE) `echo $(IMAGE) | sed -e "s/-[^-:]*:/.*:/"` ||:
+	@../../bin/docker-images "^$(BASE_IMAGE) " "`echo $(IMAGE) | sed -e 's/-[^-:]*:/.*:/'` " ||:
 
 .PHONY: pull
 pull:                 # Pull Docker base image

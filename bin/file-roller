@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-PYLD_MAIN=$(echo "${0##*/}" | sed -e "s/+/x/g;s/-/_/g")_
+PYLD_MAIN=$(echo "${0##*/}_" | tr "+-" "x_")
 source "${0%/*}/pyld_mod.bash"
