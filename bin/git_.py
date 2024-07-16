@@ -57,7 +57,9 @@ class Options:
         self._git = Command(Path('bin', 'git'), errors='stop')
         self._git.set_args(args[1:])
 
-        self._env = {}
+        self._env = {
+            'GIT_CLONE_PROTECTION_ACTIVE': 'false'
+        }
         if not Path(f'{self._git.get_cmdline()[0]}.py').is_file():
             git_home = Path(self._git.get_file()).parents[1]
             if git_home not in ('/usr', '/usr/local', '/opt/software'):
