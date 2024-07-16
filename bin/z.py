@@ -122,7 +122,7 @@ class Main:
             command = Command('zip', errors='stop')
         elif name.endswith(('.7z', '.exe')) or path.is_dir():
             command = Command('7z', errors='stop')
-            if files and all(x.is_dir() for x in files):
+            if path.is_dir() and all(x.is_dir() for x in files):
                 for directory in [path] + files:
                     if directory.is_absolute() or len(directory.parts) < 1:
                         task = Task(command.get_cmdline() + [directory])
