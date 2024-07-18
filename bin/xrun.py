@@ -17,7 +17,7 @@ from subtask_mod import Background
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#000000'
-BG_COLOUR = '#ffffdd'
+BG_COLOUR = '#F5F5DC'
 SLEEP = '10'
 URI = ('http://', 'https://', 'ftp://')
 
@@ -100,7 +100,7 @@ class Options:
                 if Path(output).is_file():
                     nargs.extend([
                         'echo',
-                        f'\x1b[1;33mOutput file exists: {output}\x1b[0m',
+                        f'\x1b[1;31mOutput file exists: {output}\x1b[0m',
                     ])
                 else:
                     outputs.append(output)
