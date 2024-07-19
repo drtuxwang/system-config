@@ -18,6 +18,7 @@ from subtask_mod import Background
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#000000'
 BG_COLOUR = '#F5F5DC'
+CR_COLOUR = '#FFAAFF'
 SLEEP = '10'
 URI = ('http://', 'https://', 'ftp://')
 
@@ -159,7 +160,7 @@ class Options:
             '-bg',
             BG_COLOUR,
             '-cr',
-            '#ff0000',
+            CR_COLOUR,
             '-ut',
             '-geometry',
             '100x10+'

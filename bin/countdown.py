@@ -17,6 +17,7 @@ from subtask_mod import Batch, Daemon
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#000000'
 BG_COLOUR = '#F5F5DC'
+CR_COLOUR = '#FFAAFF'
 
 
 class Options:
@@ -64,7 +65,7 @@ class Options:
                 '-bg',
                 BG_COLOUR,
                 '-cr',
-                '#880000',
+                CR_COLOUR,
                 '-geometry',
                 '18x4+120+20',
                 '-ut',
