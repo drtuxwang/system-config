@@ -90,12 +90,12 @@ install:              # Install Python packages
 .PHONY: diff
 diff:                 # Show differences in branch from origin/main
 	git fetch ||:
-	git diff origin/main
+	git diff origin/main..HEAD
 
 .PHONY: xdiff
 xdiff:                # Show graphical differences in branch from origin/main
 	git fetch ||:
-	git difftool --tool=meld --dir-diff origin/main
+	git difftool --tool=meld --dir-diff origin/main..HEAD
 
 .PHONY: reset
 reset:                # Ignore differences and reset to origin/<branch>
