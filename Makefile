@@ -87,6 +87,10 @@ install:              # Install Python packages
 	@echo "\n*** Installing Python 3 requirements ***"
 	etc/python-packages.bash -i ${PYTHON}
 
+.PHONY: ref
+ref:
+	git show-ref | sort
+
 .PHONY: diff
 diff:                 # Show differences in branch from origin/main
 	git fetch ||:
