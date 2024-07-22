@@ -116,7 +116,8 @@ xdiff:                # Show graphical differences in branch from origin/main
 
 .PHONY: ref
 ref:                  # Show git branch/tags hash references
-	git show-ref | sort
+	git show-ref
+	git lfs ls-files --size --all
 
 .PHONY: gc
 gc:                   # Run git garbage collection
