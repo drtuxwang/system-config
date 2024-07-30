@@ -123,6 +123,7 @@ ref:                  # Show git branch/tags hash references
 gc:                   # Run git garbage collection
 	@du -s $(shell pwd)/.git
 	rm -rf .git/lfs
+	git fsck
 	git \
 		-c gc.reflogExpire=0 \
 		-c gc.reflogExpireUnreachable=0 \
