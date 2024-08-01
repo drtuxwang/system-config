@@ -73,7 +73,7 @@ PyYAML==6.0.1                # YAML parser/emitter
 pyzstd==0.15.10              # ZSTD compression/decompression
 requests==2.32.2             # Web client
 rich==13.6.0                 #   (required by cookiecutter)
-setuptools==69.5.1           # Python package manager
+setuptools==70.3.0           # Python package manager
 six==1.16.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.1                 #   (required by gitdb)
 soupsieve==2.4.1             #   (required by beautifulsoup4)
