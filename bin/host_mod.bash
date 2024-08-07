@@ -135,6 +135,7 @@ setup_host() {
     for host in $hosts
     do
         echo "$host: setup"
+        mksshkeys $host
         timeout -s KILL 10 ssh-copy-id $host 2> /dev/null || echo continue
         timeout -s KILL 10 ssh $host 'rm -f .bash_logout .bash_profile .emacs; mkdir -p software/bin' 2> /dev/null || continue
         timeout -s KILL 10 scp -p $HOME/.profile $HOME/.profile-opt $HOME/.vimrc $host: 2> /dev/null || continue
