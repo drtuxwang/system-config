@@ -7,6 +7,8 @@
 
 set -u
 
+TIMEOUT="timeout -s KILL 10"
+
 
 #
 # Function to parse options
@@ -135,11 +137,12 @@ setup_host() {
     for host in $hosts
     do
         echo "$host: setup"
-        mksshkeys $host
-        timeout -s KILL 10 ssh-copy-id $host 2> /dev/null || echo continue
-        timeout -s KILL 10 ssh $host 'rm -f .bash_logout .bash_profile .emacs; mkdir -p software/bin' 2> /dev/null || continue
-        timeout -s KILL 10 scp -p $HOME/.profile $HOME/.profile-opt $HOME/.vimrc $host: 2> /dev/null || continue
-        timeout -s KILL 10 scp -p $sysinfo $sysinfo.sh $host:software/bin 2> /dev/null || continue
+        $TIMEOUT ssh-copy-id $host 2> /dev/null || continue
+        $TIMEOUT ssh $host rm -f .bash_logout .bash_profile .emacs 2> /dev/null || continue
+        $TIMEOUT scp -p $HOME/.profile $HOME/.profile-opt $HOME/.vimrc $host: 2> /dev/null || continue
+        [ "$($TIMEOUT ssh $host test -x /opt/software/bin/sysinfo.sh 2> /dev/null)" && continue
+        $TIMEOUT ssh $host mkdir -p software/bin 2> /dev/null || continue
+        $TIMEOUT scp -p $sysinfo $sysinfo.sh $host:software/bin 2> /dev/null || continue
         echo "$host: ok"
     done
 }
