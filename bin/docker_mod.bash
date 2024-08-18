@@ -116,9 +116,10 @@ docker_tag() {
     shift
     ${0%/*}/docker-images "^$SOURCE "
     docker inspect "$SOURCE" | sed -n '/"Labels": {/,/}/p'
+    PROMOTED=$(docker inspect "$SOURCE" 2> /dev/null  | grep '"promoted": "' | sed -e 's/.*"promoted": "//;s/"$/, /')
     for TARGET in $*
     do
-        echo "FROM $SOURCE" | docker build --label "promoted=$SOURCE" -t "$TARGET" -
+        echo "FROM $SOURCE" | docker build --label "promoted=$PROMOTED$SOURCE" -t "$TARGET" -
         ${0%/*}/docker-images "^$TARGET "
         docker inspect "$TARGET" | sed -n '/"Labels": {/,/}/p'
     done

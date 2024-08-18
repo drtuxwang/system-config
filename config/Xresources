@@ -3,30 +3,30 @@
 !
 ! xterm defaults
 xterm*font:        *-fixed-bold-*-18-*-iso10646-*
-xterm*foreground:  #009900
-xterm*background:  #000000
-xterm*cursorColor: #ff0000
+xterm*foreground:  #000000
+xterm*background:  #F5F5DC
+xterm*cursorColor: #FFAAFF
 ! Black & Dark Grey
-xterm*color0:  #333333
-xterm*color8:  #333333
+xterm*color0:  #DDDDDD
+xterm*color8:  #DDDDDD
 ! Dark & Light Red
-xterm*color1:  #ff5555
-xterm*color9:  #ff5555
+xterm*color1:  #AA0000
+xterm*color9:  #AA0000
 ! Dark & Light Green
-xterm*color2:  #55ff55
-xterm*color10: #55ff55
+xterm*color2:  #00AA00
+xterm*color10: #00AA00
 ! Dark & Light Yellow
-xterm*color3:  #ffff55
-xterm*color11: #ffff55
+xterm*color3:  #AA8800
+xterm*color11: #AA8800
 ! Dark & Light Blue
-xterm*color4:  #5555ff
-xterm*color12: #5555ff
+xterm*color4:  #0000AA
+xterm*color12: #0000AA
 ! Dark & Light Magenta
-xterm*color5:  #ff55ff
-xterm*color13: #ff55ff
+xterm*color5:  #8800AA
+xterm*color13: #8800AA
 ! Dark & Light Cyan
-xterm*color6:  #55ffff
-xterm*color14: #55ffff
+xterm*color6:  #0088AA
+xterm*color14: #0088AA
 ! Light Grey & White
-xterm*color7:  #ffffff
-xterm*color15: #ffffff
+xterm*color7:  #AAAAAA
+xterm*color15: #AAAAAA

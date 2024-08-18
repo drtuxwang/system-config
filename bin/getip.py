@@ -80,12 +80,10 @@ class Main:
             for answer in client.resolve(host, 'A'):
                 yield answer.to_text()
         except dns.exception.DNSException:
-            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-                try:
-                    sock.connect((host, 80))
-                    yield sock.getsockname()[0]
-                except socket.gaierror:
-                    pass
+            try:
+                yield socket.gethostbyname(host)
+            except socket.gaierror:
+                pass
 
     @classmethod
     def run(cls) -> int:

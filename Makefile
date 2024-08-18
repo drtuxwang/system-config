@@ -87,16 +87,6 @@ install:              # Install Python packages
 	@echo "\n*** Installing Python 3 requirements ***"
 	etc/python-packages.bash -i ${PYTHON}
 
-.PHONY: diff
-diff:                 # Show differences in branch from origin/main
-	git fetch ||:
-	git diff origin/main
-
-.PHONY: xdiff
-xdiff:                # Show graphical differences in branch from origin/main
-	git fetch ||:
-	git difftool --tool=meld --dir-diff origin/main
-
 .PHONY: reset
 reset:                # Ignore differences and reset to origin/<branch>
 	git status
@@ -114,10 +104,26 @@ time-all:             # Set file timestamps to git commit times (all files)
 	@echo "\n*** Fixing git timestamps (all files)***"
 	find * -type f | xargs git time
 
+.PHONY: diff
+diff:                 # Show differences in branch from origin/main
+	git fetch ||:
+	git diff origin/main..HEAD
+
+.PHONY: xdiff
+xdiff:                # Show graphical differences in branch from origin/main
+	git fetch ||:
+	git difftool --tool=meld --dir-diff origin/main..HEAD
+
+.PHONY: ref
+ref:                  # Show git branch/tags hash references
+	git show-ref
+	git lfs ls-files --size --all
+
 .PHONY: gc
 gc:                   # Run git garbage collection
 	@du -s $(shell pwd)/.git
 	rm -rf .git/lfs
+	git fsck
 	git \
 		-c gc.reflogExpire=0 \
 		-c gc.reflogExpireUnreachable=0 \

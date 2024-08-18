@@ -33,6 +33,8 @@
 	smudge = git-lfs smudge --skip -- %f
 	process = git-lfs filter-process --skip
 	required = true
+[lfs]
+	locksverify = true
 [log]
 	decorate = full
 [pull]

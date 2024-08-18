@@ -7,6 +7,8 @@
 
 set -u
 
+TIMEOUT="timeout -s KILL 10"
+
 
 #
 # Function to parse options
@@ -135,10 +137,12 @@ setup_host() {
     for host in $hosts
     do
         echo "$host: setup"
-        timeout -s KILL 10 ssh-copy-id $host 2> /dev/null || echo continue
-        timeout -s KILL 10 ssh $host 'rm -f .bash_logout .bash_profile .emacs; mkdir -p software/bin' 2> /dev/null || continue
-        timeout -s KILL 10 scp -p $HOME/.profile $HOME/.profile-opt $HOME/.vimrc $host: 2> /dev/null || continue
-        timeout -s KILL 10 scp -p $sysinfo $sysinfo.sh $host:software/bin 2> /dev/null || continue
+        $TIMEOUT ssh -o BatchMode=yes -o StrictHostKeyChecking=no $host exit 2>&1 | grep "Permission denied" && ssh-copy-id $host
+        $TIMEOUT ssh $host rm -f .bash_logout .bash_profile .emacs 2> /dev/null || continue
+        $TIMEOUT scp -p $HOME/.profile $HOME/.profile-opt $HOME/.vimrc $host: 2> /dev/null || continue
+        [ "$($TIMEOUT ssh $host test -x /opt/software/bin/sysinfo.sh 2> /dev/null)" ] && continue
+        $TIMEOUT ssh $host mkdir -p software/bin 2> /dev/null || continue
+        $TIMEOUT scp -p $sysinfo $sysinfo.sh $host:software/bin 2> /dev/null || continue
         echo "$host: ok"
     done
 }

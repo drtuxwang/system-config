@@ -14,7 +14,7 @@ then
 
     # Python virtualenv activation regex
     [ ! "$VIRTUAL_ENV" ] && export PYTHON_VENVS=".*"
-    ## export ANSIBLE_PYTHON27=1
+    ## export ANSIBLE_VERSION=2.12
 
     # API key files
     ##export ANSIBLE_KEY_FILE=
