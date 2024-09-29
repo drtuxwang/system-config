@@ -19,6 +19,8 @@ BUILD_DIRS := \
 	almalinux-8 \
 	oraclelinux-9 \
 	oraclelinux-8 \
+	rockylinux-9 \
+	rockylinux-8 \
 	centos-7 \
 	\
 	busybox-1.36 \

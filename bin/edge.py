@@ -172,6 +172,7 @@ class Options:
             keep_list = (
                 'Extensions',
                 'File System',
+                'IndexedDB',
                 'Local Extension Settings',
                 'Local Storage',
                 'Preferences',
@@ -280,7 +281,7 @@ class Options:
         self._pattern = (
             'ERROR:assistance_home|ERROR:disk_cache|ERROR:persistent_asset|'
             'ERROR:policy_logger|ERROR:simple_backend|ERROR:video_hover|'
-            'Fontconfig error:'
+            'Fontconfig error:|DidStartWorkerFail'
         )
         self._config()
         self._set_libraries(self._browser)

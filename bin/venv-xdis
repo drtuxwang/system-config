@@ -5,7 +5,7 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="xdis==6.1.0"
+    VENV_PACKAGE="xdis==6.1.1"
 }
 
 

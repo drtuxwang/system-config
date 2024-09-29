@@ -6,7 +6,7 @@
 virtualenv_setup() {
     VENV_PYTHON="python3"
     VENV_PACKAGE="devpi-client==6.0.7"
-    VENV_DEPENDS="devpi-common==3.7.2"  # Requires insecure py (1.11.0 last version and seems abandoned)
+    VENV_DEPENDS="devpi-common==3.7.2"
 }
 
 

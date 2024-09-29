@@ -4,7 +4,13 @@ NAME := almalinux9-dev
 HOSTNAME := almalinux9-dev
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
-	DOCKER_BUILD= := docker build
+	DOCKER_BUILD := docker build
+endif
+ifdef http_proxy
+	DOCKER_BUILD := $(DOCKER_BUILD) \
+		--build-arg http_proxy=$(http_proxy) \
+		--build-arg https_proxy=$(https_proxy) \
+		--build-arg no_proxy=$(no_proxy)
 endif
 DOCKER_RUN := docker run \
 	--rm \
@@ -53,8 +59,6 @@ run:                  # Run Docker container
 .PHONY: version
 version:              # Check version
 	@docker run --rm $(IMAGE) /opt/software/bin/sysinfo -s | grep "OS Name:" | sed -e "s@.*: *@$(shell pwd): @"
-	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi
 rmi:                  # Remove Docker image

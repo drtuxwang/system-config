@@ -35,6 +35,10 @@ options() {
     *-run|*-keys|*-setup|*-mount|*-umount)
         mode=${0##*-}
         ;;
+    ssh|scp)
+        mode="${0##*/}"
+        return
+        ;;
     *)
         help 0
         ;;
@@ -199,17 +203,64 @@ unmount_host() {
 }
 
 #
-# Function to show mounted QEMU drive image partitions
+# Run ssh with auto ssh-add keys
 #
-mount_info() {
-    local devices=$(lsblk -o "NAME,SIZE" 2> /dev/null | awk '/^nbd.* [1-9]/ {print $1}')
-    local process_list=$(ps -ef)
-    echo
-    for device in $devices
+ssh_host() {
+    if  [ -e "$SSH_AUTH_SOCK" ]
+    then
+        case ${1:-} in
+        -*)
+            ;;
+        [a-z]*)
+            ssh_add ${1%%.*}
+            ;;
+        esac
+    fi
+
+    PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@;s/^://;s/:$//")
+    exec "${0##*/}" "$@"
+}
+
+#
+# Run scp with auto ssh-add keys
+#
+scp_host() {
+    if  [ -e "$SSH_AUTH_SOCK" ]
+    then
+        for ARG in $*
+        do
+            case $ARG in
+            [a-z]*:*)
+                 ssh_add ${ARG%%:*}
+                 ;;
+            esac
+        done
+    fi
+
+    PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@;s/^://;s/:$//")
+    exec "${0##*/}" "$@"
+}
+
+#
+# Function to add ssh keys
+#
+ssh_add() {
+    for _host in $*
     do
-        echo "$process_list" | grep "qemu-nbd .*$device .*qcow2" | sed -e "s/[.]qcow2 .*/.qcow2/;s/.* /$hostname:/"
-        lsblk --noheadings -o "NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT" /dev/$device
-    done
+        for _key in $(ssh -G "$_host" 2> /dev/null | awk '/^identityfile / {print $2}' | sed -e "s@\~@$HOME@")
+        do
+            if [ -f "$_key" ]
+            then
+                _id=$(awk '{print $3}' "$_key.pub" 2> /dev/null)
+                if [ ! "$(ssh-add -l 2> /dev/null | grep -E " ($_key|$_id) ")" -a "$SSH_AUTH_SOCK" ]
+                then
+                    echo -e "\033[33mSSH key for $_host: ssh-add $_key\033[0m"
+                    ssh-add $_key
+                fi
+                break
+           fi
+       done
+   done
 }
 
 

@@ -4,7 +4,13 @@ NAME := almalinux8-dev
 HOSTNAME := almalinux8-dev
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
-	DOCKER_BUILD= := docker build
+	DOCKER_BUILD := docker build
+endif
+ifdef http_proxy
+	DOCKER_BUILD := $(DOCKER_BUILD) \
+		--build-arg http_proxy=$(http_proxy) \
+		--build-arg https_proxy=$(https_proxy) \
+		--build-arg no_proxy=$(no_proxy)
 endif
 DOCKER_RUN := docker run \
 	--rm \
@@ -59,7 +65,7 @@ rmi:                  # Remove Docker image
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi         # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker image including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help

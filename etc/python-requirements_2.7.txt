@@ -37,6 +37,7 @@ ipython==None
 isort==4.3.21
 jedi==None
 Jinja2                       # ==2.11.3 (last compatible version)
+jsonpickle                   # ==2.2.0 (last compatible version)
 lazy-object-proxy==1.6.0
 markdown2==None
 markdown-it-py==None

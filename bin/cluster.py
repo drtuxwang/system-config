@@ -54,7 +54,7 @@ class Options:
 
     @staticmethod
     def _parse_input() -> List[str]:
-        nodes = []
+        nodes: list = []
         for line in sys.stdin:
             nodes.extend(line.split())
         return nodes

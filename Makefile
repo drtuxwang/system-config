@@ -97,12 +97,12 @@ reset:                # Ignore differences and reset to origin/<branch>
 .PHONY: time
 time:                 # Set file timestamps to git commit times (last 7 days)
 	@echo "\n*** Fixing git timestamps (last 7 days) ***"
-	find * -type f -mtime -7 | xargs git time
+	find * -type f -mtime -7 | xargs -r git time
 
 .PHONY: time-all
 time-all:             # Set file timestamps to git commit times (all files)
 	@echo "\n*** Fixing git timestamps (all files)***"
-	find * -type f | xargs git time
+	find * -type f | xargs -r git time
 
 .PHONY: diff
 diff:                 # Show differences in branch from origin/main

@@ -4,6 +4,6 @@ if [ "$(grep --version 2>&1 | grep "GNU grep")" ]
 then
     exec grep -E "$@"
 else
-    PATH=$(echo ":$PATH" | sed -e "s@:${0%/*}:@:@")
+    PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@;s/^://;s/:$//")
     exec egrep "$@"
 fi

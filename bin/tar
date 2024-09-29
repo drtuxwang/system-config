@@ -10,7 +10,7 @@
 which() {
     if [ "$1" = "${0##*/}" ]
     then
-        PATH=$(echo ":$PATH:" | sed -e "s@.*:${0%/*}:@@")
+        PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@;s/^://;s/:$//")
     fi
 
     IFS=:

@@ -4,8 +4,8 @@
 #
 # 1996-2023 By Dr Colin Kong
 #
-VERSION=20240524
-RELEASE="2.6.49"
+VERSION=20240831
+RELEASE="2.6.49-1"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -47,7 +47,7 @@ fi
 which() {
     if [ "$1" = "`basename $0`" ]
     then
-        PATH=`echo ":$PATH:" | sed -e "s@.*:\`dirname \"$0\"\`:@@"`
+        PATH=`echo ":$PATH:" | sed -e "s@:\`dirname \"$0\"\`:@:@;s/^://;s/:$//"`
     fi
     for CDIR in `echo $PATH | sed -e "s/ /%20/g" -e "s/:/ /g"`
     do

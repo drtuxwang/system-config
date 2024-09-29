@@ -27,6 +27,7 @@ the years.
  * bin/pyld_mod.bash               Bash Python launcher module
  * bin/pyld_mod.py                 Python main program loader module
  * bin/qemu_mod.bash               Bash QEMU image file utilities module
+ * bin/safe_mod.bash               Bash safe command module
  * bin/subtask_mod.py              Python sub task handling module
  * bin/task_mod.py                 Python task handling utility module
  * bin/venv_mod.bash               Bash Python Virtual Environments module

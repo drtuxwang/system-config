@@ -116,7 +116,7 @@ locate_python() {
 # Function to return location of program
 #
 which() {
-    PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@")
+    PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@;s/^://;s/:$//")
 
     IFS=:
     for CDIR in $PATH

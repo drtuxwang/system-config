@@ -161,10 +161,10 @@ class Main:
         image_phash = self._calc(options, [
             Path(x) for x in options.get_files()]
         )
-        matched_images = self._match(image_phash)
+        matched_images = sorted([sorted(x) for x in self._match(image_phash)])
 
-        for images in sorted(matched_images):
-            logger.warning("Identical: %s", Command.args2cmd(sorted(images)))
+        for images in matched_images:
+            logger.warning("Identical: %s", Command.args2cmd(images))
         return bool(matched_images)
 
 

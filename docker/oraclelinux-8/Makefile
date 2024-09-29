@@ -4,7 +4,13 @@ NAME := oraclelinux8-dev
 HOSTNAME := oraclelinux8-dev
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
-	DOCKER_BUILD= := docker build
+	DOCKER_BUILD := docker build
+endif
+ifdef http_proxy
+	DOCKER_BUILD := $(DOCKER_BUILD) \
+		--build-arg http_proxy=$(http_proxy) \
+		--build-arg https_proxy=$(https_proxy) \
+		--build-arg no_proxy=$(no_proxy)
 endif
 DOCKER_RUN := docker run \
 	--rm \

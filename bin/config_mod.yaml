@@ -246,7 +246,7 @@ parameters:
   - .tif
   - .tiff
   - .webp
-  user_agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0
+  user_agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0
   video_extensions:
   - .avi
   - .flv
@@ -255,7 +255,7 @@ parameters:
   - .mpegts
   - .mpg
   - .webm
-  web_mail: https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com
+  web_mail: https://mail.google.com
   web_uri:
   - ftp
   - http

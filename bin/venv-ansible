@@ -5,7 +5,7 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="ansible-core==2.16.8"
+    VENV_PACKAGE="ansible-core==2.16.11"
     VENV_DEPENDS="certifi"
     VENV_POSTINST="install_collections"
     VENV_PRERUN="activate_collections"

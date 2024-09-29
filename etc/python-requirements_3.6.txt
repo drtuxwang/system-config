@@ -1,6 +1,8 @@
 astroid                      # ==2.11.7 (last compatible version)
 asttokens==None
+bcrypt                       # ==4.0.1 (last compatible version)
 cached-property==1.5.2
+cffi                         # ==1.15.1 (last compatible version)
 chardet                      # ==5.0.0 (last compatible version)
 charset-normalizer==2.0.0
 click                        # ==8.0.4 (last compatible version)
@@ -20,6 +22,7 @@ ipython==None
 isort                        # ==5.10.1 (last compatible version)
 jedi==None
 Jinja2                       # ==3.0.3 (last compatible version)
+jsonpickle                   # ==2.2.0 (last compatible version)
 lazy-object-proxy            # ==1.7.1 (last compatible version)
 markdown-it-py==None
 MarkupSafe==2.0.1
@@ -41,6 +44,7 @@ Pygments                     # ==2.14.0 (last compatible version)
 pylint==2.13.9
 pymongo                      # ==3.13.0 (last compatible version)
 pyOpenSSL                    # ==23.2.0 (last compatible version)
+PyYAML                       # ==6.0.1 (last compatible version)
 requests                     # ==2.27.1 (last compatible version)
 rich==None
 setuptools                   # ==59.6.0 (last compatible version)
