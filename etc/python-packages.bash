@@ -52,7 +52,7 @@ get_pip() {
         GETPIP="https://bootstrap.pypa.io/pip/get-pip.py"
         ;;
     esac
-    [ "$https_proxy" ] && GETPIP="--insecure $GETPIP"
+    [ "${https_proxy:-}" ] && GETPIP="--insecure $GETPIP"
     echo "curl --location --progress-bar $GETPIP | $PYTHON"
     curl --location --progress-bar $GETPIP | $PYTHON 2>&1 | grep -v "'root' user"
     return ${PIPESTATUS[0]}
