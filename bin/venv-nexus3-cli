@@ -5,7 +5,7 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="nexus3-cli==4.1.9"
+    VENV_PACKAGE="nexus3-cli==4.2.1"
 }
 
 
