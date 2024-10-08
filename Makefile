@@ -63,8 +63,8 @@ check-python-pip:     # Check python ackages
 
 .PHONY: check-python-test
 check-python-test:    # Check python tests
-##	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
-##	${PYTHON} -m unittest discover --buffer bin
+	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
+	${PYTHON} -m unittest discover --buffer bin
 	@echo "\n*** Running \"${PYTHON}\" COOKIECUTTER check ***"
 	@make --no-print-directory --directory cookiecutter test
 	@echo "\n*** Running \"${PYTHON}\" PYFLAKES checks ***"
