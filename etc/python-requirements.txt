@@ -17,7 +17,7 @@ cx-Oracle==8.3.0             # Oracle DB client
 Cython==3.0.11               # Cython compiler for writing C extensions
 decorator==5.1.1             #   (required by ipdb/ipython)
 dicttoxml==1.7.16            # Convert Python dict to XML
-dill==0.3.8                  #   (required by pylint)
+dill==0.3.9                  #   (required by pylint)
 distlib==0.3.8               #   (required by humpty/virtualenv)
 dnspython==2.6.1             # DNS client
 EditorConfig==0.12.4         #   (required by jsbeautifier)
@@ -28,9 +28,9 @@ gitdb==4.0.11                #   (required by GitPython)
 GitPython==3.1.43            # Library to interact with Git repositories
 gTTS==2.5.3                  # Google Text-to-Speech
 humpty==0.2.1                # Convert whl to egg
-idna==3.8                    #   (required by requests)
+idna==3.9                    #   (required by requests)
 ipdb==0.13.13                # Interactive Python debugger
-ipython==8.26.0              #   (required by ipdb)
+ipython==8.27.0              #   (required by ipdb)
 isort==5.12.0                #   (required by pylint)
 jedi==0.18.2                 #   (required by ipython)
 jinja2-cli==0.8.2            # Jinja2 commandline
@@ -46,7 +46,7 @@ MarkupSafe==2.1.5            #   (required by Jinja2)
 matplotlib-inline==0.1.6     #   (required by ipython)
 mccabe==0.7.0                #   (required by pylint)
 mdurl==0.1.2                 #   (required by cookiecutter)
-motor==3.3.2                 # Mongo async client
+motor==3.5.3                 # Mongo async client
 ntplib==0.4.0                # NTP client
 packaging==23.2              #   (required by pipdeptree)
 paramiko==3.4.1              # SSH client
@@ -56,15 +56,15 @@ pickleshare==0.7.5           #   (required by ipython)
 pip==24.1.2                  # Python package manager
 pipdeptree==2.22.0           # Python package dependency tree
 platformdirs==4.2.2          #   (required by pylint/virtualenv)
-prompt-toolkit==3.0.46       #   (required by ipython)
+prompt-toolkit==3.0.48       #   (required by ipython)
 ptyprocess==0.6.0            #   (required by pexpect)
 pure-eval==0.2.2             #   (required by stack-data)
-pycodestyle==2.11.1          # Python style guide checker
+pycodestyle==2.12.1          # Python style guide checker
 pycparser==2.21              #   (required by cffi)
 pyflakes==3.1.0              # Python source file checker 
 Pygments==2.17.2             #   (required by ipython)
 pylint==3.2.7                # Python code static checker
-pymongo==4.7.3               # MongoDB client
+pymongo==4.8.0               # MongoDB client
 PyNaCl==1.5.0                #   (required by paramiko)
 pyOpenSSL==24.2.1            # OpenSSL interface
 python-dateutil==2.8.2       #   (required by bson)
@@ -72,7 +72,7 @@ python-slugify==6.1.2        #   (required by cookiecutter)
 PyYAML==6.0.2                # YAML parser/emitter
 pyzstd==0.15.10              # ZSTD compression/decompression
 requests==2.32.3             # Web client
-rich==13.7.1                 #   (required by cookiecutter)
+rich==13.8.1                 #   (required by cookiecutter)
 setuptools==74.1.2           # Python package manager
 six==1.16.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.1                 #   (required by gitdb)
