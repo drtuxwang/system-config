@@ -19,6 +19,7 @@ virtualenv_setup() {
         VENV_PRERUN=
         ;;
     2.12)
+        VENV_PYTHON="python3.11"
         VENV_PACKAGE="ansible-core==2.12.10"
         ;;
     esac
