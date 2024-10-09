@@ -107,7 +107,9 @@ class Main:
         elif magic < 3600:
             version = (3, 13)  # 3.13
         elif magic < 3650:
-            version = (3, 14)  # 3.14 and later
+            version = (3, 14)  # 3.14
+        else:
+            version = (3, 15)  # 3.15 and later
 
         # Run difference version of Python
         if sys.version_info[0:2] != version:
