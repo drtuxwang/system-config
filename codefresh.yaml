@@ -25,8 +25,8 @@ steps:
     - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
-    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.16/Makefile | sed -e "s/.* //")
-    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.11/Makefile | sed -e "s/.* //")
+    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.18/Makefile | sed -e "s/.* //")
+    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.12/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
   preparations:
@@ -39,14 +39,14 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - cd docker/alpine-3.16/bash && ../../bin/create-root-tar.sh bash bin vim
+        - cd docker/alpine-3.18/bash && ../../bin/create-root-tar.sh bash bin vim
       create_python_deps:
         title: Build Python dependencies
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - cd docker/python-3.11/pip && ../../bin/create-root-tar.sh bash bin python3 vim
-        - cd docker/python-3.11/pip && ../../bin/python-packages.bash
+        - cd docker/python-3.12/pip && ../../bin/create-root-tar.sh bash bin python3 vim
+        - cd docker/python-3.12/pip && ../../bin/python-packages.bash
 
   docker_base_builds:
     title: Package Docker base images
@@ -57,8 +57,8 @@ steps:
         title: Build Alpine base image
         type: build
         image_name: drtuxwang/alpine
-        tag: 3.16
-        working_directory: docker/alpine-3.16
+        tag: 3.18
+        working_directory: docker/alpine-3.18
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{ALPINE_BASE}}
@@ -66,8 +66,8 @@ steps:
         title: Build Python image
         type: build
         image_name: drtuxwang/python
-        tag: 3.11
-        working_directory: docker/python-3.11
+        tag: 3.12
+        working_directory: docker/python-3.12
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{PYTHON_BASE}}
@@ -83,13 +83,13 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_alpine}}
-        tag: 3.16
+        tag: 3.18
       push_python:
         title: Push Python base image
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 3.11
+        tag: 3.12
 
   docker_builds:
     title: Package Docker images
@@ -100,14 +100,14 @@ steps:
         title: Build Alpine bash image
         type: build
         image_name: drtuxwang/alpine-bash
-        tag: 3.16
-        working_directory: docker/alpine-3.16/bash
+        tag: 3.18
+        working_directory: docker/alpine-3.18/bash
         dockerfile: Dockerfile
       build_python:
         title: Build Python dev image
         type: build
         image_name: drtuxwang/python-dev
-        tag: 3.11
+        tag: 3.12
         working_directory: docker/python-3.10/dev
         dockerfile: Dockerfile
         build_arguments:
@@ -123,13 +123,13 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_alpine_bash}}
-        tag: 3.16
+        tag: 3.18
       push_python:
         title: Push Python dev image
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 3.11
+        tag: 3.12
 
   python_tests:
     title: Run Python tests

@@ -96,7 +96,7 @@ the years.
  * docker/nginx-1.24/              nginx:1.24-bullseye based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
  * docker/oraclelinux-9/           oralcelinux:9 based Docker images
- * docker/python-3.11/             python:3.11-slim-bookworm based Docker images
+ * docker/python-3.12/             python:3.12-slim-bookworm based Docker images
  * docker/registry-2.6/            registry:2.6 based Docker Registry server app
  * docker/scratch/                 scratch Docker image
  * docker/ubuntu-18.04/            ubuntu:18.04 based Docker images
