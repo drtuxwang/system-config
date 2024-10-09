@@ -97,7 +97,7 @@ class Main:
             magic = struct.unpack('h', ifile.read(2))[0]
         # lib/importlib/_bootstrap_external.py
         if magic < 3400:
-            version = (3, 7)  # 3.7 and older
+            version = (3, 7)   # 3.7 and older
         elif magic < 3450:
             version = (3, 10)  # 3.8, 3.9, 3.10
         elif magic < 3500:
@@ -105,8 +105,8 @@ class Main:
         elif magic < 3550:
             version = (3, 12)  # 3.12
         elif magic < 3600:
-            version = (3, 13)  # 3.12
-        else:
+            version = (3, 13)  # 3.13
+        elif magic < 3650:
             version = (3, 14)  # 3.14 and later
 
         # Run difference version of Python
