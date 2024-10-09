@@ -45,7 +45,7 @@ class Options:
             nargs=1,
             dest='version',
             default=[None],
-            help="Use different Python version (2.7, 3.10, 3.11, 3.12).",
+            help="Use different Python version (2.7, 3.11, 3.12, 3.13).",
         )
         parser.add_argument(
             'files',
