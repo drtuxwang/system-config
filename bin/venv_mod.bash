@@ -80,7 +80,7 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
         sed -i "s@^#!/.*@#!/usr/bin/env $VENV_PYTHON@" "$FILE"
     done
     unset IFS
-    [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV/lib
+    [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV/lib 2> /dev/null
 
     $VENV_POSTINST
 }

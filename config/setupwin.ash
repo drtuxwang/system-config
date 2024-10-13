@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=$(uname -r | cut -f1-2 -d. | awk '{printf("%s\n", $1*10)}')
+VERSION=$($BUSYBOX/bin/uname -r | cut -f1-2 -d. | awk '{printf("%s\n", $1*10)}')
 DIR=${0%/config/*}/pool/software
 
 install() {
@@ -11,7 +11,9 @@ install() {
 }
 
 echo
-install "$DIR/system-config_*_generic.7z" bin
+install "$DIR/system-config_*_generic.7z"
+mv c:/software/system-config_*/bin/* c:/software/bin/
+rm -rf c:/software/system-config_*
 echo
 install "$DIR/vim_*-windows-x86.7z"
 

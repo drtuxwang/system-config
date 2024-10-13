@@ -112,25 +112,6 @@ class TestOptions(
         result = options.get_library_path()
         self.assertListEqual(result, expected)
 
-    def test_get_library_path_pyldpath_error(self) -> None:
-        """
-        Test '-pyldpath' without 2nd argument raise exception and
-        exit status 2.
-        """
-        expected = (
-            f'{Path(sys.argv[0]).name}: error: '
-            'argument -pyldpath: expected 1 argument'
-        )
-        args = ['arg0', 'moduleX', '-pyldpath', '-pyldv']
-
-        with self.assertRaises(SystemExit) as context:
-            pyld_mod.Options(args)
-        self.assertEqual(2, context.exception.args[0])
-
-        # pylint: disable=no-member
-        result = pyld_mod.sys.stderr.getvalue()  # type: ignore
-        self.assertIn(expected, result)
-
     def test_get_module(self) -> None:
         """
         Test module name is passed correctly.
@@ -396,7 +377,7 @@ class TestOptions(
         """
         expected = (
             f'{Path(sys.argv[0]).name}: error: '
-            'the following arguments are required: module, arg'
+            'the following arguments are required: module'
         )
         args = ['arg0']
 

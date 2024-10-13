@@ -6,6 +6,7 @@ filelock                     # ==3.12.2 (last compatible version)
 importlib-metadata==4.2.0    #   (< 4.3 required by jsonpickle/virtualenv)
 ipython                      # ==7.34.0 (last compatible version)
 isort                        # ==5.11.5 (last compatible version)
+motor==3.3.2
 packaging==None
 pip                          # ==21.3.1 (last compatible version)
 pipdeptree                   # ==2.9.6 (last compatible version)
@@ -13,6 +14,7 @@ platformdirs==2.6.2
 pycodestyle==2.9.1
 pyflakes==2.5.0
 pylint                       # ==2.17.7 (last compatible version)
+pymongo                      # ==4.7.3 (last compatible version)
 PyYAML                       # ==6.0.1 (last compatible version)
 requests                     # ==2.31.0 (last compatible version)
 setuptools                   # ==68.0.0 (last compatible version)

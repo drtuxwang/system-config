@@ -4,7 +4,7 @@
 #
 
 qemu_settings() {
-    MACHINE_VCPUS=2
+    MACHINE_VCPUS=4
     MACHINE_RAM=4096
     CONNECT_NETWORK=yes
     CONNECT_SOUND=yes

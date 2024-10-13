@@ -157,7 +157,7 @@ exec_python() {
     PYLD_BIN=${0%/*}
     if [ ! "$PYLD_EXE" ]
     then
-        PYLD_EXE=python3
+        PYLD_EXE=${PYTHON_VERSION:-python3}
     fi
     if [ "$PYLD_MAIN" ]
     then

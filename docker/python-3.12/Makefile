@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/python:3.11-slim-bookworm
-IMAGE := drtuxwang/python-pip:3.11-slim-bookworm
-NAME := python311-pip
-HOSTNAME := python311-pip
+BASE_IMAGE := python:3.12-slim-bookworm
+IMAGE := drtuxwang/python:3.12-slim-bookworm
+NAME := python312
+HOSTNAME := python312
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
@@ -12,6 +12,7 @@ ifdef http_proxy
 		--build-arg https_proxy=$(https_proxy) \
 		--build-arg no_proxy=$(no_proxy)
 endif
+BUILD_DIRS := devpi pip
 DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
@@ -29,48 +30,54 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@make --no-print-directory --directory .. status
+	@../../bin/docker-images "^$(BASE_IMAGE) " "`echo $(IMAGE) | sed -e 's/-[^-:]*:/.*:/'` " ||:
+
+.PHONY: pull
+pull:                 # Pull Docker base image
+	docker pull $(BASE_IMAGE)
+	@make --no-print-directory status
+
+.PHONY: pull-save
+pull-save:            # Pull updated Docker base image and save to tar archive
+	../bin/pull-save.bash $(BASE_IMAGE)
+
+.PHONY: save
+save: pull            # Pull Docker base image and save to tar archive
+	../../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.bash bash bin python3 vim
+	../bin/create-rootfs.bash bash bin python3 vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
-
-.PHONY: push-stable
-push-stable:          # Tag and push stable Docker images
-	../../../bin/docker-tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
-	docker push ${IMAGE}
-	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
-
-.PHONY: pull-stable
-pull-stable:          # Pull stable Docker image
-	docker pull ${IMAGE}
-	docker pull `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
-
-.PHONY: run
-run:                  # Run Docker container
-	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+	for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory --directory $$DIR build || exit 1; \
+	done
 
 .PHONY: test
 test:                 # Run tests
-	docker run \
-		--rm \
-		--volume=$(shell realpath ../../..):/vol/app:ro \
-		--workdir=/vol/app \
-		$(IMAGE) \
-		make test
+	make --no-print-directory --directory pip test
+
+.PHONY: run
+run:                  # Run Docker container
+	make --no-print-directory --directory bash run
 
 .PHONY: version
-version:              # Check versions
+version:              # Check version
 	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
 		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi
 rmi:                  # Remove Docker images
+	for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory --directory $$DIR rmi; \
+	done
 	docker rmi -f $(IMAGE) ||:
+
+.PHONY: rmi-base
+rmi-base: rmi         # Remove Docker images including base image
+	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
 help:                 # Show Makefile options

@@ -95,17 +95,21 @@ class Main:
         """
         with path.open('rb') as ifile:
             magic = struct.unpack('h', ifile.read(2))[0]
-        # Lib/importlib/_bootstrap_external.py
-        if magic <= 3394:
-            version = (3, 7)  # 3.7
-        elif magic <= 3439:
+        # lib/importlib/_bootstrap_external.py
+        if magic < 3400:
+            version = (3, 7)   # 3.7 and older
+        elif magic < 3450:
             version = (3, 10)  # 3.8, 3.9, 3.10
-        elif magic <= 3495:
+        elif magic < 3500:
             version = (3, 11)  # 3.11
-        elif magic <= 3531:
+        elif magic < 3550:
             version = (3, 12)  # 3.12
+        elif magic < 3600:
+            version = (3, 13)  # 3.13
+        elif magic < 3650:
+            version = (3, 14)  # 3.14
         else:
-            version = (3, 13)  # 3.13+
+            version = (3, 15)  # 3.15 and later
 
         # Run difference version of Python
         if sys.version_info[0:2] != version:

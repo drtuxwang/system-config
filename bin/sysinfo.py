@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.9.1'
-VERSION = 20240620
+RELEASE = '6.10.0'
+VERSION = 20241013
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -2356,6 +2356,8 @@ class Software:
     """
 
     SOFTWARE_TOOLS = [
+        (['7z', '/dev/null/null', '/dev/null'], '^7-Zip ',
+            r'7-Zip( \([^)]*\))* | .*', '7-Zip'),
         (['bash', '--version'], ' version ', '.*version |[( ].*', ''),
         (['clamscan', '--version'], 'ClamAV ', '.*ClamAV |/.*', 'ClamAV'),
         (['convert', '--version'], ' ImageMagick ',
@@ -2387,6 +2389,7 @@ class Software:
         (['ssh', '-V'], 'OpenSSH', '.*SSH[ _]| .*', 'OpenSSH'),
         (['systemctl', '--version'], '^systemd', 'systemd | .*', 'systemd'),
         (['tmux', '-V'], '^tmux ', '.* ', ''),
+        (['vi', '--version'], '^VIM.*IMproved ', '.*IMproved | .*', 'VIM'),
         (['wget', '--version'], 'Wget ', '.*Wget | .*', ''),
     ]
 

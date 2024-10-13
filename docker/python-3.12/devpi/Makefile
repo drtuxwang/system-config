@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/python:3.11-slim-bookworm
-IMAGE := drtuxwang/python-devpi:3.11-slim-bookworm
-NAME := python311-devpi
-HOSTNAME := python311-devpi
+BASE_IMAGE := drtuxwang/python:3.12-slim-bookworm
+IMAGE := drtuxwang/python-devpi:3.12-slim-bookworm
+NAME := python312-devpi
+HOSTNAME := python312-devpi
 LOCALPORT ?= 8080
 DOCKER_BUILD := docker buildx build
 ifeq ($(shell docker --help | grep -c buildx), 0)
