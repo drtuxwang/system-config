@@ -32,7 +32,7 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.10.1'
+RELEASE = '6.10.2'
 VERSION = 20241014
 
 # pylint: disable=bad-option-value, useless-option-value
@@ -2356,22 +2356,47 @@ class Software:
     """
 
     SOFTWARE_TOOLS = [
-        (['7z', '/dev/null/null', '/dev/null'], '^7-Zip ',
-            r'7-Zip( \([^)]*\))* | .*', '7-Zip'),
+        (
+            ['7z', '/dev/null/null', '/dev/null'],
+            '^7-Zip ',
+            r'7-Zip( \([^)]*\))* | .*',
+            '7-Zip',
+        ),
+        (['asmc', '--version'], '^Asmc ', '.* ', ''),
         (['bash', '--version'], ' version ', '.*version |[( ].*', ''),
         (['clamscan', '--version'], 'ClamAV ', '.*ClamAV |/.*', 'ClamAV'),
-        (['convert', '--version'], ' ImageMagick ',
-            '.*ImageMagick | .*', 'ImageMagick',),
+        (
+            ['convert', '--version'],
+            ' ImageMagick ',
+            '.*ImageMagick | .*',
+            'ImageMagick',
+        ),
         (['curl', '--version'], '^curl ', 'curl | .*', ''),
         (['dockerd', '--version'], ' version ', '.*version |,.*', 'Docker'),
-        (['ffmpeg', '-version'], '^ffmpeg version ',
-            '.*version | .*', 'FFmpeg'),
-        (['gcc', '--version'], '^gcc ',
-            r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
-        (['g++', '--version'], '^g\\+\\+ ',
-            r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
-        (['gfortran', '--version'], '^GNU Fortran ',
-            r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
+        (
+            ['ffmpeg', '-version'],
+            '^ffmpeg version ',
+            '.*version | .*',
+            'FFmpeg',
+        ),
+        (
+            ['gcc', '--version'],
+            '^gcc ',
+            r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
+            'GCC',
+        ),
+        (
+            ['g++', '--version'],
+            '^g\\+\\+ ',
+            r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
+            'GCC',
+        ),
+        (
+            ['gfortran', '--version'],
+            '^GNU Fortran ',
+            r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
+            'GCC',
+        ),
         (['git', '--version'], 'version ', '.*version ', ''),
         (['git-lfs', '--version'], 'git-lfs/', 'git-lfs/| .*', ''),
         (['go', 'version'], r'version go\d', '.*version go| .*', 'Golang'),
