@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.10.0'
-VERSION = 20241013
+RELEASE = '6.10.1'
+VERSION = 20241014
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -2378,6 +2378,7 @@ class Software:
         (['gpg', '--version'], r'GnuPG\) ', r'.*\)', 'GnuPG'),
         (['java', '--version'], '^openjdk ', 'openjdk | .*', 'OpenJDK'),
         (['javac', '--version'], '^javac ', 'javac | .*', ''),
+        (['k3s', '--version'], '^k3s.* version ', '.*version | .*', ''),
         (['kubectl', 'version'], 'Client', '.*:.v|".*', ''),
         (['helm', 'version'], 'Client', '.*SemVer:"v|".*', ''),
         (['htop', '-v'], '^htop ', 'htop | .*', ''),
