@@ -2411,7 +2411,7 @@ class Software:
         (['python', '--version'], 'Python ', '.*Python ', ''),
         (['python3', '--version'], 'Python ', '.*Python ', ''),
         (['rsync', '--version'], '^rsync +version', 'rsync +version | .*', ''),
-        (['sqlplus', '-V'], '^Version ', 'Version ', 'Instant Client'),
+        (['sqlplus', '-V'], '^Version ', 'Version ', ''),
         (['ssh', '-V'], 'OpenSSH', '.*SSH[ _]| .*', 'OpenSSH'),
         (['systemctl', '--version'], '^systemd', 'systemd | .*', 'systemd'),
         (['tmux', '-V'], '^tmux ', '.* ', ''),
