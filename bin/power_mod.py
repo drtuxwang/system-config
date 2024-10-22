@@ -2,18 +2,19 @@
 """
 Python power handling module
 
-Copyright GPL v2: 2011-2023 By Dr Colin Kong
+Copyright GPL v2: 2011-2024 By Dr Colin Kong
 """
 
 import functools
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 from typing import List, Tuple
 
-RELEASE = '2.4.2'
-VERSION = 20230122
+RELEASE = '2.5.0'
+VERSION = 20241021
 
 
 class Battery:
@@ -512,4 +513,7 @@ class ExecutableCallError(PowerError):
 
 
 if __name__ == '__main__':
-    help(__name__)
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"Python power handling module {RELEASE} ({VERSION})")
+    else:
+        help(__name__)

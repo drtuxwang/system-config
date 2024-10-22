@@ -16,7 +16,7 @@ from typing import List
 
 from command_mod import Command, Platform
 from file_mod import FileUtil
-from subtask_mod import Background, Daemon
+from subtask_mod import Background, Daemon, Exec
 from task_mod import Tasks
 
 
@@ -364,6 +364,9 @@ class Options:
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
+            elif args[1] in ('-v', '-V', '-version', '--version'):
+                self._firefox.set_args(['--version'])
+                Exec(self._firefox.get_cmdline()).run()
             else:
                 raise SystemExit(
                     f'{sys.argv[0]}: Invalid "{args[1]}" option.',

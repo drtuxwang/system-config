@@ -18,7 +18,8 @@ from logging_mod import Message
 from subtask_mod import Exec, Task
 from task_mod import Tasks
 
-RELEASE = '3.1.3'
+RELEASE = '3.2.0'
+VERSION = 20241021
 
 
 class Options:
@@ -68,6 +69,14 @@ class Options:
             "My Queuing System batch job status.",
         )
 
+        parser.add_argument(
+            '-v',
+            '-V',
+            '-version',
+            '--version',
+            action='version',
+            version=f"MyQS {RELEASE} ({VERSION})",
+        )
         parser.add_argument(
             '-a',
             dest='all_flag',

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Python sub task handling module
+Python command handling module
 
-Copyright GPL v2: 2006-2023 By Dr Colin Kong
+Copyright GPL v2: 2006-2024 By Dr Colin Kong
 """
 
 import functools
@@ -687,4 +687,7 @@ class GlibcVersionError(CommandError):
 
 
 if __name__ == '__main__':
-    help(__name__)
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"Python command handling module {RELEASE} ({VERSION})")
+    else:
+        help(__name__)

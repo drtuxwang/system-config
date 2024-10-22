@@ -251,7 +251,9 @@ class Options:
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
-
+            elif args[1] in ('-version', '--version'):
+                self._browser.set_args(['--version'])
+                Exec(self._browser.get_cmdline()).run()
             if args[1] == '-restart':
                 self._restart()
                 args = args[1:]

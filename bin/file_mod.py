@@ -7,12 +7,13 @@ Copyright GPL v2: 2006-2024 By Dr Colin Kong
 
 import getpass
 import re
+import sys
 import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.7.0'
-VERSION = 20240421
+RELEASE = '2.8.0'
+VERSION = 20241021
 
 
 class FileStat:
@@ -314,4 +315,7 @@ class FileTmpdirPermissionError(FileError):
 
 
 if __name__ == '__main__':
-    help(__name__)
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"Python file handling utility module {RELEASE} ({VERSION})")
+    else:
+        help(__name__)

@@ -7,11 +7,12 @@ Copyright GPL v2: 2018-2024 By Dr Colin Kong
 
 import logging
 import re
+import sys
 import unicodedata
 from typing import List
 
-RELEASE = '1.3.1'
-VERSION = 20240609
+RELEASE = '1.4.0'
+VERSION = 20241021
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 
@@ -120,16 +121,19 @@ class Message(str):
 
 
 if __name__ == '__main__':
-    help(__name__)
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"Python log handling module {RELEASE} ({VERSION})")
+    else:
+        help(__name__)
 
-    logger = logging.getLogger(__name__)
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(ColoredFormatter())
-    logger.addHandler(console_handler)
-    logger.setLevel(logging.DEBUG)
+        logger = logging.getLogger(__name__)
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(ColoredFormatter())
+        logger.addHandler(console_handler)
+        logger.setLevel(logging.DEBUG)
 
-    logger.debug('This is debug logging message example')
-    logger.info('This is info logging message example')
-    logger.warning('This is warning logging message example')
-    logger.error('This is error logging message example')
-    logger.critical('This is critical logging message example')
+        logger.debug('This is debug logging message example')
+        logger.info('This is info logging message example')
+        logger.warning('This is warning logging message example')
+        logger.error('This is error logging message example')
+        logger.critical('This is critical logging message example')

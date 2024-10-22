@@ -15,7 +15,7 @@ from typing import List
 
 from command_mod import Command
 from file_mod import FileUtil
-from subtask_mod import Daemon
+from subtask_mod import Daemon, Exec
 
 
 class Options:
@@ -104,8 +104,11 @@ class Options:
             self._config_geeqie()
         else:
             self._gqview = Command('gqview', errors='stop')
+
         paths = [Path(x) for x in args[1:]]
         for path in paths:
+            if path.name in ('-v', '--version'):
+                Exec(self._gqview.get_cmdline() + ['--version']).run()
             if not path.exists():
                 self._gqview.set_args(args[1:])
                 return

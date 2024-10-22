@@ -2,7 +2,7 @@
 """
 Zhong Hua Speak Chinese TTS software.
 
-2009-2023 By Dr Colin Kong
+2009-2024 By Dr Colin Kong
 """
 
 import argparse
@@ -20,7 +20,8 @@ from file_mod import FileUtil
 from subtask_mod import Batch, Exec, ExecutableCallError, Task
 from task_mod import Tasks
 
-RELEASE = '6.2.1'
+RELEASE = '6.3.0'
+VERSION = 20241021
 
 
 class Options:
@@ -75,6 +76,14 @@ class Options:
             f"v{self._release} - Chinese TTS software.",
         )
 
+        parser.add_argument(
+            '-v',
+            '-V',
+            '-version',
+            '--version',
+            action='version',
+            version=f"Zhong Hua Speak {RELEASE} ({VERSION})",
+        )
         parser.add_argument(
             '-xclip',
             action='store_true',

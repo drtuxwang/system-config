@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2023 By Dr Colin Kong
+Copyright GPL v2: 2006-2024 By Dr Colin Kong
 """
 
 import copy
@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.3.2'
-VERSION = 20230122
+RELEASE = '2.4.0'
+VERSION = 20241021
 
 BUFFER_SIZE = 131072
 
@@ -723,7 +723,9 @@ class Main:
 
 
 if __name__ == '__main__':
-    if '--pydoc' in sys.argv:
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"Python sub task handling module {RELEASE} ({VERSION})")
+    elif '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

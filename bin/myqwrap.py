@@ -13,6 +13,9 @@ from command_mod import Command
 from subtask_mod import Exec
 from task_mod import Tasks
 
+RELEASE = '3.2.0'
+VERSION = 20241021
+
 
 class Main:
     """
@@ -81,7 +84,9 @@ class Main:
 
 
 if __name__ == '__main__':
-    if '--pydoc' in sys.argv:
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"MyQS {RELEASE} ({VERSION})")
+    elif '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

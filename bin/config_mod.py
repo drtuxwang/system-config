@@ -10,6 +10,7 @@ Copyright GPL v2: 2017-2024 By Dr Colin Kong
 import json
 import os
 import re
+import sys
 import xml
 import xml.dom.minidom
 from pathlib import Path
@@ -20,8 +21,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.3.2'
-VERSION = 20240405
+RELEASE = '2.4.0'
+VERSION = 20241021
 
 
 class Data:
@@ -412,4 +413,7 @@ class WriteConfigError(ConfigError):
 
 
 if __name__ == '__main__':
-    help(__name__)
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"Python configuration module {RELEASE} ({VERSION})")
+    else:
+        help(__name__)

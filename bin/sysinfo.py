@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-System configuration detection tool.
+System information (configuration detection tool).
 
 1996-2024 By Dr Colin Kong
 """
@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.10.0'
-VERSION = 20241013
+RELEASE = '6.11.1'
+VERSION = 20241021
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -431,9 +431,9 @@ class Detect:
 
     @staticmethod
     def _software() -> None:
-        software = Software()
-        for file, version, comment in software.detect():
-            Writer.output('Software', value=file+' '+version, comment=comment)
+        for label, software in Software().detect():
+            file, version, comment = software
+            Writer.output(label, value=f'{file} {version}', comment=comment)
 
     def show_banner(self) -> None:
         """
@@ -2356,28 +2356,49 @@ class Software:
     """
 
     SOFTWARE_TOOLS = [
-        (['7z', '/dev/null/null', '/dev/null'], '^7-Zip ',
-            r'7-Zip( \([^)]*\))* | .*', '7-Zip'),
+        (
+            ['7z', '/dev/null/null', '/dev/null'],
+            '^7-Zip ',
+            r'7-Zip( \([^)]*\))* | .*',
+            '7-Zip',
+        ),
+        (['asmc', '--version'], '^Asmc ', '.* ', ''),
         (['bash', '--version'], ' version ', '.*version |[( ].*', ''),
         (['clamscan', '--version'], 'ClamAV ', '.*ClamAV |/.*', 'ClamAV'),
-        (['convert', '--version'], ' ImageMagick ',
-            '.*ImageMagick | .*', 'ImageMagick',),
+        (
+            ['convert', '--version'],
+            ' ImageMagick ',
+            '.*ImageMagick | .*',
+            'ImageMagick',
+        ),
         (['curl', '--version'], '^curl ', 'curl | .*', ''),
         (['dockerd', '--version'], ' version ', '.*version |,.*', 'Docker'),
-        (['ffmpeg', '-version'], '^ffmpeg version ',
-            '.*version | .*', 'FFmpeg'),
-        (['gcc', '--version'], '^gcc ',
-            r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
-        (['g++', '--version'], '^g\\+\\+ ',
-            r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
-        (['gfortran', '--version'], '^GNU Fortran ',
-            r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', 'GCC'),
+        (['ffmpeg', '-version'], '^ffmpeg version ', '.*version | .*', ''),
+        (
+            ['gcc', '--version'],
+            '^gcc ',
+            r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
+            'GCC',
+        ),
+        (
+            ['g++', '--version'],
+            '^g\\+\\+ ',
+            r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
+            'GCC',
+        ),
+        (
+            ['gfortran', '--version'],
+            '^GNU Fortran ',
+            r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
+            'GCC',
+        ),
         (['git', '--version'], 'version ', '.*version ', ''),
         (['git-lfs', '--version'], 'git-lfs/', 'git-lfs/| .*', ''),
         (['go', 'version'], r'version go\d', '.*version go| .*', 'Golang'),
         (['gpg', '--version'], r'GnuPG\) ', r'.*\)', 'GnuPG'),
         (['java', '--version'], '^openjdk ', 'openjdk | .*', 'OpenJDK'),
         (['javac', '--version'], '^javac ', 'javac | .*', ''),
+        (['k3s', '--version'], '^k3s.* version v', '.*version v| .*', ''),
         (['kubectl', 'version'], 'Client', '.*:.v|".*', ''),
         (['helm', 'version'], 'Client', '.*SemVer:"v|".*', ''),
         (['htop', '-v'], '^htop ', 'htop | .*', ''),
@@ -2385,12 +2406,31 @@ class Software:
         (['python', '--version'], 'Python ', '.*Python ', ''),
         (['python3', '--version'], 'Python ', '.*Python ', ''),
         (['rsync', '--version'], '^rsync +version', 'rsync +version | .*', ''),
-        (['sqlplus', '-V'], '^Version ', 'Version ', 'Instant Client'),
+        (['sqlplus', '-V'], '^Version ', 'Version ', ''),
         (['ssh', '-V'], 'OpenSSH', '.*SSH[ _]| .*', 'OpenSSH'),
         (['systemctl', '--version'], '^systemd', 'systemd | .*', 'systemd'),
         (['tmux', '-V'], '^tmux ', '.* ', ''),
         (['vi', '--version'], '^VIM.*IMproved ', '.*IMproved | .*', 'VIM'),
         (['wget', '--version'], 'Wget ', '.*Wget | .*', ''),
+    ]
+    SOFTWARE_GUI = [
+        (['audacity', '--version'], '^Audacity v', 'Audacity v| .*', ''),
+        (['gqview', '--version'], '^Geeqie ', 'Geeqie | .*', 'Geeqie'),
+        (['firefox', '--version'], '^Mozilla Firefox ', '.* Firefox ', ''),
+        (['edge', '--version'], '^Microsoft Edge ', '.* Edge ', ''),
+        (
+            ['gimp', '--version'],
+            '^GNU Image Manipulation Program version ',
+            '.*version ',
+            '',
+        ),
+        (
+            ['soffice', '--version'],
+            '^LibreOffice ',
+            'LibreOffice | .*',
+            'LibreOffice',
+        ),
+        (['vlc', '--version'], '^VLC version ', 'VLC version | .*', ''),
     ]
 
     def __init__(self) -> None:
@@ -2419,14 +2459,22 @@ class Software:
                 )
         return None
 
-    def detect(self) -> Generator[Tuple[str, str, str], None, None]:
+    def detect(self) -> Generator[
+        Tuple[str, Tuple[str, str, str]],
+        None,
+        None,
+    ]:
         """
         Yield all software versions
         """
         for software in self.SOFTWARE_TOOLS:
             info = self.get(software)
             if info:
-                yield info
+                yield ('Software', info)
+        for software in self.SOFTWARE_GUI:
+            info = self.get(software)
+            if info:
+                yield ('Software (GUI)', info)
 
 
 class Main:
@@ -2482,7 +2530,9 @@ class Main:
 
 
 if __name__ == '__main__':
-    if '--pydoc' in sys.argv:
+    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+        print(f"System Informaton {RELEASE} ({VERSION})")
+    elif '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

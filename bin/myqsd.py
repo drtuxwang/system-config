@@ -16,7 +16,8 @@ from command_mod import Command, CommandFile
 from subtask_mod import Daemon
 from task_mod import Tasks
 
-RELEASE = '3.1.2'
+RELEASE = '3.2.0'
+VERSION = 20241021
 PURGE_TIME = 604800
 
 
@@ -53,6 +54,14 @@ class Options:
             "My Queuing System batch scheduler daemon.",
         )
 
+        parser.add_argument(
+            '-v',
+            '-V',
+            '-version',
+            '--version',
+            action='version',
+            version=f"MyQS {RELEASE} ({VERSION})",
+        )
         parser.add_argument(
             '-daemon',
             dest='daemon_flag',
