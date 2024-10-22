@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.11.1'
-VERSION = 20241021
+RELEASE = '6.12.0'
+VERSION = 20241022
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -431,9 +431,11 @@ class Detect:
 
     @staticmethod
     def _software() -> None:
-        for label, software in Software().detect():
-            file, version, comment = software
-            Writer.output(label, value=f'{file} {version}', comment=comment)
+        for version, file, comment in Software().detect():
+            Writer.output(
+                f'Command {Path(file).name}',
+                value=f'{version:14s} {file}',
+                comment=comment)
 
     def show_banner(self) -> None:
         """
@@ -2363,8 +2365,10 @@ class Software:
             '7-Zip',
         ),
         (['asmc', '--version'], '^Asmc ', '.* ', ''),
+        (['audacity', '--version'], '^Audacity v', 'Audacity v| .*', ''),
         (['bash', '--version'], ' version ', '.*version |[( ].*', ''),
         (['clamscan', '--version'], 'ClamAV ', '.*ClamAV |/.*', 'ClamAV'),
+        (['clang', '--version'], 'clang version ', '.*version | .*', ''),
         (
             ['convert', '--version'],
             ' ImageMagick ',
@@ -2372,30 +2376,40 @@ class Software:
             'ImageMagick',
         ),
         (['curl', '--version'], '^curl ', 'curl | .*', ''),
-        (['dockerd', '--version'], ' version ', '.*version |,.*', 'Docker'),
+        (['docker', '--version'], ' version ', '.*version |,.*', ''),
+        (['dockerd', '--version'], ' version ', '.*version |,.*', ''),
+        (['edge', '--version'], '^Microsoft Edge ', '.* Edge ', ''),
         (['ffmpeg', '-version'], '^ffmpeg version ', '.*version | .*', ''),
+        (['firefox', '--version'], '^Mozilla Firefox ', '.* Firefox ', ''),
         (
             ['gcc', '--version'],
             '^gcc ',
             r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
-            'GCC',
+            '',
         ),
         (
             ['g++', '--version'],
             '^g\\+\\+ ',
             r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
-            'GCC',
+            '',
         ),
         (
             ['gfortran', '--version'],
             '^GNU Fortran ',
             r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
-            'GCC',
+            '',
+        ),
+        (
+            ['gimp', '--version'],
+            '^GNU Image Manipulation Program version ',
+            '.*version ',
+            '',
         ),
         (['git', '--version'], 'version ', '.*version ', ''),
         (['git-lfs', '--version'], 'git-lfs/', 'git-lfs/| .*', ''),
         (['go', 'version'], r'version go\d', '.*version go| .*', 'Golang'),
-        (['gpg', '--version'], r'GnuPG\) ', r'.*\)', 'GnuPG'),
+        (['gpg', '--version'], r'GnuPG\) ', r'.*\) ', 'GnuPG'),
+        (['gqview', '--version'], '^Geeqie ', 'Geeqie | .*', 'Geeqie'),
         (['java', '--version'], '^openjdk ', 'openjdk | .*', 'OpenJDK'),
         (['javac', '--version'], '^javac ', 'javac | .*', ''),
         (['k3s', '--version'], '^k3s.* version v', '.*version v| .*', ''),
@@ -2406,31 +2420,19 @@ class Software:
         (['python', '--version'], 'Python ', '.*Python ', ''),
         (['python3', '--version'], 'Python ', '.*Python ', ''),
         (['rsync', '--version'], '^rsync +version', 'rsync +version | .*', ''),
-        (['sqlplus', '-V'], '^Version ', 'Version ', ''),
-        (['ssh', '-V'], 'OpenSSH', '.*SSH[ _]| .*', 'OpenSSH'),
-        (['systemctl', '--version'], '^systemd', 'systemd | .*', 'systemd'),
-        (['tmux', '-V'], '^tmux ', '.* ', ''),
-        (['vi', '--version'], '^VIM.*IMproved ', '.*IMproved | .*', 'VIM'),
-        (['wget', '--version'], 'Wget ', '.*Wget | .*', ''),
-    ]
-    SOFTWARE_GUI = [
-        (['audacity', '--version'], '^Audacity v', 'Audacity v| .*', ''),
-        (['gqview', '--version'], '^Geeqie ', 'Geeqie | .*', 'Geeqie'),
-        (['firefox', '--version'], '^Mozilla Firefox ', '.* Firefox ', ''),
-        (['edge', '--version'], '^Microsoft Edge ', '.* Edge ', ''),
-        (
-            ['gimp', '--version'],
-            '^GNU Image Manipulation Program version ',
-            '.*version ',
-            '',
-        ),
         (
             ['soffice', '--version'],
             '^LibreOffice ',
             'LibreOffice | .*',
             'LibreOffice',
         ),
+        (['sqlplus', '-V'], '^Version ', 'Version ', ''),
+        (['ssh', '-V'], 'OpenSSH', '.*SSH[ _]| .*', 'OpenSSH'),
+        (['systemd', '--version'], '^systemd', 'systemd | .*', ''),
+        (['tmux', '-V'], '^tmux ', '.* ', ''),
+        (['vi', '--version'], '^VIM.*IMproved ', '.*IMproved | .*', 'VIM'),
         (['vlc', '--version'], '^VLC version ', 'VLC version | .*', ''),
+        (['wget', '--version'], 'Wget ', '.*Wget | .*', ''),
     ]
 
     def __init__(self) -> None:
@@ -2453,28 +2455,20 @@ class Software:
             task.run(pattern=required, error2output=True)
             if task.has_output():
                 return (
-                    command.get_file(),
                     re.sub(junk, '', task.get_output()[0]),
+                    command.get_file(),
                     comment,
                 )
         return None
 
-    def detect(self) -> Generator[
-        Tuple[str, Tuple[str, str, str]],
-        None,
-        None,
-    ]:
+    def detect(self) -> Generator[Tuple[str, str, str], None, None]:
         """
         Yield all software versions
         """
         for software in self.SOFTWARE_TOOLS:
             info = self.get(software)
             if info:
-                yield ('Software', info)
-        for software in self.SOFTWARE_GUI:
-            info = self.get(software)
-            if info:
-                yield ('Software (GUI)', info)
+                yield info
 
 
 class Main:
