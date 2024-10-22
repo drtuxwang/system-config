@@ -189,7 +189,8 @@ class Main:
             ])
             paths_valid = [x for x in paths if isvalid.match(x.name)]
             paths_sorted = self._sorted(options, paths)
-            if paths != paths_valid or paths != paths_sorted:
+            missing = paths[-1].name != f'pic{len(paths):05d}.jpg'
+            if paths != paths_valid or paths != paths_sorted or missing:
                 print(f"Renaming image files: {path}")
                 if reset_flag:
                     number = options.get_start()
