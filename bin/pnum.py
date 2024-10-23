@@ -189,11 +189,14 @@ class Main:
             ])
             paths_valid = [x for x in paths if isvalid.match(x.name)]
             paths_sorted = self._sorted(options, paths)
-            missing = paths[-1].name != f'pic{len(paths):05d}.jpg'
+            if reset_flag:
+                number = options.get_start()
+            missing = (  # Incomplete series
+                paths and
+                paths[-1].name != f'pic{number+len(paths)-1:05d}.jpg'
+            )
             if paths != paths_valid or paths != paths_sorted or missing:
                 print(f"Renaming image files: {path}")
-                if reset_flag:
-                    number = options.get_start()
                 self._rename(number, paths_sorted)
                 self._set_time(Path())
             os.chdir(startdir)

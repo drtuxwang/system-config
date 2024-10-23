@@ -32,10 +32,9 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.12.0'
-VERSION = 20241022
+RELEASE = '6.12.1'
+VERSION = 20241023
 
-# pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
 
 
@@ -431,11 +430,12 @@ class Detect:
 
     @staticmethod
     def _software() -> None:
-        for version, file, comment in Software().detect():
+        for name, version, path, comment in Software().detect():
             Writer.output(
-                f'Command {Path(file).name}',
-                value=f'{version:14s} {file}',
-                comment=comment)
+                f'Command {name}',
+                value=f'{version} {path}',
+                comment=comment,
+            )
 
     def show_banner(self) -> None:
         """
@@ -542,7 +542,7 @@ class OperatingSystem:
         info['Net IPvx DNS'] = []
         return info
 
-    def get_os_info(self) -> dict:  # pylint: disable=no-self-use
+    def get_os_info(self) -> dict:
         """
         Return operating system information dictionary.
         """
@@ -556,7 +556,7 @@ class OperatingSystem:
         info['OS Boot'] = 'Unknown'
         return info
 
-    def get_cpu_info(self) -> dict:  # pylint: disable=no-self-use
+    def get_cpu_info(self) -> dict:
         """
         Return CPU information dictionary.
         """
@@ -580,7 +580,7 @@ class OperatingSystem:
             info['CPU Type'] = 'x86'
         return info
 
-    def get_sys_info(self) -> dict:  # pylint: disable=no-self-use
+    def get_sys_info(self) -> dict:
         """
         Return system information dictionary.
         """
@@ -2360,79 +2360,83 @@ class Software:
     SOFTWARE_TOOLS = [
         (
             ['7z', '/dev/null/null', '/dev/null'],
-            '^7-Zip ',
-            r'7-Zip( \([^)]*\))* | .*',
-            '7-Zip',
+            ['^7-Zip ', r'7-Zip( \([^)]*\))* | .*', '7-Zip'],
         ),
-        (['asmc', '--version'], '^Asmc ', '.* ', ''),
-        (['audacity', '--version'], '^Audacity v', 'Audacity v| .*', ''),
-        (['bash', '--version'], ' version ', '.*version |[( ].*', ''),
-        (['clamscan', '--version'], 'ClamAV ', '.*ClamAV |/.*', 'ClamAV'),
-        (['clang', '--version'], 'clang version ', '.*version | .*', ''),
+        (['aria2c', '--version'], ['^aria2c version ', '.*version ', '']),
+        (['asmc', '--version'], ['^Asmc ', '.* ', '']),
+        (['audacity', '--version'], ['^Audacity v', 'Audacity v| .*', '']),
+        (['bash', '--version'], [' version ', '.*version |[( ].*', '']),
+        (['clamscan', '--version'], ['ClamAV ', '.*ClamAV |/.*', 'ClamAV']),
+        (['clang', '--version'], ['clang version ', '.*version | .*', '']),
         (
             ['convert', '--version'],
-            ' ImageMagick ',
-            '.*ImageMagick | .*',
-            'ImageMagick',
+            [' ImageMagick ', '.*ImageMagick | .*', 'ImageMagick'],
         ),
-        (['curl', '--version'], '^curl ', 'curl | .*', ''),
-        (['docker', '--version'], ' version ', '.*version |,.*', ''),
-        (['dockerd', '--version'], ' version ', '.*version |,.*', ''),
-        (['edge', '--version'], '^Microsoft Edge ', '.* Edge ', ''),
-        (['ffmpeg', '-version'], '^ffmpeg version ', '.*version | .*', ''),
-        (['firefox', '--version'], '^Mozilla Firefox ', '.* Firefox ', ''),
+        (['curl', '--version'], ['^curl ', 'curl | .*', '']),
+        (['docker', '--version'], [' version ', '.*version |,.*', '']),
+        (['dockerd', '--version'], [' version ', '.*version |,.*', '']),
+        (['edge', '--version'], ['^Microsoft Edge ', '.* Edge | .*', '']),
+        (['ffmpeg', '-version'], ['^ffmpeg version ', '.*version | .*', '']),
+        (['firefox', '--version'], ['^Mozilla Firefox ', '.* Firefox ', '']),
         (
             ['gcc', '--version'],
-            '^gcc ',
-            r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
-            '',
+            ['^gcc ', r'^gcc( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', ''],
         ),
         (
             ['g++', '--version'],
-            '^g\\+\\+ ',
-            r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
-            '',
+            ['^g\\+\\+ ', r'^g\+\+( \([^)]*\))? |( \d{8})?( \([^)]*\))*$', ''],
         ),
-        (
-            ['gfortran', '--version'],
+        (['gfortran', '--version'], [
             '^GNU Fortran ',
             r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
             '',
-        ),
+        ]),
         (
             ['gimp', '--version'],
-            '^GNU Image Manipulation Program version ',
-            '.*version ',
-            '',
+            ['^GNU Image Manipulation Program version ', '.*version ', ''],
         ),
-        (['git', '--version'], 'version ', '.*version ', ''),
-        (['git-lfs', '--version'], 'git-lfs/', 'git-lfs/| .*', ''),
-        (['go', 'version'], r'version go\d', '.*version go| .*', 'Golang'),
-        (['gpg', '--version'], r'GnuPG\) ', r'.*\) ', 'GnuPG'),
-        (['gqview', '--version'], '^Geeqie ', 'Geeqie | .*', 'Geeqie'),
-        (['java', '--version'], '^openjdk ', 'openjdk | .*', 'OpenJDK'),
-        (['javac', '--version'], '^javac ', 'javac | .*', ''),
-        (['k3s', '--version'], '^k3s.* version v', '.*version v| .*', ''),
-        (['kubectl', 'version'], 'Client', '.*:.v|".*', ''),
-        (['helm', 'version'], 'Client', '.*SemVer:"v|".*', ''),
-        (['htop', '-v'], '^htop ', 'htop | .*', ''),
-        (['make', '--version'], 'GNU Make', '.*Make ', 'GNU Make'),
-        (['python', '--version'], 'Python ', '.*Python ', ''),
-        (['python3', '--version'], 'Python ', '.*Python ', ''),
-        (['rsync', '--version'], '^rsync +version', 'rsync +version | .*', ''),
+        (['git', '--version'], ['version ', '.*version ', '']),
+        (['git-lfs', '--version'], ['git-lfs/', 'git-lfs/| .*', '']),
+        (['go', 'version'], [r'version go\d', '.*version go| .*', 'Golang']),
+        (['gpg', '--version'], [r'GnuPG\) ', r'.*\) ', 'GnuPG']),
+        (['gqview', '--version'], ['^Geeqie ', 'Geeqie | .*', 'Geeqie']),
+        (['java', '--version'], ['^openjdk ', 'openjdk | .*', 'OpenJDK']),
+        (['javac', '--version'], ['^javac ', 'javac | .*', '']),
+        (['k3s', '--version'], ['^k3s.* version v', '.*version v| .*', '']),
+        (['kubectl', 'version'], ['Client', '.*:.v|".*', '']),
+        (['helm', 'version'], ['Client', '.*SemVer:"v|".*', '']),
+        (['htop', '-v'], ['^htop ', 'htop | .*', '']),
+        (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
+        (['meld', '--version'], ['^meld ', '', '']),
+        (['python', '--version'], ['Python ', '.*Python ', '']),
+        (['python3', '--version'], ['Python ', '.*Python ', '']),
+        (
+            ['qemu-img', '--version'],
+            ['QEMU emulator version ', '.*version | .*', ''],
+        ),
+        (
+            ['qemu-system-aarch64', '--version'],
+            ['QEMU emulator version ', '.*version | .*', ''],
+        ),
+        (
+            ['qemu-system-x86_64', '--version'],
+            ['QEMU emulator version ', '.*version | .*', ''],
+        ),
+        (
+            ['rsync', '--version'],
+            ['^rsync +version', 'rsync +version | .*', ''],
+        ),
         (
             ['soffice', '--version'],
-            '^LibreOffice ',
-            'LibreOffice | .*',
-            'LibreOffice',
+            ['^LibreOffice ', 'LibreOffice | .*', 'LibreOffice'],
         ),
-        (['sqlplus', '-V'], '^Version ', 'Version ', ''),
-        (['ssh', '-V'], 'OpenSSH', '.*SSH[ _]| .*', 'OpenSSH'),
-        (['systemd', '--version'], '^systemd', 'systemd | .*', ''),
-        (['tmux', '-V'], '^tmux ', '.* ', ''),
-        (['vi', '--version'], '^VIM.*IMproved ', '.*IMproved | .*', 'VIM'),
-        (['vlc', '--version'], '^VLC version ', 'VLC version | .*', ''),
-        (['wget', '--version'], 'Wget ', '.*Wget | .*', ''),
+        (['sqlplus', '-V'], ['^Version ', 'Version ', '']),
+        (['ssh', '-V'], ['OpenSSH', '.*SSH[ _]|[ ,].*', 'OpenSSH']),
+        (['systemd', '--version'], ['^systemd', 'systemd | .*', '']),
+        (['tmux', '-V'], ['^tmux ', '.* ', '']),
+        (['vi', '--version'], ['^VIM.*IMproved ', '.*IMproved | .*', 'VIM']),
+        (['vlc', '--version'], ['^VLC version ', 'VLC version | .*', '']),
+        (['wget', '--version'], ['Wget ', '.*Wget | .*', '']),
     ]
 
     def __init__(self) -> None:
@@ -2443,25 +2447,28 @@ class Software:
         if command.is_found():
             self._wrapper = command.get_cmdline() + ['-s', 'KILL', '1']
 
-    def get(self, software: tuple) -> Tuple[str, str, str]:
+    def get(self, software: tuple) -> Tuple[str, str, Path, str]:
         """
         Detect software
         """
-        args, required, junk, comment = software
+        args, parameters, = software
+        required, junk, comment = parameters
 
         command = Command(args[0], args=args[1:], errors='ignore')
         if command.is_found():
             task = Batch(self._wrapper + command.get_cmdline())
             task.run(pattern=required, error2output=True)
             if task.has_output():
+                path = Path(command.get_file())
                 return (
+                    path.name,
                     re.sub(junk, '', task.get_output()[0]),
-                    command.get_file(),
+                    path.parent,
                     comment,
                 )
         return None
 
-    def detect(self) -> Generator[Tuple[str, str, str], None, None]:
+    def detect(self) -> Generator[Tuple[str, str, Path, str], None, None]:
         """
         Yield all software versions
         """
