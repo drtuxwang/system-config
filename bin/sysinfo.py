@@ -32,7 +32,7 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.12.1'
+RELEASE = '6.12.2'
 VERSION = 20241023
 
 # pylint: disable=too-many-lines
@@ -2412,7 +2412,7 @@ class Software:
         (['python3', '--version'], ['Python ', '.*Python ', '']),
         (
             ['qemu-img', '--version'],
-            ['QEMU emulator version ', '.*version | .*', ''],
+            ['qemu-img version ', '.*version | .*', ''],
         ),
         (
             ['qemu-system-aarch64', '--version'],
