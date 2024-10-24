@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.12.2'
-VERSION = 20241023
+RELEASE = '6.12.3'
+VERSION = 20241024
 
 # pylint: disable=too-many-lines
 
@@ -2414,6 +2414,7 @@ class Software:
             ['qemu-img', '--version'],
             ['qemu-img version ', '.*version | .*', ''],
         ),
+        (['qemu-nbd', '--version'], ['qemu-nbd ', '.*qemu-nbd | .*', '']),
         (
             ['qemu-system-aarch64', '--version'],
             ['QEMU emulator version ', '.*version | .*', ''],
@@ -2437,6 +2438,7 @@ class Software:
         (['vi', '--version'], ['^VIM.*IMproved ', '.*IMproved | .*', 'VIM']),
         (['vlc', '--version'], ['^VLC version ', 'VLC version | .*', '']),
         (['wget', '--version'], ['Wget ', '.*Wget | .*', '']),
+        (['zhspeak', '--version'], ['Zhong Hua Speak ', '.*Speak | .*', '']),
     ]
 
     def __init__(self) -> None:
