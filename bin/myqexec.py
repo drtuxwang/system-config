@@ -15,8 +15,8 @@ from typing import List
 from command_mod import Command, CommandFile
 from subtask_mod import Batch, Exec, Task
 
-RELEASE = '3.2.0'
-VERSION = 20241021
+RELEASE = '3.2.1'
+VERSION = 20241026
 
 
 class Options:
@@ -215,7 +215,7 @@ class Main:
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"MyQS {RELEASE} ({VERSION})")
     elif '--pydoc' in sys.argv:
         help(__name__)

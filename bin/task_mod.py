@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.5.0'
-VERSION = 20241021
+RELEASE = '2.5.1'
+VERSION = 20241026
 
 
 class Tasks:
@@ -464,7 +464,7 @@ class ExecutableCallError(TaskError):
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python task handling utility module {RELEASE} ({VERSION})")
     else:
         help(__name__)

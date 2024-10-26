@@ -35,18 +35,6 @@ class Options:
         """
         return self._args.order
 
-    def get_reset_flag(self) -> bool:
-        """
-        Return per directory number reset flag
-        """
-        return self._args.reset_flag
-
-    def get_start(self) -> int:
-        """
-        Return start number.
-        """
-        return self._args.start[0]
-
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description="Renumber picture files into a numerical series.",
@@ -59,19 +47,6 @@ class Options:
             dest='order',
             default='file',
             help="Sort using modification time.",
-        )
-        parser.add_argument(
-            '-noreset',
-            dest='reset_flag',
-            action='store_false',
-            help="Use same number sequence for all directories.",
-        )
-        parser.add_argument(
-            '-start',
-            nargs=1,
-            type=int,
-            default=[1],
-            help="Select number to start from.",
         )
         parser.add_argument(
             'directories',
@@ -132,9 +107,10 @@ class Main:
         return sorted(paths)
 
     @staticmethod
-    def _rename(number: int, paths: List[Path]) -> None:
+    def _rename(paths: List[Path]) -> None:
         paths_new = []
 
+        number = 1
         for path in paths:
             extension = path.suffix.lower().replace('.jpeg', '.jpg')
             path_new = Path(f'pic{number:05d}{extension}')
@@ -172,8 +148,6 @@ class Main:
         options = Options()
 
         startdir = os.getcwd()
-        reset_flag = options.get_reset_flag()
-        number = options.get_start()
         config = Config()
         images_extensions = (
             config.get('image_extensions') + config.get('video_extensions')
@@ -189,11 +163,10 @@ class Main:
             ])
             paths_valid = [x for x in paths if isvalid.match(x.name)]
             paths_sorted = self._sorted(options, paths)
-            if paths != paths_valid or paths != paths_sorted:
+            missing = paths and paths[-1].stem != f'pic{len(paths):05d}'
+            if paths != paths_valid or paths != paths_sorted or missing:
                 print(f"Renaming image files: {path}")
-                if reset_flag:
-                    number = options.get_start()
-                self._rename(number, paths_sorted)
+                self._rename(paths_sorted)
                 self._set_time(Path())
             os.chdir(startdir)
 

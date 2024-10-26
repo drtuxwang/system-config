@@ -12,8 +12,8 @@ import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.8.0'
-VERSION = 20241021
+RELEASE = '2.8.1'
+VERSION = 20241026
 
 
 class FileStat:
@@ -315,7 +315,7 @@ class FileTmpdirPermissionError(FileError):
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python file handling utility module {RELEASE} ({VERSION})")
     else:
         help(__name__)

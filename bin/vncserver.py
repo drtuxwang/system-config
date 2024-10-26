@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from subtask_mod import Task
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -77,6 +77,8 @@ class Options:
             pathextra=['/usr/bin'],
             errors='stop'
         )
+        if sys.argv[-1] in ('-help', '-version'):
+            Exec(self._vncserver.get_cmdline() + sys.argv[1:]).run()
         self._vncserver.set_args([
             '-geometry',
             '1280x720',

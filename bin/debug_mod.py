@@ -14,8 +14,8 @@ from pathlib import Path
 import jsonpickle  # type: ignore
 
 
-RELEASE = '2.4.0'
-VERSION = 20241021
+RELEASE = '2.4.1'
+VERSION = 20241026
 
 
 class Dump:
@@ -105,7 +105,7 @@ class Dump:
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python debugging tools module {RELEASE} ({VERSION})")
     else:
         help(__name__)

@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.4.0'
-VERSION = 20241021
+RELEASE = '2.4.1'
+VERSION = 20241026
 
 BUFFER_SIZE = 131072
 
@@ -723,7 +723,7 @@ class Main:
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python sub task handling module {RELEASE} ({VERSION})")
     elif '--pydoc' in sys.argv:
         help(__name__)

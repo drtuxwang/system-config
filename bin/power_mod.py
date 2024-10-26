@@ -13,8 +13,8 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-RELEASE = '2.5.0'
-VERSION = 20241021
+RELEASE = '2.5.1'
+VERSION = 20241026
 
 
 class Battery:
@@ -513,7 +513,7 @@ class ExecutableCallError(PowerError):
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python power handling module {RELEASE} ({VERSION})")
     else:
         help(__name__)

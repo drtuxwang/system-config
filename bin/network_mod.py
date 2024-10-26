@@ -16,8 +16,8 @@ from typing import Any, List, Tuple, Union
 
 from command_mod import Command, CommandFile
 
-RELEASE = '3.5.0'
-VERSION = 20241021
+RELEASE = '3.5.1'
+VERSION = 20241026
 
 
 class NetNice(Command):
@@ -320,7 +320,7 @@ class SandboxFile(CommandFile, Sandbox):
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python network handling utilit {RELEASE} ({VERSION})")
     else:
         help(__name__)

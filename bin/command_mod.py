@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.7.0'
-VERSION = 20240509
+RELEASE = '2.7.1'
+VERSION = 20241026
 
 
 class Command:
@@ -687,7 +687,7 @@ class GlibcVersionError(CommandError):
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python command handling module {RELEASE} ({VERSION})")
     else:
         help(__name__)

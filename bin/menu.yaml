@@ -143,13 +143,6 @@ menu_applications:
   checks: 
   - shotcut.desktop
 - button:
-    name: teams
-    color: '#ffff00'
-    label: Teams
-    run: exec teams &
-  checks:
-  - teams
-- button:
     name: tenacity
     color: '#ffff00'
     label: Tenacity

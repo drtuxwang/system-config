@@ -11,8 +11,8 @@ import sys
 import unicodedata
 from typing import List
 
-RELEASE = '1.4.0'
-VERSION = 20241021
+RELEASE = '1.4.1'
+VERSION = 20241026
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 
@@ -121,7 +121,7 @@ class Message(str):
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python log handling module {RELEASE} ({VERSION})")
     else:
         help(__name__)

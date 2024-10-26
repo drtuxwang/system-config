@@ -21,8 +21,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.4.0'
-VERSION = 20241021
+RELEASE = '2.4.1'
+VERSION = 20241026
 
 
 class Data:
@@ -413,7 +413,7 @@ class WriteConfigError(ConfigError):
 
 
 if __name__ == '__main__':
-    if sys.argv[-1] in ['-v', '-V', '-version', '--version']:
+    if sys.argv[-1] in ('-v', '-V', '-version', '--version'):
         print(f"Python configuration module {RELEASE} ({VERSION})")
     else:
         help(__name__)
