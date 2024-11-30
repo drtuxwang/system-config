@@ -173,10 +173,7 @@ class Main:
                     ))
                 break
             except (socket.timeout, urllib.error.URLError):
-                pass
-        else:
-            logger.warning("Skipping unreachable URL: %s", url)
-            return data
+                return data
 
         if url_time > data['time']:
             self._show_times(data['time'], url_time)

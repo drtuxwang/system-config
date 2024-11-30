@@ -116,9 +116,9 @@ class Main:
             path = Path(f'{distribution}.debs')
             with path.open(errors='replace') as ifile:
                 for line in ifile:
-                    file = line.split('#')[0].strip().split()[0]
                     try:
-                        name, version, arch = file[:-4].split('_')
+                        file = line.split('#')[0].strip().split()[0]
+                        name, version, arch = file.split('.deb')[0].split('_')
                     except IndexError:
                         continue
                     packages[f'{name}:{arch}'] = Package(
@@ -133,9 +133,9 @@ class Main:
             path = Path(f'{distribution}.debs:base')
             with path.open(errors='replace') as ifile:
                 for line in ifile:
-                    file = line.split('#')[0].strip().split()[0]
                     try:
-                        name, version, arch = file[:-4].split('_')
+                        file = line.split('#')[0].strip().split()[0]
+                        name, version, arch = file.split('.deb')[0].split('_')
                     except IndexError:
                         continue
                     if f'{name}:{arch}' in packages:
@@ -153,12 +153,13 @@ class Main:
         try:
             with Path(file).open(errors='replace') as ifile:
                 for line in ifile:
-                    if not line.strip().startswith('#'):
-                        try:
-                            name, version = line.split()
-                            packages[name] = version
-                        except (IndexError, ValueError):
-                            pass
+                    try:
+                        name, version, arch = (
+                            line.rsplit('.deb', 1)[0].split('_')
+                        )
+                    except (IndexError, ValueError):
+                        continue
+                    packages[f'{name}:{arch}'] = version
         except OSError:
             pass
         return packages

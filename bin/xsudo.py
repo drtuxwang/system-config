@@ -11,8 +11,8 @@ from command_mod import Command
 from subtask_mod import Exec
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
-FG_COLOUR = '#009900'
-BG_COLOUR = '#000000'
+FG_COLOUR = '#000000'
+BG_COLOUR = '#F5F5DC'
 
 
 class Main:

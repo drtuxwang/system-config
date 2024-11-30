@@ -102,7 +102,7 @@ class Options:
         self._parse_args(args)
 
         list_file = self._args.list_file[0]
-        ispattern = re.compile('[.]debs-?.*$')
+        ispattern = re.compile('[.]debs(-.*)?$')
         if not ispattern.search(list_file):
             raise SystemExit(
                 f'{sys.argv[0]}: Invalid "{list_file}" '
@@ -234,9 +234,8 @@ class Main:
         try:
             with Path(installed_file).open(errors='replace') as ifile:
                 for line in ifile:
-                    file = line.split('#')[0].strip().split()[0]
                     try:
-                        name, _, arch = file[:-4].split('_')
+                        name, _, arch = line.split('.deb')[0].split('_')
                     except IndexError:
                         continue
                     if f'{name}:{arch}' in self._packages:
@@ -273,7 +272,7 @@ class Main:
 
             for dep in [
                 f'{x}:{arch}'
-                if f'{x}:{arch}' in self._packages else f'{x}:{all}'
+                if f'{x}:{arch}' in self._packages else f'{x}:all'
                 for x in self._packages[package_name].depends
             ]:
                 if dep in self._packages:
@@ -295,20 +294,22 @@ class Main:
                         )
                     self._packages[dep].checked = True
 
-    def _read_distro_deny_list(self, file: str) -> None:
+    def _read_distro_deny_list(self, path: Path) -> None:
         try:
-            with Path(file).open(errors='replace') as ifile:
+            with path.open(errors='replace') as ifile:
                 for line in ifile:
-                    columns = line.split()
-                    if columns:
-                        name = columns[0]
-                        if not line.strip().startswith('#'):
-                            if name in self._packages:
-                                if columns[1] == (
-                                    '*',
-                                    self._packages[name].version
-                                ):
-                                    del self._packages[name]
+                    try:
+                        name, version, arch = (
+                            line.rsplit('.deb', 1)[0].split('_')
+                        )
+                    except (IndexError, ValueError):
+                        continue
+                    package = f'{name}:{arch}'
+                    if (
+                        package in self._packages and
+                        version in ('*', self._packages[package].version)
+                    ):
+                        del self._packages[package]
         except OSError:
             pass
 
@@ -355,9 +356,9 @@ class Main:
         self._read_distro_installed(options.get_list_file())
         self._arch = distro.split('_')[-1]
 
-        ispattern = re.compile('[.]debs-?.*$')
+        ispattern = re.compile('[.]debs(-.*)?$')
         distro = ispattern.sub('', options.get_list_file())
-        self._read_distro_deny_list(distro + '.debs:deny')
+        self._read_distro_deny_list(Path(f'{distro}.debs:deny'))
 
         self._check_distro_install(
             distro,

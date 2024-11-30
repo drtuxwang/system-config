@@ -30,7 +30,11 @@ test-all: test        # Run tests for all versions
 		3.[56]) \
 			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
 			;; \
-		3.[7-9]|3.??) \
+		3.7) \
+			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
+			PYTHON=python$$VERSION make --no-print-directory check-python-test || exit 1; \
+			;; \
+		3.[8-9]|3.??) \
 			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
 			PYTHON=python$$VERSION make --no-print-directory check-python-test || exit 1; \
 			PYTHON=python$$VERSION make --no-print-directory check-python-lint || exit 1 \

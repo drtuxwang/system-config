@@ -15,11 +15,11 @@ from typing import List
 
 from command_mod import Command
 from desktop_mod import Desktop
-from subtask_mod import Background, Batch, Exec
+from subtask_mod import Background, Batch, Task, Exec
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
-FG_COLOUR = '#009900'
-BG_COLOUR = '#000000'
+FG_COLOUR = '#000000'
+BG_COLOUR = '#F5F5DC'
 
 
 class Options:
@@ -248,6 +248,9 @@ class Xterm(Terminal):
                         'ServerAliveCountMax=3'
                     ])
                     self._ssh()
+                host_keys = Command('host-keys', args=[host], errors='ignore')
+                if host_keys.is_found():
+                    Task(host_keys.get_cmdline()).run()
                 cmdline.extend(ssh.get_cmdline() + [host])
             Background(cmdline).run(pattern=self._pattern)
 

@@ -197,16 +197,18 @@ class Main:
         try:
             with path.open(errors='replace') as ifile:
                 for line in ifile:
-                    columns = line.split()
-                    if columns:
-                        name = columns[0]
-                        if not line.strip().startswith('#'):
-                            if name in self._packages:
-                                if (
-                                    columns[1] == '*' or
-                                    columns[1] == self._packages[name].version
-                                ):
-                                    del self._packages[name]
+                    try:
+                        name, version, arch = (
+                            line.rsplit('.deb', 1)[0].split('_')
+                        )
+                    except (IndexError, ValueError):
+                        continue
+                    package = f'{name}:{arch}'
+                    if (
+                        package in self._packages and
+                        version in ('*', self._packages[package].version)
+                    ):
+                        del self._packages[package]
         except OSError:
             pass
 
@@ -215,9 +217,8 @@ class Main:
         try:
             with path.open(errors='replace') as ifile:
                 for line in ifile:
-                    file = line.split('#')[0].strip().split()[0]
                     try:
-                        name, version, arch = file[:-4].split('_')
+                        name, version, arch = line.split('.deb')[0].split('_')
                     except IndexError:
                         continue
                     versions[f'{name}:{arch}'] = version
@@ -302,7 +303,7 @@ class Main:
         """
         options = Options()
 
-        ispattern = re.compile('[.]debs-?.*')
+        ispattern = re.compile('[.]debs(-.*)?$')
         for path in [Path(x) for x in options.get_list_files()]:
             if not path.is_file():
                 logger.error('Cannot find "%s" list file.', path)
