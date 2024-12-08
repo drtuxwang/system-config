@@ -90,9 +90,11 @@ class Options:
         """
         Parse arguments
         """
-        self._archiver = Command('7zz', errors='ignore')
+        self._archiver = Command('7zzs', errors='ignore')
         if not self._archiver.is_found():
-            self._archiver = Command('7z', errors='stop')
+            self._archiver = Command('7zz', errors='ignore')
+            if not self._archiver.is_found():
+                self._archiver = Command('7z', errors='stop')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
             self._archiver.set_args(args[1:])

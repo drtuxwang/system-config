@@ -52,20 +52,13 @@ locate_python() {
         ;;
     esac
 
-    LOCATE=$(ls -1t $LOCAL/*/bin/$PYLD_EXE 2> /dev/null | head -1)
-    if [ "$LOCATE" ]
-    then  # Create "$LOCAL/*/bin/python3" wrapper script to pick system Python
-        echo "$LOCATE"
-        return
-    fi
-
     case $(uname) in
     Darwin)
         case $(uname -m) in
         i386|x86_64)
             if [ "$(/usr/sbin/sysctl -a | grep "hw.cpu64bit_capable: 1$")" ]
             then
-                LOCATE=$(ls -1t $LOCAL/*/macos64_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1)
+                LOCATE=$(ls -1t $LOCAL/*macos64*x86*/bin/$PYLD_EXE 2> /dev/null | head -1)
             fi
         esac
         ;;
@@ -74,16 +67,16 @@ locate_python() {
         GLIBC_VER=$(strings "$GLIBC" 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}')
         case $(uname -m) in
         x86_64)
-            LOCATE=$((ls -1t $LOCAL/*/*linux64_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*linux64*x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*linux64*x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         i*86)
-            LOCATE=$((ls -1t $LOCAL/*/*linux_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*linux[_-]*x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*linux[_-]*x86*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         ppc*)
-            LOCATE=$((ls -1t $LOCAL/*/*linux_*-power*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*linux64*power*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*linux64*power*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         sparc*)
-            LOCATE=$((ls -1t $LOCAL/*/*linux_*-sparc*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYLD_EXE) 2> /dev/null | head -1)
+            LOCATE=$((ls -1t $LOCAL/*linux64*-sparc*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*linux64*sparc*/bin/$PYLD_EXE) 2> /dev/null | head -1)
             ;;
         esac
         if [ ! "$LOCATE" ]
@@ -108,6 +101,9 @@ locate_python() {
         fi
         ;;
     esac
+
+    # Create "$LOCAL/*/bin/python3" wrapper script to pick system Python
+    [ ! "$LOCATE" ] && LOCATE=$(ls -1t $LOCAL/*/bin/$PYLD_EXE 2> /dev/null | head -1)
 
     echo "$LOCATE"
 }

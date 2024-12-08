@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.7.1'
-VERSION = 20241026
+RELEASE = '2.7.2'
+VERSION = 20241208
 
 
 class Command:
@@ -643,14 +643,14 @@ class _System(Platform):
         (ie 'linux64_*-x86*', 'windows64_*-x86*')
         """
         mapping = {
-            'linux-x86_64': ('linux64_*-x86*', 'linux_*-x86*'),
-            'linux-x86': ('linux_*-x86*',),
-            'linux-sparc64': ('linux64_*-sparc64*', 'linux_*-sparc*'),
-            'linux-power64': ('linux64_*-power64*', 'linux_*-power*'),
-            'macos-x86_64': ('macos64_*-x86*', 'macos_*-x86*'),
-            'macos-x86': ('macos_*-x86*',),
-            'windows-x86_64': ('windows64_*-x86*', 'windows_*-x86*'),
-            'windows-x86': ('windows_*-x86*',)
+            'linux-x86_64': ('linux64[_-]*x86*', 'linux[_-]*x86*'),
+            'linux-x86': ('linux[_-]*x86*',),
+            'linux-sparc64': ('linux64[_-]*sparc64*', 'linux[_-]*sparc*'),
+            'linux-power64': ('linux64[_-]*power64*', 'linux[_-]*power*'),
+            'macos-x86_64': ('macos64[_-]*x86*', 'macos[_-]*x86*'),
+            'macos-x86': ('macos[_-]*x86*',),
+            'windows-x86_64': ('windows64[_-]*x86*', 'windows[_-]*x86*'),
+            'windows-x86': ('windows[_-]*x86*',)
         }
 
         return mapping.get(_platform, [])

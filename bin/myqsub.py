@@ -17,8 +17,8 @@ from logging_mod import Message
 from subtask_mod import Task
 from task_mod import Tasks
 
-RELEASE = '3.2.0'
-VERSION = 20241021
+RELEASE = '3.3.0'
+VERSION = 20241206
 
 
 class Options:
@@ -54,11 +54,17 @@ class Options:
         """
         return self._args.queue[0]
 
-    def get_cmdline(self) -> List[str]:
+    def get_cmdlines(self) -> List[List[str]]:
         """
-        Return command line.
+        Return command lines.
         """
-        return self._args.cmdline
+        cmdlines = [self._args.cmdline]
+        if self.get_multi_flag():
+            if all(Path(x).is_dir() for x in cmdlines[0][1:]):
+                cmdlines = [[cmdlines[0][0], x] for x in cmdlines[0][1:]]
+            else:
+                cmdlines = [[x] for x in cmdlines[0]]
+        return cmdlines
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -258,10 +264,7 @@ class Main:
         queue = options.get_queue()
         ncpus = options.get_ncpus()
 
-        if options.get_multi_flag():
-            cmdlines = [[x] for x in options.get_cmdline()]
-        else:
-            cmdlines = [options.get_cmdline()]
+        cmdlines = options.get_cmdlines()
         if options.get_add_flag():
             cmdlines = list(self._new_jobs(cmdlines))
 
@@ -283,6 +286,8 @@ class Main:
             if Message(job_command).width() <= 45:
                 job_name = job_command
             elif len(cmdline) == 2 and not os.access(cmdline[1], os.X_OK):
+                job_name = Path(cmdline[1]).name
+            elif len(cmdline) == 2 and Path(cmdline[1]).is_dir():
                 job_name = Path(cmdline[1]).name
             else:
                 job_name = Message(job_command).get(45)

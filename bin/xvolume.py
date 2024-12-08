@@ -41,7 +41,7 @@ class Options:
                     index = line.split()[-1]
                 elif 'volume:' in line:
                     percent = int(line.split('%', 1)[0].split()[-1])
-                    yield (index, percent)
+                    yield index, percent
         except ValueError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot detect current Pulseaudio volume.',

@@ -13,8 +13,8 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-RELEASE = '2.5.1'
-VERSION = 20241026
+RELEASE = '2.5.2'
+VERSION = 20241201
 
 
 class Battery:
@@ -311,9 +311,9 @@ class BatteryPower(Battery):
             stop = value
 
         try:
-            return (int(start), int(stop))
+            return int(start), int(stop)
         except ValueError:
-            return (0, -1)
+            return 0, -1
 
     def check(self) -> None:
         """

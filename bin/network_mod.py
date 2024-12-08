@@ -16,8 +16,8 @@ from typing import Any, List, Tuple, Union
 
 from command_mod import Command, CommandFile
 
-RELEASE = '3.5.1'
-VERSION = 20241026
+RELEASE = '3.5.2'
+VERSION = 20241201
 
 
 class NetNice(Command):
@@ -146,7 +146,7 @@ class Sandbox(Command):
             mount = config
             realpath = str(Path(mount).resolve())
 
-        return (realpath, mount, mode)
+        return realpath, mount, mode
 
     def _config_access(self, bwrap: Command, configs: list) -> List[str]:
 

@@ -48,7 +48,7 @@ class Main:
                 seconds = float(delay[:-2]) / 1000.
             else:
                 seconds = float(delay[:-1])
-            yield (seconds, name)
+            yield seconds, name
 
     @classmethod
     def _filter_run(cls, command: Command) -> None:

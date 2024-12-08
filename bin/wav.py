@@ -202,7 +202,7 @@ class Media:
         Return stream
         """
         for key, value in sorted(self._stream.items()):
-            yield (key, value)
+            yield key, value
 
     def get_stream_audio(self) -> Generator[Tuple[int, str], None, None]:
         """
@@ -210,7 +210,7 @@ class Media:
         """
         for key, value in sorted(self._stream.items()):
             if value.startswith('Audio: '):
-                yield (key, value)
+                yield key, value
 
     def get_type(self) -> str:
         """

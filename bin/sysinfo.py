@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.12.5'
-VERSION = 20241026
+RELEASE = '6.13.0'
+VERSION = 20241208
 
 # pylint: disable=too-many-lines
 
@@ -1861,7 +1861,7 @@ class LinuxSystem(PosixSystem):
             for path in sorted(Path(directory).iterdir()):
                 status = ' '.join(self._read_file(directory, str(path)))
                 if 'Mitigation' in status or 'Vulnerable' in status:
-                    info['CPU Vulnerabilities'].append((str(path), status))
+                    info['CPU Vulnerabilities'].append((str(path.name), status))
 
         return info
 
@@ -2408,7 +2408,7 @@ class Software:
         (['htop', '-v'], ['^htop ', 'htop | .*', '']),
         (['ibus', 'version'], ['^IBus ', 'IBus ', '']),
         (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
-        (['meld', '--version'], ['^meld ', '', '']),
+        (['meld', '--version'], ['^meld ', 'meld ', '']),
         (['python', '--version'], ['Python ', '.*Python ', '']),
         (['python3', '--version'], ['Python ', '.*Python ', '']),
         (

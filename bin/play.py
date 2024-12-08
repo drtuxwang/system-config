@@ -140,7 +140,7 @@ class Media:
         Generates (stream-number, information) tuples.
         """
         for key, value in sorted(self._stream.items()):
-            yield (key, value)
+            yield key, value
 
     def has_audio(self) -> bool:
         """
