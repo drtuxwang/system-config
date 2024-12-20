@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.13.1'
-VERSION = 20241214
+RELEASE = '6.14.0'
+VERSION = 20241220
 
 # pylint: disable=too-many-lines
 
@@ -2395,13 +2395,19 @@ class Software:
             ['gimp', '--version'],
             ['^GNU Image Manipulation Program version ', '.*version ', ''],
         ),
-        (['git', '--version'], ['version ', '.*version ', '']),
+        ([Path('bin', 'git'), '--version'], ['version ', '.*version ', '']),
         (['git-lfs', '--version'], ['git-lfs/', 'git-lfs/| .*', '']),
-        (['go', 'version'], [r'version go\d', '.*version go| .*', 'Golang']),
+        (
+            [Path('bin', 'go'), 'version'],
+            [r'version go\d', '.*version go| .*', 'Golang'],
+        ),
         (['gpg', '--version'], [r'GnuPG\) ', r'.*\) ', 'GnuPG']),
         (['gqview', '--version'], ['^Geeqie ', 'Geeqie | .*', 'Geeqie']),
-        (['java', '--version'], ['^openjdk ', 'openjdk | .*', 'OpenJDK']),
-        (['javac', '--version'], ['^javac ', 'javac | .*', '']),
+        (
+           [Path('bin', 'java'), '--version'],
+           ['^openjdk ', 'openjdk | .*', 'OpenJDK'],
+        ),
+        ([Path('bin', 'javac'), '--version'], ['^javac ', 'javac | .*', '']),
         (['k3s', '--version'], ['^k3s.* version v', '.*version v| .*', '']),
         (['kubectl', 'version'], ['Client', '.*:.v|".*', '']),
         (['helm', 'version'], ['Client', '.*SemVer:"v|".*', '']),
@@ -2429,7 +2435,7 @@ class Software:
             ['^rsync +version', 'rsync +version | .*', ''],
         ),
         (
-            ['soffice', '--version'],
+            [Path('bin', 'soffice'), '--version'],
             ['^LibreOffice ', 'LibreOffice | .*', 'LibreOffice'],
         ),
         (['sqlplus', '-V'], ['^Version ', 'Version ', '']),
