@@ -73,9 +73,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._archiver = Command('7zz', errors='ignore')
-        if not self._archiver.is_found():
-            self._archiver = Command('7z', errors='stop')
+        self._archiver = Command('7z', errors='stop')
 
         if self._args.view_flag:
             self._archiver.set_args(['l'])
