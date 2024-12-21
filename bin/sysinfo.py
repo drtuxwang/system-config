@@ -2440,7 +2440,7 @@ class Software:
             ['^rsync +version', 'rsync +version | .*', ''],
         ),
         (
-            [Path('bin', 'soffice'), '--version'],
+            [Path('program', 'soffice'), '--version'],
             ['^LibreOffice ', 'LibreOffice | .*', 'LibreOffice'],
         ),
         (['sqlplus', '-V'], ['^Version ', 'Version ', '']),
