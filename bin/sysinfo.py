@@ -2362,7 +2362,7 @@ class Software:
         python_version = 'python3'
     SOFTWARE_TOOLS = [
         (
-            ['7z', '/dev/null/null', '/dev/null'],
+            ['bin/7z', '/dev/null/null', '/dev/null'],
             ['^7-Zip ', r'7-Zip( \([^)]*\))* | .*', '7-Zip'],
         ),
         (['aria2c', '--version'], ['aria2 version ', '.*version ', 'Aria2']),
