@@ -90,7 +90,7 @@ class Options:
         """
         Parse arguments
         """
-        self._archiver = Command('7z', errors='stop')
+        self._archiver = Command('bin/7z', errors='stop')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
             self._archiver.set_args(args[1:])

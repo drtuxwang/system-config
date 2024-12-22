@@ -47,7 +47,7 @@ class Main:
         """
         eclipse = Command('eclipse', errors='stop')
         if len(sys.argv) == 1:
-            java = Command(Path('bin', 'java'), errors='stop')
+            java = Command(Path('bin/java'), errors='stop')
             args = [
                 '-vm',
                 java.get_file(),

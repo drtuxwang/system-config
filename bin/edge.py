@@ -233,7 +233,7 @@ class Options:
             )
             if browser.is_found():
                 return browser
-        return Command('edge', errors='stop')
+        return Command('bin/edge', errors='stop')
 
     def parse(self, args: List[str]) -> None:
 

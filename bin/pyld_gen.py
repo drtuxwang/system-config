@@ -47,7 +47,7 @@ class Main:
         """
         name = Path(sys.argv[0]).stem
 
-        command = Command(Path('bin', name), errors='ignore')
+        command = Command(f'bin/{name}', errors='ignore')
         path = Path(sys.argv[0]).absolute().parents[1]
         if not command.is_found() or str(path) not in command.get_file():
             command = Command(name, errors='stop')

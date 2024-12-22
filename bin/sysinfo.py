@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.14.1'
-VERSION = 20241221
+RELEASE = '6.14.0'
+VERSION = 20241222
 
 # pylint: disable=too-many-lines
 
@@ -2378,7 +2378,7 @@ class Software:
         (['curl', '--version'], ['^curl ', 'curl | .*', '']),
         (['docker', '--version'], [' version ', '.*version |,.*', '']),
         (['dockerd', '--version'], [' version ', '.*version |,.*', '']),
-        (['edge', '--version'], ['^Microsoft Edge ', '.* Edge | .*', '']),
+        (['bin/edge', '--version'], ['^Microsoft Edge ', '.* Edge | .*', '']),
         (['ffmpeg', '-version'], ['^ffmpeg version ', '.*version | .*', '']),
         (['firefox', '--version'], ['^Mozilla Firefox ', '.* Firefox ', '']),
         (
@@ -2398,19 +2398,16 @@ class Software:
             ['gimp', '--version'],
             ['^GNU Image Manipulation Program version ', '.*version ', ''],
         ),
-        ([Path('bin', 'git'), '--version'], ['version ', '.*version ', '']),
+        (['bin/git', '--version'], ['version ', '.*version ', '']),
         (['git-lfs', '--version'], ['git-lfs/', 'git-lfs/| .*', '']),
         (
-            [Path('bin', 'go'), 'version'],
+            ['bin/go', 'version'],
             [r'version go\d', '.*version go| .*', 'Golang'],
         ),
         (['gpg', '--version'], [r'GnuPG\) ', r'.*\) ', 'GnuPG']),
         (['gqview', '--version'], ['^Geeqie ', 'Geeqie | .*', 'Geeqie']),
-        (
-           [Path('bin', 'java'), '--version'],
-           ['^openjdk ', 'openjdk | .*', 'OpenJDK'],
-        ),
-        ([Path('bin', 'javac'), '--version'], ['^javac ', 'javac | .*', '']),
+        (['bin/java', '--version'], ['^openjdk ', 'openjdk | .*', 'OpenJDK']),
+        (['bin/javac', '--version'], ['^javac ', 'javac | .*', '']),
         (['k3s', '--version'], ['^k3s.* version v', '.*version v| .*', '']),
         (['kubectl', 'version'], ['Client', '.*:.v|".*', '']),
         (['helm', 'version'], ['Client', '.*SemVer:"v|".*', '']),
@@ -2418,10 +2415,7 @@ class Software:
         (['ibus', 'version'], ['^IBus ', 'IBus ', '']),
         (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
         (['meld', '--version'], ['^meld ', 'meld ', '']),
-        (
-            [Path('bin', python_version), '--version'],
-            ['Python ', '.*Python ', ''],
-        ),
+        ([f'bin/{python_version}', '--version'], ['Python ', '.*Python ', '']),
         (
             ['qemu-img', '--version'],
             ['qemu-img version ', '.*version | .*', ''],

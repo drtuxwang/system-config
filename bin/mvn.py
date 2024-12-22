@@ -60,7 +60,7 @@ class Main:
         """
         Start program
         """
-        mvn = Command(Path('bin', 'mvn'), args=sys.argv[1:], errors='stop')
+        mvn = Command('bin/mvn', args=sys.argv[1:], errors='stop')
 
         Exec(mvn.get_cmdline()).run()
 

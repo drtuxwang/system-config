@@ -60,7 +60,7 @@ class Main:
         """
         Start program
         """
-        java = Command(Path('bin', 'java'), errors='stop')
+        java = Command('bin/java', errors='stop')
         if len(sys.argv) > 1:
             if sys.argv[1].endswith('.jar'):
                 java.set_args(['-jar'])

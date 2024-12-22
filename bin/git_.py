@@ -54,7 +54,7 @@ class Options:
         """
         Parse arguments
         """
-        self._git = Command(Path('bin', 'git'), errors='stop')
+        self._git = Command('bin/git', errors='stop')
         self._git.set_args(args[1:])
 
         self._env = {}
