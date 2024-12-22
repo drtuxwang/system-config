@@ -2378,7 +2378,7 @@ class Software:
         (['curl', '--version'], ['^curl ', 'curl | .*', '']),
         (['docker', '--version'], [' version ', '.*version |,.*', '']),
         (['dockerd', '--version'], [' version ', '.*version |,.*', '']),
-        (['bin/edge', '--version'], ['^Microsoft Edge ', '.* Edge | .*', '']),
+        (['edge', '--version'], ['^Microsoft Edge ', '.* Edge | .*', '']),
         (['ffmpeg', '-version'], ['^ffmpeg version ', '.*version | .*', '']),
         (['firefox', '--version'], ['^Mozilla Firefox ', '.* Firefox ', '']),
         (
