@@ -194,7 +194,7 @@ class Main:
             site = url[:url.find('/dists/') + 1]
 
             lines = []
-            path = Path(archive_path.parent, archive_path.stem)
+            path = archive_path.with_name(archive_path.stem)
             try:
                 with path.open(errors='replace') as ifile:
                     for line in ifile:

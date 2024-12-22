@@ -21,8 +21,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.4.1'
-VERSION = 20241026
+RELEASE = '2.4.2'
+VERSION = 20241222
 
 
 class Data:
@@ -341,7 +341,7 @@ class Config:
     This class deals with "config_mod.yaml" configuration file.
     """
     def __init__(self) -> None:
-        path = Path(Path(__file__).parent, 'config_mod.yaml')
+        path = Path(__file__).with_name('config_mod.yaml')
         mappings = next(Data(path).get())
         self._apps = mappings.get('apps', {})
         self._bindings = mappings.get('bindings', {})

@@ -88,9 +88,9 @@ class Main:
             if os.sep not in str(path):
                 path_new = Path(str(path).lower())
             elif path.is_dir():
-                path_new = Path(path.parent, path.name.lower())
+                path_new = path.with_name(path.name.lower())
             else:
-                path_new = Path(path.parent, path.name.lower())
+                path_new = path.with_name(path.name.lower())
             if path_new != path:
                 print(f'Converting filename "{path}" to lowercase...')
                 if path_new.exists():

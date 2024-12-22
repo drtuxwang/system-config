@@ -122,7 +122,7 @@ class Options:
         path = Path(self._args.archive[0])
         if path.is_dir():
             self._archive = (
-                f'{Path(Path.cwd().parent, path.resolve().name)}.7z'.lower()
+                f'{Path.cwd().with_name(path.resolve().name)}.7z'.lower()
             )
             self._archiver.extend_args([self._archive+'.part', path])
         else:

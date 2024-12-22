@@ -81,7 +81,7 @@ class Main:
 
     @staticmethod
     def _get_program(command: List[str]) -> Command:
-        path = Path(Path(sys.argv[0]).parent, command[0])
+        path = Path(sys.argv[0]).with_name(command[0])
         if path.is_file():
             return CommandFile(path)
         return Command(command[0], errors='stop')

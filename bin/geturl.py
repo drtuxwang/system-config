@@ -44,7 +44,7 @@ class Options:
 
     @staticmethod
     def _set_libraries(command: Command) -> None:
-        libdir = Path(Path(command.get_file()).parent, 'lib')
+        libdir = Path(command.get_file()).with_name('lib')
         if libdir.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
