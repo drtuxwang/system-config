@@ -2,6 +2,7 @@
 """
 Make a compressed archive in 7Z format.
 """
+# pylint: disable=invalid-name
 
 import argparse
 import os

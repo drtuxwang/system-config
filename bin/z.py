@@ -121,7 +121,7 @@ class Main:
         elif name.endswith('.zip'):
             command = Command('zip.py', errors='stop')
         elif name.endswith(('.7z', '.exe')) or path.is_dir():
-            command = Command('_7z.py', errors='stop')
+            command = Command('7z.py', errors='stop')
             if path.is_dir() and all(x.is_dir() for x in files):
                 for directory in [path] + files:
                     if directory.is_absolute() or len(directory.parts) < 1:

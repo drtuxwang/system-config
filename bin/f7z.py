@@ -84,7 +84,7 @@ class Main:
         """
         options = Options()
 
-        command = Command('_7z.py', errors='stop')
+        command = Command('7z.py', errors='stop')
         for path in [Path(x) for x in options.get_files()]:
             if path.is_file():
                 task = Task(command.get_cmdline() + [f'{path}.7z', path])
