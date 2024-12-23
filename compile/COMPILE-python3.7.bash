@@ -5,6 +5,7 @@ umask 022
 
 VERSION=$(grep "define PY_VERSION " Include/patchlevel.h | cut -f2 -d'"')
 MAJOR_VER=${VERSION%.*}
+DEFAULT_PYTHON=false
 
 case $(uname) in
 Darwin)
@@ -87,6 +88,9 @@ exec \"\$MYDIR/python$MAJOR_VER\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$F
 
     # Fix for porting on Ubuntu and running on RHEL
     [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
+
+    # Non default python3
+    [ "$DEFAULT_PYTHON" != true ] && rm -f install/bin/python3
 
     # Remove tests
     find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf
