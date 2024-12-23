@@ -33,7 +33,7 @@ if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
 RELEASE = '6.14.0'
-VERSION = 20241222
+VERSION = 20241223
 
 # pylint: disable=too-many-lines
 
@@ -2357,9 +2357,6 @@ class Software:
     Software class
     """
 
-    python_version = os.environ.get('PYTHON_VERSION', 'python3')
-    if not python_version.startswith('python'):
-        python_version = 'python3'
     SOFTWARE_TOOLS = [
         (
             ['7z', '/dev/null/null', '/dev/null'],
@@ -2415,7 +2412,8 @@ class Software:
         (['ibus', 'version'], ['^IBus ', 'IBus ', '']),
         (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
         (['meld', '--version'], ['^meld ', 'meld ', '']),
-        ([f'bin/{python_version}', '--version'], ['Python ', '.*Python ', '']),
+        ([f'bin/python', '--version'], ['Python ', '.*Python ', '']),
+        ([f'bin/python3', '--version'], ['Python ', '.*Python ', '']),
         (
             ['qemu-img', '--version'],
             ['qemu-img version ', '.*version | .*', ''],
