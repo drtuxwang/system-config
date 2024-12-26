@@ -2,9 +2,9 @@ NAME := etcd
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := etcd
-CHART_VERSION := 9.9.1
-APP_VERSION := 3.4.29
-IMAGE_TAG := 3.4.29-debian-11-r2
+CHART_VERSION := 10.6.1
+APP_VERSION := 3.5.16
+IMAGE_TAG := 3.5.16-debian-12-r4
 NAMESPACE ?= infra
 
 ifndef CHART_VERSION

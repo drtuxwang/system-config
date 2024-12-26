@@ -2,6 +2,7 @@
 """
 Make a compressed archive in 7Z format.
 """
+# pylint: disable=invalid-name
 
 import argparse
 import os
@@ -90,11 +91,7 @@ class Options:
         """
         Parse arguments
         """
-        self._archiver = Command('7zzs', errors='ignore')
-        if not self._archiver.is_found():
-            self._archiver = Command('7zz', errors='ignore')
-            if not self._archiver.is_found():
-                self._archiver = Command('7z', errors='stop')
+        self._archiver = Command('7z', errors='stop')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
             self._archiver.set_args(args[1:])
@@ -126,7 +123,7 @@ class Options:
         path = Path(self._args.archive[0])
         if path.is_dir():
             self._archive = (
-                f'{Path(Path.cwd().parent, path.resolve().name)}.7z'.lower()
+                f'{Path.cwd().with_name(path.resolve().name)}.7z'.lower()
             )
             self._archiver.extend_args([self._archive+'.part', path])
         else:

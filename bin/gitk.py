@@ -53,7 +53,7 @@ class Options:
         """
         Parse arguments
         """
-        self._gitk = Command(Path('bin', 'gitk'), errors='stop')
+        self._gitk = Command('bin/gitk', errors='stop')
         self._gitk.set_args(args[1:])
 
         self._env = {}

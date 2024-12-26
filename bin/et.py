@@ -51,7 +51,7 @@ class Main:
 
     def _punkbuster(self) -> None:
         path = Path(Path.home(), '.etwolf', 'pb')
-        link_path = Path(Path(self._command.get_file()).parent, 'pb')
+        link_path = Path(self._command.get_file()).with_name('pb')
         if not path.is_symlink():
             if path.is_dir():
                 try:

@@ -7,7 +7,6 @@ import glob
 import os
 import signal
 import sys
-from pathlib import Path
 
 from command_mod import Command
 from subtask_mod import Exec
@@ -49,7 +48,7 @@ class Main:
         """
         Start program
         """
-        scalar = Command(Path('bin', 'scalar'), errors='stop')
+        scalar = Command('bin/scalar', errors='stop')
         scalar.set_args(sys.argv[1:])
 
         os.umask(0o022)

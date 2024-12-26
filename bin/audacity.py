@@ -47,18 +47,12 @@ class Main:
             return Path(Path.home(), '.config', 'tenacity')
 
         audacitydir = Path(Path.home(), '.audacity-data')
-        if not audacitydir.is_dir():
-            try:
-                os.mkdir(audacitydir)
-            except OSError:
-                pass
-            else:
-                path = Path(audacitydir, 'audacity.cfg')
-                if not path.is_file():
-                    with path.open('w') as ofile:
-                        print("[AudioIO]", file=ofile)
-                        print("PlaybackDevice=ALSA: pulse", file=ofile)
-                        print("RecordingDevice=ALSA: pulse", file=ofile)
+        path = Path(audacitydir, 'audacity.cfg')
+        if path.is_file():
+            if b'ShowSplashScreen=0' not in path.read_bytes():
+                with path.open('a', errors='replace') as ofile:
+                    print("[GUI]", file=ofile)
+                    print("ShowSplashScreen=0", file=ofile)
         return audacitydir
 
     @classmethod

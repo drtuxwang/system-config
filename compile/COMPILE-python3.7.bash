@@ -26,7 +26,7 @@ Darwin)
 PYTHON_LIB=\$(realpath \"\${0%/*}/../lib\" | sed -e \"s,bin/[^/]*$,lib,\")
 export DYLD_LIBRARY_PATH=\"\$PYTHON_LIB:\$DYLD_LIBRARY_PATH\"
 export LDFLAGS=\"-L\$PYTHON_LIB\"
-exec \"\${0%/*}\"/python$VERSION \"\$@\""
+exec \"\${0%/*}/python$VERSION\" \"\$@\""
     ;;
 *)
     if [[ ${0##/*} =~ COMPILE32* ]]
@@ -41,7 +41,7 @@ exec \"\${0%/*}\"/python$VERSION \"\$@\""
 PYTHON_LIB=\$(realpath \"\${0%/*}/../lib\" | sed -e \"s,bin/[^/]*$,lib,\")
 export LD_LIBRARY_PATH=\"\$PYTHON_LIB:\$LD_LIBRARY_PATH\"
 export LDFLAGS=\"-L\$PYTHON_LIB\"
-exec \"\${0%/*}\"/python$VERSION \"\$@\""
+exec \"\${0%/*}/python$VERSION\" \"\$@\""
     ;;
 esac
 # Missing realpath on old operating systems
@@ -87,6 +87,9 @@ exec \"\$MYDIR/python$MAJOR_VER\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$F
 
     # Fix for porting on Ubuntu and running on RHEL
     [ "$(uname)" = Linux ] && sed -i "s/libbz2.so.1.0/libbz2.so.1\x00\x00/" install/lib/python*/lib-dynload/*bz2*.so
+
+    # Non default python3
+    rm -f install/bin/python3
 
     # Remove tests
     find install/lib/python* -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rf

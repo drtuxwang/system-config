@@ -45,7 +45,7 @@ class Main:
         """
         Start program
         """
-        golang = Command(Path('bin', 'go'), errors='stop')
+        golang = Command('bin/go', errors='stop')
         golang.extend_args(sys.argv[1:])
 
         goroot = Path(golang.get_file()).parents[1]

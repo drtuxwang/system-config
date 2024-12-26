@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.13.0'
-VERSION = 20241208
+RELEASE = '6.14.0'
+VERSION = 20241223
 
 # pylint: disable=too-many-lines
 
@@ -1861,7 +1861,7 @@ class LinuxSystem(PosixSystem):
             for path in sorted(Path(directory).iterdir()):
                 status = ' '.join(self._read_file(directory, str(path)))
                 if 'Mitigation' in status or 'Vulnerable' in status:
-                    info['CPU Vulnerabilities'].append((str(path.name), status))
+                    info['CPU Vulnerabilities'].append((path.name, status))
 
         return info
 
@@ -2395,13 +2395,16 @@ class Software:
             ['gimp', '--version'],
             ['^GNU Image Manipulation Program version ', '.*version ', ''],
         ),
-        (['git', '--version'], ['version ', '.*version ', '']),
+        (['bin/git', '--version'], ['version ', '.*version ', '']),
         (['git-lfs', '--version'], ['git-lfs/', 'git-lfs/| .*', '']),
-        (['go', 'version'], [r'version go\d', '.*version go| .*', 'Golang']),
+        (
+            ['bin/go', 'version'],
+            [r'version go\d', '.*version go| .*', 'Golang'],
+        ),
         (['gpg', '--version'], [r'GnuPG\) ', r'.*\) ', 'GnuPG']),
         (['gqview', '--version'], ['^Geeqie ', 'Geeqie | .*', 'Geeqie']),
-        (['java', '--version'], ['^openjdk ', 'openjdk | .*', 'OpenJDK']),
-        (['javac', '--version'], ['^javac ', 'javac | .*', '']),
+        (['bin/java', '--version'], ['^openjdk ', 'openjdk | .*', 'OpenJDK']),
+        (['bin/javac', '--version'], ['^javac ', 'javac | .*', '']),
         (['k3s', '--version'], ['^k3s.* version v', '.*version v| .*', '']),
         (['kubectl', 'version'], ['Client', '.*:.v|".*', '']),
         (['helm', 'version'], ['Client', '.*SemVer:"v|".*', '']),
@@ -2409,8 +2412,8 @@ class Software:
         (['ibus', 'version'], ['^IBus ', 'IBus ', '']),
         (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
         (['meld', '--version'], ['^meld ', 'meld ', '']),
-        (['python', '--version'], ['Python ', '.*Python ', '']),
-        (['python3', '--version'], ['Python ', '.*Python ', '']),
+        ([f'bin/python', '--version'], ['Python ', '.*Python ', '']),
+        ([f'bin/python3', '--version'], ['Python ', '.*Python ', '']),
         (
             ['qemu-img', '--version'],
             ['qemu-img version ', '.*version | .*', ''],
@@ -2429,7 +2432,7 @@ class Software:
             ['^rsync +version', 'rsync +version | .*', ''],
         ),
         (
-            ['soffice', '--version'],
+            [Path('program', 'soffice'), '--version'],
             ['^LibreOffice ', 'LibreOffice | .*', 'LibreOffice'],
         ),
         (['sqlplus', '-V'], ['^Version ', 'Version ', '']),

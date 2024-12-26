@@ -55,7 +55,7 @@ class Options:
 
     @staticmethod
     def _set_libraries(command: Command) -> None:
-        libdir = Path(Path(command.get_file()).parent, 'lib')
+        libdir = Path(command.get_file()).with_name('lib')
         if libdir.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
@@ -158,7 +158,7 @@ class Main:
                     f'received from "{task.get_file()}".',
                 )
 
-            path_new = Path(path.parent, path.stem)
+            path_new = path.with_name(path.stem)
             if path_new.is_file():
                 file_time = int(path.stat().st_mtime)
                 os.utime(path_new, (file_time, file_time))

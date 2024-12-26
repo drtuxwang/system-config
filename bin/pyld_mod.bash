@@ -151,10 +151,7 @@ locate_python_tool() {
 exec_python() {
     export PYTHONDONTWRITEBYTECODE=1
     PYLD_BIN=${0%/*}
-    if [ ! "$PYLD_EXE" ]
-    then
-        PYLD_EXE=${PYTHON_VERSION:-python3}
-    fi
+    PYLD_EXE=${PYLD_EXE:-python3}
     if [ "$PYLD_MAIN" ]
     then
         PYLD_FLAGS="-pyldname=${0##*/}"

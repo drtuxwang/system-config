@@ -27,9 +27,6 @@ test-docker:          # Run tests in docker
 test-all: test        # Run tests for all versions
 	@for VERSION in $(PYTHONS_VERSIONS); do \
 		case $$VERSION in \
-		3.[56]) \
-			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
-			;; \
 		3.7) \
 			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
 			PYTHON=python$$VERSION make --no-print-directory check-python-test || exit 1; \

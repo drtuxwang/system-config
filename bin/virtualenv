@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
 
-PYLD_EXE="$PYTHON_VERSION"
 source "${0%/*}/pyld_mod.bash"

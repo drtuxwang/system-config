@@ -49,7 +49,7 @@ class Options:
         """
         Parse arguments
         """
-        self._jar = Command(Path('bin', 'jar'), errors='stop')
+        self._jar = Command('bin/jar', errors='stop')
 
         if len(args) == 1:
             Exec(self._jar.get_cmdline()).run()

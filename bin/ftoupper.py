@@ -88,9 +88,9 @@ class Main:
             if os.sep not in str(path):
                 path_new = Path(str(path).upper())
             elif path.is_dir():
-                path_new = Path(path.parent, path.name.upper())
+                path_new = path.with_name(path.name.upper())
             else:
-                path_new = Path(path.parent, path.name.upper())
+                path_new = path.with_name(path.name.upper())
             if path_new != path:
                 print(f'Converting filename "{path}" to uppercase...')
                 if path_new.exists():
