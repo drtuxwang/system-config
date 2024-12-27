@@ -1,1 +1,1 @@
-appnope==0.1.3               #   (required for App Nap on MacOS)
+appnope==0.1.4               #   (required for App Nap on MacOS)
