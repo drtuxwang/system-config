@@ -32,8 +32,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.14.0'
-VERSION = 20241223
+RELEASE = '6.14.1'
+VERSION = 20241229
 
 # pylint: disable=too-many-lines
 
@@ -2412,8 +2412,8 @@ class Software:
         (['ibus', 'version'], ['^IBus ', 'IBus ', '']),
         (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
         (['meld', '--version'], ['^meld ', 'meld ', '']),
-        ([f'bin/python', '--version'], ['Python ', '.*Python ', '']),
-        ([f'bin/python3', '--version'], ['Python ', '.*Python ', '']),
+        (['bin/python', '--version'], ['Python ', '.*Python ', '']),
+        (['bin/python3', '--version'], ['Python ', '.*Python ', '']),
         (
             ['qemu-img', '--version'],
             ['qemu-img version ', '.*version | .*', ''],
