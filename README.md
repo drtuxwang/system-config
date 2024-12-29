@@ -128,7 +128,7 @@ the years.
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
  * helm/nginx/                     Helm Chart: bitnami/nginx 15.8.1 (app-1.18.0)
  * helm/oracle-xe/                 Helm Chart: Oracle XE test (gvenzl/oracle-xe:21.3.0-slim)
- * helm/postgresql/                Helm Chart: bitnami/postgresql 13.2.30 (app-11.22.0)
+ * helm/postgresql/                Helm Chart: bitnami/postgresql 15.5.38 (app-16.4.0)
  * helm/prometheus/                Helm Chart: prometheus-community/prometheus 25.30.2 (app-2.53.3)
  * helm/pushgateway/               Helm Chart: prometheus-community/prometheus-pushgateway 2.10.0 (app-1.6.2)
  * helm/rabbitmq/                  Helm Chart: bitnami/rabbitmq 14.6.10 (app-3.13.7)
