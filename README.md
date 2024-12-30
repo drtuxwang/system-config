@@ -124,7 +124,7 @@ the years.
  * helm/grafana/                   Helm Chart: bitnami/grafana 10.0.12 (app-10.4.3)
  * helm/jenkins/                   Helm Chart: bitnami/jenkins 13.4.28 (app-2.462.3)
  * helm/kafka/                     Helm Chart: bitnami/kafka 26.7.1 (app-3.5.2)
- * helm/mongodb/                   Helm Chart: bitnami/mongodb 14.6.1 (app-5.0.24)
+ * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.3.3 (app-7.0.14)
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
  * helm/nginx/                     Helm Chart: bitnami/nginx 15.8.1 (app-1.18.0)
  * helm/oracle-xe/                 Helm Chart: Oracle XE test (gvenzl/oracle-xe:21.3.0-slim)

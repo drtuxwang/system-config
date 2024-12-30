@@ -27,6 +27,7 @@ connect() {
         ;;
     mongodb)
         echo "Address: $ADDRESS:$PORT"
+        curl $ADDRESS:$PORT
         $MONGODB_CLIENT
         ;;
     oradb)
