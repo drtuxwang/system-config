@@ -1,4 +1,4 @@
-# 1996-2024 By Dr Colin Kong
+# 1996-2025 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -126,7 +126,7 @@ the years.
  * helm/kafka/                     Helm Chart: bitnami/kafka 26.7.1 (app-3.5.2)
  * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.3.3 (app-7.0.14)
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
- * helm/nginx/                     Helm Chart: bitnami/nginx 15.8.1 (app-1.18.0)
+ * helm/nginx/                     Helm Chart: bitnami/nginx 18.1.15 (app-1.24.0)
  * helm/oracle-xe/                 Helm Chart: Oracle XE test (gvenzl/oracle-xe:21.3.0-slim)
  * helm/postgresql/                Helm Chart: bitnami/postgresql 15.5.38 (app-16.4.0)
  * helm/prometheus/                Helm Chart: prometheus-community/prometheus 25.30.2 (app-2.53.3)
