@@ -30,11 +30,10 @@ class Options:
         """
         return self._convert
 
-    def get_edges(self) -> List[List[str]]:
+    def get_flags(self) -> List[str]:
         """
-        Return list of borde edges.
+        Return convert operations flags.
         """
-        edges = []
         default = not any((
             self._args.north_flag,
             self._args.east_flag,
@@ -43,16 +42,17 @@ class Options:
         ))
         pixels = self.get_pixels()
 
+        flags = ['-background', f'#{self.get_rgb()}']
         if self._args.north_flag or default:
-            edges.append(['-gravity', 'north', '-splice', f'0x{pixels}'])
+            flags.extend(['-gravity', 'north', '-splice', f'0x{pixels}'])
         if self._args.east_flag or default:
-            edges.append(['-gravity', 'east', '-splice', f'{pixels}x0'])
+            flags.extend(['-gravity', 'east', '-splice', f'{pixels}x0'])
         if self._args.south_flag or default:
-            edges.append(['-gravity', 'south', '-splice', f'0x{pixels}'])
+            flags.extend(['-gravity', 'south', '-splice', f'0x{pixels}'])
         if self._args.west_flag or default:
-            edges.append(['-gravity', 'west', '-splice', f'{pixels}x0'])
+            flags.extend(['-gravity', 'west', '-splice', f'{pixels}x0'])
 
-        return edges
+        return flags
 
     def get_pixels(self) -> int:
         """
@@ -131,7 +131,6 @@ class Options:
         self._parse_args(args[1:])
 
         self._convert = Command('convert', errors='stop')
-        self._convert.set_args(['-background', f'#{self.get_rgb()}'])
 
         if self._args.pixels[0] < 1:
             raise SystemExit(
@@ -173,21 +172,19 @@ class Main:
         Start program
         """
         options = Options()
-        convert = options.get_convert()
-        edges = options.get_edges()
+        cmdline = options.get_convert().get_cmdline() + options.get_flags()
 
         images_extensions = Config().get('image_extensions')
         for path in [Path(x) for x in options.get_files()]:
             if path.is_file() and path.suffix.lower() in images_extensions:
-                for edge in edges:
-                    task = Batch(convert.get_cmdline() + edge + [path, path])
-                    task.run()
-                    if task.get_exitcode():
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Error code '
-                            f'{task.get_exitcode()} received from '
-                            f'"{task.get_file()}".',
-                        )
+                task = Batch(cmdline + [path, path])
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Error code '
+                        f'{task.get_exitcode()} received from '
+                        f'"{task.get_file()}".',
+                    )
 
         return 0
 
