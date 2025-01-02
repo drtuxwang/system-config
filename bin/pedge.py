@@ -111,7 +111,7 @@ class Options:
             nargs=1,
             type=int,
             dest='pixels',
-            default=100,
+            default=[100],
             help="Select pixel size. Default is 100.",
         )
         parser.add_argument(
