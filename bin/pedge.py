@@ -79,35 +79,30 @@ class Options:
 
         parser.add_argument(
             '-n',
-            '-north',
             dest='north_flag',
             action='store_true',
             help="Add border to north (top) edge.",
         )
         parser.add_argument(
             '-e',
-            '-east',
             dest='east_flag',
             action='store_true',
             help="Add border to east (right) edge.",
         )
         parser.add_argument(
             '-s',
-            '-south',
             dest='south_flag',
             action='store_true',
             help="Add border to south (bottom) edge.",
         )
         parser.add_argument(
             '-w',
-            '-west',
             dest='west_flag',
             action='store_true',
             help="Add border to west (left) edge.",
         )
         parser.add_argument(
             '-p',
-            '-pixels',
             nargs=1,
             type=int,
             dest='pixels',
