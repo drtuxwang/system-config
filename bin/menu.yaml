@@ -51,7 +51,7 @@ menu_main:
     run: exec menu utility &
 - button:
     name: close
-    color: '#ff0000'
+    color: '#ff00ff'
     label: Lock Screen
     run: exec xlock &
 
