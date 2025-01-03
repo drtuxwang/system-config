@@ -51,7 +51,7 @@ menu_main:
     run: exec menu utility &
 - button:
     name: close
-    color: '#ff00ff'
+    color: '#ff00cc'
     label: Lock Screen
     run: exec xlock &
 
@@ -438,7 +438,7 @@ menu_system:
     run: exec keymap.tcl &
 - button:
     name: logout
-    color: '#00ffff'
+    color: '#ff00cc'
     label: Logout
     run: exec xlogout -force &
 - button:
