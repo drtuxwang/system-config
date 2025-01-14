@@ -1,3 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-source "${0%/*}/pyld_mod.bash"
+MYDIR=`dirname "$0"`
+if [ "`\"$MYDIR/python3\" --version 2> /dev/null`" ]
+then
+    export PYTHONDONTWRITEBYTECODE=1
+    exec "$MYDIR/python3" "$0.py" "$@"
+fi
+
+exec "$0.bash" "$@"

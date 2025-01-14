@@ -50,8 +50,8 @@ menu_main:
     label: Utility
     run: exec menu utility &
 - button:
-    name: close
-    color: '#ff0000'
+    name: lock
+    color: '#ff00ff'
     label: Lock Screen
     run: exec xlock &
 
@@ -438,17 +438,17 @@ menu_system:
     run: exec keymap.tcl &
 - button:
     name: logout
-    color: '#00ffff'
+    color: '#ff00ff'
     label: Logout
     run: exec xlogout -force &
 - button:
     name: reboot
-    color: '#ff00ff'
+    color: '#cc00cc'
     label: Reboot
     run: exec /sbin/reboot &
 - button:
     name: poweroff
-    color: '#ff00ff'
+    color: '#cc00cc'
     label: PowerOff
     run: exec /sbin/poweroff &
 - button:

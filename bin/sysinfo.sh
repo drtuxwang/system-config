@@ -4,8 +4,8 @@
 #
 # 1996-2023 By Dr Colin Kong
 #
-VERSION=20240831
-RELEASE="2.6.49-1"
+VERSION=20250104
+RELEASE="2.6.50-1"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -455,6 +455,11 @@ detect() {
         do
             write_output name="INET Nameserver" value="$HOST"
         done
+        PUBLIC=`curl http://ifconfig.me 2> /dev/null`
+        if [ "$PUBLIC" ]
+        then
+            write_output name="INET Public" value="`curl http://ifconfig.me 2> /dev/null`"
+        fi
     fi
 
     # Detect hardware information

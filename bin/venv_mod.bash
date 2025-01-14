@@ -3,7 +3,7 @@
 # Bash Python Virtual Environments module
 # - Build and run Python virtual environment
 #
-# Copyright GPL v2: 2023-2024 By Dr Colin Kong
+# Copyright GPL v2: 2023-2025 By Dr Colin Kong
 #
 
 set -u
@@ -53,36 +53,39 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
 
     if [ ! -d "$VIRTUAL_ENV" ]
     then
-        $VENV_PYTHON -m virtualenv "$VIRTUAL_ENV" || exit 1
-        rm -f "$VIRTUAL_ENV/.gitignore"
+        rm -rf "$VIRTUAL_ENV.part"
+        $VENV_PYTHON -m virtualenv "$VIRTUAL_ENV.part" || exit 1
+        rm -f "$VIRTUAL_ENV.part/.gitignore"
     fi
 
-    rm -f "$VIRTUAL_ENV/bin"/python$VERSION "$VIRTUAL_ENV/bin"/python${VERSION%%.*} "$VIRTUAL_ENV/bin"/python${VERSION%.*}
-    mv "$VIRTUAL_ENV/bin/python" "$VIRTUAL_ENV/bin"/python$VERSION
-    echo "$WRAPPER" > "$VIRTUAL_ENV/bin"/python${VERSION%.*}
-    chmod 755 "$VIRTUAL_ENV/bin"/python${VERSION%.*}
-    ln -s python${VERSION%.*} "$VIRTUAL_ENV/bin"/python${VERSION%%.*}
-    ln -s python${VERSION%.*} "$VIRTUAL_ENV/bin"/python
+    rm -f "$VIRTUAL_ENV.part/bin"/python$VERSION "$VIRTUAL_ENV.part/bin"/python${VERSION%%.*} "$VIRTUAL_ENV.part/bin"/python${VERSION%.*}
+    mv "$VIRTUAL_ENV.part/bin/python" "$VIRTUAL_ENV.part/bin"/python$VERSION
+    echo "$WRAPPER" > "$VIRTUAL_ENV.part/bin"/python${VERSION%.*}
+    chmod 755 "$VIRTUAL_ENV.part/bin"/python${VERSION%.*}
+    ln -s python${VERSION%.*} "$VIRTUAL_ENV.part/bin"/python${VERSION%%.*}
+    ln -s python${VERSION%.*} "$VIRTUAL_ENV.part/bin"/python
 
     for VENV_DEPEND in $VENV_DEPENDS
     do
-          "$VIRTUAL_ENV/bin/$VENV_PYTHON" -m pip install $VENV_DEPEND || exit 1
+          "$VIRTUAL_ENV.part/bin/$VENV_PYTHON" -m pip install $VENV_DEPEND || exit 1
     done
-    "$VIRTUAL_ENV/bin/$VENV_PYTHON" -m pip install $VENV_PACKAGE || exit 1
-    [ "$VENV_CLEAN" = "yes" ] && find "$VIRTUAL_ENV/lib" -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
+    "$VIRTUAL_ENV.part/bin/$VENV_PYTHON" -m pip install $VENV_PACKAGE || exit 1
+    [ "$VENV_CLEAN" = "yes" ] && find "$VIRTUAL_ENV.part/lib" -type f -name '*test*.py' | grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | xargs rm -rfv
     IFS=$'\n'
     for FILE in $(
-        grep "^#!/.*/python" "$VIRTUAL_ENV/bin"/* 2> /dev/null | grep -v ":#!/usr/bin/env " | sed -e "s@:#!/.*@@";
-        grep "'''exec'.*bin/python" "$VIRTUAL_ENV/bin"/* 2> /dev/null | sed -e "s/:'''.*//"
+        grep "^#!/.*/python" "$VIRTUAL_ENV.part/bin"/* 2> /dev/null | grep -v ":#!/usr/bin/env " | sed -e "s@:#!/.*@@";
+        grep "'''exec'.*bin/python" "$VIRTUAL_ENV.part/bin"/* 2> /dev/null | sed -e "s/:'''.*//"
     )
     do
         echo "$FILE: #!/usr/bin/env $VENV_PYTHON"
         sed -i "s@^#!/.*@#!/usr/bin/env $VENV_PYTHON@" "$FILE"
     done
     unset IFS
-    [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV/lib 2> /dev/null
+    [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV.part/lib 2> /dev/null
 
     $VENV_POSTINST
+
+    mv $VIRTUAL_ENV.part $VIRTUAL_ENV
 }
 
 
@@ -97,7 +100,7 @@ PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$VENV_PYTHON")
 VENV_PACKAGE=${VENV_PACKAGE,,}
 VIRTUAL_ENV="$PYTHON_DIR-venv/${VENV_PACKAGE/==/_}"
 ####VERSION=$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')
-[ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/python-$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')-${VENV_PACKAGE/==/-}/${VENV_PACKAGE/==/_}"
+[ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/python-$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')-venv/${VENV_PACKAGE/==/_}"
 FLAGS="${1:-}"
 export VIRTUAL_ENV
 export PATH="$VIRTUAL_ENV/bin:$PATH"

@@ -4,7 +4,7 @@ MYDIR=`dirname "$0"`
 if [ "`\"$MYDIR/python3\" --version 2> /dev/null`" ]
 then
     export PYTHONDONTWRITEBYTECODE=1
-    exec "$MYDIR/python3" "$MYDIR/mirror.py" "$@"
+    exec "$MYDIR/python3" "$0.py" "$@"
 fi
 
-exec "$MYDIR/mirror.bash" "$@"
+exec "$0.bash" "$@"

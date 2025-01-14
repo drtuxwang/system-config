@@ -31,11 +31,11 @@ class Options:
         self._config()
         self.parse(sys.argv)
 
-    def get_columns(self) -> str:
+    def get_size(self) -> str:
         """
-        Return number of columns.
+        Return size column X rows.
         """
-        return self._columns
+        return f'{self._columns}x{self._rows}'
 
     def get_hosts(self) -> List[str]:
         """
@@ -49,16 +49,31 @@ class Options:
         """
         return self._terminal
 
-    @staticmethod
-    def _config() -> None:
+    def _config(self) -> None:
         if "TMUX" in os.environ:
             del os.environ['TMUX']
+
+        self._columns = 80
+        self._rows = 24
+        xwininfo = Command(
+            'xwininfo',
+            pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
+            args=['-root'],
+            errors='ignore'
+        )
+        if xwininfo.is_found():
+            task = Batch(xwininfo.get_cmdline())
+            task.run()
+            for line in task.get_output():
+                if 'Width:' in line and int(line.split()[-1]) >= 1024:
+                    self._columns = 100
+                elif 'Height:' in line and int(line.split()[-1]) >= 900:
+                    self._rows = 40
 
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
-        self._columns = '100'
         invis_flag = False
 
         while len(args) > 1:
@@ -187,7 +202,7 @@ class Xterm(Terminal):
             '-ls',
             '-ut',
             '-geometry',
-            self._options.get_columns() + 'x24'
+            self._options.get_size(),
         ])
         if task.is_match_output(' -rightbar '):
             self._command.append_arg('-rightbar')
@@ -297,9 +312,7 @@ class GnomeTerminal(Xterm):
 
     def _config(self) -> None:
         self._command = Command('gnome-terminal', errors='stop')
-        self._command.set_args([
-            f'--geometry={self._options.get_columns()}x24',
-        ])
+        self._command.set_args([f'--geometry={self._options.get_size()}'])
         self._pattern = '^$|: Gtk-WARNING'
 
     @staticmethod
@@ -325,8 +338,7 @@ class Konsole(GnomeTerminal):
     def _config(self) -> None:
         self._command = Command('konsole', errors='stop')
         self._command.set_args([
-            f'--geometry={self._options.get_columns()}x24',
-        ])
+            f'--geometry={self._options.get_size()}'])
 
     @staticmethod
     def get_run_flag() -> str:
@@ -343,9 +355,7 @@ class MateTerminal(Konsole):
 
     def _config(self) -> None:
         self._command = Command('mate-terminal', errors='stop')
-        self._command.set_args([
-            f'--geometry={self._options.get_columns()}x24',
-        ])
+        self._command.set_args([f'--geometry={self._options.get_size()}'])
 
 
 class XfceTerminal(GnomeTerminal):
@@ -379,9 +389,7 @@ class XfceTerminal(GnomeTerminal):
             if not self._command.is_found():
                 self._command = Command('xfce4-terminal', errors='stop')
 
-        self._command.set_args([
-            f'--geometry={self._options.get_columns()}x24',
-        ])
+        self._command.set_args([f'--geometry={self._options.get_size()}'])
 
     @staticmethod
     def get_label_flags(host: str) -> List[str]:

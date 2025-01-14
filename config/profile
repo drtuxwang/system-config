@@ -70,7 +70,7 @@ then
             [ -f "$KUBECONFIG" ] && echo " ${KUBECONFIG##*/}"
         }
         __venv_ps1() {
-            [ "$VIRTUAL_ENV" ] && echo " ${VIRTUAL_ENV##*/}"
+            [ "${VIRTUAL_ENV:-}" ] && echo " ${VIRTUAL_ENV##*/}"
         }
         __kubeconfig() {
             ls -1 $HOME/.kube/*.yaml 2> /dev/null | sed -e "s@.*/@  Kubeconfig: @"

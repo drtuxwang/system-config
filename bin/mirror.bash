@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -u
+
+
 #
 # Function to parse options
 #
@@ -17,13 +20,10 @@ options() {
     }
 
     RECURSIVE=
-    REMOVE=
-    case "${0##*/}" in
-    *-rm)
-        REMOVE="--delete-after"
-        ;;
-    esac
-    while getopts "qhR" option
+    FLAGS="--recursive --links --perms --times --verbose --partial --progress"
+    [ "$(rsync --help 2> /dev/null | grep info=)" ] && FLAGS="$FLAGS --info=progress2"
+    [ "${1:-}" = "-rm" ] && FLAGS="$FLAGS --delete-after" && shift
+    while getopts "hR" option
     do
         case $option in
         h)
@@ -42,6 +42,10 @@ options() {
     --help)
       help 0
       ;;
+    -rm)
+      FLAGS="$FLAGS --delete-after"
+      shift
+      ;;
     --*)
       help 1
       ;;
@@ -55,9 +59,9 @@ options() {
 mirror() {
     if [ "$RECURSIVE" ]
     then
-        rsync --archive --verbose --partial --progress $DELETE --info=progress2 "$SOURCE/" "$TARGET/"
+        rsync $FLAGS "$SOURCE/" "$TARGET/"
     else
-        rsync --filter="- ..fsum" --filter="- */" --archive --verbose --partial --progress $DELETE --info=progress2 "$SOURCE/" "$TARGET/"
+        rsync --filter="- ..fsum" --filter="- */" $FLAGS "$SOURCE/" "$TARGET/"
     fi
 }
 

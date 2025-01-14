@@ -4,7 +4,7 @@
 #
 # Python loader for starting system/non system Python or Python tools/modules
 #
-# Copyright GPL v2: 2006-2024 By Dr Colin Kong
+# Copyright GPL v2: 2006-2025 By Dr Colin Kong
 #
 
 
@@ -161,6 +161,7 @@ exec_python() {
     fi
     if [ "$PYTHON_VENVS" -a "$(echo "$PYLD_MAIN" | grep -E "^(${PYTHON_VENVS//[, ]/|})")" -a ! "$VIRTUAL_ENV" ]
     then
+        [ -x "$PYLD_BIN/${0##*/}-venv" ] && source "$PYLD_BIN/${0##*/}-venv" "$@" && exit 1
         [ -x "$PYLD_BIN/venv-${0##*/}" ] && source "$PYLD_BIN/venv-${0##*/}" "$@" && exit 1
         [ -x "$PYLD_BIN/venv-${PYLD_MAIN%-*}" ] && source "$PYLD_BIN/venv-${PYLD_MAIN%-*}" "$@" && exit 1
     fi
