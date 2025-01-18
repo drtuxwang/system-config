@@ -14,19 +14,13 @@ WEB_CLIENT="firefox"
 
 connect() {
     case $PROTOCOL in
-    cql)
-        CASSANDRA_SECRET=${CASSANDRA_SECRET:-cassandra}
-        CASSANDRA_PASSWORD=$(kubectl --namespace=$NAMESPACE get secret $CASSANDRA_SECRET -o jsonpath="{.data.cassandra-password}" | base64 -d)
-        echo "Address: $ADDRESS:$PORT"
-        echo "$CASSANDRA_PASSWORD" | awk '{printf("Password: %s\n", $1)}'
-        $CQL_CLIENT -u cassandra -p $CASSANDRA_PASSWORD $ADDRESS $PORT
-        ;;
     http|https)
         echo "$WEB_CLIENT $PROTOCOL://$ADDRESS:$PORT"
         $WEB_CLIENT $PROTOCOL://$ADDRESS:$PORT
         ;;
     mongodb)
         echo "Address: $ADDRESS:$PORT"
+        curl $ADDRESS:$PORT
         $MONGODB_CLIENT
         ;;
     oradb)

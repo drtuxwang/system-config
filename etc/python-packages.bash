@@ -17,6 +17,9 @@ do
     -pip)
         MODE="piponly"
         ;;
+    -sys)
+        export PIP_BREAK_SYSTEM_PACKAGES=1  # Fix >= 3.11
+        ;;
     -i)
         MODE="install"
         ;;
@@ -40,7 +43,6 @@ REQUIREMENT=${2-}
 [[ ! /$PYTHON =~ /python[1-9]* ]] && help
 
 export PYTHONPATH=
-export PIP_BREAK_SYSTEM_PACKAGES=1  # Fix >= 3.11
 
 
 get_pip() {

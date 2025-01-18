@@ -1,14 +1,11 @@
 BUILD_DIRS := \
-	cassandra \
 	etcd \
 	grafana \
 	jenkins \
-	kafka \
 	mongodb \
 	nexus \
 	nginx \
 	oracle-xe \
-	postgresql \
 	prometheus \
 	pushgateway \
 	rabbitmq \

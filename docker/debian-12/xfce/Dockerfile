@@ -2,7 +2,7 @@ ARG BASE_IMAGE=drtuxwang/debian-dev:latest
 ARG USER=owner
 ARG GROUP=users
 
-FROM ${BASE_IMAGE} as builder
+FROM ${BASE_IMAGE} AS builder
 ARG USER
 ARG GROUP
 
@@ -60,10 +60,10 @@ RUN apt-get install --no-install-recommends --fix-missing -y \
         python3-dev && \
     apt-get clean && \
     rm /usr/lib/python*/EXTERNALLY-MANAGED && \
-    /etc/python-packages.bash -pip /usr/bin/python3 && \
+    /etc/python-packages.bash -pip -sys /usr/bin/python3 && \
     grep -E "^(bson|dicttoxml|Jinja2|MarkupSafe|packaging|pip|python-dateutil|PyYAML|setuptools|six|urllib3|wheel|xmltodict)" \
         /etc/python-requirements.txt > /etc/python-requirements_min.txt && \
-    /etc/python-packages.bash /usr/bin/python3 /etc/python-requirements_min.txt && \
+    /etc/python-packages.bash -sys /usr/bin/python3 /etc/python-requirements_min.txt && \
     rm /etc/python-requirements_min.txt && \
     chown -R ${USER}:${GROUP} /home/${USER}
 

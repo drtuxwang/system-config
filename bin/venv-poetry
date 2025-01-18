@@ -6,7 +6,7 @@
 virtualenv_setup() {
     VENV_PYTHON="python3"
     VENV_PACKAGE="poetry==1.7.1"
-    VENV_DEPENDS="poetry-core==1.8.1 poetry-plugin-export==1.6.0"
+    VENV_DEPENDS="poetry-core==1.8.1 poetry-plugin-export==1.6.0 setuptools==74.1.3"
 }
 
 
