@@ -18,4 +18,4 @@ RUN /etc/python-packages.bash -sys /usr/local/bin/python3
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD bash -l
+CMD ["bash", "-l"]

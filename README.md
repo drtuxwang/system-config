@@ -99,9 +99,9 @@ the years.
  * docker/python-3.12/             python:3.12-slim-bookworm based Docker images
  * docker/registry-2.6/            registry:2.6 based Docker Registry server app
  * docker/scratch/                 scratch Docker image
- * docker/ubuntu-18.04/            ubuntu:18.04 based Docker images
  * docker/ubuntu-20.04/            ubuntu:20.04 based Docker images
  * docker/ubuntu-22.04/            ubuntu:22.04 based Docker images
+ * docker/ubuntu-24.04/            ubuntu:24.04 based Docker images
  * etc/python-packages.bash        Install/check Python packages requirements
  * etc/python-requirements.txt     Default requirements file for Python
  * etc/python-requirements_*.txt   Additional requirements for Python versions
@@ -121,7 +121,7 @@ the years.
  * helm/bin/
  * helm/etcd/                      Helm Chart: bitnami/etcd 10.6.1 (app-3.5.16)
  * helm/grafana/                   Helm Chart: bitnami/grafana 10.0.12 (app-10.4.3)
- * helm/jenkins/                   Helm Chart: bitnami/jenkins 13.4.28 (app-2.462.3)
+ * helm/jenkins/                   Helm Chart: bitnami/jenkins 13.4.28 (app-2.479.3)
  * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.3.3 (app-7.0.14)
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
  * helm/nginx/                     Helm Chart: bitnami/nginx 18.1.15 (app-1.24.0)

@@ -7,4 +7,4 @@ COPY rootfs/ /
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD bash -l
+CMD ["bash", "-l"]

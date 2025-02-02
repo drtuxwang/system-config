@@ -2,6 +2,9 @@ ARG BASE_IMAGE=centos:latest
 
 FROM ${BASE_IMAGE}
 
+# Switch to CentOS-7.9.2009 vault
+COPY CentOS-Base.repo /etc/yum.repos.d/
+
 # Install base packages
 RUN yum install -y epel-release && \
     yum update -y && \
@@ -56,4 +59,4 @@ COPY rootfs/ /
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD bash -l
+CMD ["bash", "-l"]

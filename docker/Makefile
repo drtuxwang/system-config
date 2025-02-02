@@ -12,8 +12,7 @@ BUILD_DIRS := \
 	debian-10 \
 	ubuntu-24.04 \
 	ubuntu-22.04 \
-	ubuntu-20.04 \
-	ubuntu-18.04 \
+	ubuntu-20.04
 	\
 	almalinux-9 \
 	almalinux-8 \

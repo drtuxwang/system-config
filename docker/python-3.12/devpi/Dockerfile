@@ -10,7 +10,7 @@ RUN python3 -m pip install \
     devpi-gen-secret --secretfile=/var/lib/devpi/.secret
 
 # Configure start
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONDONTWRITEBYTECODE=1
 EXPOSE 8080
 ENTRYPOINT ["devpi-server"]
 CMD ["--serverdir=/var/lib/devpi", "--secretfile=/var/lib/devpi/.secret", "--host=0.0.0.0", "--port=8080"]
