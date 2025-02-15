@@ -146,7 +146,7 @@ class Main:
             )
 
         try:
-            with tarfile.open(path_tmp, mode) as ofile:
+            with tarfile.open(path_tmp, mode) as ofile:  # type: ignore
                 self._addfile(ofile, [Path(x) for x in options.get_files()])
         except OSError as exception:
             raise SystemExit(

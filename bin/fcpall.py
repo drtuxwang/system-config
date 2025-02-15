@@ -93,32 +93,27 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _copy(source: Path, target: Path) -> None:
-        if target.is_dir():
-            print(f'Copying to "{Path(target, source.name)}" file...')
+    def _copy(path1: Path, path2: Path) -> None:
+        if path2.is_dir():
+            print(f'Copying to "{Path(path2, path1.name)}" file...')
         else:
-            print(f'Copying to "{target}" file...')
+            print(f'Copying to "{path2}" file...')
+        path_tmp = Path(f'{path2}.part')
         try:
-            shutil.copy2(source, target)
+            shutil.copy2(path1, path_tmp)
         except shutil.Error as exception:
-            if 'are the same file' in exception.args[0]:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot copy to same "{target}" file.',
-                ) from exception
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot copy to "{target}" file.',
+                f'{sys.argv[0]}: Cannot create "{path_tmp}" file.',
             ) from exception
-        except OSError as exception:
-            if exception.args != (95, 'Operation not supported'):
-                try:
-                    with Path(source).open('rb'):
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot create "{target}" file.',
-                        ) from exception
-                except OSError as exception2:
-                    raise SystemExit(
-                        f'{sys.argv[0]}: Cannot create "{target}" file.',
-                    ) from exception2
+        try:
+            path_tmp.replace(path2)
+        except OSError:
+            try:
+                shutil.move(str(path_tmp), str(path2))  # < 3.9
+            except OSError as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot create "{path2}" file.',
+                ) from exception
 
     def run(self) -> int:
         """

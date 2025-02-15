@@ -13,6 +13,7 @@ import re
 import sys
 import xml
 import xml.dom.minidom
+import xml.parsers.expat
 from pathlib import Path
 from typing import Any, Generator, List, Tuple, Union
 
@@ -21,8 +22,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.4.2'
-VERSION = 20241222
+RELEASE = '2.4.3'
+VERSION = 20250208
 
 
 class Data:

@@ -360,7 +360,7 @@ class Main:
                 path2,
             )
             try:
-                if path2.is_symlink():
+                if path2.is_file() or path2.is_symlink():
                     path2.unlink()
                 path2.mkdir(mode=FileStat(path1).get_mode())
             except OSError as exception:

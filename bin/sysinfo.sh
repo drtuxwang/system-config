@@ -2,10 +2,10 @@
 #
 # System configuration detection tool
 #
-# 1996-2023 By Dr Colin Kong
+# 1996-2025 By Dr Colin Kong
 #
-VERSION=20250104
-RELEASE="2.6.50-1"
+VERSION=20250208
+RELEASE="2.6.52"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -73,9 +73,9 @@ isitset() {
 }
 
 #
-# Show software info if found
+# Write info if found
 #
-show_software() {
+write_found() {
     if [ ! "`echo \" $@ \" | grep \" value= \"`" ]
     then
         if [ "`echo \" $@ \" | egrep \" (location|value)=[^ ]\"`" ]
@@ -404,13 +404,16 @@ scanbus() {
 # Function to detect configurations
 #
 detect() {
-    if [ "$ALL" ]
+    if [ ! "$SHORT" ]
     then
         AUTHOR="Sysinfo $RELEASE (`echo $VERSION | cut -c1-4`-`echo $VERSION | cut -c5-6`-`echo $VERSION | cut -c7-8`)"
         TIME=`date +'%Y-%m-%d-%H:%M:%S'`
         $ECHO "$AUTHOR - System configuration detection tool"
         $ECHO "\n*** Detected at $TIME ***"
+    fi
 
+    if [ "$SHORT" = net -o ! "$SHORT" ]
+    then
         # Detect host information
         MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
         case `uname` in
@@ -455,11 +458,8 @@ detect() {
         do
             write_output name="INET Nameserver" value="$HOST"
         done
-        PUBLIC=`curl http://ifconfig.me 2> /dev/null`
-        if [ "$PUBLIC" ]
-        then
-            write_output name="INET Public" value="`curl http://ifconfig.me 2> /dev/null`"
-        fi
+        write_found name="INET Public" value="`curl --ipv4 --connect-timeout 1 http://ifconfig.me 2> /dev/null`"
+        write_found name="INET Public" value="`curl --ipv6 --connect-timeout 1 http://ifconfig.me 2> /dev/null`"
     fi
 
     # Detect hardware information
@@ -1132,15 +1132,18 @@ EOF
     esac
 
     # Report hardware information
-    if [ "$ALL" ]
+    if [ ! "$SHORT" ]
     then
         write_output name="OS Type" value="$MYOSTYPE"
     fi
-    write_output name="OS Name" value="$MYOSNAME"
-    write_output name="OS Kernel" value="$MYOSKERNEL"
-    write_output name="OS Patch" value="$MYOSPATCH"
-    write_output name="OS Boot Time" value="$MYOSBOOT"
-    if [ "$ALL" ]
+    if [ "$SHORT" = sys -o ! "$SHORT" ]
+    then
+        write_output name="OS Name" value="$MYOSNAME"
+        write_output name="OS Kernel" value="$MYOSKERNEL"
+        write_output name="OS Patch" value="$MYOSPATCH"
+        write_output name="OS Boot Time" value="$MYOSBOOT"
+    fi
+    if [ ! "$SHORT" ]
     then
         write_output name="CPU Type" value="$MYTYPE" comment="$MYTYPEX"
         write_output name="CPU Addressability" value="$MYBIT" comment="$MYBITSX"
@@ -1153,11 +1156,14 @@ EOF
             write_output name="CPU Cache" value="$MYCACHE" comment="$MYCACHEX"
         fi
     fi
-    write_output name="System Memory" value="$MYRAM" comment="$MYRAMX"
-    write_output name="System Swap Space" value="$MYSWAP" comment="$MYSWAPX"
-    write_output name="System Uptime" value="$MYUPTIME"
-    write_output name="System Load" value="$MYLOAD" comment="average over last 1min, 5min & 15min"
-    if [ "$ALL" ]
+    if [ "$SHORT" = sys -o ! "$SHORT" ]
+    then
+        write_output name="System Memory" value="$MYRAM" comment="$MYRAMX"
+        write_output name="System Swap Space" value="$MYSWAP" comment="$MYSWAPX"
+        write_output name="System Uptime" value="$MYUPTIME"
+        write_output name="System Load" value="$MYLOAD" comment="average over last 1min, 5min & 15min"
+    fi
+    if [ ! "$SHORT" ]
     then
         if [ "`uname`" = Linux ]
         then
@@ -1170,11 +1176,11 @@ EOF
             GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
             if [ "$GLIBC" ]
             then
-                show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
+                write_found name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
             fi
             for LINKER in `ls -1 /lib*/ld-*so* 2> /dev/null`
             do
-                show_software name="Dynamic linker" location="$LINKER"
+                write_found name="Dynamic linker" location="$LINKER"
             done
             ;;
         esac
@@ -1183,24 +1189,24 @@ EOF
         XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
         if [ "$XSET" ]
         then
-            show_software name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\", $1, $3, $5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
-            show_software name="X-Keyboard Repeat" value="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%sms\n\",$4)}'`" comment="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%s characters per second\n\",$7)}'`"
-            show_software name="X-Mouse Speed" value="`echo \"$XSET\" | grep \" acceleration:.* threshold: \" | awk '{print $2}'`" comment="acceleration factor"
+            write_found name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\", $1, $3, $5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
+            write_found name="X-Keyboard Repeat" value="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%sms\n\",$4)}'`" comment="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%s characters per second\n\",$7)}'`"
+            write_found name="X-Mouse Speed" value="`echo \"$XSET\" | grep \" acceleration:.* threshold: \" | awk '{print $2}'`" comment="acceleration factor"
             XSCREENSAVER=`echo "$XSET" | grep " timeout:.* cycle:" | awk '{print $2}'`
             if [ "$XSCREENSAVER" != 0 ]
             then
-                show_software name="X-Screensaver" value="$XSCREENSAVER" comment="no power saving for LCD but can keep CPU busy"
+                write_found name="X-Screensaver" value="$XSCREENSAVER" comment="no power saving for LCD but can keep CPU busy"
             fi
         fi
         XRANDR=`xrandr 2> /dev/null`
         if [ "$XRANDR" ]
         then
-            show_software name="X-Windows Display" value="$DISPLAY" comment=`echo "$XRANDR" | grep "^Screen .* current " | sed -e "s/.*current //;s/,.*//;s/ //g"`
+            write_found name="X-Windows Display" value="$DISPLAY" comment=`echo "$XRANDR" | grep "^Screen .* current " | sed -e "s/.*current //;s/,.*//;s/ //g"`
         else
             XWININFO=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xwininfo -root 2> /dev/null`
             if [ "$XWININFO" ]
             then
-                show_software name="X-Windows Display" value="$DISPLAY" comment="`echo \"$XWININFO\" | grep Width: | awk '{print $2}'`x`echo \"$XWININFO\" | grep Height: | awk '{print $2}'`"
+                write_found name="X-Windows Display" value="$DISPLAY" comment="`echo \"$XWININFO\" | grep Width: | awk '{print $2}'`x`echo \"$XWININFO\" | grep Height: | awk '{print $2}'`"
             fi
         fi
         echo
@@ -1258,11 +1264,16 @@ $1"
 #
 # Main program
 #
-if [ "$1" = "-s" ]
-then
-    ALL=
-else
-    ALL=1
-fi
+case $1 in
+-n)
+    SHORT=net
+    ;;
+-s)
+    SHORT=sys
+    ;;
+*)
+    SHORT=
+    ;;
+esac
 (detect) 2> /dev/null
 echo

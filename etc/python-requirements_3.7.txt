@@ -12,6 +12,7 @@ packaging==None
 pip                          # ==21.3.1 (last compatible version)
 pipdeptree                   # ==2.9.6 (last compatible version)
 platformdirs==2.6.2
+prompt-toolkit               # ==3.0.48 (last compatible version)
 pycodestyle==2.9.1
 pyflakes==2.5.0
 pylint                       # ==2.17.7 (last compatible version)

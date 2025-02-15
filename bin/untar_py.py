@@ -144,7 +144,7 @@ class Main:
 
             print(f"{file}:")
             try:
-                with tarfile.open(file, mode) as archive:
+                with tarfile.open(file, mode) as archive:  # type: ignore
                     if options.get_view_flag():
                         cls._view(archive)
                     else:

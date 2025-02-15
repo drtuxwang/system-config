@@ -6,14 +6,15 @@ Copyright GPL v2: 2006-2024 By Dr Colin Kong
 """
 
 import getpass
+import os
 import re
 import sys
 import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.8.1'
-VERSION = 20241026
+RELEASE = '2.8.2'
+VERSION = 20250120
 
 
 class FileStat:
@@ -268,7 +269,7 @@ class FileUtil:
         """
         Return temporary directory with prefix and set permissions.
         """
-        path = Path('/tmp', getpass.getuser())
+        path = Path(os.environ.get('TMPDIR', Path('/tmp', getpass.getuser())))
         if name:
             path = Path(path, name)
 

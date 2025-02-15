@@ -173,27 +173,22 @@ class Main:
                 return
 
         print(f'Creating "{path2}" file...')
+        path_tmp = Path(f'{path2}.part')
         try:
-            shutil.copy2(path1, path2)
+            shutil.copy2(path1, path_tmp)
         except shutil.Error as exception:
-            if 'are the same file' in exception.args[0]:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot copy to same "{path2}" file.',
-                ) from exception
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot copy to "{path2}" file.',
+                f'{sys.argv[0]}: Cannot create "{path_tmp}" file.',
             ) from exception
-        except OSError as exception:
-            if exception.args != (95, 'Operation not supported'):
-                try:
-                    with path1.open('rb'):
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot create "{path2}" file.',
-                        ) from exception
-                except OSError as exception2:
-                    raise SystemExit(
-                        f'{sys.argv[0]}: Cannot create "{path2}" file.',
-                    ) from exception2
+        try:
+            path_tmp.replace(path2)
+        except OSError:
+            try:
+                shutil.move(str(path_tmp), str(path2))  # < 3.9
+            except OSError as exception:
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot create "{path2}" file.',
+                ) from exception
 
     def _copy(self, path1: Path, path2: Path) -> None:
         if path1.is_symlink():

@@ -2,7 +2,7 @@
 """
 System information (configuration detection tool).
 
-1996-2024 By Dr Colin Kong
+1996-2025 By Dr Colin Kong
 """
 
 import argparse
@@ -19,8 +19,6 @@ import subprocess
 import sys
 import threading
 import time
-import urllib.request
-import urllib.error
 from pathlib import Path
 from typing import Any, Generator, List, Tuple, Union
 
@@ -32,8 +30,9 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.14.1'
-VERSION = 20241229
+RELEASE = '6.16.2'
+VERSION = 20250209
+MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
 
@@ -64,11 +63,11 @@ class Options:
         """
         return self._release_version
 
-    def get_full(self) -> bool:
+    def get_short(self) -> str:
         """
-        Return full flag.
+        Return short mode.
         """
-        return self._args.full
+        return self._args.short
 
     def get_system(self) -> 'OperatingSystem':
         """
@@ -81,10 +80,18 @@ class Options:
             description="Show system information.")
 
         parser.add_argument(
+            '-n',
+            action='store_const',
+            const='net',
+            dest='short',
+            help="Show network summary only.",
+        )
+        parser.add_argument(
             '-s',
-            dest='full',
-            action='store_false',
-            help="Show short summary.",
+            action='store_const',
+            const='sys',
+            dest='short',
+            help="Show system summary only.",
         )
 
         self._args = parser.parse_args(args)
@@ -194,34 +201,33 @@ class Detect:
         for address in info['Net IPvx DNS']:
             self._ip_address(address, 'Net IPvx DNS')
 
-        address = ''
-        try:
-            with urllib.request.urlopen(
-                'http://ifconfig.me',
-                timeout=2,
-            ) as response:
-                if response.getcode() == 200:
-                    address = response.read().decode(errors='replace')
-        except (urllib.error.URLError, TimeoutError):
-            pass
-        self._ip_address(address, 'Net IPvx Public')
+        curl = Command('curl', errors='ignore')
+        if curl.is_found():
+            curl.set_args(['--connect-timeout', '1'])
+            for ipv in ('ipv4', 'ipv6'):
+                task = Batch(curl.get_cmdline() + [f'--{ipv}', MYIP_URL])
+                task.run()
+                for line in task.get_output():
+                    self._ip_address(line, 'Net IPvx Public')
+                    break
 
-    def _operating_system(self, full: bool) -> None:
+    def _operating_system(self, short: str) -> None:
         info = self._system.get_os_info()
-        if full:
+        if not short:
             Writer.output(name='OS Type', value=info['OS Type'])
-        Writer.output(name='OS Name', value=info['OS Name'])
-        Writer.output(
-            name='OS Kernel',
-            value=info['OS Kernel'],
-            comment=info['OS Kernel X'],
-        )
-        Writer.output(
-            name='OS Patch',
-            value=info['OS Patch'],
-            comment=info['OS Patch X'],
-        )
-        Writer.output(name='OS Boot Time', value=info['OS Boot'])
+        if short in (None, 'sys'):
+            Writer.output(name='OS Name', value=info['OS Name'])
+            Writer.output(
+                name='OS Kernel',
+                value=info['OS Kernel'],
+                comment=info['OS Kernel X'],
+            )
+            Writer.output(
+                name='OS Patch',
+                value=info['OS Patch'],
+                comment=info['OS Patch X'],
+            )
+            Writer.output(name='OS Boot Time', value=info['OS Boot'])
 
     def _processors(self) -> None:
         info = self._system.get_cpu_info()
@@ -258,9 +264,9 @@ class Detect:
         for name, status in info['CPU Vulnerabilities']:
             Writer.output(name='CPU Vulnerability', value=name, comment=status)
 
-    def _system_status(self, full: bool) -> None:
+    def _system_status(self, short: str) -> None:
         info = self._system.get_sys_info()
-        if full:
+        if not short:
             Writer.output(
                 name='System Platform',
                 value=info['System Platform'],
@@ -276,22 +282,23 @@ class Detect:
                 value=info['System BIOS'],
                 comment=info['System BIOS X'],
             )
-        Writer.output(
-            name='System Memory',
-            value=info['System Memory'] + ' MB',
-            comment=info['System Memory X'],
-        )
-        Writer.output(
-            name='System Swap Space',
-            value=info['System Swap Space'] + ' MB',
-            comment=info['System Swap Space X'],
-        )
-        Writer.output(name='System Uptime', value=info['System Uptime'])
-        Writer.output(
-            name='System Load',
-            value=info['System Load'],
-            comment='average over last 1min, 5min & 15min',
-        )
+        if short in (None, 'sys'):
+            Writer.output(
+                name='System Memory',
+                value=info['System Memory'] + ' MB',
+                comment=info['System Memory X'],
+            )
+            Writer.output(
+                name='System Swap Space',
+                value=info['System Swap Space'] + ' MB',
+                comment=info['System Swap Space X'],
+            )
+            Writer.output(name='System Uptime', value=info['System Uptime'])
+            Writer.output(
+                name='System Load',
+                value=info['System Load'],
+                comment='average over last 1min, 5min & 15min',
+            )
 
     @staticmethod
     def _glxinfo() -> None:
@@ -445,17 +452,17 @@ class Detect:
         print(f"\n{self._author} - System configuration detection tool")
         print(f"\n*** Detected at {timestamp} ***")
 
-    def show_info(self, full: bool) -> None:
+    def show_info(self, short: str) -> None:
         """
         Show information.
         """
-        if full:
+        if short in (None, 'net'):
             self._network_information()
-        self._operating_system(full)
-        if full:
+        self._operating_system(short)
+        if not short:
             self._processors()
-        self._system_status(full)
-        if full:
+        self._system_status(short)
+        if not short:
             if self._system.has_devices():
                 self._system.detect_devices()
             if self._system.has_loader():
@@ -2527,13 +2534,13 @@ class Main:
         Start program
         """
         options = Options()
-        full = options.get_full()
+        short = options.get_short()
 
         detect = Detect(options)
-        if full:
+        if not short:
             detect.show_banner()
         try:
-            Detect(options).show_info(full)
+            Detect(options).show_info(short)
         except ExecutableCallError as exception:
             raise SystemExit(exception) from exception
         print()

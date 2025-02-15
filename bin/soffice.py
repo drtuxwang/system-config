@@ -113,18 +113,21 @@ class Main:
             work_dir,
         ]
 
-        for arg in sys.argv[1:]:
-            path = Path(arg).resolve()
-            if arg == '-net':
-                configs.append('net')
-            elif path.is_dir():
-                self._soffice.append_arg(path)
-                configs.append(path)
-            elif path.is_file():
-                self._soffice.append_arg(path)
-                configs.append(path.parent)
-            else:
-                self._soffice.append_arg(arg)
+        if len(sys.argv) == 1:
+            self._soffice.append_arg('-writer')
+        else:
+            for arg in sys.argv[1:]:
+                path = Path(arg).resolve()
+                if arg == '-net':
+                    configs.append('net')
+                elif path.is_dir():
+                    self._soffice.append_arg(path)
+                    configs.append(path)
+                elif path.is_file():
+                    self._soffice.append_arg(path)
+                    configs.append(path.parent)
+                else:
+                    self._soffice.append_arg(arg)
 
         self._soffice.sandbox(configs)
 

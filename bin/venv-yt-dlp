@@ -5,7 +5,7 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="yt-dlp==2024.12.3"
+    VENV_PACKAGE="yt-dlp==2025.1.26"
 }
 
 

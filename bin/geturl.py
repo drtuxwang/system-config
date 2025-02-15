@@ -132,12 +132,23 @@ class Main:
                     ) from exception
             for file in files_local:
                 print(f"file://{file}")
+                path = Path(directory, Path(file).name)
+                path_tmp = Path(f'{path}.part')
                 try:
-                    shutil.copy2(file, Path(directory, Path(file).name))
-                except OSError as exception:
+                    shutil.copy2(file, path_tmp)
+                except shutil.Error as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot find "{file}" file.',
                     ) from exception
+                try:
+                    path_tmp.replace(path)
+                except OSError:
+                    try:
+                        shutil.move(str(path_tmp), str(path))  # < 3.9
+                    except OSError as exception:
+                        raise SystemExit(
+                            f'{sys.argv[0]}: Cannot create "{path}" file.',
+                        ) from exception
 
     @staticmethod
     def _get_remote(aria2c: Command, files_remote: List[str]) -> None:

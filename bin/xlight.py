@@ -96,14 +96,17 @@ class Backlight:
         Return Backlight sub class object
         """
         for backlight in (
-                BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
+            BacklightIntel(),
+            BacklightIntelSetpci(),
+            BacklightXrandr(),
+        ):
             if backlight.detect():
                 return backlight
         raise SystemExit(f"{sys.argv[0]}: Cannot detect backlight device.")
 
     @staticmethod
-    def _get_device() -> str:
-        return '/sys/class/backlight/acpi_video0'
+    def _get_device() -> Path:
+        return Path('/sys/class/backlight/acpi_video0')
 
     def get_brightness(self) -> float:
         """
@@ -141,10 +144,15 @@ class Backlight:
         """
         return int(self._max / 24)
 
-    def set_brightness(self, brightness: float) -> None:
+    def set_brightness(self, brightness: float, new_brightness: float) -> None:
         """
         set brightness
         """
+        print(
+            f"Screen {self._device.name}: "
+            f"{brightness/self._max + 0.01:3.1f} => "
+            f"{new_brightness/self._max + 0.01:3.1f}"
+        )
         try:
             with Path(self._device, 'brightness').open(
                 'w',
@@ -172,19 +180,17 @@ class Backlight:
         """
         Run change
         """
+        brightness = self.get_brightness()
         if change:
             if change == '+':
-                brightness = min(self.get_brightness() + self._step, self._max)
+                new_brightness = min(brightness + self._step, self._max)
             elif change == '-':
-                brightness = max(self.get_brightness()-self._step, 0)
+                new_brightness = max(brightness - self._step, 0)
             else:
-                brightness = self._default
-            self.set_brightness(brightness)
+                new_brightness = self._default
+            self.set_brightness(brightness, new_brightness)
         else:
-            print(
-                f"{self.get_brightness() + 0.01:3.1f} / "
-                f"{self._max + 0.01:3.1f}",
-            )
+            self.set_brightness(brightness, brightness)
 
 
 class BacklightIntel(Backlight):
@@ -193,8 +199,8 @@ class BacklightIntel(Backlight):
     """
 
     @staticmethod
-    def _get_device() -> str:
-        return '/sys/class/backlight/intel_backlight'
+    def _get_device() -> Path:
+        return Path('/sys/class/backlight/intel_backlight')
 
 
 class BacklightIntelSetpci(Backlight):
@@ -203,8 +209,8 @@ class BacklightIntelSetpci(Backlight):
     """
 
     @staticmethod
-    def _get_device() -> str:
-        return ''
+    def _get_device() -> Path:
+        return Path('')
 
     def get_brightness(self) -> float:
         """
@@ -243,10 +249,15 @@ class BacklightIntelSetpci(Backlight):
         """
         return 1
 
-    def set_brightness(self, brightness: float) -> None:
+    def set_brightness(self, brightness: float, new_brightness: float) -> None:
         """
         Set brightness
         """
+        print(
+            f"Screen {self._device.name}: "
+            f"{brightness/self._max + 0.01:3.1f} => "
+            f"{new_brightness/self._max + 0.01:3.1f}"
+        )
         self._command.set_args([f'F4.B={int(brightness*16 + 15):x}'])
         Exec(self._command.get_cmdline()).run()
 
@@ -274,8 +285,8 @@ class BacklightXrandr(Backlight):
     """
 
     @staticmethod
-    def _get_device() -> str:
-        return ''
+    def _get_device() -> Path:
+        return Path('')
 
     def get_brightness(self) -> float:
         """
@@ -309,13 +320,17 @@ class BacklightXrandr(Backlight):
         """
         return 0.1
 
-    def set_brightness(self, brightness: float) -> None:
+    def set_brightness(self, brightness: float, new_brightness: float) -> None:
         """
         Set brightness
         """
         for screen in self._screens:
+            print(
+                f"Screen {screen}: {brightness/self._max + 0.01:3.1f} => "
+                f"{new_brightness/self._max + 0.01:3.1f}"
+            )
             self._command.set_args(
-                ['--output', screen, '--brightness', brightness]
+                ['--output', screen, '--brightness', new_brightness]
             )
             Task(self._command.get_cmdline()).run()
 

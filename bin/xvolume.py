@@ -86,9 +86,9 @@ class Options:
         self._settings = {}
         for index, volume in self._getvol():
             if change == '+':
-                new_volume = min(round(int(volume+5.01), -1), MAX_VOLUME)
+                new_volume = min(round(int(volume+10.01), -1), MAX_VOLUME)
             elif change == '-':
-                new_volume = max(round(int(volume-5.99), -1), 0)
+                new_volume = max(round(int(volume-9.99), -1), 0)
             elif change == '=':
                 new_volume = 100
             else:

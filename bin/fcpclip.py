@@ -98,23 +98,36 @@ class Main:
         task.run()
 
         path = Path(os.path.expandvars(''.join(task.get_output())))
-        if path.is_file():
-            directory = Path(options.get_directory())
-            path_new = Path(directory, path.name)
-            if path_new.exists():
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot safely overwrite '
-                    f'"{path_new}" file.',
-                )
-            print(f'Creating "{path_new}" file...')
-            try:
-                if not directory.is_dir():
-                    directory.mkdir(parents=True)
-                shutil.copy2(path, path_new)
-            except (OSError, shutil.Error) as exception:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot copy to "{path_new}" file.',
-                ) from exception
+        try:
+            if path.is_file():
+                directory = Path(options.get_directory())
+                path_new = Path(directory, path.name)
+                if path_new.exists():
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot safely overwrite '
+                        f'"{path_new}" file.',
+                    )
+                print(f'Creating "{path_new}" file...')
+                path_tmp = Path(f'{path_new}.part')
+                try:
+                    if not directory.is_dir():
+                        directory.mkdir(parents=True)
+                    shutil.copy2(path, path_tmp)
+                except (OSError, shutil.Error) as exception:
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot copy to "{path_tmp}" file.',
+                    ) from exception
+                try:
+                    path_tmp.replace(path_new)
+                except OSError:
+                    try:
+                        shutil.move(str(path_tmp), str(path_new))  # < 3.9
+                    except OSError as exception:
+                        raise SystemExit(
+                            f'{sys.argv[0]}: Cannot create "{path_new}" file.',
+                        ) from exception
+        except OSError:
+            pass
 
         return 0
 

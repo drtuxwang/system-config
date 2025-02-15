@@ -267,7 +267,12 @@ class Main:
         options = Options()
 
         wget = Command('wget', errors='stop')
-        wget.set_args(['--timestamping', '--connect-timeout=1'])
+        wget.set_args([
+           '--timestamping',
+           '--dns-timeout=1',
+           '--connect-timeout=1',
+           '--read-timeout=10',
+        ])
 
         for dist_path in [Path(x) for x in options.get_distribution_files()]:
             if dist_path.suffix == '.dist':

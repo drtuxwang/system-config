@@ -83,7 +83,7 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
     unset IFS
     [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV.part/lib 2> /dev/null
 
-    $VENV_POSTINST
+    VIRTUAL_ENV=$VIRTUAL_ENV.part $VENV_POSTINST
 
     mv $VIRTUAL_ENV.part $VIRTUAL_ENV
 }
@@ -99,7 +99,6 @@ virtualenv_setup
 PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$VENV_PYTHON")
 VENV_PACKAGE=${VENV_PACKAGE,,}
 VIRTUAL_ENV="$PYTHON_DIR-venv/${VENV_PACKAGE/==/_}"
-####VERSION=$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')
 [ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/python-$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')-venv/${VENV_PACKAGE/==/_}"
 FLAGS="${1:-}"
 export VIRTUAL_ENV
