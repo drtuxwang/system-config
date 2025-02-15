@@ -4,7 +4,7 @@ DOCKER_REPO=https://download.docker.com/linux/debian/dists/bookworm/pool/stable/
 DOCKER_DEB=docker-ce-cli_24.0.9-1~debian.12~bookworm_amd64.deb
 NAME := debian12-ops
 HOSTNAME := debian12-ops
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -25,7 +25,8 @@ DOCKER_RUN := docker run \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--privileged=true \
 	--name $(NAME) \
-	--hostname $(HOSTNAME)
+	--hostname $(HOSTNAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -46,6 +47,10 @@ build:                # Build Docker images
 		--build-arg DOCKER_DEB=$(DOCKER_DEB) \
 		-t $(IMAGE) .
 	rm -rf rootfs
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: push-stable
 push-stable:          # Tag and push stable Docker images

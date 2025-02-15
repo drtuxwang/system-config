@@ -2,7 +2,7 @@ BASE_IMAGE := debian:12-slim
 IMAGE := drtuxwang/debian-dev:12-slim
 NAME := debian12-dev
 HOSTNAME := debian12-dev
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -22,7 +22,8 @@ DOCKER_RUN := docker run \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(NAME)
+	--hostname $(NAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -54,6 +55,10 @@ build:                # Build Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR build || exit 1; \
 	done
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: run
 run:                  # Run Docker container

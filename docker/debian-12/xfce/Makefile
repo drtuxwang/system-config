@@ -3,7 +3,7 @@ IMAGE := drtuxwang/debian-xfce:12-slim
 NAME := debian12-xfce
 HOSTNAME := debian12-xfce
 LOCALPORT ?= 2222
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -26,7 +26,8 @@ DOCKER_RUN := docker run \
 	--hostname $(HOSTNAME) \
 	--env="DISPLAY" \
 	--volume="/tmp/.X11-unix:/tmp/.X11-unix" \
-	--volume="$(HOME)/.Xauthority:/root/.Xauthority:rw"
+	--volume="$(HOME)/.Xauthority:/root/.Xauthority:rw" \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -42,6 +43,10 @@ build:                # Build Docker images
 	../../bin/create-rootfs.bash init sudo tmux xfce
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: push-stable
 push-stable:          # Tag and push stable Docker images

@@ -3,7 +3,7 @@ IMAGE := drtuxwang/httpd-proxy:2.4-alpine
 NAME := httpd24-proxy
 HOSTNAME := httpd24-proxy
 LOCALPORT ?= 8080
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -23,7 +23,8 @@ DOCKER_RUN := docker run \
 	--memory-reservation=50m \
 	--publish $(LOCALPORT):80 \
 	--name $(NAME) \
-	--hostname $(HOSTNAME)
+	--hostname $(HOSTNAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -52,6 +53,10 @@ build:                # Build Docker image
 	../bin/create-rootfs.bash bash bash2ash bin-sysinfo
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: run
 run:                  # Run Docker container

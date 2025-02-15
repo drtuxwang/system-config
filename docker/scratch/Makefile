@@ -2,7 +2,7 @@ BASE_IMAGE := scratch
 IMAGE := drtuxwang/scratch:stable
 NAME := scratch
 HOSTNAME := scratch
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -26,7 +26,8 @@ DOCKER_RUN := docker run \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
 	--name $(NAME) \
-	--hostname $(shell uname -n)-$(HOSTNAME)
+	--hostname $(shell uname -n)-$(HOSTNAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -51,6 +52,10 @@ build:                # Build Docker image
 	../bin/create-rootfs.bash bash tmux vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
 	rm -rf rootfs
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: push-stable
 push-stable:          # Push stable Docker image

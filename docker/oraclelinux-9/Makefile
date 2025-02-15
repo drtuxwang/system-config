@@ -2,7 +2,8 @@ BASE_IMAGE := oraclelinux:9-slim
 IMAGE := drtuxwang/oraclelinux-dev:9-slim
 NAME := oraclelinux9-dev
 HOSTNAME := oraclelinux9-dev
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
+	$(DOCKER_RUN_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -50,6 +51,10 @@ build:                # Build Docker image
 	../bin/create-rootfs.bash bash bin python3 vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: run
 run:                  # Run Docker container

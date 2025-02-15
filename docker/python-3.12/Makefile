@@ -2,7 +2,8 @@ BASE_IMAGE := python:3.12-slim-bookworm
 IMAGE := drtuxwang/python:3.12-slim-bookworm
 NAME := python312
 HOSTNAME := python312
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
+	$(DOCKER_RUN_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -54,6 +55,10 @@ build:                # Build Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory --directory $$DIR build || exit 1; \
 	done
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: test
 test:                 # Run tests

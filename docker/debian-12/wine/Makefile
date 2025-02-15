@@ -2,7 +2,7 @@ BASE_IMAGE := debian:12-slim
 IMAGE := drtuxwang/debian-wine:12-slim
 NAME := debian12-wine
 HOSTNAME := debian12-wine
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -25,7 +25,8 @@ DOCKER_RUN := docker run \
 	--hostname $(HOSTNAME) \
 	--env="DISPLAY" \
 	--volume="/tmp/.X11-unix:/tmp/.X11-unix" \
-	--volume="$(HOME)/.Xauthority:/root/.Xauthority:rw"
+	--volume="$(HOME)/.Xauthority:/root/.Xauthority:rw" \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -39,6 +40,10 @@ status:               # Status of Docker images
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: run
 run:                  # Run Docker container

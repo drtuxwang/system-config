@@ -23,7 +23,7 @@ BUILD_DIRS := \
 	centos-7 \
 	\
 	busybox-1.36 \
-	golang-1.21 \
+	golang-1.22 \
 	httpd-2.4 \
 	nginx-1.24 \
 	python-3.12 \

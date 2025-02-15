@@ -1,8 +1,8 @@
-BASE_IMAGE := golang:1.21-alpine
-IMAGE := drtuxwang/golang:1.21-alpine
-NAME := golang121
-HOSTNAME := golang121
-DOCKER_BUILD := docker buildx build
+BASE_IMAGE := golang:1.22-alpine
+IMAGE := drtuxwang/golang:1.22-alpine
+NAME := golang122
+HOSTNAME := golang122
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -21,7 +21,8 @@ DOCKER_RUN := docker run \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(HOSTNAME)
+	--hostname $(HOSTNAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -50,6 +51,10 @@ build:                # Build Docker image
 	../bin/create-rootfs.bash bash bin-sysinfo vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: run
 run:                  # Run Docker container

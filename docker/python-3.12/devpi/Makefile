@@ -3,7 +3,7 @@ IMAGE := drtuxwang/python-devpi:3.12-slim-bookworm
 NAME := python312-devpi
 HOSTNAME := python312-devpi
 LOCALPORT ?= 8080
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -24,7 +24,8 @@ DOCKER_RUN := docker run \
 	--workdir /var/lib/devpi \
 	--publish $(LOCALPORT):8080 \
 	--name $(NAME) \
-	--hostname $(HOSTNAME)
+	--hostname $(HOSTNAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -38,6 +39,10 @@ status:               # Status of Docker images
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: run
 run:                  # Run Docker container

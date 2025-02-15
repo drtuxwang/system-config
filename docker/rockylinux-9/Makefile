@@ -2,7 +2,8 @@ BASE_IMAGE := rockylinux:9
 IMAGE := drtuxwang/rockylinux-dev:9
 NAME := almalinux8-dev
 HOSTNAME := almalinux8-dev
-DOCKER_BUILD := docker buildx build
+DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
+
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
@@ -21,7 +22,8 @@ DOCKER_RUN := docker run \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(HOSTNAME)
+	--hostname $(HOSTNAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
 .PHONY: default
@@ -50,6 +52,10 @@ build:                # Build Docker image
 	../bin/create-rootfs.bash bash bin python3 vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
+
+.PHONY: build-no-cache
+build-no-cache:       # Build Docker image with no cache
+	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
 .PHONY: run
 run:                  # Run Docker container

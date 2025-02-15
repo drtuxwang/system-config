@@ -88,7 +88,7 @@ the years.
  * docker/debian-10/               debian:10-slim based Docker images
  * docker/debian-11/               debian:11-slim based Docker images
  * docker/debian-12/               debian:12-slim based Docker images
- * docker/golang-1.21/             golang:1.21-alpine based GO compiler app
+ * docker/golang-1.22/             golang:1.22-alpine based GO compiler app
  * docker/httpd-2.4/               httpd:2.4-alpine (Apache) based web server
  * docker/i386-alpine-3.18/        i386/alpine:3.18 based based Docker images
  * docker/i386-debian-11/          i386/debian:11-slim based Docker images
