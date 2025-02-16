@@ -12,7 +12,7 @@ BUILD_DIRS := \
 	debian-10 \
 	ubuntu-24.04 \
 	ubuntu-22.04 \
-	ubuntu-20.04
+	ubuntu-20.04 \
 	\
 	almalinux-9 \
 	almalinux-8 \
@@ -64,7 +64,7 @@ pull:                 # Pull Docker base images
 .PHONY: pull-save
 pull-save:            # Pull updated Docker images and save to tar archives
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR pull-save|| exit 1; \
+		make --no-print-directory --directory $$DIR pull-save || exit 1; \
 	done
 	ls -l */*.tar* 2> /dev/null ||:
 

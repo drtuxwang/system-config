@@ -21,7 +21,7 @@ DOCKER_RUN := docker run \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(HOSTNAME)\
+	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
 
 

@@ -3,7 +3,6 @@ IMAGE := drtuxwang/ubuntu-dev:22.04
 NAME := ubuntu2204-dev
 HOSTNAME := ubuntu2204-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
-	$(DOCKER_RUN_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif

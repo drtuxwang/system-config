@@ -95,6 +95,12 @@ reset:                # Ignore differences and reset to origin/<branch>
 	git reset --hard origin/`git rev-parse --abbrev-ref HEAD`
 	@make --no-print-directory time
 
+.PHONY: squash
+squash:               # Squash all commits in branch
+	git fetch origin
+	git reset --soft origin/main
+	git status
+
 .PHONY: time
 time:                 # Set file timestamps to git commit times (last 7 days)
 	@echo "\n*** Fixing git timestamps (last 7 days) ***"

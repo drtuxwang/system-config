@@ -3,7 +3,6 @@ IMAGE := drtuxwang/python:3.12-slim-bookworm
 NAME := python312
 HOSTNAME := python312
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
-	$(DOCKER_RUN_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif

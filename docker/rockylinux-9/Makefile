@@ -3,7 +3,6 @@ IMAGE := drtuxwang/rockylinux-dev:9
 NAME := almalinux8-dev
 HOSTNAME := almalinux8-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
-
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif

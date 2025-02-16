@@ -3,7 +3,6 @@ IMAGE := drtuxwang/oraclelinux-dev:9-slim
 NAME := oraclelinux9-dev
 HOSTNAME := oraclelinux9-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
-	$(DOCKER_RUN_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
