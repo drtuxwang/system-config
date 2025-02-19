@@ -32,6 +32,7 @@ create_virtualenv() {
     umask 022
 
     VERSION=$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')
+    export PYTHONPATH=
     case $(uname) in
     Darwin)
         WRAPPER="#!/usr/bin/env bash
@@ -83,9 +84,8 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
     unset IFS
     [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV.part/lib 2> /dev/null
 
-    VIRTUAL_ENV=$VIRTUAL_ENV.part $VENV_POSTINST
-
-    mv $VIRTUAL_ENV.part $VIRTUAL_ENV
+    [ "$VENV_POSTINST" ] && VIRTUAL_ENV=$VIRTUAL_ENV.part $VENV_POSTINST
+    mv "$VIRTUAL_ENV.part" "$VIRTUAL_ENV"
 }
 
 

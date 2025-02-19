@@ -3,7 +3,7 @@ ARG BASE_IMAGE=centos:latest
 FROM ${BASE_IMAGE}
 
 # Switch to CentOS-7.9.2009 vault
-COPY CentOS-Base.repo /etc/yum.repos.d/
+COPY CentOS-Base.repo CentOS-CR.repo /etc/yum.repos.d/
 
 # Install base packages
 RUN yum install -y epel-release && \

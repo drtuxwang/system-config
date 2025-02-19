@@ -28,4 +28,4 @@ clean:                # Remove temporary build files
 
 .PHONY: help
 help:                 # Show Makefile options
-	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
+	@grep "^[A-Za-z0-9].*:" $(lastword $(MAKEFILE_LIST))

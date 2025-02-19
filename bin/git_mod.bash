@@ -2,7 +2,7 @@
 #
 # Git utilities module
 #
-# Copyright GPL v2: 2020-2024 By Dr Colin Kong
+# Copyright GPL v2: 2020-2025 By Dr Colin Kong
 #
 
 set -u
@@ -15,9 +15,10 @@ options() {
     help() {
         echo "Usage: $0 <options>"
         echo
-        echo "git-diff  - Show git difference against origin default branch"
-        echo "git-gc    - Run aggressive Git garbage collection"
-        echo "git-reset - Reset Git branch to origin/branch"
+        echo "git-diff   - Show git difference against origin default branch"
+        echo "git-gc     - Run aggressive Git garbage collection"
+        echo "git-reset  - Reset Git branch to origin/branch"
+        echo "git-squash - Squash all commits in branch"
         echo
         echo "Options:"
         echo "  -h, --help  Show this help message and exit."
@@ -26,14 +27,8 @@ options() {
     }
 
     case "${0##*/}" in
-    *-diff)
-        mode=diff
-        ;;
-    *-gc)
-        mode=gc
-        ;;
-    *-reset)
-        mode=reset
+    *-diff|*-gc|*-reset|*-squash)
+        mode=${0##*-}
         ;;
     *)
         help 0
@@ -87,13 +82,23 @@ git_gc() {
 }
 
 #
-# Function to Reset Git branch to origin/branch"
+# Function to reset Git branch to origin/branch"
 #
 git_reset() {
     git status
     git fetch --all --prune
     git reset --hard origin/`git rev-parse --abbrev-ref HEAD`
 }
+
+#
+# Function to squash all commits in branch
+#
+git_squash() {
+    git fetch origin
+    git reset --soft origin/$(git rev-parse --abbrev-ref origin/HEAD | sed -e "s@.*/@@")
+    git status
+}
+
 
 
 options "$@"

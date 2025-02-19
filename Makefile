@@ -88,19 +88,6 @@ install:              # Install Python packages
 	@echo "\n*** Installing Python 3 requirements ***"
 	etc/python-packages.bash -i ${PYTHON}
 
-.PHONY: reset
-reset:                # Ignore differences and reset to origin/<branch>
-	git status
-	git fetch origin
-	git reset --hard origin/`git rev-parse --abbrev-ref HEAD`
-	@make --no-print-directory time
-
-.PHONY: squash
-squash:               # Squash all commits in branch
-	git fetch origin
-	git reset --soft origin/main
-	git status
-
 .PHONY: time
 time:                 # Set file timestamps to git commit times (last 7 days)
 	@echo "\n*** Fixing git timestamps (last 7 days) ***"
@@ -112,14 +99,27 @@ time-all:             # Set file timestamps to git commit times (all files)
 	find * -type f | xargs -r git time
 
 .PHONY: diff
-diff:                 # Show differences in branch from origin/main
+diff:                 # Show commit changes in branch
 	git fetch ||:
-	git diff origin/main..HEAD
+	git diff origin/`git rev-parse --abbrev-ref origin/HEAD | sed -e "s@.*/@@"`..HEAD
 
 .PHONY: xdiff
-xdiff:                # Show graphical differences in branch from origin/main
+xdiff:                # Show graphical commit changes in branch
 	git fetch ||:
-	git difftool --tool=meld --dir-diff origin/main..HEAD
+	git difftool --tool=meld --dir-diff origin/`git rev-parse --abbrev-ref origin/HEAD | sed -e "s@.*/@@"`..HEAD
+
+.PHONY: squash
+squash:               # Squash all commits in branch
+	git fetch origin
+	git reset --soft origin/`git rev-parse --abbrev-ref origin/HEAD | sed -e "s@.*/@@"`
+	git status
+
+.PHONY: reset
+reset:                # Ignore differences and reset to origin/<branch>
+	git status
+	git fetch origin
+	git reset --hard origin/`git rev-parse --abbrev-ref HEAD`
+	@make --no-print-directory time
 
 .PHONY: ref
 ref:                  # Show git branch/tags hash references
@@ -142,4 +142,4 @@ gc:                   # Run git garbage collection
 
 .PHONY: help
 help:                 # Show Makefile options
-	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
+	@grep "^[A-Za-z0-9].*:" $(lastword $(MAKEFILE_LIST))
