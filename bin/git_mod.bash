@@ -95,10 +95,10 @@ git_reset() {
 #
 git_squash() {
     git fetch origin
-    git reset --soft origin/$(git rev-parse --abbrev-ref origin/HEAD | sed -e "s@.*/@@")
+    DEFAULT=$(git rev-parse --abbrev-ref origin/HEAD | sed -e "s@.*/@@")
+    git reset --soft $(git merge-base HEAD origin/$DEFAULT)
     git status
 }
-
 
 
 options "$@"

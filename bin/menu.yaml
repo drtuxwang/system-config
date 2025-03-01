@@ -253,12 +253,13 @@ menu_games:
   checks:
   - steam
 - button:
-    name: etwolf
+    name: etl
     color: '#00ff00'
-    label: ET
-    run: exec et.tcl &
+    label: ETL
+    run: exec etl.tcl &
   checks:
-  - et.x86
+  - etl.i386
+  - etl.x86_64
 - button:
     name: 0ad
     color: '#ffff00'

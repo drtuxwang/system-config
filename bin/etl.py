@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ET Legacy game launcher
+Sandbox for ET Legacy game launcher
 """
 
 import os
@@ -10,6 +10,7 @@ from pathlib import Path
 
 from command_mod import Command
 from file_mod import FileUtil
+from network_mod import Sandbox
 from subtask_mod import Daemon
 
 
@@ -46,9 +47,22 @@ class Main:
         """
         Start program
         """
-        etl = Command('etl', errors='stop')
+        if '-32' in sys.argv:
+            etl = Sandbox('etl.i386', errors='stop')
+            sys.argv.remove('-32')
+        else:
+            etl = Sandbox('etl.x86_64', errors='stop')
         etl.set_args(sys.argv[1:])
         os.chdir(Path(etl.get_file()).parent)
+
+        configs = [
+            'net',
+            '/dev/dri',
+            f'/run/user/{os.getuid()}/pulse',
+            f"{Path(Path.home(), '.etwolf')}",
+            f"{Path(Path.home(), '.etlegacy')}",
+        ]
+        ##etl.sandbox(configs)
 
         log_path = Path(FileUtil.tmpdir(), 'etl.log')
         Daemon(etl.get_cmdline()).run(file=log_path)

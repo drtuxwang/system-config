@@ -111,7 +111,7 @@ xdiff:                # Show graphical commit changes in branch
 .PHONY: squash
 squash:               # Squash all commits in branch
 	git fetch origin
-	git reset --soft origin/`git rev-parse --abbrev-ref origin/HEAD | sed -e "s@.*/@@"`
+	git reset --soft `git merge-base HEAD origin/main`
 	git status
 
 .PHONY: reset

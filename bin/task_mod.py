@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import List
 
-RELEASE = '2.5.1'
-VERSION = 20241026
+RELEASE = '2.5.2'
+VERSION = 20250223
 
 
 class Tasks:
@@ -241,21 +241,21 @@ class PosixTasks(Tasks):
 
         for line in lines[1:]:
             process: dict = {}
-            process['USER'] = line.split()[0]
-            pid = int(line.split()[1])
-            process['PPID'] = int(line.split()[2])
-            process['PGID'] = int(line.split()[3])
-            process['PRI'] = line.split()[4]
-            process['NICE'] = line.split()[5]
-            process['TTY'] = line.split()[6]
             try:
+                process['USER'] = line.split()[0]
+                pid = int(line.split()[1])
+                process['PPID'] = int(line.split()[2])
+                process['PGID'] = int(line.split()[3])
+                process['PRI'] = line.split()[4]
+                process['NICE'] = line.split()[5]
+                process['TTY'] = line.split()[6]
                 process['MEMORY'] = int(line.split()[7])
-            except ValueError:
+                process['CPUTIME'] = line.split()[8]
+                process['ETIME'] = line.split()[9]
+                process['COMMAND'] = ' '.join(line.split()[10:])
+                self._process[pid] = process
+            except (IndexError, ValueError):
                 continue
-            process['CPUTIME'] = line.split()[8]
-            process['ETIME'] = line.split()[9]
-            process['COMMAND'] = ' '.join(line.split()[10:])
-            self._process[pid] = process
 
     def pname2pids(self, pname: str) -> List[int]:
         """
