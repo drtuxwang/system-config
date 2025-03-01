@@ -1,18 +1,12 @@
 BASE_IMAGE := debian:12-slim
 IMAGE := drtuxwang/debian-ops:12-slim
 DOCKER_REPO=https://download.docker.com/linux/debian/dists/bookworm/pool/stable/amd64
-DOCKER_DEB=docker-ce-cli_24.0.9-1~debian.12~bookworm_amd64.deb
+DOCKER_DEB=docker-ce-cli_26.1.4-1~debian.12~bookworm_amd64.deb
 NAME := debian12-ops
 HOSTNAME := debian12-ops
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
-endif
-ifdef http_proxy
-	DOCKER_BUILD := $(DOCKER_BUILD) \
-		--build-arg http_proxy=$(http_proxy) \
-		--build-arg https_proxy=$(https_proxy) \
-		--build-arg no_proxy=$(no_proxy)
 endif
 DOCKER_RUN := docker run \
 	--rm \
@@ -27,6 +21,16 @@ DOCKER_RUN := docker run \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
+ifdef http_proxy
+	DOCKER_BUILD := $(DOCKER_BUILD) \
+		--build-arg http_proxy=$(http_proxy) \
+		--build-arg https_proxy=$(https_proxy) \
+		--build-arg no_proxy=$(no_proxy)
+	DOCKER_RUN := $(DOCKER_RUN) \
+		--env http_proxy=$(http_proxy) \
+		--env https_proxy=$(https_proxy) \
+		--env no_proxy=$(no_proxy)
+endif
 
 
 .PHONY: default
