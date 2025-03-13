@@ -56,12 +56,20 @@ class Options:
         )
 
         parser.add_argument(
+            '-n',
+            action='store_const',
+            const='names',
+            dest='mode',
+            default='dpkg',
+            help="Show name of all installed packages.",
+        )
+        parser.add_argument(
             '-l',
             action='store_const',
             const='list',
             dest='mode',
             default='dpkg',
-            help="Show all installed packages (optional arch).",
+            help="Show information of all installed packages.",
         )
         parser.add_argument(
             '-d',
@@ -173,10 +181,10 @@ class Options:
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
         elif self._args.args:
             raise SystemExit(
-                f'{sys.argv[0]}: Invalid Debian package name '
+                f'{sys.argv[0]}: Unsupported argument supplied '
                 f'"{self._args.args[0]}".',
             )
-        elif self._args.mode not in ('list', 'nodepends'):
+        elif self._args.mode not in ('names', 'list', 'nodepends'):
             self._parse_args(['-h'])
             raise SystemExit(1)
 
@@ -327,6 +335,11 @@ class Main:
 
         return packages
 
+    def _show_names(self) -> None:
+        for key in sorted(self._packages, key=lambda s: s[0].split(':')):
+            name, arch = key.split(':')
+            print(f"{name}:{arch}")
+
     def _show_packages_info(self) -> None:
         for key, package in sorted(
             self._packages.items(),
@@ -397,7 +410,9 @@ class Main:
         self._packages = self._read_dpkg_status()
 
         mode = self._options.get_mode()
-        if mode == 'list':
+        if mode == 'names':
+            self._show_names()
+        elif mode == 'list':
             self._show_packages_info()
         elif mode == 'depends':
             for package_name in self._options.get_package_names():

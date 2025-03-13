@@ -8,7 +8,6 @@ import signal
 import sys
 from pathlib import Path
 
-from command_mod import Command
 from file_mod import FileUtil
 from network_mod import Sandbox
 from subtask_mod import Daemon
@@ -59,10 +58,9 @@ class Main:
             'net',
             '/dev/dri',
             f'/run/user/{os.getuid()}/pulse',
-            f"{Path(Path.home(), '.etwolf')}",
             f"{Path(Path.home(), '.etlegacy')}",
         ]
-        ##etl.sandbox(configs)
+        etl.sandbox(configs)
 
         log_path = Path(FileUtil.tmpdir(), 'etl.log')
         Daemon(etl.get_cmdline()).run(file=log_path)
