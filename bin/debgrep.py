@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Search Debian package json.zst file.
+Search Debian software repository.
 """
 
 import argparse
-import json
 import os
 import re
 import signal
@@ -12,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import pyzstd  # type: ignore
+from debian_mod import DebianDist
 
 
 class Options:
@@ -36,16 +35,15 @@ class Options:
         """
         return self._args.pattern[0]
 
-    def get_packages_file(self) -> List[str]:
+    def get_files(self) -> List[str]:
         """
-        Return packages file location.
+        Return list of distribution files.
         """
-        return self._args.packages_files
+        return self._args.dist_files
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Print lines matching a pattern in Debian "
-            "package files.",
+            description="Search Debian software repository.",
         )
 
         parser.add_argument(
@@ -61,10 +59,10 @@ class Options:
             help="Regular expression.",
         )
         parser.add_argument(
-            'packages_files',
+            'dist_files',
             nargs='+',
-            metavar='distro.json.zst',
-            help="Debian package file.",
+            metavar='distro.dist',
+            help="Debian distribution file.",
         )
 
         self._args = parser.parse_args(args)
@@ -105,33 +103,11 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    @staticmethod
-    def _read_data(path: Path) -> dict:
-        try:
-            data = json.loads(pyzstd.decompress(  # pylint: disable=no-member
-                 path.read_bytes()
-            ))
-        except json.decoder.JSONDecodeError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Corrupt "{path}" file.',
-            ) from exception
-        except OSError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{path}" file.'
-            ) from exception
-
-        return data
-
     @classmethod
-    def _grep(cls, message: str, pattern: str, path: Path) -> None:
-        distro_data = cls._read_data(path)
-        lines = []
-        for url in distro_data['urls']:
-            lines.extend(distro_data['data'][url]['text'])
-
+    def _grep(cls, message: str, pattern: str, dist: DebianDist) -> None:
         ispattern = re.compile(pattern, re.IGNORECASE)
         matched = ispattern.search('')
-        for line in lines:
+        for line in dist.get():
             if line.startswith('Package: '):
                 name = line.split('Package: ')[1].rstrip('\n')
                 matched = ispattern.search(name)
@@ -140,15 +116,10 @@ class Main:
                 print(message.format(file))
 
     @classmethod
-    def _grep_full(cls, message: str, pattern: str, path: Path) -> None:
-        distro_data = cls._read_data(path)
-        lines = []
-        for url in distro_data['urls']:
-            lines.extend(distro_data['data'][url]['text'])
-
+    def _grep_full(cls, message: str, pattern: str, dist: DebianDist) -> None:
         ispattern = re.compile(pattern, re.IGNORECASE)
         matched = ispattern.search('')
-        for line in lines:
+        for line in dist.get():
             if line.startswith('Package: '):
                 name = line.split('Package: ')[1].rstrip('\n')
                 matched = ispattern.search(name)
@@ -159,18 +130,17 @@ class Main:
     def _search(cls, options: Options) -> None:
         full = options.get_full()
         pattern = options.get_pattern()
-        package_files = options.get_packages_file()
+        package_files = options.get_files()
 
-        for path in [
-            Path(x) for x in package_files if x.endswith('.json.zst')
-        ]:
+        for path in [Path(x) for x in package_files if x.endswith('.dist')]:
+            dist = DebianDist(path)
             message = "{0:s}"
             if len(package_files) > 1:
                 message = f"{path}: {message}"
             if full:
-                cls._grep_full(message, pattern, path)
+                cls._grep_full(message, pattern, dist)
             else:
-                cls._grep(message, pattern, path)
+                cls._grep(message, pattern, dist)
 
     @classmethod
     def run(cls) -> int:
