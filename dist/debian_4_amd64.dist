@@ -1,0 +1,6 @@
+#
+#deb http://archive.debian.org/debian etch main contrib non-free
+#
+http://archive.debian.org/debian/dists/etch/main/binary-amd64/Packages.bz2
+http://archive.debian.org/debian/dists/etch/contrib/binary-amd64/Packages.bz2
+http://archive.debian.org/debian/dists/etch/non-free/binary-amd64/Packages.bz2

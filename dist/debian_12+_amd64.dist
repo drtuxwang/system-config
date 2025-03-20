@@ -1,0 +1,7 @@
+#
+#deb https://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
+#
+https://deb.debian.org/debian/dists/bookworm-backports/main/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm-backports/contrib/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm-backports/non-free/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm-backports/non-free-firmware/binary-amd64/Packages.xz

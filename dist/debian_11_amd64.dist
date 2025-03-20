@@ -1,0 +1,18 @@
+#
+#deb https://deb.debian.org/debian bullseye main contrib non-free
+#
+https://deb.debian.org/debian/dists/bullseye/main/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/bullseye/contrib/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/bullseye/non-free/binary-amd64/Packages.xz
+#
+#deb https://deb.debian.org/debian bullseye-updates main contrib non-free
+#
+https://deb.debian.org/debian/dists/bullseye-updates/main/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/bullseye-updates/contrib/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/bullseye-updates/non-free/binary-amd64/Packages.xz
+#
+#deb https://security.debian.org bullseye-security main contrib non-free
+#
+https://security.debian.org/dists/bullseye-security/main/binary-amd64/Packages.xz
+https://security.debian.org/dists/bullseye-security/contrib/binary-amd64/Packages.xz
+https://security.debian.org/dists/bullseye-security/non-free/binary-amd64/Packages.xz

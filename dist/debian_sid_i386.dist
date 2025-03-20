@@ -1,0 +1,18 @@
+#
+#deb https://deb.debian.org/debian sid main contrib non-free
+#
+https://deb.debian.org/debian/dists/sid/main/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/sid/contrib/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/sid/non-free/binary-i386/Packages.xz
+#
+#deb https://deb.debian.org/debian sid-updates main contrib non-free
+#
+##https://deb.debian.org/debian/dists/sid-updates/main/binary-i386/Packages.xz
+##https://deb.debian.org/debian/dists/sid-updates/contrib/binary-i386/Packages.xz
+##https://deb.debian.org/debian/dists/sid-updates/non-free/binary-i386/Packages.xz
+#
+#deb https://security.debian.org sid-security main contrib non-free
+#
+##https://security.debian.org/dists/sid-security/main/binary-i386/Packages.xz
+##https://security.debian.org/dists/sid-security/contrib/binary-i386/Packages.xz
+##https://security.debian.org/dists/sid-security/non-free/binary-i386/Packages.xz

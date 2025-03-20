@@ -1,0 +1,6 @@
+#
+#deb http://archive.debian.org/debian lenny main contrib non-free
+#
+http://archive.debian.org/debian/dists/lenny/main/binary-amd64/Packages.bz2
+http://archive.debian.org/debian/dists/lenny/contrib/binary-amd64/Packages.bz2
+http://archive.debian.org/debian/dists/lenny/non-free/binary-amd64/Packages.bz2

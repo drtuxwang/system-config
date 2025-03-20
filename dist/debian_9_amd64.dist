@@ -1,0 +1,12 @@
+#
+#deb http://archive.debian.org/debian stretch main contrib non-free
+#
+http://archive.debian.org/debian/dists/stretch/main/binary-amd64/Packages.xz
+http://archive.debian.org/debian/dists/stretch/contrib/binary-amd64/Packages.xz
+http://archive.debian.org/debian/dists/stretch/non-free/binary-amd64/Packages.xz
+#
+#deb http://archive.debian.org/debian-archive/debian-security stretch/updates main contrib non-free
+#
+http://archive.debian.org/debian-archive/debian-security/dists/stretch/updates/main/binary-amd64/Packages.xz
+http://archive.debian.org/debian-archive/debian-security/dists/stretch/updates/contrib/binary-amd64/Packages.xz
+http://archive.debian.org/debian-archive/debian-security/dists/stretch/updates/non-free/binary-amd64/Packages.xz

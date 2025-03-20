@@ -78,6 +78,7 @@ the years.
  * cloudformation/1pxy/            pxy CloudFormation example
  * cloudformation/multi-stacks/    multi-stacks CloudFormation example
  * cookiecutter/                   Cookie cutter example for Docker projects
+ * dist/*.dist                     Debian repository dist files
  * docker/Makefile
  * docker/bin/
  * docker/almalinux-8/             almalinux:8 based Docker images

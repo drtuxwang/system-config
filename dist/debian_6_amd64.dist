@@ -1,0 +1,6 @@
+#
+#deb http://archive.debian.org/debian squeeze main contrib non-free
+#
+http://archive.debian.org/debian/dists/squeeze/main/binary-amd64/Packages.bz2
+http://archive.debian.org/debian/dists/squeeze/contrib/binary-amd64/Packages.bz2
+http://archive.debian.org/debian/dists/squeeze/non-free/binary-amd64/Packages.bz2
