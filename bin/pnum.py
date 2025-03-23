@@ -63,13 +63,6 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        for path in [Path(x) for x in self._args.directories]:
-            if not path.is_dir():
-                raise SystemExit(
-                    f'{sys.argv[0]}: Picture directory '
-                    f'"{path}" does not exist.',
-                )
-
 
 class Main:
     """
