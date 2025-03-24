@@ -4,8 +4,8 @@
 #
 # 1996-2025 By Dr Colin Kong
 #
-VERSION=20250208
-RELEASE="2.6.52"
+VERSION=20250324
+RELEASE="2.6.53"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -1163,13 +1163,15 @@ EOF
         write_output name="System Uptime" value="$MYUPTIME"
         write_output name="System Load" value="$MYLOAD" comment="average over last 1min, 5min & 15min"
     fi
-    if [ ! "$SHORT" ]
+    if [ ! "$SHORT" -o "$SHORT" = "dev" ]
     then
         if [ "`uname`" = Linux ]
         then
             scanbus
         fi
-
+    fi
+    if [ ! "$SHORT" ]
+    then
         # Detect loaders
         case `uname` in
         Linux)
@@ -1265,6 +1267,9 @@ $1"
 # Main program
 #
 case $1 in
+-d)
+    SHORT=dev
+    ;;
 -n)
     SHORT=net
     ;;

@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.16.2'
-VERSION = 20250209
+RELEASE = '6.17.0'
+VERSION = 20250324
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -79,6 +79,13 @@ class Options:
         parser = argparse.ArgumentParser(
             description="Show system information.")
 
+        parser.add_argument(
+            '-d',
+            action='store_const',
+            const='dev',
+            dest='short',
+            help="Show device summary only.",
+        )
         parser.add_argument(
             '-n',
             action='store_const',
@@ -462,9 +469,9 @@ class Detect:
         if not short:
             self._processors()
         self._system_status(short)
+        if short in (None, 'dev') and self._system.has_devices():
+            self._system.detect_devices()
         if not short:
-            if self._system.has_devices():
-                self._system.detect_devices()
             if self._system.has_loader():
                 self._system.detect_loader()
             self._xwindows()
