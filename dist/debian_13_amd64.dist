@@ -1,0 +1,18 @@
+#
+#deb https://deb.debian.org/debian trixie main contrib non-free
+#
+https://deb.debian.org/debian/dists/trixie/main/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/trixie/contrib/binary-amd64/Packages.xz
+https://deb.debian.org/debian/dists/trixie/non-free/binary-amd64/Packages.xz
+#
+#deb https://deb.debian.org/debian trixie-updates main contrib non-free
+#
+##https://deb.debian.org/debian/dists/trixie-updates/main/binary-amd64/Packages.xz
+##https://deb.debian.org/debian/dists/trixie-updates/contrib/binary-amd64/Packages.xz
+##https://deb.debian.org/debian/dists/trixie-updates/non-free/binary-amd64/Packages.xz
+#
+#deb https://security.debian.org trixie-security main contrib non-free
+#
+##https://security.debian.org/dists/trixie-security/main/binary-amd64/Packages.xz
+##https://security.debian.org/dists/trixie-security/contrib/binary-amd64/Packages.xz
+##https://security.debian.org/dists/trixie-security/non-free/binary-amd64/Packages.xz

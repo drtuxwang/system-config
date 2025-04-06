@@ -15,6 +15,7 @@ the years.
  * bin/config_mod.py               Python configuration module
  * bin/config_mod.yaml             Python configuration YAML file
  * bin/crypt_mod.bash              Bash encrypted partitions handling module
+ * bin/debian_mod.py               Python Debian software repository handling module
  * bin/debug_mod.py                Python debugging tools module
  * bin/desktop_mod.py              Python graphical desktop module
  * bin/docker_mod.bash             Bash Docker utilities module
@@ -77,6 +78,7 @@ the years.
  * cloudformation/1pxy/            pxy CloudFormation example
  * cloudformation/multi-stacks/    multi-stacks CloudFormation example
  * cookiecutter/                   Cookie cutter example for Docker projects
+ * dist/*.dist                     Debian repository dist files
  * docker/Makefile
  * docker/bin/
  * docker/almalinux-8/             almalinux:8 based Docker images

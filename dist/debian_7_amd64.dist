@@ -1,0 +1,12 @@
+#
+#deb http://archive.debian.org/debian wheezy main contrib non-free
+#
+http://archive.debian.org/debian/dists/wheezy/main/binary-amd64/Packages.gz
+http://archive.debian.org/debian/dists/wheezy/contrib/binary-amd64/Packages.gz
+http://archive.debian.org/debian/dists/wheezy/non-free/binary-amd64/Packages.gz
+#
+#deb http://archive.debian.org/debian-archive/debian-security wheezy/updates main contrib non-free
+#
+http://archive.debian.org/debian-archive/debian-security/dists/wheezy/updates/main/binary-amd64/Packages.gz
+http://archive.debian.org/debian-archive/debian-security/dists/wheezy/updates/contrib/binary-amd64/Packages.gz
+http://archive.debian.org/debian-archive/debian-security/dists/wheezy/updates/non-free/binary-amd64/Packages.gz

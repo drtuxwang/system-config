@@ -1,0 +1,12 @@
+#
+#deb http://archive.debian.org/debian jessie main contrib non-free
+#
+http://archive.debian.org/debian/dists/jessie/main/binary-amd64/Packages.xz
+http://archive.debian.org/debian/dists/jessie/contrib/binary-amd64/Packages.xz
+http://archive.debian.org/debian/dists/jessie/non-free/binary-amd64/Packages.xz
+#
+#deb http://archive.debian.org/debian-archive/debian-security jessie/updates main contrib non-free
+#
+http://archive.debian.org/debian-archive/debian-security/dists/jessie/updates/main/binary-amd64/Packages.bz2
+http://archive.debian.org/debian-archive/debian-security/dists/jessie/updates/contrib/binary-amd64/Packages.bz2
+http://archive.debian.org/debian-archive/debian-security/dists/jessie/updates/non-free/binary-amd64/Packages.bz2

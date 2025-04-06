@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-Check installation dependencies of packages against '.debs' list file.
+Check installation dependencies of packages.
 """
 
 import argparse
 import dataclasses
 import copy
-import json
 import logging
 import os
 import re
@@ -15,9 +14,8 @@ import sys
 from pathlib import Path
 from typing import List, TextIO
 
-import pyzstd  # type: ignore
-
 from command_mod import LooseVersion
+from debian_mod import DebianDist
 from logging_mod import ColoredFormatter
 
 logger = logging.getLogger(__name__)
@@ -147,36 +145,14 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    @staticmethod
-    def _read_data(path: Path) -> dict:
-        try:
-            data = json.loads(pyzstd.decompress(  # pylint: disable=no-member
-                 path.read_bytes()
-            ))
-        except json.decoder.JSONDecodeError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Corrupt "{path}" file.',
-            ) from exception
-        except OSError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{path}" file.'
-            ) from exception
-
-        return data
-
     @classmethod
     def _read_distro_packages(cls, path: Path) -> dict:
-        distro_data = cls._read_data(path)
-        lines = []
-        for url in distro_data['urls']:
-            lines.extend(distro_data['data'][url]['text'])
-        disable_deps = re.fullmatch(r'.*_\w+-\w+.json', str(path))
-
+        disable_deps = re.fullmatch(r'.*_\w+-\w+.dist', str(path))
         packages: dict = {}
         name = ''
         arch = ''
         package = Package()
-        for line in lines:
+        for line in DebianDist(path).get():
             line = line.rstrip('\n')
             if line.startswith('Package: '):
                 name = line.replace('Package: ', '')
@@ -213,10 +189,7 @@ class Main:
                     if columns:
                         pattern = columns[0]
                         if not pattern.startswith('#'):
-                            path = Path(
-                                pin_path.parent,
-                                f'{columns[1]}.json.zst',
-                            )
+                            path = Path(pin_path.parent, f'{columns[1]}.dist')
                             if path not in packages_cache:
                                 packages_cache[path] = (
                                     self._read_distro_packages(path)
@@ -351,7 +324,7 @@ class Main:
         options = Options()
 
         distro = options.get_distro()
-        self._packages = self._read_distro_packages(Path(f'{distro}.json.zst'))
+        self._packages = self._read_distro_packages(Path(f'{distro}.dist'))
         self._read_distro_pin_packages(Path(f'{distro}.debs:select'))
         self._read_distro_installed(options.get_list_file())
         self._arch = distro.split('_')[-1]

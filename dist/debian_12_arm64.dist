@@ -1,0 +1,21 @@
+#
+#deb https://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+#
+https://deb.debian.org/debian/dists/bookworm/main/binary-arm64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm/contrib/binary-arm64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm/non-free/binary-arm64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm/non-free-firmware/binary-arm64/Packages.xz
+#
+#deb https://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+#
+https://deb.debian.org/debian/dists/bookworm-updates/main/binary-arm64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm-updates/contrib/binary-arm64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm-updates/non-free/binary-arm64/Packages.xz
+https://deb.debian.org/debian/dists/bookworm-updates/non-free-firmware/binary-arm64/Packages.xz
+#
+#deb https://security.debian.org bookworm-security main contrib non-free non-free-firmware
+#
+https://security.debian.org/dists/bookworm-security/main/binary-arm64/Packages.xz
+https://security.debian.org/dists/bookworm-security/contrib/binary-arm64/Packages.xz
+https://security.debian.org/dists/bookworm-security/non-free/binary-arm64/Packages.xz
+https://security.debian.org/dists/bookworm-security/non-free-firmware/binary-arm64/Packages.xz

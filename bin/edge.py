@@ -283,7 +283,7 @@ class Options:
         self._pattern = (
             'ERROR:assistance_home|ERROR:disk_cache|ERROR:persistent_asset|'
             'ERROR:policy_logger|ERROR:simple_backend|ERROR:video_hover|'
-            'Fontconfig error:|DidStartWorkerFail'
+            'Fontconfig error:|DidStartWorkerFail|software WebGL.*deprecated'
         )
         self._config()
         self._set_libraries(self._browser)
