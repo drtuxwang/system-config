@@ -38,7 +38,7 @@ MiscShowUnsafePasteDialog=FALSE
 ShortcutsNoHelpkey=TRUE
 ShortcutsNoMenukey=TRUE
 ShortcutsNoMnemonics=TRUE
-WordChars=-A-Za-z0-9,./?%&#:_=+@~–
+WordChars=-A-Za-z0-9,./?%&#:_=+@~–$
 MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
 ColorSelectionUseDefault=FALSE
 ColorSelectionBackground=#ffffffff0000
