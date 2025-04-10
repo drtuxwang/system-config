@@ -85,7 +85,7 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
     [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV.part/lib 2> /dev/null
 
     [ "$VENV_POSTINST" ] && VIRTUAL_ENV=$VIRTUAL_ENV.part $VENV_POSTINST
-    fmod -R "$($VENV_PYTHON -m pip show pip | grep "^Location: " | sed -e "s/Location: //")" 2> /dev/null
+    fmod -R "$("$VIRTUAL_ENV.part/bin/$VENV_PYTHON" -m pip show pip | grep "^Location: " | sed -e "s/Location: //")" 2> /dev/null
     mv "$VIRTUAL_ENV.part" "$VIRTUAL_ENV"
 }
 
