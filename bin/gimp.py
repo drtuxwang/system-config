@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """
 Wrapper for "gimp" command
+
+Use '-reset' to remove profile
 """
 
+import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 from command_mod import Command, Platform
@@ -31,6 +35,13 @@ class Options:
         """
         return self._gimp
 
+    @staticmethod
+    def _reset() -> None:
+        path = Path(Path.home(), '.config', 'GIMP')
+        if path.is_dir():
+            print(f'Removing "{path}"...')
+            shutil.rmtree(path)
+
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
@@ -39,6 +50,11 @@ class Options:
             ['/Applications/GIMP-2.10.app/Contents/MacOS']
             if Platform.get_system() == 'macos' else []
         )
+
+        if len(args) > 1 and args[1] == '-reset':
+            self._reset()
+            raise SystemExit(0)
+
         self._gimp = Command('gimp', pathextra=pathextra, errors='stop')
         self._gimp.set_args(['--no-splash'] + args[1:])
         self._pattern = (
