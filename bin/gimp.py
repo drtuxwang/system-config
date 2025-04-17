@@ -37,10 +37,15 @@ class Options:
 
     @staticmethod
     def _reset() -> None:
-        path = Path(Path.home(), '.config', 'GIMP')
-        if path.is_dir():
-            print(f'Removing "{path}"...')
-            shutil.rmtree(path)
+        config_path = Path(Path.home(), '.config', 'GIMP')
+        for path in [Path(config_path, x) for x in config_path.iterdir()]:
+            if path.is_dir():
+                print(f'Removing "{path}"...')
+                shutil.rmtree(path)
+                path.mkdir()
+                with Path(path, 'gimprc').open('w') as ofile:
+                    print('(theme "Light")', file=ofile)
+                    print('(icon-size medium)', file=ofile)
 
     def parse(self, args: List[str]) -> None:
         """
