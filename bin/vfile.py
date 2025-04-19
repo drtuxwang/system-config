@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Determine file type
+Determine video file information
 """
 
 import argparse
@@ -35,7 +35,9 @@ class Options:
         return [os.path.expandvars(x) for x in self._args.files]
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description="determine file type.")
+        parser = argparse.ArgumentParser(
+            description="Determine video file information."
+        )
 
         parser.add_argument(
             'files',
@@ -57,8 +59,9 @@ class Main:
     """
     Main class
     """
-    _ffprobe = Command('ffprobe', errors='ignore')
-    _isjunk = re.compile(r'( \[SAR[^,]*)?, (\d* kb/s|\d+.\d+ fps),.*')
+    _ffprobe = Command('ffprobe', errors='stop')
+    _isjunk1 = re.compile(r'( \[SAR[^,]*)?, (\d* kb/s|\d+.\d+ fps),.*')
+    _isjunk2 = re.compile(r'ISO Media, | .*')
     _video_extensions = Config().get('video_extensions')
 
     def __init__(self) -> None:
@@ -94,12 +97,12 @@ class Main:
                     length = int(int(hrs)*3600+int(mins)*60+float(secs))
                 elif line.strip().startswith('Stream #'):
                     if ' fps,' in line:
-                        size = cls._isjunk.sub('', line).split(', ')[-1]
+                        size = cls._isjunk1.sub('', line).split(', ')[-1]
                     elif ' Hz,' in line:
                         freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
             except IndexError:
                 pass
-        return f'{length}s, {size}, {freq}Hz, {info}'
+        return f'{cls._isjunk2.sub('', info)} {length}s {size} {freq}Hz'
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
@@ -108,12 +111,9 @@ class Main:
             for file in files:
                 info = checker.id_filename(file)
                 path = Path(file)
-                if (
-                    path.suffix in cls._video_extensions and
-                    cls._ffprobe.is_found()
-                ):
+                if path.suffix in cls._video_extensions:
                     info = cls._get_media_info(path, info)
-                print(f"{Message(file).get(width)}  {info}")
+                    print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:
