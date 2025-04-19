@@ -57,8 +57,9 @@ class Main:
     """
     Main class
     """
-    _isjunk = re.compile(r'image data, |, .*')
     _image_extensions = Config().get('image_extensions')
+    _isjunk = re.compile(r'image data, |, .*')
+    _issize = re.compile(r', \d+x\d+, ')
 
     def __init__(self) -> None:
         try:
@@ -78,15 +79,26 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
+    def _get_media_info(cls, info: str) -> str:
+        image_type = info.split(' ', 1)[0]
+        try:
+            image_size = cls._issize.search(info).group().split(', ')[1]
+        except AttributeError:
+            image_size = '?x?'
+        return f'{image_type} {image_size}'
+
+    @classmethod
     def _show(cls, files: List[str]) -> None:
         width = max(Message(x).width() for x in files)
         with magic.Magic() as checker:
             for file in files:
-                info = checker.id_filename(file)
                 path = Path(file)
                 if path.suffix in cls._image_extensions:
-                    info = cls._isjunk.sub('', info).replace(' x ', 'x')
-                    print(f"{Message(file).get(width)}  {info}")
+                    info = checker.id_filename(file)
+                    print(
+                        f"{Message(file).get(width)}  "
+                        f"{cls._get_media_info(info)}"
+                    )
 
     @classmethod
     def run(cls) -> int:

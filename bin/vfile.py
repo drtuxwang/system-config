@@ -85,35 +85,38 @@ class Main:
     def _get_media_info(cls, path: Path, info: str) -> str:
         task = Batch(cls._ffprobe.get_cmdline() + [path])
         task.run(error2output=True)
-        length = 0
-        size = '?x?'
-        freq = '?Hz'
+        video_type = cls._isjunk2.sub('', info)
+        video_time = 0
+        video_size = '?x?'
+        video_freq = '?Hz'
         for line in task.get_output():
             try:
                 if line.strip().startswith('Duration:'):
                     hrs, mins, secs = (
                         line.replace(',', '').split()[1].split(':')
                     )
-                    length = int(int(hrs)*3600+int(mins)*60+float(secs))
+                    video_time = int(int(hrs)*3600+int(mins)*60+float(secs))
                 elif line.strip().startswith('Stream #'):
                     if ' fps,' in line:
-                        size = cls._isjunk1.sub('', line).split(', ')[-1]
+                        video_size = cls._isjunk1.sub('', line).split(', ')[-1]
                     elif ' Hz,' in line:
-                        freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
+                        video_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
             except IndexError:
                 pass
-        return f'{cls._isjunk2.sub('', info)} {length}s {size} {freq}Hz'
+        return f'{video_type} {video_time}s {video_size} {video_freq}Hz'
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
         width = max(Message(x).width() for x in files)
         with magic.Magic() as checker:
             for file in files:
-                info = checker.id_filename(file)
                 path = Path(file)
                 if path.suffix in cls._video_extensions:
-                    info = cls._get_media_info(path, info)
-                    print(f"{Message(file).get(width)}  {info}")
+                    info = checker.id_filename(file)
+                    print(
+                        f"{Message(file).get(width)}  "
+                        f"{cls._get_media_info(path, info)}"
+                    )
 
     @classmethod
     def run(cls) -> int:
