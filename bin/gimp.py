@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command, Platform
-from subtask_mod import Background
+from subtask_mod import Background, Exec
 
 
 class Options:
@@ -57,11 +57,15 @@ class Options:
             if Platform.get_system() == 'macos' else []
         )
 
-        if len(args) > 1 and args[1] == '-reset':
-            self._reset()
-            raise SystemExit(0)
-
         self._gimp = Command('gimp', pathextra=pathextra, errors='stop')
+        if len(args) > 1:
+            if args[1] == '-reset':
+                self._reset()
+                raise SystemExit(0)
+            if args[1] in ('-v', '-V', '-version', '--version'):
+                self._gimp.set_args(['--version'])
+                Exec(self._gimp.get_cmdline()).run()
+
         self._gimp.set_args(['--no-splash'] + args[1:])
         self._pattern = (
             '^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
