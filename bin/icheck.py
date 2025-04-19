@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Check JPEG picture files.
+Check JPEG image files.
 """
 
 import argparse
@@ -31,7 +31,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Check JPEG picture files.",
+            description="Check JPEG image files.",
         )
 
         parser.add_argument(

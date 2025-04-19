@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Resize large picture images to mega-pixels limit.
+Resize large images to mega-pixels limit.
 """
 
 import argparse
@@ -45,7 +45,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Resize large picture images to mega-pixels limit.",
+            description="Resize large images to mega-pixels limit.",
         )
 
         parser.add_argument(
@@ -120,7 +120,7 @@ class Main:
         task.run(pattern='=>', error2output=True)
         if not task.has_output():
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{path}" picture file.',
+                f'{sys.argv[0]}: Cannot read "{path}" image file.',
             )
         if task.get_exitcode():
             raise SystemExit(

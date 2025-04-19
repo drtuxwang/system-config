@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create links to picture/video files.
+Create links to image/video files.
 """
 
 import argparse
@@ -37,7 +37,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Create links to picture/video files.",
+            description="Create links to image/video files.",
         )
 
         parser.add_argument(

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Show picture files with same finger print.
+Show image files with same finger print.
 """
 
 import argparse
@@ -52,7 +52,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Show picture files with same finger print.",
+            description="Show image files with same finger print.",
         )
 
         parser.add_argument(

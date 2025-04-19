@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Renumber picture/video files into a numerical series.
+Renumber image/video files into a numerical series.
 """
 
 import argparse
@@ -37,7 +37,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Renumber picture files into a numerical series.",
+            description="Renumber image/video files into a numerical series.",
         )
 
         parser.add_argument(
@@ -52,7 +52,7 @@ class Options:
             'directories',
             nargs='+',
             metavar='directory',
-            help="Directory containing picture/video files.",
+            help="Directory containing image/video files.",
         )
 
         self._args = parser.parse_args(args)

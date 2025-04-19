@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Determine picture file information
+Determine image file information
 """
 
 import argparse
@@ -34,7 +34,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Determine picture file information."
+            description="Determine image file information."
         )
 
         parser.add_argument(
