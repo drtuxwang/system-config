@@ -47,7 +47,7 @@ class Main:
         if path.is_file():
             return str(path)
 
-        return Config().get('homepage')
+        return Config().get('web_homepage')
 
     @staticmethod
     def _get_tabs() -> int:

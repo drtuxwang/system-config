@@ -211,7 +211,7 @@ class Main:
             tmpsize = Path(f'{file}.part').stat().st_size
             req = urllib.request.Request(url, headers={
                 'Range': 'bytes='+str(tmpsize)+'-',
-                'User-Agent': Config().get('user_agent'),
+                'User-Agent': Config().get('web_agent'),
             })
             # pylint: disable=consider-using-with
             conn = urllib.request.urlopen(req)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate XHTML files to view pictures.
+Generate XHTML files to view images.
 """
 
 import argparse
@@ -37,19 +37,19 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Generate XHTML files to view pictures.",
+            description="Generate XHTML files to view images.",
         )
 
         parser.add_argument(
             '-height',
             type=int,
             default=600,
-            help="Select picture height in pixels (default 600).",
+            help="Select image height in pixels (default 600).",
         )
         parser.add_argument(
             'directory',
             nargs=1,
-            help="Directory containing picture files.",
+            help="Directory containing image files.",
         )
 
         self._args = parser.parse_args(args)
@@ -57,7 +57,7 @@ class Options:
         if self._args.height < 1:
             raise SystemExit(
                 f'{sys.argv[0]}: You must specific a '
-                'positive integer for picture height.',
+                'positive integer for image height.',
             )
         if not Path(self._args.directory[0]).is_dir():
             raise SystemExit(

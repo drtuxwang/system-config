@@ -47,8 +47,8 @@ check-makefile:       # Check Makefile files
 
 .PHONY: check-config
 check-config:         # Check all config files
-	@echo "\n*** Running BSON/JSON/YAML check ***"
-	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} + > /dev/null
+	@echo "\n*** Running BSON/JSON/XML/YAML check ***"
+	find -regex '.*[.]\(bson\|xhtml\|json\|xml\|ya?ml\)' -exec bin/chkconfig {} +
 
 .PHONY: check-python
 check-python:         # Check Python code

@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 """
-Check BSON/JSON/XML/YAML configuration files for errors.
+Determine image file information
 """
 
 import argparse
 import os
+import re
 import signal
 import sys
 from pathlib import Path
 from typing import List
 
-from config_mod import Data, ReadConfigError
+import magic  # type: ignore
+
+from config_mod import Config
+from logging_mod import Message
 
 
 class Options:
@@ -26,18 +30,18 @@ class Options:
         """
         Return list of files.
         """
-        return self._args.files
+        return [os.path.expandvars(x) for x in self._args.files]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Check BSON/JSON/YAML configuration files for errors.",
+            description="Determine image file information."
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help="File to check.",
+            help="File to view.",
         )
 
         self._args = parser.parse_args(args)
@@ -53,6 +57,9 @@ class Main:
     """
     Main class
     """
+    _image_extensions = Config().get('image_extensions')
+    _isjunk = re.compile(r'image data, |, .*')
+    _issize = re.compile(r', \d+ ?x ?\d+, ')
 
     def __init__(self) -> None:
         try:
@@ -70,42 +77,41 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.linesep != '\n':
-            def _open(file, *args, **kwargs):  # type: ignore
-                if 'newline' not in kwargs and args and 'b' not in args[0]:
-                    kwargs['newline'] = '\n'
-                return open(str(file), *args, **kwargs)
-            Path.open = _open  # type: ignore
 
-    @staticmethod
-    def run() -> int:
+    @classmethod
+    def _get_media_info(cls, info: str) -> str:
+        image_type = info.split(' ', 1)[0]
+        try:
+            size = cls._issize.search(info).group().split(', ')[1]
+            image_size = size.replace(' x ', 'x').replace('x', ':')
+        except AttributeError:
+            image_size = '?:?'
+        return f'{image_type} {image_size}'
+
+    @classmethod
+    def _show(cls, files: List[str]) -> None:
+        width = max(Message(x).width() for x in files)
+        with magic.Magic() as checker:
+            for file in files:
+                path = Path(file)
+                if path.suffix in cls._image_extensions:
+                    info = checker.id_filename(file)
+                    print(
+                        f"{Message(file).get(width)}  "
+                        f"{cls._get_media_info(info)}"
+                    )
+
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
-        data = Data()
-        error = 0
+        files = options.get_files()
 
-        types = Data.TYPES
-        for path in [Path(x) for x in options.get_files()]:
-            if not path.is_file():
-                print(f"{path}: Cannot find file", file=sys.stderr)
-                error = 1
-                continue
+        cls._show(files)
 
-            file_type = types.get(path.suffix)
-            if file_type in ('BSON', 'JSON', 'XML', 'YAML'):
-                try:
-                    warnings = data.read(path, check=True)
-                    if warnings:
-                        for warning in warnings:
-                            print(f"{path}:{warning}")
-                        error = 1
-                except ReadConfigError as exception:
-                    print(f"{path}: {exception}", file=sys.stderr)
-                    error = 1
-
-        return error
+        return 0
 
 
 if __name__ == '__main__':

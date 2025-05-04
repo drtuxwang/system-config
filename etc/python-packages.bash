@@ -190,6 +190,7 @@ install_packages() {
         done
         unset IFS
     fi
+    fmod -R "$($PYTHON -m pip show pip 2> /dev/null | grep "^Location: " | sed -e "s/Location: //")" > /dev/null 2>&1
 }
 
 

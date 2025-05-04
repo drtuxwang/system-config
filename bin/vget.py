@@ -101,7 +101,7 @@ class Options:
         if task.has_output():
             try:
                 req = urllib.request.Request(task.get_output()[0], headers={
-                    'User-Agent': Config().get('user_agent'),
+                    'User-Agent': Config().get('web_agent'),
                 })
             except (urllib.error.HTTPError, urllib.error.URLError):
                 pass

@@ -103,7 +103,7 @@ class Main:
 
     @classmethod
     def _search(cls, options: Options) -> str:
-        user_agent = Config().get('user_agent')
+        user_agent = Config().get('web_agent')
         curl = Command('curl', errors='stop')
         curl.set_args(['-A', user_agent, options.get_url()])
         task = Batch(curl.get_cmdline())

@@ -4,7 +4,7 @@ Python configuration module (uses "config_mod.yaml")
 
 Supports BSON, multi-JSON, XML, multi-YAML files.
 
-Copyright GPL v2: 2017-2024 By Dr Colin Kong
+Copyright GPL v2: 2017-2025 By Dr Colin Kong
 """
 
 import json
@@ -22,8 +22,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.4.3'
-VERSION = 20250208
+RELEASE = '2.5.1'
+VERSION = 20250426
 
 
 class Data:
@@ -81,10 +81,14 @@ class Data:
                 continue
             lines.append(re.sub(':.*{{.*:.*}}.*', ': 0', line))
         data_new = '\n'.join(lines)
+        data_new = re.sub(': ([Nn]one|null)', ': "protect_None"', data_new)
         data_new = re.sub('{{[^}]*}}: *{{[^}]*}}', '_: 0', data_new)
         data_new = re.sub(':  *{{[^}]*}}', ': 0', data_new)
+        data_new = re.sub('\n{{[^}]*}}', ' jinja_string', data_new)
+        data_new = re.sub('{{[^-}]*}}', 'jinja_string', data_new)
         data_new = re.sub('{{[^}]*}}', lambda m: ' '*len(m.group()), data_new)
         data_new = re.sub('{%[^}]*}', '', data_new)
+        data_new = re.sub(r': .*\*/.*', ': slash_string', data_new)
         return data_new
 
     @staticmethod
@@ -197,12 +201,26 @@ class Data:
             )
         return blocks
 
+    @classmethod
+    def _check(cls, prefix: str, data: Any) -> List[str]:
+        warnings = []
+        if isinstance(data, dict):
+            for key, value in sorted(data.items()):
+                warnings.extend(cls._check(f"{prefix}['{key}']", value))
+        elif isinstance(data, list):
+            for key, value in enumerate(data):
+                warnings.extend(cls._check(f"{prefix}['{key}']", value))
+        elif data is None:
+            warnings.append(f"{prefix} = None")
+
+        return warnings
+
     def read(
         self,
         file: Union[str, Path],
         config: str = None,
         check: bool = False,
-    ) -> None:
+    ) -> List[str]:
         """
         Read or check configuration file.
         """
@@ -218,9 +236,16 @@ class Data:
             raise ReadConfigError(
                 f'Cannot read "{path}" {config} file.',
             ) from exception
-        blocks = self.decode(config, data)
-        if not check:
+        blocks = self.decode(config, data, check=check)
+
+        warnings = []
+        if check:
+            if config in ('BSON', 'JSON', 'YAML'):
+                for n, block in enumerate(blocks):
+                    warnings.extend(self._check(f'[{n}]', block))
+        else:
             self._blocks = blocks
+        return warnings
 
     @staticmethod
     def _encode_json(blocks: List[dict], compact: bool) -> bytes:

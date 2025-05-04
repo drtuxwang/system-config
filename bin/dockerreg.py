@@ -117,7 +117,7 @@ class DockerRegistry:
     def __init__(self, server: str) -> None:
         self._server = server
         config = Config()
-        self._user_agent = config.get('user_agent')
+        self._user_agent = config.get('web_agent')
         self._config()
 
     def get_url(self) -> str:

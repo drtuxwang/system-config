@@ -84,7 +84,8 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
     unset IFS
     [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV.part/lib 2> /dev/null
 
-    [ "$VENV_POSTINST" ] && VIRTUAL_ENV=$VIRTUAL_ENV.part $VENV_POSTINST
+    [ "$VENV_POSTINST" ] && VIRTUAL_ENV="$VIRTUAL_ENV.part" $VENV_POSTINST
+    fmod -R "$VIRTUAL_ENV.part" > /dev/null 2>&1
     mv "$VIRTUAL_ENV.part" "$VIRTUAL_ENV"
 }
 

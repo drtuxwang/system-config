@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Generator, List, Tuple
 
 from command_mod import Command
-from file_mod import FileStat, FileUtil
+from file_mod import FileStat
 from logging_mod import ColoredFormatter
 from subtask_mod import Batch, Child
 
@@ -402,6 +402,8 @@ class Encoder:
                 path_tmp = Path(f'{file_new}.part')
                 self._ffmpeg.extend_args(['-f', 'mp3', '-y', path_tmp])
                 self._run()
+                file_time = FileStat(file).get_mtime()
+                os.utime(path_tmp, (file_time, file_time))
                 path_tmp.replace(file_new)
                 Media(file_new).show()
 
@@ -421,9 +423,6 @@ class Encoder:
             self._single()
         else:
             self._multi()
-        newest = FileUtil.newest(self._options.get_files())
-        file_time = FileStat(newest).get_mtime()
-        os.utime(self._options.get_file_new(), (file_time, file_time))
 
 
 class Main:

@@ -277,7 +277,6 @@ menu_games:
   - assaultcube
 - button:
     name: padman
-    button:
     color: '#ffff00'
     label: Padman
     run: exec padman &
@@ -321,7 +320,6 @@ menu_games:
   - wesnoth-1.14
 - button:
     name: close
-    button:
     color: '#ff0000'
     label: Close
     run: exit

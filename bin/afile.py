@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Determine file type
+Determine audio file information
 """
 
 import argparse
@@ -35,7 +35,9 @@ class Options:
         return [os.path.expandvars(x) for x in self._args.files]
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description="determine file type.")
+        parser = argparse.ArgumentParser(
+            description="Determine audio file information."
+        )
 
         parser.add_argument(
             'files',
@@ -57,9 +59,12 @@ class Main:
     """
     Main class
     """
-    _ffprobe = Command('ffprobe', errors='ignore')
-    _isjunk = re.compile(r'( \[SAR[^,]*)?, (\d* kb/s|\d+.\d+ fps),.*')
-    _video_extensions = Config().get('video_extensions')
+    _ffprobe = Command('ffprobe', errors='stop')
+    _isjunk1 = re.compile(r'( \[SAR[^,]*)?, (\d* kb/s|\d+.\d+ fps),.*')
+    _isjunk2 = re.compile(r'(ISO|Ogg|RIFF)[^,]*, |.*contains: |[ ,].*')
+    _audio_extensions = (
+        Config().get('audio_extensions') + Config().get('video_extensions')
+    )
 
     def __init__(self) -> None:
         try:
@@ -82,38 +87,36 @@ class Main:
     def _get_media_info(cls, path: Path, info: str) -> str:
         task = Batch(cls._ffprobe.get_cmdline() + [path])
         task.run(error2output=True)
-        length = 0
-        size = '?x?'
-        freq = '?Hz'
+        info = info.replace('MPEG ADTS, layer III,', 'MP3')
+        audio_type = cls._isjunk2.sub('', info)
+        audio_time = 0
+        audio_freq = '?Hz'
         for line in task.get_output():
             try:
                 if line.strip().startswith('Duration:'):
                     hrs, mins, secs = (
                         line.replace(',', '').split()[1].split(':')
                     )
-                    length = int(int(hrs)*3600+int(mins)*60+float(secs))
+                    audio_time = int(int(hrs)*3600+int(mins)*60+float(secs))
                 elif line.strip().startswith('Stream #'):
-                    if ' fps,' in line:
-                        size = cls._isjunk.sub('', line).split(', ')[-1]
-                    elif ' Hz,' in line:
-                        freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
+                    if ' Hz,' in line:
+                        audio_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
             except IndexError:
                 pass
-        return f'{length}s, {size}, {freq}Hz, {info}'
+        return f'{audio_type} {audio_time}s {audio_freq}Hz'
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
         width = max(Message(x).width() for x in files)
         with magic.Magic() as checker:
             for file in files:
-                info = checker.id_filename(file)
                 path = Path(file)
-                if (
-                    path.suffix in cls._video_extensions and
-                    cls._ffprobe.is_found()
-                ):
-                    info = cls._get_media_info(path, info)
-                print(f"{Message(file).get(width)}  {info}")
+                if path.suffix in cls._audio_extensions:
+                    info = checker.id_filename(file)
+                    print(
+                        f"{Message(file).get(width)}  "
+                        f"{cls._get_media_info(path, info)}"
+                    )
 
     @classmethod
     def run(cls) -> int:
