@@ -1,7 +1,7 @@
-BASE_IMAGE := nginx:1.24.0-bullseye
-IMAGE := drtuxwang/nginx-proxy:1.24.0-bullseye
-NAME := nginx124-proxy
-HOSTNAME := nginx124-proxy
+BASE_IMAGE := nginx:1.26-bookworm
+IMAGE := drtuxwang/nginx-proxy:1.26-bookworm
+NAME := nginx126-proxy
+HOSTNAME := nginx126-proxy
 LOCALPORT ?= 8080
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
@@ -54,7 +54,7 @@ save: pull            # Pull Docker base image and save to tar archive
 .PHONY: build
 build:                # Build Docker image
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../bin/create-rootfs.bash bash bash2ash bin-sysinfo
+	../bin/create-rootfs.bash bash bin-sysinfo
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 

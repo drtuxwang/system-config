@@ -69,7 +69,7 @@ test:                 # Run tests
 
 .PHONY: run
 run:                  # Run Docker container
-	make --no-print-directory --directory bash run
+	make --no-print-directory --directory pip run
 
 .PHONY: version
 version:              # Check version

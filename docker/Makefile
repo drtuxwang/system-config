@@ -25,14 +25,14 @@ BUILD_DIRS := \
 	busybox-1.36 \
 	golang-1.22 \
 	httpd-2.4 \
-	nginx-1.24 \
+	nginx-1.26 \
 	python-3.12 \
 	registry-2.6 \
 	scratch
 STABLE_DIRS := \
 	debian-12/ops \
 	debian-12/xfce \
-	nginx-1.24 \
+	nginx-1.26 \
 	python-3.12/pip \
 	scratch
 TEST_DIRS := \

@@ -26,7 +26,6 @@ spec:
         image: {{ include "chart.image.name" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-box
-        resources:
         volumeMounts:
         - mountPath: /shared
           name: shared

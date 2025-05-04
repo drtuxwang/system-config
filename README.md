@@ -95,7 +95,7 @@ the years.
  * docker/i386-alpine-3.18/        i386/alpine:3.18 based based Docker images
  * docker/i386-debian-11/          i386/debian:11-slim based Docker images
  * docker/i386-debian-12/          i386/debian:12-slim based Docker images
- * docker/nginx-1.24/              nginx:1.24-bullseye based reverse proxy server
+ * docker/nginx-1.26/              nginx:1.26-bookworm based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
  * docker/oraclelinux-9/           oralcelinux:9 based Docker images
  * docker/python-3.12/             python:3.12-slim-bookworm based Docker images
@@ -121,16 +121,16 @@ the years.
  * kubernetes/test-storage/        Kubernetes: Persistent Volume example
  * helm/Makefile
  * helm/bin/
- * helm/etcd/                      Helm Chart: bitnami/etcd 10.6.1 (app-3.5.16)
- * helm/grafana/                   Helm Chart: bitnami/grafana 10.0.12 (app-10.4.3)
- * helm/jenkins/                   Helm Chart: bitnami/jenkins 13.4.28 (app-2.479.3)
- * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.3.3 (app-7.0.14)
+ * helm/etcd/                      Helm Chart: bitnami/etcd 11.1.5 (app-3.5.19)
+ * helm/grafana/                   Helm Chart: bitnami/grafana 11.4.10 (app-10.4.14)
+ * helm/jenkins/                   Helm Chart: bitnami/jenkins 13.5.7 (app-2.479.3)
+ * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.4.12 (app-7.0.15)
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
- * helm/nginx/                     Helm Chart: bitnami/nginx 18.1.15 (app-1.24.0)
+ * helm/nginx/                     Helm Chart: bitnami/nginx 18.3.6 (app-1.26.2)
  * helm/oracle-xe/                 Helm Chart: Oracle XE test (gvenzl/oracle-xe:21.3.0-slim)
- * helm/prometheus/                Helm Chart: prometheus-community/prometheus 25.30.2 (app-2.53.3)
+ * helm/prometheus/                Helm Chart: prometheus-community/prometheus 27.7.1 (app-2.53.4)
  * helm/pushgateway/               Helm Chart: prometheus-community/prometheus-pushgateway 2.10.0 (app-1.6.2)
- * helm/rabbitmq/                  Helm Chart: bitnami/rabbitmq 14.6.10 (app-3.13.7)
+ * helm/rabbitmq/                  Helm Chart: bitnami/rabbitmq 15.5.3 (app-3.13.7)
  * helm/test-box/                  Helm Chart: drtuxwang/test-box (drtuxwang/debian-ops:stable)
  * helm/test-server/               Helm Chart: drtuxwang/test-server (drtuxwang/debian-ops:stable)
  * helm/xfce-server/               Helm Chart: drtuxwang/xfce-server (drtuxwang/debian-xfce:stable)
