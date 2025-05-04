@@ -170,6 +170,7 @@ class Options:
         config_path = Path(Path.home(), self._get_profiles_dir())
         if config_path.is_dir():
             keep_list = (
+                'DNR Extension Rules',
                 'Extensions',
                 'File System',
                 'IndexedDB',
