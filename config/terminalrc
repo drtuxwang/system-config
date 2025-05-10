@@ -5,7 +5,7 @@ MiscBellUrgent=FALSE
 MiscBordersDefault=TRUE
 MiscCursorBlinks=FALSE
 MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
-MiscDefaultGeometry=132x50
+MiscDefaultGeometry=80x100
 MiscInheritGeometry=FALSE
 MiscMenubarDefault=TRUE
 MiscMouseAutohide=TRUE
@@ -43,5 +43,4 @@ MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
 ColorSelectionUseDefault=FALSE
 ColorSelectionBackground=#ffffffff0000
 ColorSelection=#000000000000
-FontName=Monospace 10
 
