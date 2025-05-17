@@ -67,7 +67,7 @@ options() {
       help 1
       ;;
     ?*)
-        uuids=$(lsblk -list -o NAME,FSTYPE,UUID 2> /dev/null | awk '/^'"($(echo "$@" | sed -e "s@/@\/@g;s/ /|/g"))"' *crypto_LUKS/ {print $3; exit}')
+        uuids=$(lsblk -list -o NAME,FSTYPE,UUID 2> /dev/null | awk '/^'"($(echo "$@" | sed -e "s@/@\/@g;s/ /|/g"))"' *crypto_LUKS/ {print $3; exit}' 2> /dev/null)
         ;;
     esac
 }

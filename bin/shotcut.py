@@ -56,6 +56,7 @@ class Main:
 
         configs = [
             '/dev/dri',
+            f'/run/user/{os.getuid()}/pulse',
             Path(home, '.config/ibus'),
             Path(home, '.config/Meltytech'),
             f"{home_videos}:{Path(home, 'Videos')}",
