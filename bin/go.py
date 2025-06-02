@@ -51,6 +51,8 @@ class Main:
         goroot = Path(golang.get_file()).parents[1]
         if Path(goroot, 'pkg').is_dir():
             os.environ['GOROOT'] = str(goroot)
+        # Re-direct "$HOME/go/pkg/mod" cache
+        os.environ['GOMODCACHE'] = str(Path(Path.home(), '.cache/go/pkg/mod'))
 
         Exec(golang.get_cmdline()).run()
 
