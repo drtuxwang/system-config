@@ -68,7 +68,7 @@ class Options:
                 if 'Width:' in line and int(line.split()[-1]) >= 1024:
                     self._columns = 100
                 elif 'Height:' in line and int(line.split()[-1]) >= 900:
-                    self._rows = 50
+                    self._rows = 45
 
     def parse(self, args: List[str]) -> None:
         """
