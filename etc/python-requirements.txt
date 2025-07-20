@@ -53,7 +53,7 @@ paramiko==3.4.1              # SSH client
 parso==0.8.4                 #   (required by jedi)
 pexpect==4.8.0               #   (required by ipython)
 pickleshare==0.7.5           #   (required by ipython)
-pip==24.3.1                  # Python package manager
+pip==25.1.1                  # Python package manager
 pipdeptree==2.25.1           # Python package dependency tree
 platformdirs==4.2.2          #   (required by pylint/virtualenv)
 prompt-toolkit==3.0.50       #   (required by ipython)
@@ -71,7 +71,7 @@ python-dateutil==2.8.2       #   (required by bson)
 python-slugify==6.1.2        #   (required by cookiecutter)
 PyYAML==6.0.2                # YAML parser/emitter
 pyzstd==0.15.10              # ZSTD compression/decompression
-requests==2.32.3             # Web client
+requests==2.32.4             # Web client
 rich==13.9.4                 #   (required by cookiecutter)
 setuptools==78.1.1           # Python package manager
 six==1.17.0                  # Python 2 and 3 compatibility utilities
@@ -83,7 +83,7 @@ tomlkit==0.12.5              #   (required by pylint)
 tornado==6.5                 # Web server framework
 traitlets==5.13.0            #   (required by ipython)
 typing-extensions==4.13.1    #   (required by ipython)
-urllib3==2.2.3               #   (required by requests)
+urllib3==2.5.0               #   (required by requests)
 virtualenv==20.29.3          # Python Virtual Environments
 wcwidth==0.2.13              #   (required by prompt-toolkit)
 wheel==0.45.1                # Python wheel packaging
