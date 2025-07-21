@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-De-compile PYC file to Python byte code.
+De-compile Python PYC bytecode file.
 """
 
 import argparse
@@ -34,7 +34,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="De-compile PYC file to Python byte code.",
+            description="De-compile Python PYC bytecode file.",
         )
 
         parser.add_argument(
