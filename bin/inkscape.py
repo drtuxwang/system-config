@@ -61,6 +61,7 @@ class Main:
             Path(Path.home(), '.config/ibus'),
             Path(Path.home(), '.config/inkscape'),
             work_dir,
+            '/',  # Only block network
         ]
 
         for arg in sys.argv[1:]:

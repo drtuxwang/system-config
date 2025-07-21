@@ -111,6 +111,7 @@ class Main:
             Path(home, '.config/ibus'),
             Path(home, '.config/libreoffice'),
             work_dir,
+            '/',  # Only block network
         ]
 
         if len(sys.argv) == 1:

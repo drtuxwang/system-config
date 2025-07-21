@@ -60,6 +60,7 @@ class Main:
             Path(home, '.config/ibus'),
             Path(home, '.config/Meltytech'),
             f"{home_videos}:{Path(home, 'Videos')}",
+            '/',  # Only block network
         ]
         work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
         if work_dir == home:

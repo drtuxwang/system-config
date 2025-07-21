@@ -81,6 +81,7 @@ class Main:
             Path(Path.home(), '.config/ibus'),
             config_dir,
             work_dir,
+            '/',  # Only block network
         ]
 
         for arg in sys.argv[1:]:
