@@ -152,7 +152,7 @@ class DebianDist:
                     ))
                 break
             except socket.timeout:
-                return 0
+                continue
             except urllib.error.URLError:
                 logger.error("URL error: %s", url)
                 return 1
