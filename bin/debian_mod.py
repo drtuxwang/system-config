@@ -152,11 +152,13 @@ class DebianDist:
                     ))
                 break
             except socket.timeout:
-                logger.warning("connection timeout: %s", url)
                 return 0
             except urllib.error.URLError:
                 logger.error("URL error: %s", url)
                 return 1
+        else:
+            logger.warning("connection timeout: %s", url)
+            return 0
         if path.is_file() and url_time <= path.stat().st_mtime:
             return 0
         if path.is_file():
