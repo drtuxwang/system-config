@@ -3,7 +3,6 @@
 Sandbox for "tenacity" launcher
 """
 
-import getpass
 import os
 import signal
 import sys
@@ -65,7 +64,6 @@ class Main:
             audacity = Sandbox('audacity', errors='stop')
         if Path(f'{audacity.get_file()}.py').is_file():
             Exec(audacity.get_cmdline() + sys.argv[1:]).run()
-        config_dir = cls._config(audacity)
 
         # "os.getcwd()" returns realpath instead
         work_dir = Path(os.environ['PWD'])
@@ -75,24 +73,10 @@ class Main:
                 os.chdir(desktop)
                 work_dir = desktop
 
-        configs = [
-            f'/tmp/{getpass.getuser()}:/var/tmp',
-            f'/run/user/{os.getuid()}/pulse',
-            Path(Path.home(), '.config/ibus'),
-            config_dir,
-            work_dir,
-        ]
-
+        configs = ['/']  # Only block network
         for arg in sys.argv[1:]:
-            path = Path(arg).resolve()
             if arg == '-net':
                 configs.append('net')
-            elif path.is_dir():
-                audacity.append_arg(path)
-                configs.append(path)
-            elif path.is_file():
-                audacity.append_arg(path)
-                configs.append(path.parent)
             else:
                 audacity.append_arg(arg)
 

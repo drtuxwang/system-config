@@ -1,11 +1,17 @@
 astroid                      # ==3.2.4 (last compatible version)
 filelock                     # ==3.16.1 (last compatible version)
 ipython                      # ==8.13.0 (last compatible version)
+ipython-pygments-lexers==None
+motor                        # ==3.6.1 (last compatible version)
+pip                          # ==24.3.1 (last compatible version)
 pycodestyle                  # ==2.12.1 (last compatible version)
 pipdeptree                   # ==2.24.0 (last compatible version)
+pyflakes                     # ==3.2.0 (last compatible version)
 pylint                       # ==3.2.7 (last compatible version)
+pymongo                      # ==4.9.2 (last compatible version)
 setuptools                   # ==75.3.2 (last compatible version)
 tornado                      # ==6.4.2 (last compatible version)
 tomli==2.0.1                 #   (required by pylint for 3.8)
+typing-extensions            # ==4.13.2 (last compatible version)
+urllib3                      # ==2.2.3 (last compatible version)
 zipp                         # ==3.14.0 (required by importlib-metadata for 3.8)
-

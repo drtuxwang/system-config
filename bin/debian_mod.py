@@ -26,8 +26,8 @@ from file_mod import FileUtil
 from logging_mod import ColoredFormatter
 from subtask_mod import Task
 
-RELEASE = '2.0.0'
-VERSION = 20250316
+RELEASE = '2.1.0'
+VERSION = 20250731
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -139,7 +139,7 @@ class DebianDist:
         self._remove()
         return data
 
-    def _update_packages(self, path: Path, url: str) -> None:
+    def _update_packages(self, path: Path, url: str) -> int:
         """
         Download updated Packages file.
         """
@@ -151,10 +151,16 @@ class DebianDist:
                         '%a, %d %b %Y %H:%M:%S %Z',
                     ))
                 break
-            except (socket.timeout, urllib.error.URLError):
-                return
+            except socket.timeout:
+                continue
+            except urllib.error.URLError:
+                logger.error("URL error: %s", url)
+                return 1
+        else:
+            logger.warning("connection timeout: %s", url)
+            return 0
         if path.is_file() and url_time <= path.stat().st_mtime:
-            return
+            return 0
         if path.is_file():
             old_utc = datetime.datetime.fromtimestamp(path.stat().st_mtime)
             logger.warning(
@@ -187,6 +193,7 @@ class DebianDist:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path}" file.',
             ) from exception
+        return 0
 
     def get(self) -> Generator[str, None, None]:
         """
@@ -214,15 +221,17 @@ class DebianDist:
                     package = {}
         return data
 
-    def update(self) -> None:
+    def update(self) -> int:
         """
         Download updated Packages files defined in dist file.
         """
         logger.info('Checking "%s" distribution packages cache.', self._path)
         if not self._path.is_dir():
             self._path.mkdir()
+        errors = 0
         for path, url in self._repos:
-            self._update_packages(path, url)
+            errors += self._update_packages(path, url)
+        return errors
 
 
 if __name__ == '__main__':

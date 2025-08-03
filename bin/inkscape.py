@@ -57,22 +57,10 @@ class Main:
                 os.chdir(desktop)
                 work_dir = desktop
 
-        configs: list = [
-            Path(Path.home(), '.config/ibus'),
-            Path(Path.home(), '.config/inkscape'),
-            work_dir,
-        ]
-
+        configs = ['/']  # Only block network
         for arg in sys.argv[1:]:
-            path = Path(arg).resolve()
             if arg == '-net':
                 configs.append('net')
-            elif path.is_dir():
-                inkscape.append_arg(path)
-                configs.append(path)
-            elif path.is_file():
-                inkscape.append_arg(path)
-                configs.append(path.parent)
             else:
                 inkscape.append_arg(arg)
 

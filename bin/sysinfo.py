@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.17.1'
-VERSION = 20250418
+RELEASE = '6.17.2'
+VERSION = 20250722
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -2405,10 +2405,6 @@ class Software:
             r'^GNU Fortran( \([^)]*\))? |( \d{8})?( \([^)]*\))*$',
             '',
         ]),
-        (
-            ['gimp', '--version'],
-            ['^GNU Image Manipulation Program version ', '.*version ', ''],
-        ),
         (['bin/git', '--version'], ['version ', '.*version ', '']),
         (['gimp', '--version'], ['version ', '.*version ', '']),
         (['git-lfs', '--version'], ['git-lfs/', 'git-lfs/| .*', '']),

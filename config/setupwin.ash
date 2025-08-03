@@ -78,14 +78,9 @@ EOF
     echo "pause" >> "$TMP/setupwin.bat"
     powershell.exe -command start-process "$TMP/setupwin.bat" -verb runas
 
-    if [ $VERSION -ge 61 ]
+    if [ $VERSION -ge 100 ]
     then
         echo
-        if [ $VERSION -lt 100 ]
-        then
-            echo "Running \"$DIR/vc-redist_14.0.23026_win51x86.exe\"..."
-            "$DIR/vc-redist_14.0.23026_win51x86.exe"
-        fi
         install "$DIR/python_3.*-windows-x86.7z"
     fi
 
@@ -100,15 +95,6 @@ EOF
         cmd /r netplwiz
     fi
 fi
-
-##if [ "$PROCESSOR_ARCHITECTURE" = AMD64 -o "$PROCESSOR_ARCHITEW6432" = AMD64 ]
-##then
-##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*-windows64-x86.7z | head -1)
-##else
-##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*-windows-x86.7z | head -1)
-##fi
-##echo "Running \"$INSTALLER\" installer..." | sed -e "s/\//\\\\/g"
-##cmd /r "$INSTALLER"
 
 if [ "${0%/*}/../scripts/index-system" ]
 then

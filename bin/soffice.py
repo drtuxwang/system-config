@@ -105,39 +105,20 @@ class Main:
                 os.chdir(desktop)
                 work_dir = str(desktop)
 
-        configs = [
-            '/tmp',
-            f'/run/user/{os.getuid()}',
-            Path(home, '.config/ibus'),
-            Path(home, '.config/libreoffice'),
-            work_dir,
-        ]
-
+        configs = ['/']  # Only block network
+        for arg in sys.argv[1:]:
+            if arg == '-net':
+                configs.append('net')
+            else:
+                self._soffice.append_arg(arg)
         if len(sys.argv) == 1:
-            self._soffice.append_arg('-writer')
-        else:
-            for arg in sys.argv[1:]:
-                path = Path(arg).resolve()
-                if arg == '-net':
-                    configs.append('net')
-                elif path.is_dir():
-                    self._soffice.append_arg(path)
-                    configs.append(path)
-                elif path.is_file():
-                    self._soffice.append_arg(path)
-                    configs.append(path.parent)
-                else:
-                    self._soffice.append_arg(arg)
+            self._soffice.append_arg('--writer')
 
         self._soffice.sandbox(configs)
 
         self._pattern = (
-            '^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: G[dt]k-WARNING |'
-            ': wrong ELF class:|: Could not find a Java Runtime|'
-            ': failed to read path from javaldx|^Failed to load module:|'
-            'unary operator expected|: unable to get gail version number|'
-            'gtk printer|: GConf-WARNING|: Connection refused|GConf warning: '
-            '|GConf Error: |: invalid source position|:'
+            '^$|: dbind-WARNING|platform (in)?dependent libraries|'
+            'Consider setting [$]PYTHONHOME'
         )
         self._config()
         self._setenv()

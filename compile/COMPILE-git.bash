@@ -12,5 +12,5 @@ fi
 make -i NO_INSTALL_HARDLINKS=YesPlease install
 
 ls -l $PWD/install/bin/*
-strip $PWD/install/bin/*
+strip $PWD/install/bin/* 2> /dev/null
 ls -l $PWD/install/bin/*

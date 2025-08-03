@@ -3,7 +3,8 @@ ARG BASE_IMAGE=debian:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN apt-get update && \
+RUN sed -i "s/deb.debian.org/archive.debian.org/" /etc/apt/sources.list && \
+    apt-get update && \
     apt-get install --no-install-recommends --fix-missing -y \
         ca-certificates \
         curl \

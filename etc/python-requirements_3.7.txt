@@ -3,10 +3,14 @@ cffi                         # ==1.15.1 (last compatible version)
 commonmark==0.9.1            #   (required by rich for 3.7)
 dill                         # ==0.3.7 (last compatible version)
 dnspython                    # ==2.3.0 (last compatible version)
+executing                    # ==2.0.1 (last compatible version)
 filelock                     # ==3.12.2 (last compatible version)
 importlib-metadata==4.2.0    #   (< 4.3 required by jsonpickle/virtualenv)
 ipython                      # ==7.34.0 (last compatible version)
+ipython-pygments-lexers==None
+jsonpickle                   # ==3.4.2 (last compatible version)
 isort                        # ==5.11.5 (last compatible version)
+lazy-object-proxy            # ==1.9.0 (last compatible version)
 matplotlib-inline            # ==0.1.6 (last compatible version)
 motor==3.3.2
 packaging==None
