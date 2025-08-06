@@ -9,6 +9,7 @@ RUN sed -i "s/deb.debian.org/archive.debian.org/" /etc/apt/sources.list && \
         ca-certificates \
         curl \
         dnsutils \
+        file \
         iproute2 \
         iputils-ping \
         net-tools \

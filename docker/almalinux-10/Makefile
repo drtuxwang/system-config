@@ -1,7 +1,7 @@
-BASE_IMAGE := alpine:3.18
-IMAGE := drtuxwang/alpine-dev:3.18
-NAME := alpine316-dev
-HOSTNAME := alpine316-dev
+BASE_IMAGE := almalinux:10
+IMAGE := drtuxwang/almalinux-dev:10
+NAME := almalinux10-dev
+HOSTNAME := almalinux10-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
@@ -27,7 +27,6 @@ ifdef http_proxy
 		--env https_proxy=$(https_proxy) \
 		--env no_proxy=$(no_proxy)
 endif
-
 
 .PHONY: default
 default: build status # Default

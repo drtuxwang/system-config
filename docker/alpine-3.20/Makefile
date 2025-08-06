@@ -1,7 +1,7 @@
-BASE_IMAGE := alpine:3.17
-IMAGE := drtuxwang/alpine-dev:3.17
-NAME := alpine317-dev
-HOSTNAME := alpine317-dev
+BASE_IMAGE := alpine:3.20
+IMAGE := drtuxwang/alpine-dev:3.20
+NAME := alpine320-dev
+HOSTNAME := alpine320-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build

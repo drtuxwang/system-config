@@ -10,6 +10,7 @@ RUN yum install -y epel-release && \
     yum update -y && \
     yum install -y \
         bind-utils \
+        file \
         iproute \
         net-tools \
         netcat \

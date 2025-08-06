@@ -4,7 +4,8 @@ FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN apk update && \
-    apk add bash openssh-client vim
+    apk add bash openssh-client vim && \
+    ln -s /usr/local/go/bin/go /usr/local/bin/go
 
 COPY rootfs/ /
 

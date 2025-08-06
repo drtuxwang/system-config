@@ -9,6 +9,7 @@ RUN ln -s microdnf /bin/yum && \
     yum install -y \
         bind-utils \
         diffutils \
+        file \
         net-tools \
         netcat \
         openssh-clients \

@@ -8,6 +8,7 @@ RUN apk update && \
         bash \
         bind-tools \
         curl \
+        file \
         iproute2 \
         openssh-client \
         socat \

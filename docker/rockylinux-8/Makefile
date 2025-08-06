@@ -1,5 +1,5 @@
-BASE_IMAGE := rockylinux:8
-IMAGE := drtuxwang/rockylinux-dev:8
+BASE_IMAGE := rockylinux/rockylinux:8-minimal
+IMAGE := drtuxwang/rockylinux-dev:8-minimal
 NAME := almalinux8-dev
 HOSTNAME := almalinux8-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)

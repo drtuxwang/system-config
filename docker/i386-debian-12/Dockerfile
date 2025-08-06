@@ -8,6 +8,7 @@ RUN apt-get update && \
         ca-certificates \
         curl \
         dnsutils \
+        file \
         iproute2 \
         iputils-ping \
         net-tools \

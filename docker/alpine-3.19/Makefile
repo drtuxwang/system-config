@@ -1,7 +1,7 @@
-BASE_IMAGE := rockylinux/rockylinux:9-minimal
-IMAGE := drtuxwang/rockylinux-dev:9-minimal
-NAME := almalinux9-dev
-HOSTNAME := almalinux9-dev
+BASE_IMAGE := alpine:3.19
+IMAGE := drtuxwang/alpine-dev:3.19
+NAME := alpine319-dev
+HOSTNAME := alpine319-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build

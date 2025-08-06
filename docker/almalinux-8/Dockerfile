@@ -8,6 +8,7 @@ RUN yum install -y epel-release && \
     yum install -y \
         bind-utils \
         diffutils \
+        file \
         net-tools \
         netcat \
         openssh-clients \
