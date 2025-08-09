@@ -257,7 +257,7 @@ parameters:
   - .mpegts
   - .mpg
   - .webm
-  web_agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0
+  web_agent: Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
   web_homepage: http://drtuxwang.fast-page.org/bookmarks.xhtml
   web_mail: https://mail.google.com
   web_uri:

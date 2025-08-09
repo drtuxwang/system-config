@@ -5,7 +5,7 @@
 
 set  -u
 
-IMAGE="drtuxwang/debian-dev:stable"
+IMAGE="drtuxwang/debian-ops:stable"
 LOCALPORT="2222"
 
 DOCKER_RUN_FLAGS="

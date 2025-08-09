@@ -105,10 +105,26 @@ class Main:
                 os.chdir(desktop)
                 work_dir = str(desktop)
 
-        configs = ['/']  # Only block network
+        configs = [
+            '/tmp',
+            f'/run/user/{os.getuid()}',
+            Path(home, '.config/ibus'),
+            Path(home, '.config/libreoffice'),
+            work_dir,
+        ]
+        if home not in work_dir:
+            configs.append(work_dir)
+
         for arg in sys.argv[1:]:
+            path = Path(arg).resolve()
             if arg == '-net':
                 configs.append('net')
+            elif path.is_dir():
+                self._soffice.append_arg(path)
+                configs.append(path)
+            elif path.is_file():
+                self._soffice.append_arg(path)
+                configs.append(path.parent)
             else:
                 self._soffice.append_arg(arg)
         if len(sys.argv) == 1:
@@ -118,7 +134,7 @@ class Main:
 
         self._pattern = (
             '^$|: dbind-WARNING|platform (in)?dependent libraries|'
-            'Consider setting [$]PYTHONHOME'
+            'Consider setting [$]PYTHONHOME|: Gtk-WARNING'
         )
         self._config()
         self._setenv()

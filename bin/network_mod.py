@@ -16,8 +16,8 @@ from typing import Any, List, Tuple, Union
 
 from command_mod import Command, CommandFile
 
-RELEASE = '3.5.2'
-VERSION = 20241201
+RELEASE = '3.6.0'
+VERSION = 20250807
 
 
 class NetNice(Command):
@@ -85,8 +85,10 @@ class Sandbox(Command):
     Optional sandbox network and disk writes command class
 
     Requires "nonet" group membership and Firewalling:
-    iptables -I OUTPUT 1 -m <username> --gid-owner nonet -j DROP
-    iptables -A OUTPUT -m <username> --gid-owner nonet -d 127.0.0.0/8 -j ACCEPT
+    iptables -I OUTPUT 1 -m owner --gid-owner nonet -j DROP
+    iptables -A OUTPUT -m owner --gid-owner nonet -d 127.0.0.0/8 -j ACCEPT
+    ip6tables -I OUTPUT 1 -m owner --gid-owner nonet -j DROP
+    ip6tables -A OUTPUT -m owner --gid-owner nonet -d ::1/128 -j ACCEPT
     """
     BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
