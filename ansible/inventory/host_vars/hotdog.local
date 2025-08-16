@@ -1,2 +1,2 @@
 clamav_directory: /mnt/data1/var/lib/clamav
-download_rate: 32000
+download_rate: 130000

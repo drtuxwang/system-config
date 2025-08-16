@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Debian 12 x86 VM
+# Debian 13 x86 VM
 #
 
 qemu_settings() {
@@ -8,7 +8,7 @@ qemu_settings() {
     MACHINE_RAM=4096
     CONNECT_NETWORK=yes
     CONNECT_SOUND=yes
-    CONNECT_SSHPORT=2212
+    CONNECT_SSHPORT=2213
 }
 
 

@@ -4,8 +4,8 @@
 #
 # 1996-2025 By Dr Colin Kong
 #
-VERSION=20250324
-RELEASE="2.6.53"
+VERSION=20250814
+RELEASE="2.6.54"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -1143,7 +1143,7 @@ EOF
         write_output name="OS Patch" value="$MYOSPATCH"
         write_output name="OS Boot Time" value="$MYOSBOOT"
     fi
-    if [ ! "$SHORT" ]
+    if [ "$SHORT" = processor -o ! "$SHORT" ]
     then
         write_output name="CPU Type" value="$MYTYPE" comment="$MYTYPEX"
         write_output name="CPU Addressability" value="$MYBIT" comment="$MYBITSX"
@@ -1272,6 +1272,9 @@ case $1 in
     ;;
 -n)
     SHORT=net
+    ;;
+-p)
+    SHORT=processor
     ;;
 -s)
     SHORT=sys

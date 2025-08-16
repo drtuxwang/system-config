@@ -1,4 +1,4 @@
 clamav_directory: /mnt/data1/var/lib/clamav
 docker_daemon: true
-download_rate: 32000
+download_rate: 130000
 vm_host: true

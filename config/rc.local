@@ -10,7 +10,6 @@ sleep 300 && rm /sys/fs/pstore/* > /dev/null 2>&1 &
 
 # Configure Firewall
 /etc/iptables.conf > /dev/null 2>&1 &
-/etc/ip6tables.conf > /dev/null 2>&1 &
 
 # Fix VPN client incorrect termination
 [ -f /run/resolvconf/resolv.conf ] && ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf

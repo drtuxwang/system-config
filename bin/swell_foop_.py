@@ -56,7 +56,7 @@ class Main:
             configs = [
                 '/dev/dri',
                 f'/run/user/{os.getuid()}/dconf',
-                Path(Path.home(), '.config/dconf/user'),
+                Path(Path.home(), '.config/dconf'),
             ]
             command.sandbox(configs)
 

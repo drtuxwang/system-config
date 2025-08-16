@@ -51,15 +51,6 @@
   - local-system
   - iptables
 
-- name: Template file to "/etc/ip6tables.conf"
-  template:
-    src: ip6tables.conf
-    dest: /etc/ip6tables.conf
-    mode: '0755'
-  tags:
-  - local-system
-  - iptables
-
 - name: Ensure "/opt/software/bin" directory exists
   file:
     path: /opt/software/bin

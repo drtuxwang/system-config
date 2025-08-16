@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.17.2'
-VERSION = 20250722
+RELEASE = '6.18.0'
+VERSION = 20250814
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -92,6 +92,13 @@ class Options:
             const='net',
             dest='short',
             help="Show network summary only.",
+        )
+        parser.add_argument(
+            '-p',
+            action='store_const',
+            const='processor',
+            dest='short',
+            help="Show processor summary only.",
         )
         parser.add_argument(
             '-s',
@@ -466,7 +473,7 @@ class Detect:
         if short in (None, 'net'):
             self._network_information()
         self._operating_system(short)
-        if not short:
+        if short in (None, 'processor'):
             self._processors()
         self._system_status(short)
         if short in (None, 'dev') and self._system.has_devices():
