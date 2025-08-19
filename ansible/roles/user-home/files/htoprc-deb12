@@ -27,11 +27,7 @@ show_cpu_usage=1
 show_merged_command=0
 show_program_path=1
 show_thread_names=0
-{% if htop_ver == 2 %}
-sort_direction=1
-{% else %}
 sort_direction=-1
-{% endif %}
 sort_key=46
 strip_exe_from_cmdline=1
 tree_sort_direction=1

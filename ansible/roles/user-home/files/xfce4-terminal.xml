@@ -1,0 +1,24 @@
+<?xml version="1.1" encoding="UTF-8"?>
+
+<channel name="xfce4-terminal" version="1.0">
+  <property name="title-mode" type="string" value="TERMINAL_TITLE_REPLACE"/>
+  <property name="command-login-shell" type="bool" value="true"/>
+  <property name="scrolling-lines" type="uint" value="9999"/>
+  <property name="misc-show-unsafe-paste-dialog" type="bool" value="false"/>
+  <property name="font-name" type="string" value="Monospace 12"/>
+  <property name="misc-default-geometry" type="string" value="100x40"/>
+  <property name="misc-slim-tabs" type="bool" value="true"/>
+  <property name="color-foreground" type="string" value="#000000000000"/>
+  <property name="color-background" type="string" value="#f5f5f5f5dcdc"/>
+  <property name="color-cursor-use-default" type="bool" value="false"/>
+  <property name="color-cursor-foreground" type="string" value="#000000000000"/>
+  <property name="color-cursor" type="string" value="#ffffaaaaffff"/>
+  <property name="color-selection-use-default" type="bool" value="false"/>
+  <property name="color-selection" type="string" value="#000000000000"/>
+  <property name="color-selection-background" type="string" value="#ffffffff0000"/>
+  <property name="color-palette" type="string" value="rgb(221,221,221);rgb(170,0,0);rgb(0,170,0);rgb(170,136,0);rgb(0,0,170);rgb(136,0,170);rgb(0,136,170);rgb(170,170,170);rgb(221,221,221);rgb(170,0,0);rgb(0,170,0);rgb(170,136,0);rgb(0,0,170);rgb(136,0,170);rgb(0,136,170);rgb(170,170,170)"/>
+  <property name="word-chars" type="string" value="-A-Za-z0-9,./?%&amp;#:_=+@~–$"/>
+  <property name="misc-mouse-autohide" type="bool" value="true"/>
+  <property name="misc-tab-close-middle-click" type="bool" value="false"/>
+  <property name="misc-hyperlinks-enabled" type="bool" value="false"/>
+</channel>

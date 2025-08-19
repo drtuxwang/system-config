@@ -137,11 +137,11 @@ setup_machine() {
         case $(uname -a) in
         Darwin*x86_64*)
             MACHINE_TYPE="$MACHINE_TYPE -accel hvf"
-            CPU="host,-pdpe1gb"
+            CPU="host,-pdpe1gb -smp $MACHINE_VCPUS"
             ;;
         Linux*x86_64*)
             MACHINE_TYPE="$MACHINE_TYPE -accel kvm"
-            CPU="host"
+            CPU="host -smp $MACHINE_VCPUS"
             ;;
         esac
     fi
@@ -174,7 +174,8 @@ setup_connects() {
     add_args "-usb -device usb-tablet -device usb-kbd"
     [ "$CONNECT_SOUND" = yes ] && add_args "-device intel-hda -device hda-output"
     [ "$CONNECT_DISPLAY" != yes ] && add_args "-display none"
-    NETWORK="user,net=192.168.56.0/24"
+##    NETWORK="user,ipv4=on,ipv6=on,net=192.168.56.0/24,ipv6-net=::/0"
+    NETWORK="user,ipv4=on,net=192.168.56.0/24"
     [ "$CONNECT_SSHPORT" ] && NETWORK="$NETWORK,hostfwd=tcp::$CONNECT_SSHPORT-:22"
     [ "$CONNECT_NETWORK" != yes ] && NETWORK="$NETWORK,restrict=yes"
     add_args "-nic $NETWORK"

@@ -87,6 +87,11 @@ class Options:
             if 'mp4' in line and 'dash' in line:
                 code, _, size = line.split()[:3]
                 codes[int(size.split('x')[1])] = code
+        if not codes:  # No dash workaround
+            for line in task.get_output():
+                if 'mp4' in line:
+                    code, _, size = line.split()[:3]
+                    codes[int(size.split('x')[1])] = code
         for height in sorted(codes, reverse=True):
             if height <= 720:
                 return codes[height] + '+bestaudio[ext=m4a]/mp4'

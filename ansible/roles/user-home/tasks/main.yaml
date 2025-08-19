@@ -1,55 +1,15 @@
-- name: Ensure "{{ home_directory }}" directory exists
-  file:
-    path: '{{ home_directory }}/'
-    state: directory
-    owner: '{{ user }}'
-    group: '{{ group }}'
-    mode: '{{ home_mod }}'
+- name: Include "home-setup.yaml" tasks
+  include_tasks: home-setup.yaml
   tags:
   - user-home
 
-- name: Copy files to "{{ home_directory }}" directory
-  loop:
-  - profile
-  - bashrc
-  - vimrc
-  copy:
-    src: '{{ config_directory }}/{{ item }}'
-    dest: '{{ home_directory }}/.{{ item }}'
-    owner: '{{ user }}'
-    group: '{{ group }}'
-    mode: '0600'
+- name: Include "user-setup.yaml" tasks
+  when: user not in ["root", ansible_user]
+  include_tasks: user-setup.yaml
   tags:
   - user-home
-
-- name: Check "{{ home_directory }}/.profile-opt" file status
-  stat:
-    path: '{{ home_directory }}/.profile-opt'
-  register: profile_opt
-  tags:
-  - user-home
-
-- name: Copy file to "{{ home_directory }}/.profile-opt"
-  when: not profile_opt.stat.exists
-  copy:
-    src: '{{ config_directory }}/profile-opt'
-    dest: '{{ home_directory }}/.profile-opt'
-    owner: '{{ user }}'
-    group: '{{ group }}'
-    mode: '0600'
-  tags:
-  - user-home
-
-- name: Remove "{{ home_directory }}" junk files
-  loop:
-  - .bash_history
-  - .kshrc
-  - .viminfo
-  file:
-    path: '{{ home_directory }}/{{ item }}'
-    state: absent
-  tags:
-  - user-home
+  - netnice
+  - ssh
 
 - name: Include "cmdline-apps.yaml" tasks
   when: cmdline_apps
@@ -59,16 +19,25 @@
   - htop
   - tmux
 
-- name: Include "login-user.yaml" tasks
-  when: user not in ["root", ansible_user]
-  include_tasks: login-user.yaml
+- name: Include "gui-apps-deb12.yaml" tasks
+  when:
+  - user not in ["root", ansible_user] and gui_apps
+  - ansible_distribution == 'Debian' and ansible_distribution_major_version | int < 13
+  include_tasks: gui-apps-deb12.yaml
   tags:
   - user-home
-  - netnice
-  - ssh
+  - autostart
+  - bootstart
+  - mimeapps
+  - geeqie
+  - terminal
+  - thunar
+  - vlc
 
 - name: Include "gui-apps.yaml" tasks
-  when: user not in ["root", ansible_user] and gui_apps
+  when:
+  - user not in ["root", ansible_user] and gui_apps
+  - ansible_distribution != 'Debian' or ansible_distribution_major_version | int >= 13
   include_tasks: gui-apps.yaml
   tags:
   - user-home

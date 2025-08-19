@@ -15,4 +15,5 @@ ryson.local            ansible_user=admin
 [my_vm_hosts]
 debian11.vm            ansible_user=admin
 debian12.vm            ansible_user=admin
+debian13.vm            ansible_user=admin
 debianmac.vm           ansible_user=admin

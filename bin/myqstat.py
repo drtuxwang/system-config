@@ -18,7 +18,7 @@ from logging_mod import Message
 from subtask_mod import Exec, Task
 from task_mod import Tasks
 
-RELEASE = '3.2.0'
+RELEASE = '3.2.1'
 VERSION = 20241021
 
 
@@ -143,7 +143,7 @@ class Status:
         """
         print(
             "JOBID  QUEUE   JOBNAME               "
-            "( MyQS v3)               CPUS  STATE  TIME"
+            "( MyQS v3 )              CPUS  STATE  TIME"
         )
         for mode in ('DONE', 'FAIL', 'RUN', 'STOP', 'QUEUE'):
             for line in self._lines[mode]:
