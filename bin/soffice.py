@@ -112,9 +112,6 @@ class Main:
             Path(home, '.config/libreoffice'),
             work_dir,
         ]
-        if home not in work_dir:
-            configs.append(work_dir)
-
         for arg in sys.argv[1:]:
             path = Path(arg).resolve()
             if arg == '-net':

@@ -1,5 +1,5 @@
-BASE_IMAGE := almalinux:8
-IMAGE := drtuxwang/almalinux-dev:8
+BASE_IMAGE := almalinux:8-minimal
+IMAGE := drtuxwang/almalinux-dev:8-minimal
 NAME := almalinux8-dev
 HOSTNAME := almalinux8-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
@@ -51,7 +51,7 @@ save: pull            # Pull Docker base image and save to tar archive
 .PHONY: build
 build:                # Build Docker image
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../bin/create-rootfs.bash bash bin python3 vim
+	../bin/create-rootfs.bash bash bin-sysinfo vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 

@@ -6,8 +6,10 @@ umask 022
 # Compile 7zzs as well
 export COMPL_STATIC=1
 
-# Fix "Dangerous link path was ignored" bug
-sed -i "s/if (!IsSafePath(relatPath))/if (0)/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+# Fix "Dangerous link path was ignored" unpack bug
+sed -i "s/if (!IsSafePath(.*/if (0)/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+# Fix "Dangerous link via another link was ignored" unpack bug
+sed -i "s/if.*level.*Link/if (0/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
 
 if [ $(uname) = Darwin ]
 then
