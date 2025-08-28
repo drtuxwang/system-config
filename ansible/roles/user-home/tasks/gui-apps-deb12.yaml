@@ -187,8 +187,8 @@
 
 - name: Copy file to "{{ home_directory }}/.config/xfce4/terminal/terminalrc"
   copy:
-    src: '{{ config_directory }}/terminalrc'
-    dest: '{{ home_directory }}/.config/xfce4/terminal'
+    src: terminalrc-deb12
+    dest: '{{ home_directory }}/.config/xfce4/terminal/terminalrc'
     owner: '{{ user }}'
     group: '{{ group }}'
   tags:
