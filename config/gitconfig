@@ -13,7 +13,8 @@
 	find-merge = "!f() { git log --graph $1^..${2:-HEAD}; }; f"
 	find-nomerge = "!f() { git branch -r --no-merged | grep -v /HEAD | sed -e "s@.*origin/@@"; }; f"
 	grep-all = "!f() { git --no-pager grep -in \"$1\"; git submodule foreach \"git --no-pager grep -in '$1'||:\"; }; f"
-	grep-commit = "!f() { git --no-pager grep -n \"$1\" $(git rev-list --all); }; f"
+	grep-commit = "!f() { git rev-list --all | xargs -n 1000 git --no-pager grep -in \"$1\"; }; f"
+	grep-rev = "!f() { git rev-list --all | (while read rev; do git grep -e \"$1\" $rev; done); }; f"
 	merge = merge --no-ff
 	pull-all = "!f() { git pull ||:; git submodule foreach \"git pull ||:\"; }; f"
 	pull-lfs = "!f() { git lfs pull $(echo \" $*\" | sed -e \"s/ / -I /g\"); }; f"
