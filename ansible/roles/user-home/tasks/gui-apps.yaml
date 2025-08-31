@@ -77,7 +77,7 @@
   - xfce4-terminal.xml
   - thunar.xml
   copy:
-    src: '{{ item }}'
+    src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/{{ item | regex_replace("-deb.*$", "") }}'
     owner: '{{ user }}'
     group: '{{ group }}'

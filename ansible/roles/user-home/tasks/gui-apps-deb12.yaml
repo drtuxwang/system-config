@@ -76,7 +76,7 @@
   - xfce4-keyboard-shortcuts.xml-deb12
   - thunar.xml-deb12
   copy:
-    src: '{{ item }}'
+    src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/{{ item | regex_replace("-deb.*$", "") }}'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -187,7 +187,7 @@
 
 - name: Copy file to "{{ home_directory }}/.config/xfce4/terminal/terminalrc"
   copy:
-    src: terminalrc-deb12
+    src: '{{ config_directory }}/terminalrc-deb12'
     dest: '{{ home_directory }}/.config/xfce4/terminal/terminalrc'
     owner: '{{ user }}'
     group: '{{ group }}'
