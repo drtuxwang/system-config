@@ -128,7 +128,7 @@ class Main:
                         task = Task(command.get_cmdline() + [directory])
                     else:
                         task = Task(command.get_cmdline() + [
-                            f"../{'-'.join(directory.parts)}.7z",
+                            f"{'-'.join(directory.parts)}.7z",
                             directory,
                         ])
                     task.run()
