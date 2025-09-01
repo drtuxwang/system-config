@@ -58,6 +58,7 @@ class Main:
                 work_dir = desktop
 
         configs: list = [
+            Path(Path.home(), '.cache/ibus'),
             Path(Path.home(), '.config/ibus'),
             Path(Path.home(), '.config/inkscape'),
             work_dir,

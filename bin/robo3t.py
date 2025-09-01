@@ -55,6 +55,7 @@ class Main:
         configs = [
             'net',
             f'/run/user/{os.getuid()}',
+            Path(home, '.cache/ibus'),
             Path(home, '.config/ibus'),
             Path(home, '.3T/robo-3t'),
         ]

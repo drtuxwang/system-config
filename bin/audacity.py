@@ -78,6 +78,7 @@ class Main:
         configs = [
             f'/tmp/{getpass.getuser()}:/var/tmp',
             f'/run/user/{os.getuid()}/pulse',
+            Path(Path.home(), '.cache/ibus'),
             Path(Path.home(), '.config/ibus'),
             config_dir,
             work_dir,

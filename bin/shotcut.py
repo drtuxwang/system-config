@@ -55,6 +55,7 @@ class Main:
             home_videos.mkdir(parents=True)
         configs = [
             '/dev/dri',
+            Path(home, '.cache/ibus'),
             Path(home, '.config/ibus'),
             Path(home, '.config/Meltytech'),
             f"{home_videos}:{Path(home, 'Videos')}",
