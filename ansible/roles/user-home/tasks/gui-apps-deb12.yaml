@@ -131,7 +131,7 @@
   - accels-deb12
   - geeqierc.xml-deb12
   copy:
-    src: '{{ item }}'
+    src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/geeqie/{{ item | regex_replace("-deb.*$", "") }}'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -141,13 +141,13 @@
 
 - name: Copy files to "{{ home_directory }}/.config/geeqie/applications/" directory
   loop:
-  - animate.desktop
-  - gimp.desktop
-  - play.desktop
-  - rotate-90.desktop
-  - rotate-270.desktop
+  - usergq-animate.desktop
+  - usergq-edit.desktop
+  - usergq-play.desktop
+  - usergq-rotate90.desktop
+  - usergq-rotate270.desktop
   copy:
-    src: '{{ item }}'
+    src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/geeqie/applications/{{ item }}'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -167,7 +167,7 @@
 
 - name: Copy file to "{{ home_directory }}/.config/vlc/vlcrc"
   copy:
-    src: vlcrc
+    src: '{{ config_directory }}/vlcrc'
     dest: '{{ home_directory }}/.config/vlc'
     owner: '{{ user }}'
     group: '{{ group }}'

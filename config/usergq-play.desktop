@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Animate
+Name=User Play Video
 TryExec=vlc
-Exec=vlc --no-repeat --no-loop --noaudio %f
+Exec=vlc --no-repeat --no-loop %f
 Categories=X-Geeqie;
 OnlyShowIn=X-Geeqie;

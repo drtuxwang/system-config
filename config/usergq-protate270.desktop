@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Rotate-270
+Name=User Rotate Image Anti-Clockwise
 TryExec=irotate
 Exec=irotate -r 270 %f
 Categories=X-Geeqie;
