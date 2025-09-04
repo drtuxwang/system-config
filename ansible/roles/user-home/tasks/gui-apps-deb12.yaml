@@ -19,9 +19,9 @@
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autostart.bash"
+- name: Copy file to "{{ home_directory }}/.config/autorun.start"
   copy:
-    src: '{{ config_directory }}/autostart.bash'
+    src: '{{ config_directory }}/autorun.start'
     dest: '{{ home_directory }}/.config/'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -30,18 +30,18 @@
   - user-home
   - autostart
 
-- name: Check "{{ home_directory }}/.config/autostart-opt.bash" file status
+- name: Check "{{ home_directory }}/.config/autorun.start-opt" file status
   stat:
-    path: '{{ home_directory }}/.config/autostart-opt.bash'
-  register: autostart_opt_bash
+    path: '{{ home_directory }}/.config/autorun.start-opt'
+  register: autorun_start_opt
   tags:
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autostart-opt.bash"
-  when: not autostart_opt_bash.stat.exists
+- name: Copy file to "{{ home_directory }}/.config/autorun.start-opt"
+  when: not autorun_start_opt.stat.exists
   copy:
-    src: '{{ config_directory }}/autostart-opt.bash'
+    src: '{{ config_directory }}/autorun.start-opt'
     dest: '{{ home_directory }}/.config/'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -50,9 +50,9 @@
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autostart/autostart.desktop"
+- name: Copy file to "{{ home_directory }}/.config/autostart/autorun.desktop"
   copy:
-    src: '{{ config_directory }}/autostart.desktop'
+    src: '{{ config_directory }}/autorun.desktop'
     dest: '{{ home_directory }}/.config/autostart/'
     owner: '{{ user }}'
     group: '{{ group }}'
