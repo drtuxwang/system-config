@@ -27,7 +27,7 @@
   tags:
   - user-home
   - autostart
-  - bootstart
+  - bootrun
   - mimeapps
   - geeqie
   - terminal
@@ -42,7 +42,7 @@
   tags:
   - user-home
   - autostart
-  - bootstart
+  - bootrun
   - mimeapps
   - geeqie
   - terminal

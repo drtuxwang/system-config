@@ -177,25 +177,25 @@
   - user-home
   - vlc
 
-- name: Template file to "{{ home_directory }}/.config/bootstart.bash"
+- name: Template file to "{{ home_directory }}/.config/autorun.boot"
   when: user == "owner"
   template:
-    src: bootstart.bash
-    dest: '{{ home_directory }}/.config/bootstart.bash'
+    src: autorun.boot
+    dest: '{{ home_directory }}/.config/autorun.boot'
     owner: '{{ user }}'
     group: '{{ group }}'
     mode: '0700'
   tags:
   - user-home
-  - bootstart
+  - bootrun
 
-- name: Cron entry for starting "{{ home_directory }}/.config/bootstart.bash"
+- name: Cron entry for starting "{{ home_directory }}/.config/autorun.boot"
   when: user == "owner"
   cron:
-    name: Start "{{ home_directory }}/.config/bootstart.bash"
+    name: Start "{{ home_directory }}/.config/autorun.boot"
     user: '{{ user }}'
     special_time: reboot
-    job: 'sleep 20 && SHELL=/bin/bash {{ home_directory }}/.config/bootstart.bash'
+    job: 'sleep 20 && SHELL=/bin/bash {{ home_directory }}/.config/autorun.boot'
   tags:
   - user-home
-  - bootstart
+  - bootrun
