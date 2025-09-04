@@ -143,11 +143,11 @@
 
 - name: Copy files to "{{ home_directory }}/.config/geeqie/applications/" directory
   loop:
-  - usergq-animate.desktop
-  - usergq-edit.desktop
-  - usergq-play.desktop
-  - usergq-rotate90.desktop
-  - usergq-rotate270.desktop
+  - geeqie-animate.desktop
+  - geeqie-edit.desktop
+  - geeqie-play.desktop
+  - geeqie-rotate90.desktop
+  - geeqie-rotate270.desktop
   copy:
     src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/geeqie/applications/{{ item }}'
