@@ -7,6 +7,6 @@ case $1 in
 pre)
     ;;
 post)
-    killall pulseaudio >> /tmnp/DEBUG 2>&1
+    killall pulseaudio
     ;;
 esac
