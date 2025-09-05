@@ -66,8 +66,8 @@ do
         mkdir -p rootfs/home/owner/.config/autostart rootfs/home/owner/.config/xfce4/terminal rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml rootfs/home/owner/.vnc
         echo "Creating \"rootfs/home/owner/.config\" XFCE setup..."
         cp -p -v files/xstartup rootfs/home/owner/.vnc
-        cp -p -v "$TOPDIR"/config/autorun.start rootfs/home/owner/.config
         cp -p -v "$TOPDIR"/config/autorun.desktop rootfs/home/owner/.config/autostart
+        cp -p -v "$TOPDIR"/config/autorun-start.bash rootfs/home/owner/.config
         cp -p -v "$TOPDIR"/config/terminalrc-deb12 rootfs/home/owner/.config/xfce4/terminal/terminalrc
         cp -p -v "$TOPDIR"/config/thunar.xml-deb12 rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
         cp -p -v "$TOPDIR"/config/xfce4-keyboard-shortcuts.xml-deb12 rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
@@ -77,8 +77,8 @@ do
         mkdir -p rootfs/home/owner/.config/autostart rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml rootfs/home/owner/.vnc
         echo "Creating \"rootfs/home/owner/.config/xfce4/terminal/terminalrc\"..."
         cp -p -v files/xstartup rootfs/home/owner/.vnc
-        cp -p -v "$TOPDIR"/config/autorun.start rootfs/home/owner/.config
         cp -p -v "$TOPDIR"/config/autorun.desktop rootfs/home/owner/.config/autostart
+        cp -p -v "$TOPDIR"/config/autorun-start.bash rootfs/home/owner/.config
         cp -p -v "$TOPDIR"/config/thunar.xml rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/
 		cp -p -v "$TOPDIR"/config/xfce4-keyboard-shortcuts.xml rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/
         cp -p -v "$TOPDIR"/config/xfce4-terminal.xml rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/
