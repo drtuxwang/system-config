@@ -19,9 +19,9 @@
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autorun.start"
+- name: Copy file to "{{ home_directory }}/.config/autorun-start.bash"
   copy:
-    src: '{{ config_directory }}/autorun.start'
+    src: '{{ config_directory }}/autorun-start.bash'
     dest: '{{ home_directory }}/.config/'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -30,18 +30,18 @@
   - user-home
   - autostart
 
-- name: Check "{{ home_directory }}/.config/autorun.start-opt" file status
+- name: Check "{{ home_directory }}/.config/autorun-start-opt.bash" file status
   stat:
-    path: '{{ home_directory }}/.config/autorun.start-opt'
+    path: '{{ home_directory }}/.config/autorun-start-opt.bash'
   register: autorun_start_opt
   tags:
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autorun.start-opt"
+- name: Copy file to "{{ home_directory }}/.config/autorun-start-opt.bash"
   when: not autorun_start_opt.stat.exists
   copy:
-    src: '{{ config_directory }}/autorun.start-opt'
+    src: '{{ config_directory }}/autorun-start-opt.bash'
     dest: '{{ home_directory }}/.config/'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -177,11 +177,11 @@
   - user-home
   - vlc
 
-- name: Template file to "{{ home_directory }}/.config/autorun.boot"
+- name: Template file to "{{ home_directory }}/.config/autorun-boot.bash"
   when: user == "owner"
   template:
-    src: autorun.boot
-    dest: '{{ home_directory }}/.config/autorun.boot'
+    src: autorun-boot.bash
+    dest: '{{ home_directory }}/.config/autorun-boot.bash'
     owner: '{{ user }}'
     group: '{{ group }}'
     mode: '0700'
@@ -189,13 +189,13 @@
   - user-home
   - bootrun
 
-- name: Cron entry for starting "{{ home_directory }}/.config/autorun.boot"
+- name: Cron entry for starting "{{ home_directory }}/.config/autorun-boot.bash"
   when: user == "owner"
   cron:
-    name: Start "{{ home_directory }}/.config/autorun.boot"
+    name: Start "{{ home_directory }}/.config/autorun-boot.bash"
     user: '{{ user }}'
     special_time: reboot
-    job: 'sleep 20 && SHELL=/bin/bash {{ home_directory }}/.config/autorun.boot'
+    job: 'sleep 20 && SHELL=/bin/bash {{ home_directory }}/.config/autorun-boot.bash'
   tags:
   - user-home
   - bootrun

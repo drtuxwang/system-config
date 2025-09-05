@@ -68,4 +68,4 @@ numlockx off
 [ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
 
 # Optional setup
-[ -f $HOME/.config/autorun.start-opt ] && . $HOME/.config/autorun.start-opt
+[ -f $HOME/.config/autorun-start-opt.bash ] && . $HOME/.config/autorun-start-opt.bash
