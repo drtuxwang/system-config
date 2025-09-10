@@ -1,6 +1,6 @@
-BASE_IMAGE := i386/debian:12-slim
-IMAGE := drtuxwang/i386-debian-dev:12-slim
-NAME := debian12-dev32
+BASE_IMAGE := i386/debian:13-slim
+IMAGE := drtuxwang/i386-debian-dev:13-slim
+NAME := debian13-dev32
 HOSTNAME := debian12-dev32
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)

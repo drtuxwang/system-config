@@ -6,10 +6,13 @@ umask 022
 # Compile 7zzs as well
 export COMPL_STATIC=1
 
-# Fix "Dangerous link path was ignored" unpack bug
+# Fix "Dangerous link path was ignored" (older versions)
 sed -i "s/if (!IsSafePath(.*/if (0)/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
-# Fix "Dangerous link via another link was ignored" unpack bug
-sed -i "s/if.*level.*Link/if (0/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+# Fix "Dangerous link path was ignored"
+# Fix "Dangerous link via another link was ignored"
+sed -i "s/isDang = true/isDang = false/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+# Stop removing "/" from absolute symlink
+sed -i "s@^ *Remove_AbsPathPrefixes()@  // Remove_AbsPathPrefixes()@" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
 
 if [ $(uname) = Darwin ]
 then
@@ -33,3 +36,17 @@ FILES=$(find $PWD -name 7zz*)
 ls -l $FILES
 strip $FILES
 ls -l $FILES
+
+# Test for absolute path symlink archiving bug
+FILE=$(find $PWD -name 7zzs)
+[ ! "$FILE" ] && exit 1
+ln -snf /absolute/path testlink
+"$FILE" a -snl test.7z testlink > /dev/null || exit 1
+rm -f testlink
+"$FILE" x test.7z > /dev/null || exit 1
+LINK=$(readlink testlink)
+if [ "$LINK" != /absolute/path ]
+then
+    echo "CRITICAL: Unpatched symlink archiving design flaw: $LINK != /absolute/path"
+    exit 1
+fi

@@ -62,13 +62,26 @@ do
         echo "Creating \"rootfs/root/.vimrc\"..."
         cp -p -v "$TOPDIR"/config/vimrc rootfs/root/.vimrc
         ;;
+    xfce418)
+        mkdir -p rootfs/home/owner/.config/autostart rootfs/home/owner/.config/xfce4/terminal rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml rootfs/home/owner/.config/tigervnc
+        echo "Creating \"rootfs/home/owner/.config\" XFCE setup..."
+        cp -p -v files/xstartup rootfs/home/owner/.config/tigervnc
+        cp -p -v "$TOPDIR"/config/autorun.desktop rootfs/home/owner/.config/autostart
+        cp -p -v "$TOPDIR"/config/autorun-start.bash rootfs/home/owner/.config
+        cp -p -v "$TOPDIR"/config/terminalrc-deb12 rootfs/home/owner/.config/xfce4/terminal/terminalrc
+        cp -p -v "$TOPDIR"/config/thunar.xml-deb12 rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
+        cp -p -v "$TOPDIR"/config/xfce4-keyboard-shortcuts.xml-deb12 rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+        cp -p -v "$TOPDIR"/config/tmux.conf rootfs/home/owner/.config
+        ;;
     xfce)
-        mkdir -p rootfs/home/owner/.config/autostart rootfs/home/owner/.config/xfce4/terminal rootfs/home/owner/.vnc
+        mkdir -p rootfs/home/owner/.config/autostart rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml rootfs/home/owner/.config/tigervnc
         echo "Creating \"rootfs/home/owner/.config/xfce4/terminal/terminalrc\"..."
-        cp -p -v files/xstartup rootfs/home/owner/.vnc
-        cp -p -v "$TOPDIR"/config/autostart.bash rootfs/home/owner/.config
-        cp -p -v "$TOPDIR"/config/autostart.desktop rootfs/home/owner/.config/autostart
-        cp -p -v "$TOPDIR"/config/terminalrc rootfs/home/owner/.config/xfce4/terminal
+        cp -p -v files/xstartup rootfs/home/owner/.config/tigervnc
+        cp -p -v "$TOPDIR"/config/autorun.desktop rootfs/home/owner/.config/autostart
+        cp -p -v "$TOPDIR"/config/autorun-start.bash rootfs/home/owner/.config
+        cp -p -v "$TOPDIR"/config/thunar.xml rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/
+		cp -p -v "$TOPDIR"/config/xfce4-keyboard-shortcuts.xml rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/
+        cp -p -v "$TOPDIR"/config/xfce4-terminal.xml rootfs/home/owner/.config/xfce4/xfconf/xfce-perchannel-xml/
         cp -p -v "$TOPDIR"/config/tmux.conf rootfs/home/owner/.config
         ;;
     *)

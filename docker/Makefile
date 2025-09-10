@@ -5,24 +5,24 @@ BUILD_DIRS := \
 	i386-alpine-3.20 \
 	alpine-3.19 \
 	\
+	debian-13 \
+	i386-debian-13 \
 	debian-12 \
-	i386-debian-12 \
 	debian-11 \
-	i386-debian-11 \
 	debian-10 \
-	ubuntu-24.04 \
-	ubuntu-22.04 \
-	ubuntu-20.04 \
 	\
 	almalinux-10 \
 	almalinux-9 \
 	almalinux-8 \
+	centos-7 \
 	oraclelinux-9 \
 	oraclelinux-8 \
 	rockylinux-10 \
 	rockylinux-9 \
 	rockylinux-8 \
-	centos-7 \
+	ubuntu-24.04 \
+	ubuntu-22.04 \
+	ubuntu-20.04 \
 	\
 	busybox-1.36 \
 	golang-1.23 \
@@ -32,8 +32,8 @@ BUILD_DIRS := \
 	registry-2.6 \
 	scratch
 STABLE_DIRS := \
-	debian-12/ops \
-	debian-12/xfce \
+	debian-13/ops \
+	debian-13/xfce \
 	nginx-1.26 \
 	python-3.12/pip \
 	scratch

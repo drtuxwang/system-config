@@ -46,61 +46,83 @@ the years.
  * appimage/wesnoth-1.16.8-deb11/  Wesnoth 1.16.8 (Debian 11 backports) appimage
  * appimage/wesnoth-1.16.9-deb12/  Wesnoth 1.16.9 (Debian 12) appimage
  * compile/                        Build scripts of open source software
- * config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
- * config/accels                   Copy to "$HOME/.config/geeqie" for keyboard shortcuts
- * config/adblock.txt              Adblock filter list
- * config/autostart.bash           Copy to "$HOME/.config/autostart.bash" & add to desktop auto startup
- * config/autostart-opt.bash       Copy to "$HOME/.config/autostart-opt.bash" for optional settings
- * config/autostart.desktop        Copy to "$HOME/.config/autostart/autostart.desktop" for XFCE autostart
- * config/config                   Copy to "$HOME/.ssh/config"
- * config/config-opt               Copy to "$HOME/.ssh/config-opt"
- * config/gitconfig                Copy to "$HOME/.gitconfig" and edit
+ * config/Xresources               Copy to "~/.Xresources" to set xterm resources
+ * config/accels                   Copy to "~/.config/geeqie/" for keyboard shortcuts
+ * config/accels-deb12
+ * config/autorun-boot.bash        Copy to "~/.config/" for system start autorun
+ * config/autorun-sleep.bash       Copy to "/lib/systemd/system-sleep/" for pre/post sleep autorun
+ * config/autorun-start.bash       Copy to "~/.config/" for desktop login autorun
+ * config/autorun-start-opt.bash   Copy to "~/.config/" for desktop login optional autorun
+ * config/autorun.desktop          Copy to "~/.config/autostart/" for desktop login autorun
+ * config/bashrc                   Copy to "~/.bashrc"
+ * config/config                   Copy to "~/.ssh/config" for ssh client setup
+ * config/config-opt               Copy to "~/.ssh/config-opt" for ssh client optional setup
+ * config/daemon.json              Copy to "/etc/docker/" for Docker daemon setup
+ * config/geeqie-animate.desktop   Copy to "~/.config/geeqie/applications" for Geeqie plugin
+ * config/geeqie-edit.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
+ * config/geeqie-play.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
+ * config/geeqie-rotate270.desktop Copy to "~/.config/geeqie/applications" for Geeqie plugin
+ * config/geeqie-rotate90.desktop  Copy to "~/.config/geeqie/applications" for Geeqie plugin
+ * config/geeqierc.xml             Copy to "~/.config/geeqie/" for Geeqie setup
+ * config/geeqierc.xml-deb12       Copy to "~/.config/geeqie/" for Geeqie setup
+ * config/gitconfig                Copy to "~/.gitconfig" and edit
+ * config/htoprc                   Copy to "~/.config/htop" for htop setup
+ * config/htoprc-deb12
  * config/iptables.conf            IPTABLES setup script
- * config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
- * config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
- * config/minttyrc                 Copy to "$HOME/.minttyrc" for MSYS2 terminal
- * config/tmux.conf                Copy to "$HOME/.tmux.conf" fro TMUX terminal
- * config/profile                  Copy to "$HOME/.profile" for ksh/ash/bash shells settings
- * config/profile-opt              Copy to "$HOME/.profile-opt" for optional ksh/bash shells settings
+ * config/login                    Copy to "~.login" for csh/tcsh shells
+ * config/mimeapps.list            Copy to "~/.local/share/applications" for MIME definitions
+ * config/minttyrc                 Copy to "~/.minttyrc" for MSYS2 terminal
+ * config/profile                  Copy to "~/.profile" for ksh/ash/bash setup
+ * config/profile-opt              Copy to "~/.profile-opt" for optional ksh/ash/bash setup
  * config/rc.local                 Copy to "/etc/rc.local" for system startup commands
  * config/rc.local-opt             Copy to "/etc/rc.local-opt" for optional system startup commands
- * config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
- * config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
- * config/userapp-evince.desktop   Copy to "$HOME/.local/share/applications" for Evince/Atril
- * config/userapp-gqview.desktop   Copy to "$HOME/.local/share/applications" for GQview/Geeqie
- * config/userapp-soffice.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
- * config/userapp-vlc.desktop      Copy to "$HOME/.local/share/applications" for VLC
+ * config/setup.bat                Windows busybox setup
+ * config/setupwin.ash             Windows busybox setup
+ * config/terminalrc-deb32         Copy to "~/.config/xfce4/terminal/terminalrc" for XFCE term
+ * config/thunar.xml               Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
+ * config/thunar.xml-deb12
+ * config/tmux.conf                Copy to "~/.tmux.conf" fro TMUX terminal
+ * config/userapp-evince.desktop   Copy to "~/.local/share/applications" for Evince/Atril
+ * config/userapp-gqview.desktop   Copy to "~/.local/share/applications" for GQview/Geeqie
+ * config/userapp-soffice.desktop  Copy to "~/.local/share/applications" for LibreOffice
+ * config/userapp-vlc.desktop      Copy to "~/.local/share/applications" for VLC
+ * config/vimrc                    Copy to "~/.vimrc" for VIM defaults
+ * config/vlcrc                    Copy to "~/.config/vlc" for VLC setup
  * config/vm-linux0.vbox           VirtualBox Linux example
  * config/vm-win10.vbox            VirtualBox Windows example
- * config/setup.bat                Configure Windows QEMU/VirtualBox VMs
- * config/setupwin.ash
- * config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
+ * config/xfce4-keyboard-shortcuts.xml  Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
+ * config/xfce4-keyboard-shortcuts.xml-deb12  Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
+ * config/xfce4-terminal.xml       Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
  * cloudformation/1pxy/            pxy CloudFormation example
  * cloudformation/multi-stacks/    multi-stacks CloudFormation example
  * cookiecutter/                   Cookie cutter example for Docker projects
  * dist/*.dist                     Debian repository dist files
  * docker/Makefile
  * docker/bin/
- * docker/almalinux-8/             almalinux:8 based Docker images
+ * docker/almalinux-10/            almalinux:10 based Docker images
  * docker/almalinux-9/             almalinux:9 based Docker images
- * docker/alpine-3.17/             alpine:3.17 based Docker images
- * docker/alpine-3.18/             alpine:3.18 based Docker images
+ * docker/almalinux-8/             almalinux:8 based Docker images
+ * docker/alpine-3.20/             alpine:3.20 based Docker images
+ * docker/alpine-3.19/             alpine:3.19 based Docker images
  * docker/busybox-1.36/            busybox:1.36 based Docker images
  * docker/centos-7/                centos:7 based Docker images
  * docker/debian-10/               debian:10-slim based Docker images
  * docker/debian-11/               debian:11-slim based Docker images
  * docker/debian-12/               debian:12-slim based Docker images
+ * docker/debian-13/               debian:13-slim based Docker images
  * docker/golang-1.22/             golang:1.22-alpine based GO compiler app
  * docker/httpd-2.4/               httpd:2.4-alpine (Apache) based web server
- * docker/i386-alpine-3.18/        i386/alpine:3.18 based based Docker images
- * docker/i386-debian-11/          i386/debian:11-slim based Docker images
- * docker/i386-debian-12/          i386/debian:12-slim based Docker images
+ * docker/i386-alpine-3.20/        i386/alpine:3.20 based based Docker images
+ * docker/i386-debian-13/          i386/debian:13-slim based Docker images
  * docker/nginx-1.26/              nginx:1.26-bookworm based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
  * docker/oraclelinux-9/           oralcelinux:9 based Docker images
- * docker/python-3.12/             python:3.12-slim-bookworm based Docker images
+ * docker/python-3.12/             python:3.12-slim-trixie based Docker images
  * docker/registry-2.6/            registry:2.6 based Docker Registry server app
  * docker/scratch/                 scratch Docker image
+ * docker/rockylinux-10/           rockylinux:10 based Docker images
+ * docker/rockylinux-9/            rockylinux:9 based Docker images
+ * docker/rockylinux-8/            rockylinux:8 based Docker images
  * docker/ubuntu-20.04/            ubuntu:20.04 based Docker images
  * docker/ubuntu-22.04/            ubuntu:22.04 based Docker images
  * docker/ubuntu-24.04/            ubuntu:24.04 based Docker images
@@ -138,9 +160,9 @@ the years.
  * python/simple-flask/            Simple Flask demo
  * python/simple-package/          Simple Egg & WHL package
  * python/simple-tornado/          Tornado examples
- * qemu/*.vm.bash                  QEMU VM examples
- * qemu-system-aarch64.bash        QEMU System aarch64 (arm64) wrapper
- * qemu-system-x86_64.bash         QEMU System x86_64 (amd64) wrapper
+ * qemu/*.bash                     QEMU VM examples
+ * qmeu/qemu-system-aarch64.bash   QEMU System aarch64 (arm64) wrapper
+ * qmeu/qemu-system-x86_64.bash    QEMU System x86_64 (amd64) wrapper
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example
  * wipe/                           Disk wipe utility

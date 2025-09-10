@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=autoexec
-Exec=.config/autostart.bash
+Exec=.config/autorun-start.bash
 StartupNotify=false
 Terminal=false
 Hidden=false

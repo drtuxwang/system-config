@@ -1,7 +1,7 @@
-BASE_IMAGE := i386/debian:11-slim
-IMAGE := drtuxwang/i386-debian-dev:11-slim
-NAME := debian11-dev32
-HOSTNAME := debiani11-dev32
+BASE_IMAGE := debian:13-slim
+IMAGE := drtuxwang/debian-wine:13-slim
+NAME := debian13-wine
+HOSTNAME := debian13-wine
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
@@ -14,8 +14,12 @@ DOCKER_RUN := docker run \
 	--cpu-shares=50000 \
 	--memory=2000m \
 	--memory-reservation=50m \
+	--publish $(LOCALPORT):22 \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
+	--env="DISPLAY" \
+	--volume="/tmp/.X11-unix:/tmp/.X11-unix" \
+	--volume="$(HOME)/.Xauthority:/root/.Xauthority:rw" \
 	$(DOCKER_RUN_FLAGS)
 ifdef http_proxy
 	DOCKER_BUILD := $(DOCKER_BUILD) \
@@ -34,27 +38,12 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@../../bin/docker-images "^$(BASE_IMAGE) " "`echo $(IMAGE) | sed -e 's/-[^-:]*:/.*:/'` " ||:
-
-.PHONY: pull
-pull:                 # Pull Docker base image
-	docker pull $(BASE_IMAGE)
-	@make --no-print-directory status
-
-.PHONY: pull-save
-pull-save:            # Pull updated Docker base image and save to tar archive
-	../bin/pull-save.bash $(BASE_IMAGE)
-
-.PHONY: save
-save: pull            # Pull Docker base image and save to tar archive
-	../../bin/docker-save $(BASE_IMAGE)
+	@make --no-print-directory --directory .. status
 
 .PHONY: build
-build:                # Build Docker image
+build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../bin/create-rootfs.bash bash bin-sysinfo vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf rootfs
 
 .PHONY: build-no-cache
 build-no-cache:       # Build Docker image with no cache
@@ -63,19 +52,17 @@ build-no-cache:       # Build Docker image with no cache
 .PHONY: run
 run:                  # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	xhost +SI:localuser:root
 	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:              # Check version
-	@docker run --rm $(IMAGE) /opt/software/bin/sysinfo -s | grep "OS Name:" | sed -e "s@.*: *@$(shell pwd): @"
+version:              # Check versions
+	@docker run --rm --entrypoint dpkg $(IMAGE) -s xfce4 | \
+		awk '/^Version: / {printf("'$(shell pwd)': Xfce %s\n", $$2)}'
 
 .PHONY: rmi
-rmi:                  # Remove Docker image
+rmi:                  # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
-
-.PHONY: rmi-base
-rmi-base: rmi         # Remove Docker image including base image
-	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
 help:                 # Show Makefile options

@@ -109,6 +109,8 @@ class Options:
 
         self._vncviewer = Sandbox('vncviewer', errors='stop')
         configs = [
+            'net',
+            Path(Path.home(), '.cache/ibus'),
             Path(Path.home(), '.config/ibus'),
             Path(Path.home(), '.vnc'),
         ]

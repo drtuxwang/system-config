@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=i386/debian:latest
+ARG BASE_IMAGE=debian:latest
 
 FROM ${BASE_IMAGE}
 
@@ -34,15 +34,15 @@ RUN apt-get install --no-install-recommends --fix-missing -y \
         libffi-dev \
         libgdbm-dev \
         liblzma-dev \
-        libncurses5-dev \
-        libreadline6-dev \
+        libncurses-dev \
+        libreadline-dev \
         libsqlite3-dev \
         libssl-dev \
         make \
         pkg-config \
         uuid-dev && \
     apt-get install --no-install-recommends --fix-missing -y \
-        libcurl4-openssl-dev make && \
+        libcurl4-openssl-dev && \
     apt-get clean
 
 COPY rootfs/ /

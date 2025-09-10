@@ -108,6 +108,7 @@ class Main:
         configs = [
             '/tmp',
             f'/run/user/{os.getuid()}',
+            Path(home, '.cache/ibus'),
             Path(home, '.config/ibus'),
             Path(home, '.config/libreoffice'),
             work_dir,

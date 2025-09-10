@@ -85,6 +85,7 @@ class Main:
 
         configs = [
             f'/run/user/{os.getuid()}/dconf',
+            Path(Path.home(), '.cache/ibus'),
             Path(Path.home(), '.config/ibus'),
             work_path,
         ] + glob.glob('/tmp/dbus*')

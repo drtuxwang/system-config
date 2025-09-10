@@ -1,5 +1,5 @@
-BASE_IMAGE := drtuxwang/python:3.12-slim-bookworm
-IMAGE := drtuxwang/python-devpi:3.12-slim-bookworm
+BASE_IMAGE := drtuxwang/python:3.12-slim-trixie
+IMAGE := drtuxwang/python-devpi:3.12-slim-trixie
 NAME := python312-devpi
 HOSTNAME := python312-devpi
 LOCALPORT ?= 8080

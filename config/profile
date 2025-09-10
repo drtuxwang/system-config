@@ -83,6 +83,8 @@ then
                 echo "KUBECONFIG=$KUBECONFIG"
             fi
         }
+        alias o=open
+        alias v=view
         alias fcd=__fcd
         if [ ! "$KUBECONFIG" ]
         then
@@ -353,7 +355,7 @@ then
         alias cd$_dir='echo "cd \"$cd'$_dir'\"" && cd "$cd'$_dir'"'
     done
     unset _dir
-    alias scd='env | grep "^cd[0-9a-z]=." | sort'
+    alias scd='env | grep "^cd[0-9a-z]=" | sort'
     alias cd-='cd $OLDPWD'
 
     # Platform specific

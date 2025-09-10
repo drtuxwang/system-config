@@ -19,9 +19,9 @@
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autostart.bash"
+- name: Copy file to "{{ home_directory }}/.config/autorun-start.bash"
   copy:
-    src: '{{ config_directory }}/autostart.bash'
+    src: '{{ config_directory }}/autorun-start.bash'
     dest: '{{ home_directory }}/.config/'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -30,18 +30,18 @@
   - user-home
   - autostart
 
-- name: Check "{{ home_directory }}/.config/autostart-opt.bash" file status
+- name: Check "{{ home_directory }}/.config/autorun-start-opt.bash" file status
   stat:
-    path: '{{ home_directory }}/.config/autostart-opt.bash'
-  register: autostart_opt_bash
+    path: '{{ home_directory }}/.config/autorun-start-opt.bash'
+  register: autorun_start_opt
   tags:
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autostart-opt.bash"
-  when: not autostart_opt_bash.stat.exists
+- name: Copy file to "{{ home_directory }}/.config/autorun-start-opt.bash"
+  when: not autorun_start_opt.stat.exists
   copy:
-    src: '{{ config_directory }}/autostart-opt.bash'
+    src: '{{ config_directory }}/autorun-start-opt.bash'
     dest: '{{ home_directory }}/.config/'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -50,9 +50,9 @@
   - user-home
   - autostart
 
-- name: Copy file to "{{ home_directory }}/.config/autostart/autostart.desktop"
+- name: Copy file to "{{ home_directory }}/.config/autostart/autorun.desktop"
   copy:
-    src: '{{ config_directory }}/autostart.desktop'
+    src: '{{ config_directory }}/autorun.desktop'
     dest: '{{ home_directory }}/.config/autostart/'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -76,7 +76,7 @@
   - xfce4-keyboard-shortcuts.xml-deb12
   - thunar.xml-deb12
   copy:
-    src: '{{ item }}'
+    src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/{{ item | regex_replace("-deb.*$", "") }}'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -106,7 +106,7 @@
 
 - name: Copy files to "{{ home_directory }}/.local/share/applications" directory
   with_fileglob:
-  - "{{ config_directory }}/userapp-*.desktop"
+  - '{{ config_directory }}/userapp-*.desktop'
   copy:
     src: '{{ item }}'
     dest: '{{ home_directory }}/.local/share/applications/'
@@ -131,7 +131,7 @@
   - accels-deb12
   - geeqierc.xml-deb12
   copy:
-    src: '{{ item }}'
+    src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/geeqie/{{ item | regex_replace("-deb.*$", "") }}'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -141,13 +141,13 @@
 
 - name: Copy files to "{{ home_directory }}/.config/geeqie/applications/" directory
   loop:
-  - animate.desktop
-  - gimp.desktop
-  - play.desktop
-  - rotate-90.desktop
-  - rotate-270.desktop
+  - geeqie-animate.desktop
+  - geeqie-edit.desktop
+  - geeqie-play.desktop
+  - geeqie-rotate90.desktop
+  - geeqie-rotate270.desktop
   copy:
-    src: '{{ item }}'
+    src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.config/geeqie/applications/{{ item }}'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -167,7 +167,7 @@
 
 - name: Copy file to "{{ home_directory }}/.config/vlc/vlcrc"
   copy:
-    src: vlcrc
+    src: '{{ config_directory }}/vlcrc'
     dest: '{{ home_directory }}/.config/vlc'
     owner: '{{ user }}'
     group: '{{ group }}'
@@ -187,33 +187,33 @@
 
 - name: Copy file to "{{ home_directory }}/.config/xfce4/terminal/terminalrc"
   copy:
-    src: '{{ config_directory }}/terminalrc'
-    dest: '{{ home_directory }}/.config/xfce4/terminal'
+    src: '{{ config_directory }}/terminalrc-deb12'
+    dest: '{{ home_directory }}/.config/xfce4/terminal/terminalrc'
     owner: '{{ user }}'
     group: '{{ group }}'
   tags:
   - user-home
   - terminal
 
-- name: Template file to "{{ home_directory }}/.config/bootstart.bash"
+- name: Template file to "{{ home_directory }}/.config/autorun-boot.bash"
   when: user == "owner"
   template:
-    src: bootstart.bash
-    dest: '{{ home_directory }}/.config/bootstart.bash'
+    src: autorun-boot.bash
+    dest: '{{ home_directory }}/.config/autorun-boot.bash'
     owner: '{{ user }}'
     group: '{{ group }}'
     mode: '0700'
   tags:
   - user-home
-  - bootstart
+  - bootrun
 
-- name: Cron entry for starting "{{ home_directory }}/.config/bootstart.bash"
+- name: Cron entry for starting "{{ home_directory }}/.config/autorun-boot.bash"
   when: user == "owner"
   cron:
-    name: Start "{{ home_directory }}/.config/bootstart.bash"
+    name: Start "{{ home_directory }}/.config/autorun-boot.bash"
     user: '{{ user }}'
     special_time: reboot
-    job: 'sleep 20 && SHELL=/bin/bash {{ home_directory }}/.config/bootstart.bash'
+    job: 'sleep 20 && SHELL=/bin/bash {{ home_directory }}/.config/autorun-boot.bash'
   tags:
   - user-home
-  - bootstart
+  - bootrun

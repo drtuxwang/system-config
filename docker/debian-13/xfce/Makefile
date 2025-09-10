@@ -1,12 +1,12 @@
-BASE_IMAGE := python:3.12-slim-trixie
-IMAGE := drtuxwang/python:3.12-slim-trixie
-NAME := python312
-HOSTNAME := python312
+BASE_IMAGE := drtuxwang/debian-dev:13-slim
+IMAGE := drtuxwang/debian-xfce:13-slim
+NAME := debian13-xfce
+HOSTNAME := debian13-xfce
+LOCALPORT ?= 2222
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
-BUILD_DIRS := devpi pip
 DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
@@ -15,8 +15,13 @@ DOCKER_RUN := docker run \
 	--cpu-shares=50000 \
 	--memory=2000m \
 	--memory-reservation=50m \
+	--publish $(LOCALPORT):22 \
 	--name $(NAME) \
-	--hostname $(NAME)
+	--hostname $(HOSTNAME) \
+	--env="DISPLAY" \
+	--volume="/tmp/.X11-unix:/tmp/.X11-unix" \
+	--volume="$(HOME)/.Xauthority:/root/.Xauthority:rw" \
+	$(DOCKER_RUN_FLAGS)
 ifdef http_proxy
 	DOCKER_BUILD := $(DOCKER_BUILD) \
 		--build-arg http_proxy=$(http_proxy) \
@@ -34,58 +39,44 @@ default: build status # Default
 
 .PHONY: status
 status:               # Status of Docker images
-	@../../bin/docker-images "^$(BASE_IMAGE) " "`echo $(IMAGE) | sed -e 's/-[^-:]*:/.*:/'` " ||:
-
-.PHONY: pull
-pull:                 # Pull Docker base image
-	docker pull $(BASE_IMAGE)
-	@make --no-print-directory status
-
-.PHONY: pull-save
-pull-save:            # Pull updated Docker base image and save to tar archive
-	../bin/pull-save.bash $(BASE_IMAGE)
-
-.PHONY: save
-save: pull            # Pull Docker base image and save to tar archive
-	../../bin/docker-save $(BASE_IMAGE)
+	@make --no-print-directory --directory .. status
 
 .PHONY: build
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../bin/create-rootfs.bash bash bin python3 vim
+	../../bin/create-rootfs.bash bin init python3 sudo tmux xfce
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR build || exit 1; \
-	done
 
 .PHONY: build-no-cache
 build-no-cache:       # Build Docker image with no cache
 	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
-.PHONY: test
-test:                 # Run tests
-	make --no-print-directory --directory pip test
+.PHONY: push-stable
+push-stable:          # Tag and push stable Docker images
+	../../../bin/docker-tag ${IMAGE} `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+	docker push ${IMAGE}
+	docker push `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
+
+.PHONY: pull-stable
+pull-stable:          # Pull stable Docker image
+	docker pull ${IMAGE}
+	docker pull `echo ${IMAGE} | sed -e "s/:.*/:stable/"`
 
 .PHONY: run
 run:                  # Run Docker container
-	make --no-print-directory --directory pip run
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	xhost +SI:localuser:root
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:              # Check version
-	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+version:              # Check versions
+	@docker run --rm --entrypoint dpkg $(IMAGE) -s xfce4 | \
+		awk '/^Version: / {printf("'$(shell pwd)': Xfce %s\n", $$2)}'
 
 .PHONY: rmi
 rmi:                  # Remove Docker images
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR rmi; \
-	done
 	docker rmi -f $(IMAGE) ||:
-
-.PHONY: rmi-base
-rmi-base: rmi         # Remove Docker images including base image
-	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
 help:                 # Show Makefile options

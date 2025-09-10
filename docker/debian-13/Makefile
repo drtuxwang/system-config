@@ -1,12 +1,12 @@
-BASE_IMAGE := python:3.12-slim-trixie
-IMAGE := drtuxwang/python:3.12-slim-trixie
-NAME := python312
-HOSTNAME := python312
+BASE_IMAGE := debian:13-slim
+IMAGE := drtuxwang/debian-dev:13-slim
+NAME := debian13-dev
+HOSTNAME := debian13-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
-BUILD_DIRS := devpi pip
+BUILD_DIRS := ops wine xfce
 DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
@@ -16,7 +16,8 @@ DOCKER_RUN := docker run \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(NAME)
+	--hostname $(NAME) \
+	$(DOCKER_RUN_FLAGS)
 ifdef http_proxy
 	DOCKER_BUILD := $(DOCKER_BUILD) \
 		--build-arg http_proxy=$(http_proxy) \
@@ -52,7 +53,7 @@ save: pull            # Pull Docker base image and save to tar archive
 .PHONY: build
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../bin/create-rootfs.bash bash bin python3 vim
+	../bin/create-rootfs.bash bash bin-sysinfo vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 	for DIR in $(BUILD_DIRS); do \
@@ -63,18 +64,14 @@ build:                # Build Docker images
 build-no-cache:       # Build Docker image with no cache
 	@DOCKER_BUILD_FLAGS="--no-cache" make --no-print-directory build
 
-.PHONY: test
-test:                 # Run tests
-	make --no-print-directory --directory pip test
-
 .PHONY: run
 run:                  # Run Docker container
-	make --no-print-directory --directory pip run
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:              # Check version
-	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run --rm $(IMAGE) /opt/software/bin/sysinfo -s | grep "OS Name:" | sed -e "s@.*: *@$(shell pwd): @"
 
 .PHONY: rmi
 rmi:                  # Remove Docker images

@@ -1,7 +1,9 @@
-BASE_IMAGE := drtuxwang/python:3.12-slim-trixie
-IMAGE := drtuxwang/python-pip:3.12-slim-trixie
-NAME := python312-pip
-HOSTNAME := python312-pip
+BASE_IMAGE := debian:13-slim
+IMAGE := drtuxwang/debian-ops:13-slim
+DOCKER_REPO=https://download.docker.com/linux/debian/dists/trixie/pool/stable/amd64
+DOCKER_DEB=docker-ce-cli_28.3.3-1~debian.13~trixie_amd64.deb
+NAME := debian13-ops
+HOSTNAME := debian13-ops
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
@@ -12,10 +14,12 @@ DOCKER_RUN := docker run \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
+	--volume /var/run/docker.sock:/var/run/docker.sock \
+	--privileged=true \
 	--name $(NAME) \
-	--hostname $(NAME) \
+	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
 ifdef http_proxy
 	DOCKER_BUILD := $(DOCKER_BUILD) \
@@ -39,8 +43,13 @@ status:               # Status of Docker images
 .PHONY: build
 build:                # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.bash bash bin python3 vim
-	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	../../bin/create-rootfs.bash bash bin vim
+	$(DOCKER_BUILD) \
+		$(DOCKER_BUILD_FLAGS) \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg DOCKER_REPO=$(DOCKER_REPO) \
+		--build-arg DOCKER_DEB=$(DOCKER_DEB) \
+		-t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: build-no-cache
@@ -63,19 +72,10 @@ run:                  # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	$(DOCKER_RUN) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
-.PHONY: test
-test:                 # Run tests
-	docker run \
-		--rm \
-		--volume=$(shell realpath ../../..):/vol/app:ro \
-		--workdir=/vol/app \
-		$(IMAGE) \
-		make test
-
 .PHONY: version
 version:              # Check versions
-	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run --rm --entrypoint docker $(IMAGE) --version 2> /dev/null | \
+		grep ^Docker | sed -e "s/,/ /g" | awk '{printf("'$(shell pwd)': docker %s\n", $$3)}'
 
 .PHONY: rmi
 rmi:                  # Remove Docker images

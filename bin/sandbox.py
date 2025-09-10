@@ -98,6 +98,7 @@ class Options:
                 f'{Path(home, x)}:ro'
                 for x in (
                     '.bashrc',
+                    '.cache/ibus',
                     '.config/ibus',
                     '.profile',
                     '.tmux.conf',

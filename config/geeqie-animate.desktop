@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=GIMP
-TryExec=gimp
-Exec=gimp %U
+Name=User Animate
+TryExec=vlc
+Exec=vlc --no-repeat --no-loop --noaudio %f
 Categories=X-Geeqie;
 OnlyShowIn=X-Geeqie;
