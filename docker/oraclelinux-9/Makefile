@@ -46,7 +46,7 @@ pull-save:            # Pull updated Docker base image and save to tar archive
 
 .PHONY: save
 save: pull            # Pull Docker base image and save to tar archive
-	../bin/docker-save $(BASE_IMAGE)
+	../../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:                # Build Docker image

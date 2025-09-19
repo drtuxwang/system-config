@@ -11,8 +11,8 @@ RUN apt-get update && \
         file \
         iproute2 \
         iputils-ping \
+        ncat \
         net-tools \
-        netcat-openbsd \
         openssh-client \
         pciutils \
         socat \

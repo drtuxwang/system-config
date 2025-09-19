@@ -41,6 +41,7 @@ the years.
  * appimage/0ad-0.0.26-deb12/      0AD 0.0.26 (Debian 12) appimage
  * appimage/bash-5.1.4-deb11/      Bash 5.1.4 (Debian 11) appimage
  * appimage/bash-5.2.15-deb12/     Bash 5.2.15 (Debian 12) appimage
+ * appimage/bash-5.2.37-deb13/     Bash 5.2.37 (Debian 13) appimage - run time issue???
  * appimage/vlc-3.0.18-deb12/      VLC 3.0.18 (Debian 12) appimage
  * appimage/wesnoth-1.14.15-deb11/ Wesnoth 1.14.15 (Debian 11) appimage
  * appimage/wesnoth-1.16.8-deb11/  Wesnoth 1.16.8 (Debian 11 backports) appimage

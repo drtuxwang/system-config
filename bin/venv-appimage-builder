@@ -7,7 +7,17 @@ virtualenv_setup() {
     VENV_PYTHON="python3"
     VENV_PACKAGE="appimage-builder==1.1.0"
     VENV_CLEAN=no
+    VENV_POSTINST="fix_depends"
+}
+
+fix_depends() {
+    case ${VENV_PACKAGE##*==} in
+    1.1.0)
+        sed -i 's/"apt-key", //' \
+            "$VIRTUAL_ENV/lib/python3.12/site-packages/appimagebuilder/modules/deploy/apt/venv.py"
+        ;;
+    esac
 }
 
 
-source "${0%/*}/venv_mod.bash" -noclean
+source "${0%/*}/venv_mod.bash"

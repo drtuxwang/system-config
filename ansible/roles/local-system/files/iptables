@@ -1,6 +1,0 @@
-iptables -P FORWARD DROP
-ip6tables -P FORWARD DROP
-iptables -P INPUT DROP
-ip6tables -P INPUT DROP
-iptables -P OUTPUT ACCEPT
-ip6tables -P OUTPUT ACCEPT

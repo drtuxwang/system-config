@@ -1,7 +1,7 @@
-BASE_IMAGE := ubuntu:24.04
-IMAGE := drtuxwang/ubuntu-dev:24.04
-NAME := ubuntu2404-dev
-HOSTNAME := ubuntu2404-dev
+BASE_IMAGE := oraclelinux:10-slim
+IMAGE := drtuxwang/oraclelinux-dev:10-slim
+NAME := oraclelinux10-dev
+HOSTNAME := oraclelinux10-dev
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
@@ -15,8 +15,7 @@ DOCKER_RUN := docker run \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
-	$(DOCKER_RUN_FLAGS)
+	--hostname $(HOSTNAME)
 ifdef http_proxy
 	DOCKER_BUILD := $(DOCKER_BUILD) \
 		--build-arg http_proxy=$(http_proxy) \

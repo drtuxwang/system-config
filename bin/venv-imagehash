@@ -6,7 +6,7 @@
 virtualenv_setup() {
     VENV_PYTHON="python3"
     VENV_PACKAGE="ImageHash==4.3.2"
-    VENV_DEPENDS="Pillow==10.4.0 scipy==1.13.1 numpy==1.26.4 PyWavelets==1.6.0 pybktree==1.1 pyzstd==0.15.10"
+    VENV_DEPENDS="Pillow==10.4.0 scipy==1.15.3 numpy==2.2.6 PyWavelets==1.8.0 pybktree==1.1 pyzstd==0.16.2"
 }
 
 

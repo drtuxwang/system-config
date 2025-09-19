@@ -4,8 +4,8 @@
 #
 # 1996-2025 By Dr Colin Kong
 #
-VERSION=20250814
-RELEASE="2.6.54"
+VERSION=20250914
+RELEASE="2.6.55"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -1143,7 +1143,7 @@ EOF
         write_output name="OS Patch" value="$MYOSPATCH"
         write_output name="OS Boot Time" value="$MYOSBOOT"
     fi
-    if [ "$SHORT" = processor -o ! "$SHORT" ]
+    if [ "$SHORT" = cpu -o ! "$SHORT" ]
     then
         write_output name="CPU Type" value="$MYTYPE" comment="$MYTYPEX"
         write_output name="CPU Addressability" value="$MYBIT" comment="$MYBITSX"
@@ -1170,23 +1170,28 @@ EOF
             scanbus
         fi
     fi
-    if [ ! "$SHORT" ]
+    if [ "`uname`" = Linux ]
     then
+        if [ ! "$SHORT" ]
+        then
         # Detect loaders
-        case `uname` in
-        Linux)
             GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
             if [ "$GLIBC" ]
             then
                 write_found name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
             fi
+        fi
+        if [ "$SHORT" = sys -o ! "$SHORT" ]
+        then
             for LINKER in `ls -1 /lib*/ld-*so* 2> /dev/null`
             do
                 write_found name="Dynamic linker" location="$LINKER"
             done
-            ;;
-        esac
+        fi
+    fi
 
+    if [ ! "$SHORT" ]
+    then
         # Detect X-Windows
         XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
         if [ "$XSET" ]
@@ -1267,14 +1272,14 @@ $1"
 # Main program
 #
 case $1 in
+-c)
+    SHORT=cpu
+    ;;
 -d)
     SHORT=dev
     ;;
 -n)
     SHORT=net
-    ;;
--p)
-    SHORT=processor
     ;;
 -s)
     SHORT=sys

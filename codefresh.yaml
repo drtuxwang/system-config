@@ -25,7 +25,7 @@ steps:
     - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
-    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.18/Makefile | sed -e "s/.* //")
+    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.20/Makefile | sed -e "s/.* //")
     - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.12/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
@@ -39,7 +39,7 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - cd docker/alpine-3.18/bash && ../../bin/create-root-tar.sh bash bin vim
+        - cd docker/alpine-3.20/bash && ../../bin/create-root-tar.sh bash bin vim
       create_python_deps:
         title: Build Python dependencies
         image: codefresh/cli:latest
@@ -57,8 +57,8 @@ steps:
         title: Build Alpine base image
         type: build
         image_name: drtuxwang/alpine
-        tag: 3.18
-        working_directory: docker/alpine-3.18
+        tag: 3.20
+        working_directory: docker/alpine-3.20
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{ALPINE_BASE}}
@@ -83,7 +83,7 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_alpine}}
-        tag: 3.18
+        tag: 3.20
       push_python:
         title: Push Python base image
         type: push
@@ -100,8 +100,8 @@ steps:
         title: Build Alpine bash image
         type: build
         image_name: drtuxwang/alpine-bash
-        tag: 3.18
-        working_directory: docker/alpine-3.18/bash
+        tag: 3.20
+        working_directory: docker/alpine-3.20/bash
         dockerfile: Dockerfile
       build_python:
         title: Build Python dev image
@@ -123,7 +123,7 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_alpine_bash}}
-        tag: 3.18
+        tag: 3.20
       push_python:
         title: Push Python dev image
         type: push

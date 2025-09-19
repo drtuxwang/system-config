@@ -33,15 +33,6 @@
   - local-system
   - sudoers
 
-- name: Copy file to "/etc/network/if-pre-up.d/iptables"
-  copy:
-    src: iptables
-    dest: /etc/network/if-pre-up.d/iptables
-    mode: '0755'
-  tags:
-  - local-system
-  - iptables
-
 - name: Template file to "/etc/iptables.conf"
   template:
     src: iptables.conf

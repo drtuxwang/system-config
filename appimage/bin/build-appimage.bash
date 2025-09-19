@@ -10,7 +10,7 @@ then
     echo "Usage: $0 <file.yaml>"
     exit 1
 
-elif [ ! "$(appimage-builder -h 2> /dev/null | grep "usage: appimage-builder")" ]
+elif [ ! "$(appimage-builder -h 2>&1 | grep "usage: appimage-builder")" ]
 then
     echo "$0: Error: Cannot find \"appimage-builder\" tool"
     exit 1

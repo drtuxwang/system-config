@@ -4,7 +4,7 @@
 ARG=${1:-}
 
 # Fix logging
-[ "$ARG" != "-start" ] && mkdir -p /tmp/$(id -un) && exec $0 -start > /tmp/$(id -un)/.bootrun.log 2>&1
+[ "$ARG" != "-start" ] && mkdir -p /tmp/$(id -un) && exec $0 -start > /tmp/$(id -un)/.autorun-boot.log 2>&1
 
 # Setup bash
 export TERM=xterm

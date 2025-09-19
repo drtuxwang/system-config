@@ -14,8 +14,8 @@ RUN apt-get update && \
         dnsutils \
         iproute2 \
         iputils-ping \
+        ncat \
         net-tools \
-        netcat-openbsd \
         openssh-client \
         pciutils \
         procps \

@@ -10,8 +10,8 @@ RUN ln -s microdnf /bin/yum && \
         bind-utils \
         diffutils \
         file \
+        nc \
         net-tools \
-        netcat \
         openssh-clients \
         pciutils \
         procps \

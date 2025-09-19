@@ -15,6 +15,7 @@ BUILD_DIRS := \
 	almalinux-9 \
 	almalinux-8 \
 	centos-7 \
+	oraclelinux-10 \
 	oraclelinux-9 \
 	oraclelinux-8 \
 	rockylinux-10 \

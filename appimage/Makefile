@@ -3,6 +3,7 @@ BUILD_DIRS := \
 	0ad-0.0.26-deb12 \
 	bash-5.1.4-deb11 \
 	bash-5.2.15-deb12 \
+	bash-5.2.37-deb13 \
 	vlc-3.0.18-deb12 \
 	wesnoth-1.14.15-deb11 \
 	wesnoth-1.16.8-deb11 \

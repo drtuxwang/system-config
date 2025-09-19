@@ -4,8 +4,8 @@
 #
 
 virtualenv_setup() {
-    VENV_PYTHON="python3"
-    VENV_PACKAGE="mypy==1.17.0"
+    VENV_PYTHON="python3.13"
+    VENV_PACKAGE="mypy==1.18.2"
 }
 
 

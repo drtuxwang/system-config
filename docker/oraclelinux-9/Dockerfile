@@ -10,8 +10,8 @@ RUN ln -s microdnf /bin/yum && \
         bind-utils \
         diffutils \
         file \
+        nc \
         net-tools \
-        netcat \
         openssh-clients \
         pciutils \
         procps \
@@ -31,7 +31,7 @@ RUN ln -s microdnf /bin/yum && \
         /root/anaconda-ks.cfg
 
 # Install compiler & dev packages
-RUN dnf config-manager --add-repo http://yum.oracle.com/repo/OracleLinux/OL9/codeready/builder/x86_64 && \
+RUN sed -i "s/enabled=0/enabled=1/" /etc/yum.repos.d/oracle-linux-ol9.repo  && \
     yum install -y \
         automake \
         bison \

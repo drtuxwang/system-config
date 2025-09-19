@@ -1,0 +1,104 @@
+version: 1
+
+script:
+  - rm -rf ./AppDir || true
+
+AppDir:
+  path: ./AppDir
+
+  app_info:
+    id: org.gnu.bash
+    icon: utilities-terminal-symbolic
+    name: bash
+    version: 5.2.37
+    exec: usr/bin/bash
+    exec_args: $@
+
+  apt:
+    sources:
+    - sourceline: deb https://deb.debian.org/debian trixie main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian trixie-updates main contrib non-free
+    - sourceline: deb https://security.debian.org trixie-security main contrib non-free
+    allow_unauthenticated: true
+    arch: amd64
+    include:
+    - bash
+    - adwaita-icon-theme
+    - libc6
+    exclude:
+    - fdisk
+    - gcc-14-base
+    - gtk-update-icon-cache
+    - hicolor-icon-theme
+    - libacl1
+    - libapparmor1
+    - libatomic1
+    - libaudit-common
+    - libaudit1
+    - libblkid1
+    - libcap-ng0_
+    - libcap2-bin
+    - libcap2
+    - libcrypt1
+    - libdb5.3t64
+    - libdeflate0
+    - libfdisk1
+    - libffi8
+    - libgcc-s1
+    - libgdk-pixbuf-2.0-0
+    - libgdk-pixbuf2.0-common
+    - libglib2.0-0t64
+    - libjbig0
+    - libjpeg62-turbo
+    - liblastlog2-2
+    - liblerc4
+    - liblzma5
+    - libmount1
+    - libncursesw6
+    - libpam-modules-bin
+    - libpam-modules
+    - libpam-runtime
+    - libpam0g
+    - libpcre2-8-0
+    - libpng16-16t64
+    - libreadline8t64
+    - libseccomp2
+    - libselinux1
+    - libsharpyuv0
+    - libsmartcols1
+    - libsqlite3-0
+    - libssl3t64
+    - libstdc++6
+    - libsystemd-shared
+    - libsystemd0
+    - libtiff6
+    - libtinfo6
+    - libudev1
+    - libuuid1
+    - libwebp7
+    - libzstd1
+    - mount
+    - openssl-provider-legacy
+    - readline-common
+    - systemd-sysv
+    - systemd
+    - util-linux
+    - zlib1g
+
+  files:
+    exclude:
+    - usr/share/doc
+    - usr/share/locale
+    - usr/share/man
+    - usr/share/icons/Adwaita/16x16
+    - usr/share/icons/Adwaita/cursor*
+    - usr/share/icons/Adwaita/index*
+    - usr/share/icons/Adwaita/icon-theme.cache
+    - usr/share/icons/Adwaita/scalable*
+##    - usr/share/icons/Adwaita/symbolic
+    - usr/share/pkgconfig
+
+AppImage:
+  arch: x86_64
+  sign-key: None
+  update-information: None

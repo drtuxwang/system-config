@@ -1,21 +1,20 @@
-ARG BASE_IMAGE=centos:latest
+ARG BASE_IMAGE=oraclelinux:latest
 
 FROM ${BASE_IMAGE}
 
-# Switch to CentOS-7.9.2009 vault
-COPY CentOS-Base.repo CentOS-CR.repo /etc/yum.repos.d/
-
 # Install base packages
-RUN yum install -y epel-release && \
+RUN ln -s microdnf /bin/yum && \
+    yum install -y oracle-epel-release-el10 && \
     yum update -y && \
     yum install -y \
         bind-utils \
+        diffutils \
         file \
-        iproute \
-        nc \
+        ncat \
         net-tools \
         openssh-clients \
         pciutils \
+        procps \
         socat \
         traceroute \
         vim \
@@ -32,7 +31,8 @@ RUN yum install -y epel-release && \
         /root/anaconda-ks.cfg
 
 # Install compiler & dev packages
-RUN yum install -y \
+RUN sed -i "s/enabled=0/enabled=1/" /etc/yum.repos.d/oracle-linux-ol10.repo  && \
+    yum install -y \
         automake \
         bison \
         gcc-c++ \
@@ -41,15 +41,15 @@ RUN yum install -y \
         pkg-config \
         bzip2-devel \
         gdbm-devel \
-        libdb-devel \
         libcurl-devel \
+        libdb-devel \
         libevent-devel \
         libffi-devel \
         libsqlite3x-devel \
+        libuuid-devel \
         ncurses-devel \
         openssl-devel \
         readline-devel \
-        uuid-devel \
         xz-devel \
         zlib-devel && \
     yum clean all && \

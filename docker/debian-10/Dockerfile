@@ -12,8 +12,8 @@ RUN sed -i "s/deb.debian.org/archive.debian.org/" /etc/apt/sources.list && \
         file \
         iproute2 \
         iputils-ping \
+        ncat \
         net-tools \
-        netcat-openbsd \
         openssh-client \
         pciutils \
         procps \

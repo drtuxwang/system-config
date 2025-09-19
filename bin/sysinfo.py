@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.18.0'
-VERSION = 20250814
+RELEASE = '6.19.1'
+VERSION = 20250915
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -80,6 +80,13 @@ class Options:
             description="Show system information.")
 
         parser.add_argument(
+            '-c',
+            action='store_const',
+            const='cpu',
+            dest='short',
+            help="Show CPU summary only.",
+        )
+        parser.add_argument(
             '-d',
             action='store_const',
             const='dev',
@@ -92,13 +99,6 @@ class Options:
             const='net',
             dest='short',
             help="Show network summary only.",
-        )
-        parser.add_argument(
-            '-p',
-            action='store_const',
-            const='processor',
-            dest='short',
-            help="Show processor summary only.",
         )
         parser.add_argument(
             '-s',
@@ -473,14 +473,17 @@ class Detect:
         if short in (None, 'net'):
             self._network_information()
         self._operating_system(short)
-        if short in (None, 'processor'):
+        if short in (None, 'cpu'):
             self._processors()
         self._system_status(short)
         if short in (None, 'dev') and self._system.has_devices():
             self._system.detect_devices()
-        if not short:
-            if self._system.has_loader():
+        if self._system.has_loader():
+            if not short:
                 self._system.detect_loader()
+            if short in (None, 'sys'):
+                self._system.detect_linker()
+        if not short:
             self._xwindows()
             self._software()
 
@@ -515,6 +518,12 @@ class OperatingSystem:
                         location=glibc,
                         value=version,
                     )
+
+    @staticmethod
+    def detect_linker() -> None:
+        """
+        Detect linker
+        """
         for linker in sorted(glob.glob('/lib*/ld-*so*')):
             Writer.output(name='Dynamic linker', location=linker)
 

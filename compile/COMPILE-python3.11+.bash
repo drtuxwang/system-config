@@ -5,7 +5,7 @@ umask 022
 
 VERSION=$(grep "define PY_VERSION " Include/patchlevel.h | cut -f2 -d'"')
 MAJOR_VER=${VERSION%.*}
-DEFAULT_PYTHON=3.12
+DEFAULT_PYTHON=3.13
 
 if [ "$(gcc --version 2>&1 | grep -E "gcc .* ([1-3][.]|4[.][1-6])")" ]
 then
@@ -104,3 +104,4 @@ exec \"\$MYDIR/python$MAJOR_VER\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$F
 fi
 
 ls -ld $PWD/install/bin/python* $PWD/install/lib/libpython*
+grep MODULE.*=missing config.log
