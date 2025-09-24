@@ -34,19 +34,43 @@ the years.
  * bin/venv_mod.bash               Bash Python Virtual Environments module
  * bin/python*                     Python startup wrapper
  * bin/*                           Python utilities and wrapper scripts
- * ansible/                        Ansible for local hosts
+ * ansible/Makefile
+ * ansible/ansible.cfg
+ * ansible/bin/*
+ * ansible/inventory/*             Ansible for local hosts & VMs
+ * ansible/my_playbook.yaml
+ * ansible/roles
  * appimage/Makefile
- * appimage/bin/
+ * appimage/bin/*
  * appimage/0ad-0.0.26-deb11/      0AD 0.0.26 (Debian 11 backports) appimage
  * appimage/0ad-0.0.26-deb12/      0AD 0.0.26 (Debian 12) appimage
  * appimage/bash-5.1.4-deb11/      Bash 5.1.4 (Debian 11) appimage
  * appimage/bash-5.2.15-deb12/     Bash 5.2.15 (Debian 12) appimage
- * appimage/bash-5.2.37-deb13/     Bash 5.2.37 (Debian 13) appimage - run time issue???
+ * appimage/bash-5.2.37-deb13/     Bash 5.2.37 (Debian 13) appimage - broken patched binary
  * appimage/vlc-3.0.18-deb12/      VLC 3.0.18 (Debian 12) appimage
  * appimage/wesnoth-1.14.15-deb11/ Wesnoth 1.14.15 (Debian 11) appimage
  * appimage/wesnoth-1.16.8-deb11/  Wesnoth 1.16.8 (Debian 11 backports) appimage
  * appimage/wesnoth-1.16.9-deb12/  Wesnoth 1.16.9 (Debian 12) appimage
- * compile/                        Build scripts of open source software
+ * bwrap/COMPILE-0ad.bash          0AD 0.27.1 (Debian 13) bubblewrap portable app - broken
+ * bwrap/COMPILE-wesnoth.bash      Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
+ * compile/COMPILE-7zip.bash       Compile script for 7-Zip (patched for absolute path symlink bug)
+ * compile/COMPILE-aria2.bash      Compile script fro Aria2 downloader
+ * compile/COMPILE-cutils.bash     Compile script for C Utilities
+ * compile/COMPILE-git.bash        Compile script for Git
+ * compile/COMPILE-git-lfs.bash    Compile script for Git LFS
+ * compile/COMPILE-helm.bash       Compile script for Helm
+ * compile/COMPILE-libdvdcss.bash  Compile script for Libddvcss
+ * compile/COMPILE-openmpi.bash    Compile script for Open MPI
+ * compile/COMPILE-par2.bash       Compile script for Par2
+ * compile/COMPILE-python*.bash    Compile script for Python
+ * compile/COMPILE-tinyproxy.bash  Compile script for Tinyproxy
+ * compile/COMPILE-tmux.bash       Compile script for TMUX
+ * compile/COMPILE-unace.bash      Compile script for Unace unpacker
+ * compile/COMPILE-unrar.bash      Compile script for Unrar unpacker
+ * compile/COMPILE-unzip.bash      Compile script for Unzip unpacker
+ * compile/COMPILE-xz-utils.bash   Compile script for XZ archiver
+ * compile/COMPILE-zip.bash        Compile script for Zip archiver
+ * compile/COMPILE-zstd.bash       Compile script for Zstd archiver
  * config/Xresources               Copy to "~/.Xresources" to set xterm resources
  * config/accels                   Copy to "~/.config/geeqie/" for keyboard shortcuts
  * config/accels-deb12

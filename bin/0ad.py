@@ -57,6 +57,12 @@ class Main:
             if len(sys.argv) >= 2 and sys.argv[1] == '-net':
                 command.set_args(sys.argv[2:])
                 configs.append('net')
+
+            # use overlay for portable installation
+            path = Path(command.get_file()).with_name('usr')
+            if path.is_dir():
+                configs.append(f'{path}:/usr:ol')
+
             command.sandbox(configs)
 
         Exec(command.get_cmdline()).run()

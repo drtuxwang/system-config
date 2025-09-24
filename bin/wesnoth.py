@@ -66,6 +66,12 @@ class Main:
             if len(sys.argv) >= 2 and sys.argv[1] == '-net':
                 wesnoth.set_args(sys.argv[2:])
                 configs.append('net')
+
+            # use overlay for portable installation
+            path = Path(wesnoth.get_file()).with_name('usr')
+            if path.is_dir():
+                configs.append(f'{path}:/usr:ol')
+
             wesnoth.sandbox(configs)
 
         pattern = 'deprecation:'

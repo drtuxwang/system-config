@@ -16,8 +16,8 @@ from typing import Any, List, Tuple, Union
 
 from command_mod import Command, CommandFile
 
-RELEASE = '3.6.0'
-VERSION = 20250807
+RELEASE = '3.7.0'
+VERSION = 20250921
 
 
 class NetNice(Command):
@@ -137,6 +137,9 @@ class Sandbox(Command):
         if config.endswith(':ro'):
             mode = 'read'
             config = config.rsplit(':', 1)[0]
+        elif config.endswith(':ol'):
+            mode = 'overlay'
+            config = config.rsplit(':', 1)[0]
         elif config.startswith('/dev/'):
             mode = 'device'
         else:
@@ -150,7 +153,11 @@ class Sandbox(Command):
 
         return realpath, mount, mode
 
-    def _config_access(self, bwrap: Command, configs: list) -> List[str]:
+    def _config_access(  # pylint: disable=too-many-branches
+        self,
+        bwrap: Command,
+        configs: list,
+    ) -> List[str]:
 
         cmdline: list = bwrap.get_cmdline()
 
@@ -244,6 +251,19 @@ class Sandbox(Command):
                     Sandbox.YELLOW,
                     f"Enable device access {config}",
                 )
+            elif mode == 'overlay':
+                cmdline.extend([
+                    '--overlay-src',
+                    mount,
+                    '--overlay-src',
+                    realpath,
+                    '--ro-overlay',
+                    mount
+                ])
+                self._show(
+                    Sandbox.YELLOW,
+                    f"Enable overlay access {config}",
+                )
             elif not mount.startswith(allow_reads):
                 cmdline.extend(['--ro-bind-try', realpath, mount])
                 self._show(
@@ -259,7 +279,7 @@ class Sandbox(Command):
         """
         Setup sandboxing
 
-        configs = Allow access to file/path/device ([realpath:]file[:ro]|net)
+        configs = Allow file/path/device access ([realpath:]file[:ro|:ol]|net)
         errors  = Optional error handling ('stop' or 'ignore')
         """
         if os.environ.get('_SANDBOX_PARENT'):

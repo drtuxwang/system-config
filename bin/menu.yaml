@@ -266,6 +266,7 @@ menu_games:
     label: 0AD
     run: exec 0ad &
   checks:
+  - 0ad.bwrap
   - 0ad.desktop
   - pyrogenesis
 - button:
@@ -316,8 +317,10 @@ menu_games:
     label: Wesnoth
     run: exec wesnoth &
   checks:
+  - wesnoth-1.16
+  - wesnoth-1.18
+  - wesnoth.bwrap
   - wesnoth.desktop
-  - wesnoth-1.14
 - button:
     name: close
     color: '#ff0000'
