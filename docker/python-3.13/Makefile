@@ -1,7 +1,7 @@
-BASE_IMAGE := python:3.12-slim-trixie
-IMAGE := drtuxwang/python:3.12-slim-trixie
-NAME := python312
-HOSTNAME := python312
+BASE_IMAGE := python:3.13-slim-trixie
+IMAGE := drtuxwang/python:3.13-slim-trixie
+NAME := python313
+HOSTNAME := python313
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build

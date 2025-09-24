@@ -142,7 +142,7 @@ the years.
  * docker/nginx-1.26/              nginx:1.26-bookworm based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
  * docker/oraclelinux-9/           oralcelinux:9 based Docker images
- * docker/python-3.12/             python:3.12-slim-trixie based Docker images
+ * docker/python-3.13/             python:3.13-slim-trixie based Docker images
  * docker/registry-2.6/            registry:2.6 based Docker Registry server app
  * docker/scratch/                 scratch Docker image
  * docker/rockylinux-10/           rockylinux:10 based Docker images

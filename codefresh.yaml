@@ -26,7 +26,7 @@ steps:
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
     - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.20/Makefile | sed -e "s/.* //")
-    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.12/Makefile | sed -e "s/.* //")
+    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.13/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
   preparations:
@@ -45,8 +45,8 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - cd docker/python-3.12/pip && ../../bin/create-root-tar.sh bash bin python3 vim
-        - cd docker/python-3.12/pip && ../../bin/python-packages.bash
+        - cd docker/python-3.13/pip && ../../bin/create-root-tar.sh bash bin python3 vim
+        - cd docker/python-3.13/pip && ../../bin/python-packages.bash
 
   docker_base_builds:
     title: Package Docker base images
@@ -66,8 +66,8 @@ steps:
         title: Build Python image
         type: build
         image_name: drtuxwang/python
-        tag: 3.12
-        working_directory: docker/python-3.12
+        tag: 3.13
+        working_directory: docker/python-3.13
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{PYTHON_BASE}}
@@ -89,7 +89,7 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 3.12
+        tag: 3.13
 
   docker_builds:
     title: Package Docker images
@@ -107,7 +107,7 @@ steps:
         title: Build Python dev image
         type: build
         image_name: drtuxwang/python-dev
-        tag: 3.12
+        tag: 3.13
         working_directory: docker/python-3.10/dev
         dockerfile: Dockerfile
         build_arguments:
@@ -129,7 +129,7 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 3.12
+        tag: 3.13
 
   python_tests:
     title: Run Python tests
