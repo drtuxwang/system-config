@@ -200,5 +200,5 @@ echo "$COMMAND" | sed -e 's/$/ \\/;$s/ \\//'
 [ "$DRYRUN" = yes ] && exit
 
 trap true INT
-($COMMAND 2>&1 | grep -v ": warning: dbind:"; rm -rf "$DRIVE_TMPDIR/$MACHINE_NAME") &
+($COMMAND 2>&1 | grep -Ev ": warning: dbind:| pw.conf "; rm -rf "$DRIVE_TMPDIR/$MACHINE_NAME") &
 [ "$CONNECT_DISPLAY" != yes ] && wait

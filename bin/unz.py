@@ -134,7 +134,7 @@ class Main:
             elif suffix in ('.pyc', 'unsqlite'):
                 command = Command(f'un{suffix[1:]}', errors='stop')
                 args = [path]
-            elif suffix == 'initr':
+            elif path.name.startswith('initr'):
                 command = Command('uninitrd', errors='stop')
             else:
                 command = Command('un7z', errors='stop')

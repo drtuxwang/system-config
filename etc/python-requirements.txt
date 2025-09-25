@@ -54,7 +54,7 @@ paramiko==3.5.1              # SSH client
 parso==0.8.4                 #   (required by jedi)
 pexpect==4.8.0               #   (required by ipython)
 pickleshare==0.7.5           #   (required by ipython)
-pip==25.1.1                  # Python package manager
+pip==25.2                    # Python package manager
 pipdeptree==2.27.0           # Python package dependency tree
 platformdirs==4.3.8          #   (required by pylint/virtualenv)
 prompt-toolkit==3.0.52       #   (required by ipython)
