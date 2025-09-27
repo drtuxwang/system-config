@@ -174,11 +174,21 @@ setup_connects() {
     add_args "-usb -device usb-tablet -device usb-kbd"
     [ "$CONNECT_SOUND" = yes ] && add_args "-device intel-hda -device hda-output"
     [ "$CONNECT_DISPLAY" != yes ] && add_args "-display none"
-##    NETWORK="user,ipv4=on,ipv6=on,net=192.168.56.0/24,ipv6-net=::/0"
-    NETWORK="user,ipv4=on,net=192.168.56.0/24"
-    [ "$CONNECT_SSHPORT" ] && NETWORK="$NETWORK,hostfwd=tcp::$CONNECT_SSHPORT-:22"
-    [ "$CONNECT_NETWORK" != yes ] && NETWORK="$NETWORK,restrict=yes"
-    add_args "-nic $NETWORK"
+    SLIRP="-nic user,ipv4=on,net=192.168.56.0/24"
+    [ "$CONNECT_SSHPORT" ] && SLIRP="$SLIRP,hostfwd=tcp::$CONNECT_SSHPORT-:22"
+    OFFLINE=yes
+    if [ "$CONNECT_NETWORK" = yes ]
+    then
+        PASST=$(umask 077; passt --one-off 2>&1 | awk '/UNIX.*socket bound at / {print $NF; exit}')
+        if [ "$PASST" ]
+        then
+            add_args "-device virtio-net-pci,netdev=s"
+            add_args "-netdev stream,id=s,server=off,addr.type=unix,addr.path=$PASST"
+        else
+            OFFLINE=no  # SLIRP external network fallback
+        fi
+    fi
+    add_args "$SLIRP,restrict=$OFFLINE" && \
     [ -d "$CONNECT_SHARE" ] && add_args "-virtfs local,path=$CONNECT_SHARE,mount_tag=Shared,multidevs=remap,security_model=none"
 }
 

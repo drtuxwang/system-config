@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.19.1'
-VERSION = 20250915
+RELEASE = '6.20.0'
+VERSION = 20250927
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -224,6 +224,11 @@ class Detect:
                 for line in task.get_output():
                     self._ip_address(line, 'Net IPvx Public')
                     break
+            task = Batch(curl.get_cmdline() + [MYIP_URL])
+            task.run()
+            for line in task.get_output():
+                self._ip_address(line, 'Net Dflt Public')
+                break
 
     def _operating_system(self, short: str) -> None:
         info = self._system.get_os_info()

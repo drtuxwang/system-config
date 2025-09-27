@@ -4,8 +4,8 @@
 #
 # 1996-2025 By Dr Colin Kong
 #
-VERSION=20250914
-RELEASE="2.6.55"
+VERSION=20250927
+RELEASE="2.6.56"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -458,8 +458,9 @@ detect() {
         do
             write_output name="INET Nameserver" value="$HOST"
         done
-        write_found name="INET Public" value="`curl --ipv4 --connect-timeout 1 http://ifconfig.me 2> /dev/null`"
-        write_found name="INET Public" value="`curl --ipv6 --connect-timeout 1 http://ifconfig.me 2> /dev/null`"
+        write_found name="INET IPv4 Public" value="`curl --ipv4 --connect-timeout 1 http://ifconfig.me 2> /dev/null`"
+        write_found name="INET IPv6 Public" value="`curl --ipv6 --connect-timeout 1 http://ifconfig.me 2> /dev/null`"
+        write_found name="INET Dflt Public" value="`curl --connect-timeout 1 http://ifconfig.me 2> /dev/null`"
     fi
 
     # Detect hardware information

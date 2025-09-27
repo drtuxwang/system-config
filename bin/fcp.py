@@ -176,7 +176,7 @@ class Main:
         path_tmp = Path(f'{path2}.part')
         try:
             shutil.copy2(path1, path_tmp)
-        except shutil.Error as exception:
+        except (PermissionError, shutil.Error) as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path_tmp}" file.',
             ) from exception
