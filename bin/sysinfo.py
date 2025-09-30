@@ -224,7 +224,6 @@ class Detect:
                 for line in task.get_output():
                     self._ip_address(line, 'Net IPvx Public')
                     break
-            curl.set_args(['--connect-timeout', '2'])
             task = Batch(curl.get_cmdline() + [MYIP_URL])
             task.run()
             for line in task.get_output():
