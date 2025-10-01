@@ -7,18 +7,18 @@ MYUNAME=$(id -un)
 
 if [ "$MYUNAME" != root ]
 then
-    echo "Run \"poweroff\" as root to switch off \"$MYHNAME\""
+    echo "Run \"reboot\" as root to restart \"$MYHNAME\""
     exit 1
 fi
 
 if [ "${1:-}" != "-f" ]
 then
-    echo -e "\nDo you really want to switch off \"$MYHNAME\" (y/n)?"
+    echo -e "\nDo you really want to restart \"$MYHNAME\" (y/n)?"
     read LINE
     [ "$LINE" != y ] && exit 1
 fi
 
-/sbin/poweroff &
+/sbin/reboot &
 sleep 8
 
 # Sync all mounted filesystems
@@ -29,5 +29,5 @@ sleep 1
 echo u > /proc/sysrq-trigger 2> /dev/null
 sleep 0.25
 
-# Switch off the system
+# Restart the system
 echo o > /proc/sysrq-trigger 2> /dev/null
