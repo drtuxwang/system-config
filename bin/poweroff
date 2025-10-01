@@ -10,13 +10,9 @@ then
     echo "Run \"poweroff\" as root to switch off \"$MYHNAME\""
     exit 1
 fi
-
-if [ "${1:-}" != "-f" ]
-then
-    echo -e "\nDo you really want to switch off \"$MYHNAME\" (y/n)?"
-    read LINE
-    [ "$LINE" != y ] && exit 1
-fi
+echo -e "\nDo you really want to switch off \"$MYHNAME\" (y/n)?"
+read LINE
+[ "$LINE" != y ] && exit 1
 
 /sbin/poweroff &
 sleep 8

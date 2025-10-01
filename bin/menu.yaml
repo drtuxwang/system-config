@@ -447,12 +447,12 @@ menu_system:
     name: reboot
     color: '#cc00cc'
     label: Reboot
-    run: exec /sbin/reboot -f &
+    run: exec /sbin/reboot &
 - button:
     name: poweroff
     color: '#cc00cc'
     label: PowerOff
-    run: exec /sbin/poweroff -f &
+    run: exec /sbin/poweroff &
 - button:
     name: close
     color: '#ff0000'

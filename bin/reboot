@@ -10,13 +10,9 @@ then
     echo "Run \"reboot\" as root to restart \"$MYHNAME\""
     exit 1
 fi
-
-if [ "${1:-}" != "-f" ]
-then
-    echo -e "\nDo you really want to restart \"$MYHNAME\" (y/n)?"
-    read LINE
-    [ "$LINE" != y ] && exit 1
-fi
+echo -e "\nDo you really want to restart \"$MYHNAME\" (y/n)?"
+read LINE
+[ "$LINE" != y ] && exit 1
 
 /sbin/reboot &
 sleep 8
