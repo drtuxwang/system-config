@@ -26,4 +26,4 @@ echo u > /proc/sysrq-trigger 2> /dev/null
 sleep 0.25
 
 # Restart the system
-echo o > /proc/sysrq-trigger 2> /dev/null
+echo b > /proc/sysrq-trigger 2> /dev/null
