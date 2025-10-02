@@ -11,11 +11,11 @@ then
     exit 1
 fi
 
-case $(cat /proc/ide/hd?/model /proc/scsi/scsi 2> /dev/null; /sbin/lsmod 2> /dev/null) in
+case $(cat /proc/ide/hd?/model /proc/scsi/scsi /proc/bus/input/devices 2> /dev/null; /sbin/lsmod 2> /dev/null) in
 *Hyper-V*|*hv_*)
     TYPE="Hyper-V"
     ;;
-*qemu*)
+*qemu*|*QEMU*)
     TYPE="QEMU"
     ;;
 *VBOX*|*vboxguest*)

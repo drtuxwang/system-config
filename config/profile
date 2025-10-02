@@ -128,11 +128,11 @@ then
             then
                 PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/& \\[\\033[01;31m\\](Xen)/')
             else
-                case $(cat /proc/ide/hd?/model /proc/scsi/scsi 2> /dev/null; /sbin/lsmod 2> /dev/null) in
+                case $(cat /proc/ide/hd?/model /proc/scsi/scsi /proc/bus/input/devices 2> /dev/null; /sbin/lsmod 2> /dev/null) in
                 *Hyper-V*|*hv_*)
                     PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/& \\[\\033[01;31m\\](Hyper-V)/')
                     ;;
-                *qemu*)
+                *qemu*|*QEMU*)
                     PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/& \\[\\033[01;31m\\](QEMU)/')
                     ;;
                 *VBOX*|*vboxguest*)
