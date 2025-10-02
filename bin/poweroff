@@ -10,9 +10,32 @@ then
     echo "Run \"poweroff\" as root to switch off \"$MYHNAME\""
     exit 1
 fi
-echo -e "\nDo you really want to switch off \"$MYHNAME\" (y/n)?"
-read LINE
-[ "$LINE" != y ] && exit 1
+
+case $(cat /proc/ide/hd?/model /proc/scsi/scsi 2> /dev/null; /sbin/lsmod 2> /dev/null) in
+*Hyper-V*|*hv_*)
+    TYPE="Hyper-V"
+    ;;
+*qemu*)
+    TYPE="QEMU"
+    ;;
+*VBOX*|*vboxguest*)
+    TYPE="VirtualBox"
+    ;;
+*VM[Ww]are*|*vmw_*)
+    TYPE="VMware"
+    ;;
+*xen_blkfront*)
+    TYPE="Xen"
+    ;;
+*)
+    echo -e "\n$MYHNAME: Do you really want to poweroff system (y/n)?"
+    read LINE
+    [ "$LINE" != y ] && exit 1
+    TYPE="physical"
+    ;;
+esac
+echo "$MYHNAME: poweroff $TYPE system..."
+sleep 1
 
 /sbin/poweroff &
 sleep 8
