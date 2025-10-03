@@ -450,7 +450,7 @@ detect() {
         esac
 
         write_output name="Hostname" value="$MYHNAME"
-        write_output name="FQDN" value=`isitset \`hostname -A 2> /dev/null\``
+        write_output name="INET FQDN" value=`isitset \`hostname -A 2> /dev/null\``
         for INET in $INETS
         do
             write_output name="INET Address" value="$INET"
