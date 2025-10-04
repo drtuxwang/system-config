@@ -4,8 +4,8 @@
 #
 # 1996-2025 By Dr Colin Kong
 #
-VERSION=20251003
-RELEASE="2.6.57"
+VERSION=20250927
+RELEASE="2.6.56"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -450,7 +450,6 @@ detect() {
         esac
 
         write_output name="Hostname" value="$MYHNAME"
-        write_output name="INET FQDN" value=`isitset \`hostname -A 2> /dev/null\``
         for INET in $INETS
         do
             write_output name="INET Address" value="$INET"
