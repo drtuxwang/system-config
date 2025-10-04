@@ -82,8 +82,8 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_media_info(cls, path: Path, info: str) -> str:
-        task = Batch(cls._ffprobe.get_cmdline() + [path])
+    def _get_media_info(cls, file: str, info: str) -> str:
+        task = Batch(cls._ffprobe.get_cmdline() + [file])
         task.run(error2output=True)
         video_type = cls._isjunk2.sub('', info)
         video_time = 0
@@ -108,16 +108,15 @@ class Main:
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
+        files = [x for x in files if Path(x).suffix in cls._video_extensions]
         width = max(Message(x).width() for x in files)
         with magic.Magic() as checker:
             for file in files:
-                path = Path(file)
-                if path.suffix in cls._video_extensions:
-                    info = checker.id_filename(file)
-                    print(
-                        f"{Message(file).get(width)}  "
-                        f"{cls._get_media_info(path, info)}"
-                    )
+                info = checker.id_filename(file)
+                print(
+                    f"{Message(file).get(width)}  "
+                    f"{cls._get_media_info(file, info)}"
+                )
 
     @classmethod
     def run(cls) -> int:
