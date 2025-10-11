@@ -16,7 +16,7 @@ from typing import Any, List, Tuple, Union
 
 from command_mod import Command, CommandFile
 
-RELEASE = '3.8.0'
+RELEASE = '3.8.1'
 VERSION = 20251011
 
 
@@ -272,8 +272,10 @@ class Sandbox(Command):
                     f"Enable read access {config}",
                 )
 
-        for key, value in sorted(env.items()):
-            cmdline.extend(['--setenv', key, value])
+        if env:
+            for key, value in sorted(env.items()):
+                cmdline.extend(['--setenv', key, value])
+
         cmdline.extend(['--setenv', '_SANDBOX_PARENT', os.getpid(), '--'])
 
         return cmdline
