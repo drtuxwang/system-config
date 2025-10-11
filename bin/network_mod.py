@@ -16,8 +16,8 @@ from typing import Any, List, Tuple, Union
 
 from command_mod import Command, CommandFile
 
-RELEASE = '3.7.0'
-VERSION = 20250921
+RELEASE = '3.8.0'
+VERSION = 20251011
 
 
 class NetNice(Command):
@@ -153,10 +153,11 @@ class Sandbox(Command):
 
         return realpath, mount, mode
 
-    def _config_access(  # pylint: disable=too-many-branches
+    def _config_access(  # pylint: disable=too-many-branches, too-many-locals
         self,
         bwrap: Command,
         configs: list,
+        env: dict,
     ) -> List[str]:
 
         cmdline: list = bwrap.get_cmdline()
@@ -271,15 +272,23 @@ class Sandbox(Command):
                     f"Enable read access {config}",
                 )
 
+        for key, value in sorted(env.items()):
+            cmdline.extend(['--setenv', key, value])
         cmdline.extend(['--setenv', '_SANDBOX_PARENT', os.getpid(), '--'])
 
         return cmdline
 
-    def sandbox(self, configs: list, errors: str = 'ignore') -> None:
+    def sandbox(
+        self,
+        configs: list,
+        env: dict = None,
+        errors: str = 'ignore',
+    ) -> None:
         """
         Setup sandboxing
 
         configs = Allow file/path/device access ([realpath:]file[:ro|:ol]|net)
+        env     = Dictionary containing environmental variables to change
         errors  = Optional error handling ('stop' or 'ignore')
         """
         if os.environ.get('_SANDBOX_PARENT'):
@@ -304,7 +313,7 @@ class Sandbox(Command):
                 "(using nonet group & iptables)",
             )
 
-        cmdline = self._config_access(bwrap, configs)
+        cmdline = self._config_access(bwrap, configs, env)
 
         if not network:
             command = Command('sg', args=['nonet'], errors=errors)

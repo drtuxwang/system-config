@@ -24,6 +24,7 @@ pyflakes==2.5.0
 pylint                       # ==2.17.7 (last compatible version)
 pymongo                      # ==4.7.3 (last compatible version)
 PyYAML                       # ==6.0.1 (last compatible version)
+pyzstd                       # ==0.16.2 (last compatible version)
 requests                     # ==2.31.0 (last compatible version)
 rich                         # ==12.6.0 (last compatible version)
 setuptools                   # ==68.0.0 (last compatible version)

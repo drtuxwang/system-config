@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox for "tenacity" launcher
+Sandbox for "audacity" launcher
 """
 
 import getpass
@@ -97,7 +97,9 @@ class Main:
             else:
                 audacity.append_arg(arg)
 
-        audacity.sandbox(configs)
+        env = {'LD_LIBRARY_PATH': Path(audacity.get_file()).with_name('lib')}
+
+        audacity.sandbox(configs, env)
 
         pattern = (
             '^$|: (Gdk|GdkPixbuf|GLib-GObject)-|[.]so|: invalid (image|bitmap)'

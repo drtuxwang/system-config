@@ -30,6 +30,7 @@ defaults_settings() {
     DRIVE_TMPDIR="/tmp/qemu-$(id -un)"
     CONNECT_DISPLAY=yes
     CONNECT_NETWORK=no
+    CONNECT_PASST_AUTO=yes
     CONNECT_SSHPORT=
     CONNECT_SHARE=$(realpath "$HOME/Desktop/shared")
     CONNECT_SOUND=no
@@ -53,6 +54,7 @@ show_settings() {
     echo "Debug: DRIVE_TMPDIR=$DRIVE_TMPDIR"
     echo "Debug: CONNECT_DISPLAY=$CONNECT_DISPLAY"
     echo "Debug: CONNECT_NETWORK=$CONNECT_NETWORK"
+    echo "Debug: CONNECT_PASST_AUTO=$CONNECT_PASST_AUTO"
     echo "Debug: CONNECT_SOUND=$CONNECT_SOUND"
     echo "Debug: CONNECT_SSHPORT=$CONNECT_SSHPORT"
     echo "Debug: CONNECT_SHARE=$CONNECT_SHARE"
@@ -179,7 +181,8 @@ setup_connects() {
     OFFLINE=yes
     if [ "$CONNECT_NETWORK" = yes ]
     then
-        PASST=$(umask 077; passt --one-off 2>&1 | awk '/UNIX.*socket bound at / {print $NF; exit}')
+        PASST=
+        [ "$CONNECT_PASST_AUTO" = yes ] && PASST=$(umask 077; passt --one-off 2>&1 | awk '/UNIX.*socket bound at / {print $NF; exit}')
         if [ "$PASST" ]
         then
             add_args "-device virtio-net-pci,netdev=s"

@@ -7,7 +7,7 @@ MYUNAME=$(id -un)
 
 if [ "$MYUNAME" != root ]
 then
-    echo "Run \"poweroff\" as root to switch off \"$MYHNAME\""
+    echo "Run \"reboot\" as root to restart \"$MYHNAME\""
     exit 1
 fi
 
@@ -28,16 +28,16 @@ case $(cat /proc/ide/hd?/model /proc/scsi/scsi /proc/bus/input/devices 2> /dev/n
     TYPE="Xen"
     ;;
 *)
-    echo -e "\n$MYHNAME: Do you really want to poweroff system (y/n)?"
+    echo -e "\n$MYHNAME: Do you really want to reboot system (y/n)?"
     read LINE
     [ "$LINE" != y ] && exit 1
     TYPE="physical"
     ;;
 esac
-echo "$MYHNAME: poweroff $TYPE system..."
+echo "$MYHNAME: reboot $TYPE system..."
 sleep 1
 
-/sbin/poweroff &
+/sbin/reboot &
 sleep 8
 
 # Sync all mounted filesystems
@@ -48,5 +48,5 @@ sleep 1
 echo u > /proc/sysrq-trigger 2> /dev/null
 sleep 0.25
 
-# Switch off the system
-echo o > /proc/sysrq-trigger 2> /dev/null
+# Restart the system
+echo b > /proc/sysrq-trigger 2> /dev/null

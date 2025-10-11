@@ -54,6 +54,13 @@ esac
 # Missing realpath on old operating systems
 realpath --version || WRAPPER=$(echo "$WRAPPER" | sed -e "s/realpath/readlink -e/")
 
+# Disable tests due to memory leaks requiring > 16GB
+if [ "$MAJOR_VER" != 3.14 ]
+then
+    sed -i "s/  'test_functools',/  # 'test_functools',/" Lib/test/libregrtest/pgo.py
+    sed -i "s/  'test_json',/  # 'test_json',/" Lib/test/libregrtest/pgo.py
+fi
+
 CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
 # Enable profile-guided optimization (PGO) except old gcc
 [ "$(gcc --version 2>&1 | grep "gcc .* [1-8][.]")" ] || CONFIGURE="$CONFIGURE --enable-optimizations"
