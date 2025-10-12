@@ -3856,16 +3856,16 @@ video-title-show=0
 #meta-url=
 
 # File caching (ms) (integer)
-#file-caching=1000
+file-caching=300
 
 # Live capture caching (ms) (integer)
-live-caching=1000
+#live-caching=300
 
 # Disc caching (ms) (integer)
-disc-caching=1000
+#disc-caching=300
 
 # Network caching (ms) (integer)
-network-caching=3333
+#network-caching=1000
 
 # Clock reference average counter (integer)
 #cr-average=40
