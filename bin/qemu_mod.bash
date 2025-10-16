@@ -97,10 +97,10 @@ snapshot_drive() {
 #
 mount_image() {
     image="$1"
-    if [ "$(echo "$image" | grep base)" ]  # Drive base image files uses snapshots
+    if [ "$(echo "$image" | grep "[.]snap")" ]  # Drive base image files uses snapshots
     then
-        snapshot_drive $image ${image//base/driv}
-        image=${image//base/driv}
+        snapshot_drive $image ${image%.snap*}
+        image=${image%.snap*}
     fi
 
     become_root
@@ -160,7 +160,7 @@ unmount_image() {
 #
 trim_image() {
     case ${1##*/} in
-    *base*)
+    *.snap*)
         ;;
     *)
         mount_image "$1"
