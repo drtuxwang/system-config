@@ -1,0 +1,18 @@
+#
+#deb https://deb.debian.org/debian forky main contrib non-free
+#
+https://deb.debian.org/debian/dists/forky/main/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/forky/contrib/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/forky/non-free/binary-i386/Packages.xz
+#
+#deb https://deb.debian.org/debian forky-updates main contrib non-free
+#
+https://deb.debian.org/debian/dists/forky-updates/main/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/forky-updates/contrib/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/forky-updates/non-free/binary-i386/Packages.xz
+#
+#deb https://security.debian.org forky-security main contrib non-free
+#
+https://security.debian.org/dists/forky-security/main/binary-i386/Packages.xz
+https://security.debian.org/dists/forky-security/contrib/binary-i386/Packages.xz
+https://security.debian.org/dists/forky-security/non-free/binary-i386/Packages.xz
