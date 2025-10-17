@@ -28,7 +28,7 @@ class Options:
         return self._vncserver
 
     def _config(self) -> None:
-        directory_path = Path(Path.home(), '.config', 'tigernvc')
+        directory_path = Path(Path.home(), '.config', 'tigervnc')
         if not directory_path.is_dir():
             directory_path.mkdir(mode=0o700)
 
