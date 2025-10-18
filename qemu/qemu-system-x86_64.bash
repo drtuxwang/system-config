@@ -10,8 +10,8 @@
 #   ssh 192.168.56.2
 # Images:
 #   qemu-img create -f qcow2 name.boot.qcow2 8M
-#   qemu-img create -f qcow2 name.os-base.qcow2 8192M
-#   qemu-img create -F qcow2 -b name.base.qcow2 -f qcow2 name.driv.qcow2
+#   qemu-img create -f qcow2 name_root.qcow2.snap 8192M
+#   qemu-img create -F qcow2 -b file.qcow2.snap -f qcow2 file.qcow2
 #   qemu-img convert -p -f vdi file1.vdi -O qcow2 file2.qcow2
 #   qemu-img convert -p -f qcow2 file1.qcow2 -O qcow2 -c -o compression_type=zstd file2.qcow2
 #
@@ -112,7 +112,7 @@ parse_options() {
          esac
          shift
     done
-    DRIVE_FILES="$(ls -1 ${0%/*}/$MACHINE_NAME.*.qcow2 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
+    DRIVE_FILES="$(ls -1 ${0%/*}/${MACHINE_NAME}/*qcow2* 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
 }
 
 snapshot_drive() {
@@ -162,9 +162,9 @@ setup_drives() {
         *.iso)
             MOUNT_OPT="if=ide,media=cdrom"
             ;;
-        *base*.qcow2)
-           MOUNT_DEV="${FILE//base/driv}"
-           snapshot_drive $FILE $MOUNT_DEV
+        *qcow2.snap*)
+            MOUNT_DEV="${FILE%.snap*}"
+            snapshot_drive $FILE $MOUNT_DEV
         esac
         add_args "-drive file=$MOUNT_DEV,$MOUNT_OPT" || continue
         [ "$VERBOSE" = yes ] && echo -e "\nqemu-img info $MOUNT_DEV" && qemu-img info $MOUNT_DEV

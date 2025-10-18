@@ -4,7 +4,7 @@
 #
 # qemu-mount, qemu-umount, qemu-trim, qemu-compress - image file utilities
 #
-# Copyright GPL v2: 2023-2024 By Dr Colin Kong
+# Copyright GPL v2: 2023-2025 By Dr Colin Kong
 #
 
 
@@ -13,7 +13,6 @@ set -u
 hostname=$(uname -n)
 username=$(id -un)
 mount_user=${SUDO_USER:-$username}
-drive_tmpdir="/tmp/qemu-${mount_user%:*}"
 
 
 #
@@ -98,12 +97,10 @@ snapshot_drive() {
 #
 mount_image() {
     image="$1"
-    if [ "$(echo "$image" | grep base)" ]  # Drive base image files uses snapshots
+    if [ "$(echo "$image" | grep "[.]snap")" ]  # Drive base image files uses snapshots
     then
-        mkdir -p $drive_tmpdir && chmod go= $drive_tmpdir
-        snapshot_drive $image $drive_tmpdir/$image
-        chown -R ${mount_user}:$(id -g $mount_user) $drive_tmpdir
-        image="$drive_tmpdir/$image"
+        snapshot_drive $image ${image%.snap*}
+        image=${image%.snap*}
     fi
 
     become_root
@@ -163,7 +160,7 @@ unmount_image() {
 #
 trim_image() {
     case ${1##*/} in
-    *base*)
+    *.snap*)
         ;;
     *)
         mount_image "$1"
