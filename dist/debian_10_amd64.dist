@@ -1,18 +1,12 @@
 #
-#deb https://deb.debian.org/debian buster main contrib non-free
+#deb https://archive.debian.org/debian buster main contrib non-free
 #
-https://deb.debian.org/debian/dists/buster/main/binary-amd64/Packages.xz
-https://deb.debian.org/debian/dists/buster/contrib/binary-amd64/Packages.xz
-https://deb.debian.org/debian/dists/buster/non-free/binary-amd64/Packages.xz
-#
-#deb https://deb.debian.org/debian buster-updates main contrib non-free
-#
-https://deb.debian.org/debian/dists/buster-updates/main/binary-amd64/Packages.xz
-https://deb.debian.org/debian/dists/buster-updates/contrib/binary-amd64/Packages.xz
-https://deb.debian.org/debian/dists/buster-updates/non-free/binary-amd64/Packages.xz
+https://archive.debian.org/debian/dists/buster/main/binary-amd64/Packages.xz
+https://archive.debian.org/debian/dists/buster/contrib/binary-amd64/Packages.xz
+https://archive.debian.org/debian/dists/buster/non-free/binary-amd64/Packages.xz
 #
 #deb https://security.debian.org buster/updates main contrib non-free
 #
-https://security.debian.org/dists/buster/updates/main/binary-amd64/Packages.xz
-https://security.debian.org/dists/buster/updates/contrib/binary-amd64/Packages.xz
-https://security.debian.org/dists/buster/updates/non-free/binary-amd64/Packages.xz
+http://archive.debian.org/debian-archive/debian-security/dists/buster/updates/main/binary-amd64/Packages.xz
+http://archive.debian.org/debian-archive/debian-security/dists/buster/updates/contrib/binary-amd64/Packages.xz
+http://archive.debian.org/debian-archive/debian-security/dists/buster/updates/non-free/binary-amd64/Packages.xz

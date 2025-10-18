@@ -7,12 +7,12 @@ https://deb.debian.org/debian/dists/trixie/non-free/binary-i386/Packages.xz
 #
 #deb https://deb.debian.org/debian trixie-updates main contrib non-free
 #
-##https://deb.debian.org/debian/dists/trixie-updates/main/binary-i386/Packages.xz
-##https://deb.debian.org/debian/dists/trixie-updates/contrib/binary-i386/Packages.xz
-##https://deb.debian.org/debian/dists/trixie-updates/non-free/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/trixie-updates/main/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/trixie-updates/contrib/binary-i386/Packages.xz
+https://deb.debian.org/debian/dists/trixie-updates/non-free/binary-i386/Packages.xz
 #
 #deb https://security.debian.org trixie-security main contrib non-free
 #
-##https://security.debian.org/dists/trixie-security/main/binary-i386/Packages.xz
-##https://security.debian.org/dists/trixie-security/contrib/binary-i386/Packages.xz
-##https://security.debian.org/dists/trixie-security/non-free/binary-i386/Packages.xz
+https://security.debian.org/dists/trixie-security/main/binary-i386/Packages.xz
+https://security.debian.org/dists/trixie-security/contrib/binary-i386/Packages.xz
+https://security.debian.org/dists/trixie-security/non-free/binary-i386/Packages.xz
