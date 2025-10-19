@@ -83,15 +83,7 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def run() -> int:
-        """
-        Start program
-        """
-        options = Options()
-        clamscan = options.get_clamscan()
-
-        task = Task(clamscan.get_cmdline())
-        task.run()
+    def show() -> None:
         print("---------- VIRUS DATABASE ----------")
         if os.name == 'nt':
             os.chdir(Path(task.get_file()).parent)
@@ -107,6 +99,18 @@ class Main:
                 f"[{file_stat.get_time_local()}] "
                 f"{path}",
             )
+
+    @classmethod
+    def run(cls) -> int:
+        """
+        Start program
+        """
+        options = Options()
+        clamscan = options.get_clamscan()
+
+        cls.show()
+        task = Task(clamscan.get_cmdline())
+        task.run()
 
         return task.get_exitcode()
 

@@ -129,7 +129,7 @@ the years.
  * docker/almalinux-8/             almalinux:8 based Docker images
  * docker/alpine-3.20/             alpine:3.20 based Docker images
  * docker/alpine-3.19/             alpine:3.19 based Docker images
- * docker/busybox-1.36/            busybox:1.36 based Docker images
+ * docker/busybox-1.37/            busybox:1.37 based Docker images
  * docker/centos-7/                centos:7 based Docker images
  * docker/debian-10/               debian:10-slim based Docker images
  * docker/debian-11/               debian:11-slim based Docker images

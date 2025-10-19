@@ -108,14 +108,15 @@ class Main:
     @classmethod
     def _show(cls, files: List[str]) -> None:
         files = [x for x in files if Path(x).suffix in cls._audio_extensions]
-        width = max(Message(x).width() for x in files)
-        with magic.Magic() as checker:
-            for file in files:
-                info = checker.id_filename(file)
-                print(
-                    f"{Message(file).get(width)}  "
-                    f"{cls._get_media_info(file, info)}"
-                )
+        if files:
+            width = max(Message(x).width() for x in files)
+            with magic.Magic() as checker:
+                for file in files:
+                    info = checker.id_filename(file)
+                    print(
+                        f"{Message(file).get(width)}  "
+                        f"{cls._get_media_info(file, info)}"
+                    )
 
     @classmethod
     def run(cls) -> int:
