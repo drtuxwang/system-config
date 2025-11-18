@@ -1,4 +1,6 @@
 astroid                      # ==3.2.4 (last compatible version)
+bson==0.5.10
+bson-senao==None
 dnspython                    # ==2.6.1 (last compatible version)
 filelock                     # ==3.16.1 (last compatible version)
 ipython                      # ==8.13.0 (last compatible version)

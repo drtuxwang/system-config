@@ -1,4 +1,6 @@
 arrow==0.17.0
+bson==0.5.10
+bson-senao==None
 astroid==1.6.6
 asttokens==None
 backports-abc==0.5           #   (required by tornado for 2.7)

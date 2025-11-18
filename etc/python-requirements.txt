@@ -5,7 +5,7 @@ backcall==0.2.0              #   (required by ipython)
 bcrypt==4.2.1                #   (required by paramiko)
 beautifulsoup4==4.13.5       # HTML/XML parser/emitter
 binaryornot==0.4.4           #   (required by cookiecutter)
-bson==0.5.10                 # BSON parser/emitter
+bson-senao==0.5.10           # BSON parser/emitter
 certifi==2025.10.5           #   (required by requests)
 cffi==1.17.1                 #   (required by cryptography)
 chardet==5.1.0               #   (required by binaryornot)

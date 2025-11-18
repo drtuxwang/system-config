@@ -173,7 +173,9 @@ class Data:
     @staticmethod
     def _decode_bson(bdata: bytes) -> List[dict]:
         try:
-            blocks = [bson.decode(bdata)]
+            blocks = [
+               bson.decode(bdata)  # pylint: disable=c-extension-no-member
+            ]
         except IndexError as exception:
             raise ReadConfigError(exception) from exception
         return blocks
@@ -304,7 +306,7 @@ class Data:
 
     @staticmethod
     def _encode_bson(block: dict) -> bytes:
-        data = bson.encode(block)  # pylint: disable=no-member
+        data = bson.encode(block)  # pylint: disable=c-extension-no-member
         return data
 
     def encode(

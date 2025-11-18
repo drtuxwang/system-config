@@ -84,11 +84,11 @@ class Main:
 
     @staticmethod
     def show() -> None:
+        """
+        Show database files
+        """
         print("---------- VIRUS DATABASE ----------")
-        if os.name == 'nt':
-            os.chdir(Path(task.get_file()).parent)
-            directory_path = Path('database')
-        elif Path('/var/clamav').is_dir():
+        if Path('/var/clamav').is_dir():
             directory_path = Path('/var/clamav')
         else:
             directory_path = Path('/var/lib/clamav')

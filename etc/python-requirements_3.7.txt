@@ -1,4 +1,6 @@
 astroid                      # ==2.15.8 (last compatible version)
+bson==0.5.10
+bson-senao==None
 cffi                         # ==1.15.1 (last compatible version)
 commonmark==0.9.1            #   (required by rich for 3.7)
 dill                         # ==0.3.7 (last compatible version)
