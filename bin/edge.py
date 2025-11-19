@@ -282,11 +282,11 @@ class Options:
             ])
 
         self._pattern = (
-            'ERROR:assistance_home|ERROR:disk_cache|ERROR:persistent_asset|'
-            'ERROR:policy_logger|ERROR:simple_backend|ERROR:video_hover|'
-            'Fontconfig error:|DidStartWorkerFail|software WebGL.*deprecated|'
-            'ERROR:extension|Gtk-WARNING|vdhcoapp is running|'
-            'ERROR:shared_image|ERROR:.*disk_cache'
+            'ERROR:assistance_home|ERROR:dbus|ERROR:disk_cache|'
+            'ERROR:persistent_asset|ERROR:policy_logger|ERROR:simple_backend|'
+            'ERROR:video_hover|Fontconfig error:|DidStartWorkerFail|'
+            'software WebGL.*deprecated|ERROR:extension|Gtk-WARNING|'
+            'vdhcoapp is running|ERROR:shared_image|ERROR:.*disk_cache'
         )
         self._config()
         self._set_libraries(self._browser)
