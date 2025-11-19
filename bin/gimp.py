@@ -45,8 +45,8 @@ class Options:
                     shutil.rmtree(path)
                     path.mkdir()
                     with Path(path, 'gimprc').open('w') as ofile:
-                        print('(theme "Light")', file=ofile)
-                        print('(icon-size medium)', file=ofile)
+                        print('(theme "System")', file=ofile)
+                        print('(override-theme-icon-size yes)', file=ofile)
 
     def parse(self, args: List[str]) -> None:
         """
@@ -68,17 +68,9 @@ class Options:
 
         self._gimp.set_args(['--no-splash'] + args[1:])
         self._pattern = (
-            '^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
-            ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'
-            'pixmap_path: |in <module>| import |wrong ELF class:|'
-            ': LibGimpBase-WARNING |^Traceback |: undefined symbol:|'
-            ' XMP metadata:|: No XMP packet found|: GEGL-gegl-operation.c|'
-            ': using babl for|gimp_pickable_contiguous_region_by_seed:|'
-            'librsvg-WARNING|Plug-in| deprecated |GIMP is started|'
-            'machine-id: |GIMP-Message: |- /Applications/|'
-            'gimp_check_updates_callback: |GLib-GObject-CRITICAL |'
-            'GIMP-Error: |Please create the folder|GeglBuffer|using gegl copy|'
-            'gegl_tile_cache_destroy:|Failed to parse tag cache:'
+            '^$|^Failed to parse|Gtk-WARNING|LibGimpBase-WARNING:|'
+            'ModuleNotFoundError:|^Traceback|dbind-WARNING| import |'
+            'in <module>|\\[script|^set device'
         )
 
 
