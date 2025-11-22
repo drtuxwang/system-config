@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# glances virtualenv (system monitoring tool)
+#
+
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="glances==4.2.1"
+}
+
+
+source "${0%/*}/venv_mod.bash"
