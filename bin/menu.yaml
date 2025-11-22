@@ -396,6 +396,11 @@ menu_system:
     label: Audio Mixer
     run: exec xmixer &
 - button:
+    name: monitor
+    color: '#ffcc00'
+    label: Monitor
+    run: exec xtop &
+- button:
     name: printer
     color: '#ffcc00'
     label: Printer
@@ -408,7 +413,7 @@ menu_system:
     label: virtualbox
     run: exec virtualbox &
   checks:
-  - virtualbox
+  - /opt/VirtualBox
 - button:
     name: fullcharge
     color: '#ffff00'
