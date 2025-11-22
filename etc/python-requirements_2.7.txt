@@ -29,6 +29,7 @@ futures==3.3.0               #   (required by tornado for 2.7)
 gitdb2==2.0.6                #   (required by GitPython for 2.7)
 gitdb==None
 GitPython                    # ==2.1.15 (last compatible version)
+Glances==None
 gTTS==None
 idna                         # ==2.10 (last compatible version)
 importlib-metadata==2.1.1    #   (required by virtualenv for 2.7)
