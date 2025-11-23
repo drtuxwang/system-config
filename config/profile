@@ -324,10 +324,6 @@ then
     then
         alias sudo="ssudo"
     fi
-    if [ "`which htop 2> /dev/null`" ]
-    then
-        alias top="htop"
-    fi
     alias df="df -k"
     alias du="du -k"
     if [ "$BASH" ]

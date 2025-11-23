@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Run "glances" in xterm window
+Run "top" in xterm window
 """
 
 import signal
@@ -41,8 +41,6 @@ class Main:
         """
         Start program
         """
-        glances = Command('glances', errors='stop')
-        glances.set_args(['--disable-check-update'])
         xterm = Command('xterm', errors='stop')
         xterm.set_args([
             '-fn',
@@ -58,7 +56,8 @@ class Main:
             '-ut',
             '+sb',
             '-e',
-        ] + glances.get_cmdline())
+            'top',
+        ])
         Daemon(xterm.get_cmdline()).run()
 
         return 0
