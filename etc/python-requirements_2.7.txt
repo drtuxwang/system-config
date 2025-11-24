@@ -16,11 +16,13 @@ contextlib2                  # ==0.6.0.post1 (required by importlib-metadata for
 cookiecutter                 # ==1.7.3 (old version)
 cryptography                 # ==3.3.2 (required by pyopenssl for 2.7)
 cx-Oracle                    # ==7.3.0 (Oracle DB client for 2.7)
+decorator                    # ==4.4.2 (required by legacy code for 2.7)
 dicttoxml                    # ==None
 dill                         # ==None
 dnspython                    # ==None
 enum34                       # ==1.1.10 (required by astroid for 2.7)
 filelock                     # ==3.2.1 (old version)
+future                       # ==0.18.3 (required by legacy code for 2.7)
 futures                      # ==3.3.0 (required by isort for 2.7)
 gitdb2                       # ==2.0.6 (required instead of gitdb for 2.7)
 gitdb                        # ==None
@@ -50,13 +52,16 @@ platformdirs                 # ==2.0.2 (old version)
 poyo                         # ==0.5.0 (required by cookiecutter for 2.7)
 pycodestyle                  # ==2.7.0 (old version)
 pycparser                    # ==2.21 (required by cffi for 2.7)
+pycrypto                     # ==2.0.1 (required by gen-ctl for 2.7)
+pycryptodome                 # ==3.19.1 (required by abettersqlplus for 2.7)
 pyflakes                     # ==2.3.1 (old version)
 Pygments                     # ==None
-pylint                         # ==1.9.5 (old version)
+pylint                       # ==1.9.5 (old version)
 pymongo                      # ==3.13.0 (MongoDB client for 2.7)
 PyNaCl                       # ==1.4.0 (required by paramiko for 2.7)
 pyOpenSSL                    # ==21.0.0 (old version)
 pyparsing                    # ==2.2.2 (old version)
+pytz                         # ==2023.3 (required by legacy code for 2.7)
 PyYAML                       # ==5.4.1 (old version)
 pyzstd                         # ==None
 requests                     # ==2.27.1 (old version)
