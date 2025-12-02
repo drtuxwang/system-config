@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.20.0'
-VERSION = 20250927
+RELEASE = '6.21.0'
+VERSION = 20251202
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -1626,11 +1626,11 @@ class LinuxSystem(PosixSystem):
             task = Batch(systemd_analyze.get_cmdline())
             task.run(pattern='^Startup finished in ')
             if task.has_output():
-                info['OS Boot'] = task.get_output()[0].replace(
-                    'Startup finished in ',
+                info['OS Boot'] = re.sub(
+                    r'.* in |[^ ]* .firmware. \+ |[^ ]* .loader. \+ |=.*',
                     '',
+                    task.get_output()[0],
                 )
-
         return info
 
     def get_os_info(self) -> dict:

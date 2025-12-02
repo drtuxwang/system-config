@@ -4,8 +4,8 @@
 #
 # 1996-2025 By Dr Colin Kong
 #
-VERSION=20250927
-RELEASE="2.6.56"
+VERSION=20251202
+RELEASE="2.6.57"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -555,7 +555,7 @@ detect() {
             fi
         fi
         MYOSKERNEL="`uname -r` (`uname -v | sed -e 's/ (.*)//g'`)"
-        MYOSBOOT=`isitset \`systemd-analyze 2> /dev/null | grep "^Startup finished in " | sed -e "s/Startup finished in //"\``
+        MYOSBOOT=`isitset \`systemd-analyze 2> /dev/null | grep "^Startup finished in " | sed -e "s/Startup finished in //;s/[^ ]* (firmware) + //;s/[^ ]* (loader) +//;s/ =.*//"\``
         ;;
 
     *NT*)
