@@ -7,5 +7,4 @@ set -u
 [ "$(top --version 2>&1 | grep "^htop ")" ] && exec htop
 
 PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@;s/^://;s/:$//")
-which top
-###exec top
+exec top
