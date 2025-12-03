@@ -11,6 +11,7 @@ viva.local             ansible_user=admin
 koko.local             ansible_user=admin
 ryzen.local            ansible_user=admin
 ryson.local            ansible_user=admin
+boss.local             ansible_user=admin
 
 [my_vm_hosts]
 debian12.vm            ansible_user=admin

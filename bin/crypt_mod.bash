@@ -132,7 +132,7 @@ format_crypt() {
     cryptsetup --cipher=aes-cbc-essiv:sha256 --key-size=256 --hash=sha256 --verify-passphrase \
         luksFormat /dev/$DEVICE || exit 1
     echo
-    echo "*** Opening LUKS encrypted partition: luksOpen /dev/$DEVICE $DEVICE}"
+    echo "*** Opening LUKS encrypted partition: luksOpen /dev/$DEVICE $DEVICE"
     cryptsetup --allow-discards --persistent luksOpen /dev/$DEVICE $DEVICE || exit 1:
     echo
     format_partition "$@"
