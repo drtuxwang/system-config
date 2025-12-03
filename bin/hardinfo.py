@@ -10,7 +10,7 @@ from pathlib import Path
 
 from command_mod import Command
 from file_mod import FileUtil
-from subtask_mod import Exec
+from subtask_mod import Background
 
 
 class Main:
@@ -55,7 +55,8 @@ class Main:
             hardinfo = Command(Path('bin', 'hardinfo'), errors='stop')
         hardinfo.set_args(sys.argv[1:])
 
-        Exec(hardinfo.get_cmdline()).run()
+        pattern = "^$|dbind-WARNING"
+        Background(hardinfo.get_cmdline()).run(pattern=pattern)
 
         return 0
 
