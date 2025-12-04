@@ -55,7 +55,7 @@ class Main:
             hardinfo = Command(Path('bin', 'hardinfo'), errors='stop')
         hardinfo.set_args(sys.argv[1:])
 
-        pattern = "^$|dbind-WARNING"
+        pattern = "^$|dbind-WARNING|Gdk-CRITICAL"
         Background(hardinfo.get_cmdline()).run(pattern=pattern)
 
         return 0
