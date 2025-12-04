@@ -37,16 +37,9 @@ cat > "$SOFTWARE/$START.bwrap" << EOF
 MYDIR=\$(realpath "\${0%/*}")
 /usr/bin/bwrap \\
     --ro-bind / / \\
-    --tmpfs /home \\
-    --tmpfs /media \\
-    --tmpfs /mnt \\
-    --tmpfs /srv \\
-    --tmpfs /tmp \\
     --dev dev \\
-    --ro-bind-try "\$MYDIR" "\$MYDIR" \\
     --dev-bind-try /dev/dri /dev/dri \\
     --bind-try /run/user/\$(id -u)/pulse /run/user/\$(id -u)/pulse \\
-    --bind-try \$HOME/.config/0ad \$HOME/.config/0ad \\
     --overlay-src /usr --overlay-src "\$MYDIR/usr" --ro-overlay /usr \\
     -- "\$MYDIR/$START"
 EOF
