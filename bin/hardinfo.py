@@ -51,7 +51,7 @@ class Main:
         Start program
         """
         hardinfo = Command('hardinfo2', errors='ignore')
-        if not hardinfo.is_found:
+        if not hardinfo.is_found():
             hardinfo = Command(Path('bin', 'hardinfo'), errors='stop')
         hardinfo.set_args(sys.argv[1:])
 
