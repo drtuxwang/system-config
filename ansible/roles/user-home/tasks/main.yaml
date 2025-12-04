@@ -16,7 +16,6 @@
   include_tasks: cmdline-apps.yaml
   tags:
   - user-home
-  - htop
   - tmux
 
 - name: Include "gui-apps-deb12.yaml" tasks
