@@ -55,11 +55,8 @@ esac
 realpath --version || WRAPPER=$(echo "$WRAPPER" | sed -e "s/realpath/readlink -e/")
 
 # Disable tests due to memory leaks requiring > 16GB
-if [ "$MAJOR_VER" != 3.14 ]
-then
-    sed -i "s/  'test_functools',/  # 'test_functools',/" Lib/test/libregrtest/pgo.py
-    sed -i "s/  'test_json',/  # 'test_json',/" Lib/test/libregrtest/pgo.py
-fi
+sed -i "s/  'test_functools',/  # 'test_functools',/" Lib/test/libregrtest/pgo.py
+sed -i "s/  'test_json',/  # 'test_json',/" Lib/test/libregrtest/pgo.py
 
 CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
 # Enable profile-guided optimization (PGO) except old gcc
