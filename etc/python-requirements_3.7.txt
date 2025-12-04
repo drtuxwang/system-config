@@ -2,9 +2,11 @@ astroid                      # ==2.15.8 (old version)
 bson                         # ==0.5.10 (required instead of bson-senao for 3.7)
 bson-senao                   # ==None
 commonmark                   # ==0.9.1 (required by rich for 3.7)
+defusedxml                   # ==None
 dill                         # ==0.3.7 (old version)
 dnspython                    # ==2.3.0 (old version)
 filelock                     # ==3.12.2 (old version)
+Glances                      # ==None
 importlib-metadata           # ==4.2.0 (< 4.3 required by jsonpickle/virtualenv for 3.7)
 jsonpickle                   # ==3.4.2 (old version)
 isort                        # ==5.11.5 (old version)
@@ -13,6 +15,7 @@ packaging                    # ==None
 pip                          # ==21.3.1 (old version)
 pipdeptree                   # ==2.9.6 (old version)
 platformdirs                 # ==2.6.2 (old version)
+psutil                       # ==None
 pycodestyle                  # ==2.9.1 (old version)
 pyflakes                     # ==3.0.1 (old version)
 pylint                       # ==2.17.7 (old version)
@@ -21,6 +24,7 @@ pyzstd                       # ==0.16.2 (old version)
 requests                     # ==2.31.0 (old version)
 rich                         # ==12.6.0 (old version)
 setuptools                   # ==68.0.0 (old version)
+shtab                        # ==None
 soupsieve                    # ==2.4.1 (old version)
 tomli                        # ==2.0.1 (required by pylint for 3.7)
 typing-extensions            # ==4.7.1 (old version)
@@ -30,4 +34,5 @@ virtualenv                   # ==20.15.1 (old version)
 wheel                        # ==0.42.0 (old version)
 wrapt                        # ==1.16.0 (required by astroid for 3.7)
 xmltodict                    # ==0.15.0 (old version)
+yt-dlp                       # ==None
 zipp                         # ==3.14.0 (required by importlib-metadata for 3.7)

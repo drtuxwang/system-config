@@ -47,7 +47,7 @@ pyzstd==0.17.0               # ZSTD compression/decompression
 requests==2.32.5             # Web client
 rich==13.9.4                 #   (required by cookiecutter)
 setuptools==80.9.0           # Python package manager
-shtab==1.7.2                 #   (required by glances)
+shtab==1.8.0                 #   (required by glances)
 six==1.17.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.2                 #   (required by gitdb)
 soupsieve==2.7               #   (required by beautifulsoup4)

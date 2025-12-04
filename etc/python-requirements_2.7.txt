@@ -17,6 +17,7 @@ cookiecutter                 # ==1.7.3 (old version)
 cryptography                 # ==3.3.2 (required by pyopenssl for 2.7)
 cx-Oracle                    # ==7.3.0 (Oracle DB client for 2.7)
 decorator                    # ==4.4.2 (required by legacy code for 2.7)
+defusedxml                   # ==None
 dicttoxml                    # ==None
 dill                         # ==None
 dnspython                    # ==None
@@ -27,6 +28,7 @@ futures                      # ==3.3.0 (required by isort for 2.7)
 gitdb2                       # ==2.0.6 (required instead of gitdb for 2.7)
 gitdb                        # ==None
 GitPython                    # ==2.1.15 (old version)
+Glances                      # ==None
 gTTS                         # ==None
 idna                         # ==2.10 (old version)
 importlib-metadata           # ==2.1.1 (required by virtualenv for 2.7)
@@ -38,18 +40,19 @@ jinja2-time                  # ==0.2.0 (required by cookiecutter for 2.7)
 jsonpickle                   # ==2.2.0 (old version)
 lazy-object-proxy            # ==1.6.0 (old version)
 markdown2                    # ==None (old version)
-markdown-it-py                 # ==None
-MarkupSafe                     # ==1.1.1 (old version)
+markdown-it-py               # ==None
+MarkupSafe                   # ==1.1.1 (old version)
 mccabe                       # ==0.6.1 (old version)
 mdurl                        # ==None
 motor                        # ==2.1.0 (Mongo async client for 2.7)
-packaging                      # ==None
+packaging                    # ==None
 paramiko                     # ==2.12.0 (SSH client for 2.7)
 pathlib2                     # ==2.3.7.post1 (required by virtualenv for 2.7)
 pip                          # ==20.3.4 (old version)
 pipdeptree                   # ==2.2.1 (old version)
 platformdirs                 # ==2.0.2 (old version)
 poyo                         # ==0.5.0 (required by cookiecutter for 2.7)
+psutil                       # ==None
 pycodestyle                  # ==2.7.0 (old version)
 pycparser                    # ==2.21 (required by cffi for 2.7)
 pycrypto                     # ==2.0.1 (required by gen-ctl for 2.7)
@@ -63,11 +66,12 @@ pyOpenSSL                    # ==21.0.0 (old version)
 pyparsing                    # ==2.2.2 (old version)
 pytz                         # ==2023.3 (required by legacy code for 2.7)
 PyYAML                       # ==5.4.1 (old version)
-pyzstd                         # ==None
+pyzstd                       # ==None
 requests                     # ==2.27.1 (old version)
-rich                           # ==None
+rich                         # ==None
 scandir                      # ==1.10.0 (required by pathlib2 for 2.7)
 setuptools                   # ==44.1.1 (old version)
+shtab                        # ==None
 singledispatch               # ==3.7.0 (required by pylint for 2.7)
 smmap2                       # ==3.0.1 (required by gitdb2 for 2.7)
 smmap                        # ==3.0.5 (old version)
@@ -75,11 +79,12 @@ soupsieve                    # ==1.9.6 (old version)
 tomlkit                      # ==None
 tornado                      # ==5.1.1 (Web server framework for 2.7)
 typing                       # ==3.10.0.0 (required by importlib-resources for 2.7)
-typing-extensions              # ==None
+typing-extensions            # ==None
 urllib3                      # ==1.26.20 (old version)
 virtualenv                   # ==20.15.1 (old version)
 wheel                        # ==0.37.1 (old version)
 whichcraft                   # ==0.6.1 (required by cookiecutter for 2.7)
 wrapt                        # ==1.15.0 (old version)
 xmltodict                    # ==0.12.0 (old version)
+yt-dlp                       # ==None
 zipp                         # ==1.2.0 (required by importlib-metadata for 2.7)
