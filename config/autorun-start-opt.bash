@@ -33,4 +33,5 @@ set_vga() {
 
 # Start applications:
 ##XWEB_TABS=3 xweb &
+##XWEB_TABS=3 xweb -width 1920 -height 1080 &
 ##myqsd 1
