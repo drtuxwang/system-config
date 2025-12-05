@@ -59,6 +59,14 @@ class Main:
             pass
         return 1
 
+    @staticmethod
+    def _get_size() -> list:
+        try:
+            x, y = os.environ['XWEB_SIZE'].split('x')
+        except (KeyError, ValueError):
+            return []
+        return ['-width', x, '-height', y]
+
     @classmethod
     def run(cls) -> int:
         """
@@ -69,7 +77,9 @@ class Main:
         if len(sys.argv) > 1:
             command.set_args(sys.argv[1:])
         else:
-            command.set_args([cls._get_default()] * cls._get_tabs())
+            command.set_args(
+                [cls._get_default()] * cls._get_tabs() + cls._get_size()
+            )
         Task(command.get_cmdline()).run()
 
         return 0
