@@ -113,7 +113,7 @@
             fullscreen.disable_saver = "true" 
             fullscreen.above = "false" 
 
-            image_overlay.template_string = "[%number%/%total%]\n%size%\n%res%\n%date%\n%name%\n" 
+            image_overlay.template_string = "[%number%/%total%]  %name%\n" 
             image_overlay.x = "0" 
             image_overlay.y = "-1" 
             image_overlay.text_red = "0" 

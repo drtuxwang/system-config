@@ -10,7 +10,7 @@ from pathlib import Path
 
 from command_mod import Command
 from file_mod import FileUtil
-from subtask_mod import Exec
+from subtask_mod import Background
 
 
 class Main:
@@ -50,13 +50,13 @@ class Main:
         """
         Start program
         """
-        hardinfo = Command(
-            Path('bin', 'hardinfo'),
-            errors='stop',
-            args=sys.argv[1:],
-        )
+        hardinfo = Command('hardinfo2', errors='ignore')
+        if not hardinfo.is_found():
+            hardinfo = Command(Path('bin', 'hardinfo'), errors='stop')
+        hardinfo.set_args(sys.argv[1:])
 
-        Exec(hardinfo.get_cmdline()).run()
+        pattern = "^$|dbind-WARNING|Gdk-CRITICAL|GLib-CRITICAL"
+        Background(hardinfo.get_cmdline()).run(pattern=pattern)
 
         return 0
 

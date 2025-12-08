@@ -5,7 +5,7 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="awscli==1.41.17"
+    VENV_PACKAGE="awscli==1.42.76"
     VENV_DEPENDS="PyYAML==6.0.3"
 }
 

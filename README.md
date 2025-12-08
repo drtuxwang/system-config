@@ -91,8 +91,6 @@ the years.
  * config/geeqierc.xml             Copy to "~/.config/geeqie/" for Geeqie setup
  * config/geeqierc.xml-deb12       Copy to "~/.config/geeqie/" for Geeqie setup
  * config/gitconfig                Copy to "~/.gitconfig" and edit
- * config/htoprc                   Copy to "~/.config/htop" for htop setup
- * config/htoprc-deb12
  * config/iptables.conf            IPTABLES setup script
  * config/login                    Copy to "~.login" for csh/tcsh shells
  * config/mimeapps.list            Copy to "~/.local/share/applications" for MIME definitions

@@ -22,7 +22,12 @@ from file_mod import FileStat, FileUtil
 from logging_mod import ColoredFormatter
 from subtask_mod import Task
 
-DNS_SERVERS = ['1.1.1.1', '8.8.8.8']
+DNS_SERVERS = [
+    '2606:4700:4700::1111',
+    '2001:4860:4860::8888',
+    '1.1.1.1',
+    '8.8.8.8',
+]
 NTP_SERVER = 'pool.ntp.org'
 NTP_SYNC_MAX = 8
 NTP_SYNC_MIN = 3

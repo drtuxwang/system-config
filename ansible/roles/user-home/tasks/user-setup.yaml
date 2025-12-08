@@ -49,7 +49,7 @@
   - ssh
 
 - name: Template file to "{{ home_directory }}/.config/netnice.json"
-  when: download_rate
+  when: download_rate > 0
   template:
     src: netnice.json
     dest: '{{ home_directory }}/.config/'

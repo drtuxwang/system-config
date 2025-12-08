@@ -157,9 +157,6 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     if ( "`which ssudo |& \grep '/ssudo'`" != "" ) then
         alias sudo ssudo
     endif
-    if ( "`which htop |& \grep '/htop'`" != "" ) then
-        alias top htop
-    endif
     alias df "df -k"
     alias du "du -k"
     alias h history 256

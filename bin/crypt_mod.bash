@@ -2,7 +2,7 @@
 #
 # Bash encrypted partitions utilities module
 #
-# Copyright GPL v2: 2018-2024 By Dr Colin Kong
+# Copyright GPL v2: 2018-2025 By Dr Colin Kong
 #
 
 set -u
@@ -19,8 +19,20 @@ options() {
     help() {
         echo "Usage: $0 <options>"
         echo
+        if [ "${0##*/}" = "crypt-format" ]
+        then
+            echo "crypt-format - Create LUKS encrypted partition and format"
+            echo "Options:"
+            echo "  -h, --help  Show this help message and exit."
+            echo "  <device>    Select crypto_LUKS partition (ie sdc1)."
+            echo "  <fstype>    Select f2fs or ext4."
+            echo "  <volume>    Select partition volume name."
+            exit $1
+        fi
+
         echo "crypt-mount  - Mount LUKS encrypted partition"
         echo "crypt-umount - Unmmount LUKS encrypted partition"
+        echo "crypt-format - Create LUKS encrypted partition and format"
         echo
         echo "Options:"
         echo "  -h, --help  Show this help message and exit."
@@ -32,6 +44,12 @@ options() {
 
     uuids=
     case "${0##*/}" in
+    *-format)
+        mode=format
+        [ $# != 3 ] && help 1
+        [ "$2" != f2fs -a "$2" != ext4 ] && help 1
+        return
+        ;;
     *-mount)
         local rootdev=$(df / | awk '/^\/dev\// {print $1}' | sed -e "s@^/dev/@@;s/[0-9]*$//")
         uuids=$(lsblk -list -o NAME,FSTYPE,UUID 2> /dev/null | awk '/^'$rootdev'[1-9]* * crypto_LUKS/ {print $3}')
@@ -79,6 +97,48 @@ become_root() {
     [ "$username" = root ] && return
     echo -e "\033[33mSwitch root@$hostname: sudo \"$0\"\033[0m"
     exec sudo "$0" $args_list
+}
+
+#
+# Function to format encrypted partition
+#
+format_partition() {
+    DEVICE="$1"
+    local fstype="$2"
+    local volume="$3"
+    if [ "$fstype" = f2fs ]
+    then
+        echo "*** Format encrypted partition: mkfs.f2fs -l $volume /dev/mapper/$DEVICE"
+        mkfs.f2fs -l $volume /dev/mapper/$DEVICE || return 1
+    else
+        echo "*** Format encrypted partition: mkfs.ext4 -L $volume /dev/mapper/$DEVICE"
+        mkfs.ext4 -L $volume /dev/mapper/$DEVICE || return 1
+        tune2fs -m 1 -c 256 -i 90d /dev/mapper/$DEVICE || return 1
+    fi
+    mkdir -p /media/$mount_user/$volume
+    mount /dev/mapper/$DEVICE /media/$mount_user/$volume || return 1
+    mkdir -p /media/$mount_user/$volume/$mount_user
+    chown $mount_user:$(id -gn $mount_user) /media/$mount_user/$volume/$mount_user
+    umount /media/$mount_user/$volume
+}
+
+#
+# Function to create LUKS encrypted partition and format
+#
+format_crypt() {
+    DEVICE="$1"
+    echo
+    echo "*** Creating LUKS encrypted partition: luksFormat /dev/$DEVICE"
+    cryptsetup --cipher=aes-cbc-essiv:sha256 --key-size=256 --hash=sha256 --verify-passphrase \
+        luksFormat /dev/$DEVICE || exit 1
+    echo
+    echo "*** Opening LUKS encrypted partition: luksOpen /dev/$DEVICE $DEVICE"
+    cryptsetup --allow-discards --persistent luksOpen /dev/$DEVICE $DEVICE || exit 1:
+    echo
+    format_partition "$@"
+    echo
+    echo "*** Closing LUKS encrypted partition: luksClose /dev/mapper/$DEVICE"
+    /sbin/cryptsetup luksClose /dev/mapper/$DEVICE
 }
 
 #
@@ -159,6 +219,7 @@ mount_info() {
 options "$@"
 
 args_list="$@"
+[ "$mode" = format ] && ${mode}_crypt $args_list
 for uuid in $uuids
 do
     ${mode}_crypt $uuid

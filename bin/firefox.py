@@ -354,9 +354,7 @@ class Options:
 
         updates = os.access(self._firefox.get_file(), os.W_OK)
 
-        while len(args) > 1:
-            if not args[1].startswith('-'):
-                break
+        if len(args) > 1:
             if args[1] == '-copy':
                 self._copy()
                 self._firefox.set_args(['--new-instance'])
@@ -367,11 +365,6 @@ class Options:
             elif args[1] in ('-v', '-V', '-version', '--version'):
                 self._firefox.set_args(['--version'])
                 Exec(self._firefox.get_cmdline()).run()
-            else:
-                raise SystemExit(
-                    f'{sys.argv[0]}: Invalid "{args[1]}" option.',
-                )
-            args.remove(args[1])
 
         # Avoids 'exo-helper-1 firefox http://' prob of clicking text in XFCE
         if len(args) > 1:

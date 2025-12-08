@@ -10,8 +10,8 @@
 #   ssh 192.168.56.2
 # Images:
 #   qemu-img create -f qcow2 name.boot.qcow2 8M
-#   qemu-img create -f qcow2 name_root.qcow2-snap 8192M
-#   qemu-img create -F qcow2 -b file.qcow2-snap -f qcow2 file.qcow2
+#   qemu-img create -f qcow2 name_root.qcow2.snap 8192M
+#   qemu-img create -F qcow2 -b file.qcow2.snap -f qcow2 file.qcow2
 #   qemu-img convert -p -f vdi file1.vdi -O qcow2 file2.qcow2
 #   qemu-img convert -p -f qcow2 file1.qcow2 -O qcow2 -c -o compression_type=zstd file2.qcow2
 #
@@ -164,8 +164,8 @@ setup_drives() {
         *.iso)
             MOUNT_OPT="if=$DRIVE_INTERFACE,media=cdrom"
             ;;
-        *qcow2-snap*)
-            MOUNT_DEV="${FILE%-snap*}"
+        *qcow2.snap*)
+            MOUNT_DEV="${FILE%.snap*}"
             snapshot_drive $FILE $MOUNT_DEV
         esac
         add_args "-drive file=$MOUNT_DEV,$MOUNT_OPT" || continue

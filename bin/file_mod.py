@@ -2,7 +2,7 @@
 """
 Python file handling utility module
 
-Copyright GPL v2: 2006-2024 By Dr Colin Kong
+Copyright GPL v2: 2006-2025 By Dr Colin Kong
 """
 
 import getpass
@@ -13,8 +13,8 @@ import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.8.2'
-VERSION = 20250120
+RELEASE = '2.8.3'
+VERSION = 20251208
 
 
 class FileStat:
@@ -269,7 +269,9 @@ class FileUtil:
         """
         Return temporary directory with prefix and set permissions.
         """
-        path = Path(os.environ.get('TMPDIR', Path('/tmp', getpass.getuser())))
+        path = Path(os.environ.get('TMPDIR'))
+        if path in (Path('/tmp'), None):
+            path = Path('/tmp', getpass.getuser())
         if name:
             path = Path(path, name)
 

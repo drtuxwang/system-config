@@ -32,5 +32,6 @@ set_vga() {
 ##xset m 4,16
 
 # Start applications:
+##export XWEB_SIZE=1920x1080
 ##XWEB_TABS=3 xweb &
-##myqsd 1
+##myqsd 4

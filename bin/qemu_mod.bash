@@ -178,17 +178,16 @@ trim_image() {
 compress_image() {
    case "$1" in
     *.qcow2)
-        IMAGE=${1##*/}
-        echo "qemu-img convert -f qcow2 \"$1\" -O qcow2 -c -o compression_type=zstd \"$IMAGE.part\""
-        qemu-img convert -f qcow2 "$1" -O qcow2 -c -o compression_type=zstd "$IMAGE.part"
+        echo "qemu-img convert -f qcow2 \"$1\" -O qcow2 -c -o compression_type=zstd \"$1.part\""
+        qemu-img convert -f qcow2 "$1" -O qcow2 -c -o compression_type=zstd "$1.part"
         [ $? = 0 ] || return 1
-        if [ -f "$IMAGE" ]
+        if [ -f "$1" ]
         then
             echo "mv \"$1\" \"$1-orig\""
             mv "$1" "$1-orig" || return 1
         fi
-        echo "mv \"$IMAGE.part\" \"$IMAGE\""
-        mv "$IMAGE.part" "$IMAGE"
+        echo "mv \"$1.part\" \"$1\""
+        mv "$1.part" "$1"
         ;;
     esac
 }

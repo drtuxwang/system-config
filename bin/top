@@ -1,3 +1,10 @@
 #!/usr/bin/env bash
 
-source "${0%/*}/pyld_mod.bash"
+set -u
+
+[ "$(uname)" = SunOS -a -x /bin/prstat ] && exec /bin/prstat 10
+[ "$(glances --version 2>&1 | grep "^Glances version:")" ] && exec glances --disable-check-update
+[ "$(top --version 2>&1 | grep "^htop ")" ] && exec htop
+
+PATH=$(echo ":$PATH:" | sed -e "s@:${0%/*}:@:@;s/^://;s/:$//")
+exec top

@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-Wrapper for "top" command
+Wrapper for "curl" command
 """
 
 import os
 import signal
 import sys
-from pathlib import Path
 
-from command_mod import Command, CommandFile
+from command_mod import Command
 from subtask_mod import Exec
 
 
@@ -25,7 +24,6 @@ class Main:
             sys.exit(114)
         except SystemExit as exception:
             sys.exit(exception)  # type: ignore
-        sys.exit(0)
 
     @staticmethod
     def config() -> None:
@@ -39,26 +37,16 @@ class Main:
                 if 'newline' not in kwargs and args and 'b' not in args[0]:
                     kwargs['newline'] = '\n'
                 return open(str(file), *args, **kwargs)
-            Path.open = _open  # type: ignore
 
     @staticmethod
-    def _get_top() -> Command:
-        if os.name == 'posix' and os.uname()[0] == 'SunOS':
-            if Path('/bin/prstat').is_file():
-                return CommandFile('/bin/prstat', args=['10'])
-            return Command('prstat', args=['10'], errors='stop')
-
-        return Command('top', errors='stop')
-
-    @classmethod
-    def run(cls) -> int:
+    def run() -> int:
         """
         Start program
         """
-        top = cls._get_top()
-        top.extend_args(sys.argv[1:])
+        curl = Command('curl', errors='stop')
+        curl.extend_args(['-H', 'Accept-Language: en'] + sys.argv[1:])
 
-        Exec(top.get_cmdline()).run()
+        Exec(curl.get_cmdline()).run()
 
         return 0
 

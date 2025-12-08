@@ -1,94 +1,90 @@
-arrow==0.17.0
-astroid==1.6.6
-asttokens==None
-backports-abc==0.5           #   (required by tornado for 2.7)
-backports.functools-lru-cache==1.6.4  #   (required by pylint for 2.7)
-bcrypt==3.1.7
-beautifulsoup4               # ==4.9.3 (last compatible version)
-certifi                      # ==2021.10.8 (last compatible version)
-cffi==1.15.1
-chardet                      # ==4.0.0 (last compatible version)
-charset-normalizer==None
-click                        # ==7.1.2 (last compatible version)
-configparser==3.8.1          #   (required by pylint/virtualenv for 2.7)
-contextlib2==0.6.0.post1     #   (required by importlib-metadata/importlib-resources for 2.7)
-cookiecutter                 # ==1.7.3 (last compatible version)
-cryptography                 # ==3.3.2 (last compatible version)
-cx-Oracle==7.3.0
-decorator==4.4.2
-dicttoxml==None
-dill==None
-dnspython==None
-enum34==1.1.10               #   (required by astroid for 2.7)
-executing==None
-filelock==3.2.1
-future                       # ==0.18.3 (required by legacy code)
-futures==3.3.0               #   (required by tornado for 2.7)
-gitdb2==2.0.6                #   (required by GitPython for 2.7)
-gitdb==None
-GitPython                    # ==2.1.15 (last compatible version)
-gTTS==None
-idna                         # ==2.10 (last compatible version)
-importlib-metadata==2.1.1    #   (required by virtualenv for 2.7)
-importlib-resources==3.3.1   #   (required by virtualenv for 2.7)
-ipaddress==1.0.23            #   (required by cryptography for 2.7)
-ipdb==None
-ipython==None
-ipython-pygments-lexers==None
-isort==4.3.21
-jedi==None
-Jinja2                       # ==2.11.3 (last compatible version)
-jsonpickle                   # ==2.2.0 (last compatible version)
-lazy-object-proxy==1.6.0
-markdown2==None
-markdown-it-py==None
-MarkupSafe==1.1.1
-matplotlib-inline==None
-mccabe                       # ==0.6.1 (last compatible version)
-mdurl==None
-motor==2.1.0
-packaging==None
-paramiko                     # ==2.12.0 (last compatible version)
-parso==None
-pathlib2==2.3.6              #   (required by virtualenv for 2.7)
-pip                          # ==20.3.4 (last compatible version)
-pipdeptree                   # ==2.2.1 (last compatible version)
-platformdirs==2.0.2
-poyo==0.5.0                  #   (required by cookiecutter for 2.7)
-prompt-toolkit==None
-pure-eval==None
-pycodestyle==2.7.0
-pycparser                    # ==2.21 (last compatible version)
-pycrypto                     # ==2.0.1 (required by gen-ctl)
-pycryptodome==3.19.1         #   (required by abettersqlplus)
-pyflakes==2.3.1
-Pygments==None
-pylint==1.9.5
-pymongo                      # ==3.13.0 (last compatible version)
-PyNaCl                       # ==1.4.0 (last compatible version)
-pyOpenSSL==21.0.0
-pyparsing                    # ==2.2.2 (last compatible required by legacy code)
-pytz==2023.3                 #   (required by legacy code)
-PyYAML                       # ==5.4.1 (last compatible version)
-pyzstd==None
-requests                     # ==2.27.1 (last compatible version)
-rich==None
-scandir==1.10.0              #   (required by pathlib2 for 2.7)
-setuptools                   # ==44.1.1 (last compatible version)
-singledispatch==3.7.0        #   (required by astroid for 2.7)
-smmap2==3.0.1                #   (required by gitdb2 for 2.7)
-smmap==3.0.5                 #   (required by smmap2 for 2.7)
-soupsieve                    # ==1.9.6 (last compatible version)
-stack-data==None
-tomlkit==None
-tornado                      # ==5.1.1 (last compatible version)
-traitlets==None
-typing==3.10.0.0
-typing-extensions==None
-urllib3                      # ==1.26.20 (last compatible version)
-virtualenv                   # ==20.15.1 (last compatible version)
-wheel                        # ==0.37.1 (last compatible version)
-whichcraft==0.6.1            #   (required by cookiecutter for 2.7)
-wrapt                        # ==1.15.0 (last compatible version)
-xmltodict                    # ==0.12.0 (last compatible version)
-zipp                         # ==1.2.0 (required by importlib-metadata/pep517 for 2.7)
+arrow                        # ==0.17.0 (old version)
+astroid                      # ==1.6.6 (old version)
+backports-abc                # ==0.5 (required by tornado for 2.7)
+backports.functools-lru-cache # ==1.6.4 (required by pylint for 2.7)
+bcrypt                       # ==3.1.7 (old version)
+beautifulsoup4               # ==4.9.3 (old version)
+bson                         # ==0.5.10 (required instead of bson-senao for 2.7)
+bson-senao                   # ==None
+certifi                      # ==2021.10.8 (old version)
+cffi                         # ==1.15.1 (required by bcrypt for 2.7)
+chardet                      # ==4.0.0 (old version)
+charset-normalizer           # ==None
+click                        # ==7.1.2 (old version)
+configparser                 # ==3.8.1 (required by pylint for 2.7)
+contextlib2                  # ==0.6.0.post1 (required by importlib-metadata for 2.7)
+cookiecutter                 # ==1.7.3 (old version)
+cryptography                 # ==3.3.2 (required by pyopenssl for 2.7)
+cx-Oracle                    # ==7.3.0 (Oracle DB client for 2.7)
+decorator                    # ==4.4.2 (required by legacy code for 2.7)
+defusedxml                   # ==None
+dicttoxml                    # ==None
+dill                         # ==None
+dnspython                    # ==None
+enum34                       # ==1.1.10 (required by astroid for 2.7)
+filelock                     # ==3.2.1 (old version)
+future                       # ==0.18.3 (required by legacy code for 2.7)
+futures                      # ==3.3.0 (required by isort for 2.7)
+gitdb2                       # ==2.0.6 (required instead of gitdb for 2.7)
+gitdb                        # ==None
+GitPython                    # ==2.1.15 (old version)
+Glances                      # ==None
+gTTS                         # ==None
+idna                         # ==2.10 (old version)
+importlib-metadata           # ==2.1.1 (required by virtualenv for 2.7)
+importlib-resources          # ==3.3.1 (required by virtualenv for 2.7)
+ipaddress                    # ==1.0.23 (required by cryptography for 2.7)
+isort                        # ==4.3.21 (old version)
+Jinja2                       # ==2.11.3 (old version)
+jinja2-time                  # ==0.2.0 (required by cookiecutter for 2.7)
+jsonpickle                   # ==2.2.0 (old version)
+lazy-object-proxy            # ==1.6.0 (old version)
+markdown2                    # ==None (old version)
+markdown-it-py               # ==None
+MarkupSafe                   # ==1.1.1 (old version)
+mccabe                       # ==0.6.1 (old version)
+mdurl                        # ==None
+motor                        # ==2.1.0 (Mongo async client for 2.7)
+packaging                    # ==None
+paramiko                     # ==2.12.0 (SSH client for 2.7)
+pathlib2                     # ==2.3.7.post1 (required by virtualenv for 2.7)
+pip                          # ==20.3.4 (old version)
+pipdeptree                   # ==2.2.1 (old version)
+platformdirs                 # ==2.0.2 (old version)
+poyo                         # ==0.5.0 (required by cookiecutter for 2.7)
+psutil                       # ==None
+pycodestyle                  # ==2.7.0 (old version)
+pycparser                    # ==2.21 (required by cffi for 2.7)
+pycrypto                     # ==2.0.1 (required by gen-ctl for 2.7)
+pycryptodome                 # ==3.19.1 (required by abettersqlplus for 2.7)
+pyflakes                     # ==2.3.1 (old version)
+Pygments                     # ==None
+pylint                       # ==1.9.5 (old version)
+pymongo                      # ==3.13.0 (MongoDB client for 2.7)
+PyNaCl                       # ==1.4.0 (required by paramiko for 2.7)
+pyOpenSSL                    # ==21.0.0 (old version)
+pyparsing                    # ==2.2.2 (old version)
+pytz                         # ==2023.3 (required by legacy code for 2.7)
+PyYAML                       # ==5.4.1 (old version)
+pyzstd                       # ==None
+requests                     # ==2.27.1 (old version)
+rich                         # ==None
+scandir                      # ==1.10.0 (required by pathlib2 for 2.7)
+setuptools                   # ==44.1.1 (old version)
+shtab                        # ==None
+singledispatch               # ==3.7.0 (required by pylint for 2.7)
+smmap2                       # ==3.0.1 (required by gitdb2 for 2.7)
+smmap                        # ==3.0.5 (old version)
+soupsieve                    # ==1.9.6 (old version)
+tomlkit                      # ==None
+tornado                      # ==5.1.1 (Web server framework for 2.7)
+typing                       # ==3.10.0.0 (required by importlib-resources for 2.7)
+typing-extensions            # ==None
+urllib3                      # ==1.26.20 (old version)
+virtualenv                   # ==20.15.1 (old version)
+wheel                        # ==0.37.1 (old version)
+whichcraft                   # ==0.6.1 (required by cookiecutter for 2.7)
+wrapt                        # ==1.15.0 (old version)
+xmltodict                    # ==0.12.0 (old version)
+yt-dlp                       # ==None
+zipp                         # ==1.2.0 (required by importlib-metadata for 2.7)
