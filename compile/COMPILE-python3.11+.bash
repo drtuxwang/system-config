@@ -6,6 +6,7 @@ umask 022
 VERSION=$(grep "define PY_VERSION " Include/patchlevel.h | cut -f2 -d'"')
 MAJOR_VER=${VERSION%.*}
 DEFAULT_PYTHON=3.13
+THREADS=$(awk '/processor/ {n++} END {print n/2+1}' /proc/cpuinfo 2> /dev/null)
 
 if [ "$(gcc --version 2>&1 | grep -E "gcc .* ([1-3][.]|4[.][1-6])")" ]
 then
@@ -55,11 +56,8 @@ esac
 realpath --version || WRAPPER=$(echo "$WRAPPER" | sed -e "s/realpath/readlink -e/")
 
 # Disable tests due to memory leaks requiring > 16GB
-if [ "$MAJOR_VER" != 3.14 ]
-then
-    sed -i "s/  'test_functools',/  # 'test_functools',/" Lib/test/libregrtest/pgo.py
-    sed -i "s/  'test_json',/  # 'test_json',/" Lib/test/libregrtest/pgo.py
-fi
+sed -i "s/  'test_functools',/  # 'test_functools',/" Lib/test/libregrtest/pgo.py
+sed -i "s/  'test_json',/  # 'test_json',/" Lib/test/libregrtest/pgo.py
 
 CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
 # Enable profile-guided optimization (PGO) except old gcc
@@ -68,7 +66,7 @@ CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
 [ "$(gcc --version 2>&1 | grep "gcc .* [1-4][.]")" ] || CONFIGURE="$CONFIGURE --with-lto"
 
 $CONFIGURE
-make
+make -j $THREADS
 make install
 
 if [ -d install/bin ]

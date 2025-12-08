@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+THREADS=$(awk '/processor/ {n++} END {print n/2+1}' /proc/cpuinfo 2> /dev/null)
+
 cd ${0%/*}
 umask 022
 
@@ -9,7 +11,7 @@ then
 fi
 
 ./configure --prefix=$PWD/install
-make -i NO_INSTALL_HARDLINKS=YesPlease install
+make -i NO_INSTALL_HARDLINKS=YesPlease install -j $THREADS
 
 ls -l $PWD/install/bin/*
 strip $PWD/install/bin/* 2> /dev/null

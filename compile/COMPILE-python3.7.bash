@@ -5,6 +5,7 @@ umask 022
 
 VERSION=$(grep "define PY_VERSION " Include/patchlevel.h | cut -f2 -d'"')
 MAJOR_VER=${VERSION%.*}
+THREADS=$(awk '/processor/ {n++} END {print n/2+1}' /proc/cpuinfo 2> /dev/null)
 
 case $(uname) in
 Darwin)
@@ -52,7 +53,7 @@ CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
 [ "$(gcc --version 2>&1 | grep "gcc .* [1-4][.]")" ] || CONFIGURE="$CONFIGURE --with-lto"
 
 $CONFIGURE
-make
+make -j $THREADS
 make install
 
 if [ -d install/bin ]
