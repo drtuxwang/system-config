@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Create BubbleWrap portable app
+# 0AD 0.27.1 (Debian 13) bubblewrap portable app
 #
 
 SOFTWARE="0ad_0.27.1-linux64-x86-glibc_2.41"

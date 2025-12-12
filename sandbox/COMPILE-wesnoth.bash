@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Create BubbleWrap portable app
+# Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
 #
 
 SOFTWARE="wesnoth_1.18.5-linux64-x86-glibc_2.41"
