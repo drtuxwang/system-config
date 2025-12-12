@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# Create hardinfo portable app
+# Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
 #
 
-SOFTWARE="hardinfo_0.5.1-linux64-x86-glibc_2.36"
-EXEC="usr/bin/hardinfo"
+SOFTWARE="hardinfo_2.2.10-linux64-x86-glibc_2.41"
+EXEC="usr/bin/hardinfo2"
 START="hardinfo"
 URLS="
-    https://deb.debian.org/debian/pool/main/h/hardinfo/hardinfo_0.5.1+git20180227-2.1+b1_amd64.deb
+    https://deb.debian.org/debian/pool/main/h/hardinfo/hardinfo2_2.2.10-1_amd64.deb
 "
 
 # Download and unpack
