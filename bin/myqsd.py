@@ -243,12 +243,12 @@ class Main:
                 express_queued = True
 
         free_slots = self._slots - slots_used
-        if not express_queued:
-            self._attempt('normal', free_slots)
-        elif slots_used:
-            self._attempt('express', free_slots + 1)
+        if not slots_used:
+            free_slots = os.cpu_count()
+        if express_queued:
+            self._attempt('express', free_slots)
         else:
-            self._attempt('express', os.cpu_count())
+            self._attempt('normal', free_slots)
 
     def _attempt(self, queue: str, free_slots: int) -> bool:
         for path in sorted(
