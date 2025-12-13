@@ -16,8 +16,8 @@ from command_mod import Command, CommandFile
 from subtask_mod import Daemon
 from task_mod import Tasks
 
-RELEASE = '3.3.0'
-VERSION = 20251212
+RELEASE = '3.3.1'
+VERSION = 20251213
 PURGE_TIME = 604800
 
 
@@ -91,9 +91,11 @@ class Options:
             socket.gethostname().split('.')[0].lower()
         )
 
-        if self._args.slots[0] < -1:
+        slots = self._args.slots[0]
+        if slots < 0 or slots > os.cpu_count():
             raise SystemExit(
-                f"{sys.argv[0]}: Invalid number of CPU execution slots (>= -1)"
+                f"{sys.argv[0]}: Invalid number of CPU execution slots "
+                f"(0-{os.cpu_count()})"
             )
 
 
