@@ -16,8 +16,8 @@ from command_mod import Command, CommandFile
 from subtask_mod import Daemon
 from task_mod import Tasks
 
-RELEASE = '3.2.0'
-VERSION = 20241021
+RELEASE = '3.3.1'
+VERSION = 20251213
 PURGE_TIME = 604800
 
 
@@ -91,9 +91,11 @@ class Options:
             socket.gethostname().split('.')[0].lower()
         )
 
-        if self._args.slots[0] < -1:
+        slots = self._args.slots[0]
+        if slots < 0 or slots > os.cpu_count():
             raise SystemExit(
-                f"{sys.argv[0]}: Invalid number of CPU execution slots (>= -1)"
+                f"{sys.argv[0]}: Invalid number of CPU execution slots "
+                f"(0-{os.cpu_count()})"
             )
 
 
@@ -228,7 +230,7 @@ class Main:
 
     def _schedule_job(self) -> None:
         slots_used = 0
-        express_active = False
+        express_queued = False
         for path in [Path(x) for x in self._myqsdir.glob('*.r')]:
             info = self._get_info(path)
             if 'PGID' in info:
@@ -240,15 +242,14 @@ class Main:
                         continue
             slots_used += int(info.get('NCPUS', '0'))
             if info.get('QUEUE') == 'express':
-                express_active = True
+                express_queued = True
 
         free_slots = self._slots - slots_used
-        if not express_active:
-            if self._attempt('express', free_slots + 1):
-                return
-        if free_slots > 0:
-            if self._attempt('express', free_slots):
-                return
+        if not slots_used:
+            free_slots = os.cpu_count()
+        if express_queued:
+            self._attempt('express', free_slots)
+        else:
             self._attempt('normal', free_slots)
 
     def _attempt(self, queue: str, free_slots: int) -> bool:

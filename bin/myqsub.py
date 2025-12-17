@@ -17,8 +17,8 @@ from logging_mod import Message
 from subtask_mod import Task
 from task_mod import Tasks
 
-RELEASE = '3.3.0'
-VERSION = 20241206
+RELEASE = '3.3.1'
+VERSION = 20251213
 
 
 class Options:
@@ -46,12 +46,16 @@ class Options:
         """
         Return number of CPU slots.
         """
+        if self._args.exclusive_flag:
+            return os.cpu_count()
         return self._args.ncpus[0]
 
     def get_queue(self) -> str:
         """
         Return queue name.
         """
+        if self._args.exclusive_flag:
+            return 'express'
         return self._args.queue[0]
 
     def get_cmdlines(self) -> List[List[str]]:
@@ -100,7 +104,12 @@ class Options:
             default=[1],
             help="Select CPU core slots to reserve for job. Default is 1.",
         )
-
+        parser.add_argument(
+            '-e',
+            dest='exclusive_flag',
+            action='store_true',
+            help="Select exclusive job running mode.",
+        )
         parser.add_argument(
             '-q',
             nargs=1,
@@ -108,6 +117,12 @@ class Options:
             choices=('normal', 'express'),
             default=['normal'],
             help='Select "normal" or "express" queue. Default is "normal".',
+        )
+        parser.add_argument(
+            '-x',
+            dest='express_flag',
+            action='store_true',
+            help='Select "express" queue.',
         )
         parser.add_argument(
             'cmdline',

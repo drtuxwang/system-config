@@ -111,8 +111,11 @@ class Main:
             Path(home, '.cache/ibus'),
             Path(home, '.config/ibus'),
             Path(home, '.config/libreoffice'),
-            work_dir,
+            Path('/home'),
+            Path('/mnt'),
+            Path('/media'),
         ]
+        print("debugX1", work_dir)
         for arg in sys.argv[1:]:
             path = Path(arg).resolve()
             if arg == '-net':

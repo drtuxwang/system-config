@@ -51,8 +51,6 @@ the years.
  * appimage/wesnoth-1.14.15-deb11/ Wesnoth 1.14.15 (Debian 11) appimage
  * appimage/wesnoth-1.16.8-deb11/  Wesnoth 1.16.8 (Debian 11 backports) appimage
  * appimage/wesnoth-1.16.9-deb12/  Wesnoth 1.16.9 (Debian 12) appimage
- * bwrap/COMPILE-0ad.bash          0AD 0.27.1 (Debian 13) bubblewrap portable app - broken
- * bwrap/COMPILE-wesnoth.bash      Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
  * compile/COMPILE-7zip.bash       Compile script for 7-Zip (patched for absolute path symlink bug)
  * compile/COMPILE-aria2.bash      Compile script fro Aria2 downloader
  * compile/COMPILE-cutils.bash     Compile script for C Utilities
@@ -186,6 +184,10 @@ the years.
  * qemu/*.bash                     QEMU VM examples
  * qmeu/qemu-system-aarch64.bash   QEMU System aarch64 (arm64) wrapper
  * qmeu/qemu-system-x86_64.bash    QEMU System x86_64 (amd64) wrapper
+ * sandbox/COMPILE-0ad.bash        0AD 0.27.1 (Debian 13) bubblewrap portable app - broken
+ * sandbox/COMPILE-hardinfo.bash   Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
+ * sandbox/COMPILE-hardinfo2.bash  Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
+ * sandbox/COMPILE-wesnoth.bash    Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example
  * wipe/                           Disk wipe utility

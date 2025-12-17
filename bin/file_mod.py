@@ -13,8 +13,8 @@ import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.8.3'
-VERSION = 20251208
+RELEASE = '2.8.4'
+VERSION = 20251214
 
 
 class FileStat:
@@ -269,8 +269,8 @@ class FileUtil:
         """
         Return temporary directory with prefix and set permissions.
         """
-        path = Path(os.environ.get('TMPDIR'))
-        if path in (Path('/tmp'), None):
+        path = Path(os.environ.get('TMPDIR', '/tmp'))
+        if path == Path('/tmp'):
             path = Path('/tmp', getpass.getuser())
         if name:
             path = Path(path, name)
