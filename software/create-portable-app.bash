@@ -116,6 +116,8 @@ prepare_start() {
     fi
 
     PATH=../bin:$PATH fmod -R "$APP_DIRECTORY" > /dev/null 2>&1
+    EMPTY=$(find "$APP_DIRECTORY" -type d -empty)
+    [ "$EMPTY" ] && echo "$EMPTY" && exit 1
     echo -e "\033[33m=> DONE!\033[0m"
 }
 
