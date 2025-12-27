@@ -115,7 +115,6 @@ class Main:
             Path('/mnt'),
             Path('/media'),
         ]
-        print("debugX1", work_dir)
         for arg in sys.argv[1:]:
             path = Path(arg).resolve()
             if arg == '-net':
@@ -135,7 +134,7 @@ class Main:
 
         self._pattern = (
             '^$|: dbind-WARNING|platform (in)?dependent libraries|'
-            'Consider setting [$]PYTHONHOME|: Gtk-WARNING'
+            'Consider setting [$]PYTHONHOME|: Gtk-WARNING|javaldx'
         )
         self._config()
         self._setenv()

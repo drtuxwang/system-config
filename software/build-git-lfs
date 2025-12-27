@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Git LFS 3.6.1 (Offical) portable app
+#
+
+set -e
+
+
+app_settings() {
+    NAME="git-lfs"
+    VERSION="3.6.1"
+    PORT="linux64-x86"
+
+    APP_DIRECTORY="${NAME}_stable-$PORT"
+    APP_FILES="
+        https://github.com/git-lfs/git-lfs/releases/download/v$VERSION/git-lfs-linux-amd64-v$VERSION.tar.gz
+    "
+    APP_REMOVE="
+        git-lfs-$VERSION/install.sh
+        git-lfs-$VERSION/man/
+    "
+    APP_SHELL="
+        mv git-lfs-$VERSION/* .
+        rm -r git-lfs-$VERSION/
+    "
+    APP_START="git-lfs"
+}
+
+app_start() {
+    MYDIR=$(realpath "${0%/*}")
+    exec "$MYDIR/$APP_START" "$@"
+}
+
+
+source "${0%/*}/create-portable-app.bash"

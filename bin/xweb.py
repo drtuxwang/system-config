@@ -8,7 +8,7 @@ import signal
 import sys
 from pathlib import Path
 
-from command_mod import Command
+from command_mod import Command, CommandFile
 from config_mod import Config
 from subtask_mod import Task
 
@@ -73,7 +73,12 @@ class Main:
         Start program
         """
         browser, *flags = Config().get_app('web_browser')[0]
-        command = Command(browser, args=flags, errors='stop')
+        command: Command = CommandFile(
+            Path(sys.argv[0]).with_name(browser),
+            errors='ignore',
+        )
+        if not command.is_found:
+            command = Command(browser, args=flags, errors='stop')
         if len(sys.argv) > 1:
             command.set_args(sys.argv[1:])
         else:

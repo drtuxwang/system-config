@@ -13,8 +13,8 @@ import time
 from pathlib import Path
 from typing import Any, Union
 
-RELEASE = '2.8.4'
-VERSION = 20251214
+RELEASE = '2.9.0'
+VERSION = 20251221
 
 
 class FileStat:
@@ -237,15 +237,20 @@ class FileUtil:
         return str(path_new)
 
     @staticmethod
-    def strings(file: str, pattern: str) -> str:
+    def strings(
+        file: Union[str, Path],
+        pattern: str,
+        full: bool = False,
+    ) -> str:
         """
         Return first match of pattern in binary file
         """
         is_match = re.compile(pattern)
+        matches = []
         try:
             with Path(file).open('rb') as ifile:
                 string = ''
-                while True:
+                while True:  # pylint: disable = too-many-nested-blocks
                     data = ifile.read(4096)
                     if not data:
                         break
@@ -255,14 +260,16 @@ class FileUtil:
                         else:
                             if len(string) >= 4:
                                 if is_match.search(string):
+                                    if full:
+                                        matches.append(string)
+                                        continue
                                     return string
                             string = ''
-            if len(string) >= 4:
-                if is_match.search(string):
-                    return string
+            if len(string) >= 4 and is_match.search(string):
+                matches.append(string)
         except OSError:
             pass
-        return ''
+        return '\n'.join(matches)
 
     @staticmethod
     def tmpdir(name: Union[str, Path] = None) -> str:

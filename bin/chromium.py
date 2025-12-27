@@ -3,8 +3,6 @@
 Wrapper for "chromium" command
 
 Use '-copy' to copy profile to '/tmp'
-Use '-reset' to clean junk from profile
-Use '-restart' to restart chromium
 """
 
 import json
@@ -17,7 +15,6 @@ from pathlib import Path
 from typing import Any, List
 
 from command_mod import Command, Platform
-from file_mod import FileUtil
 from subtask_mod import Background, Daemon, Exec
 from task_mod import Tasks
 
@@ -119,43 +116,6 @@ class Options:
             self._clean_preferences(path)
             self._clean_junk_files(path)
 
-    def _copy(self) -> None:
-        task = Tasks.factory()
-        tmpdir = FileUtil.tmpdir('.cache')
-        for path in Path(tmpdir).glob('chromium.*'):
-            try:
-                if not task.pgid2pids(int(path.suffix)):
-                    print(
-                        f'Removing copy of Chrome profile in "{path}"...',
-                    )
-                    try:
-                        shutil.rmtree(path)
-                    except OSError:
-                        pass
-            except ValueError:
-                pass
-
-        home = Path.home()
-        config_path = Path(home, self._get_profiles_dir())
-        mypid = os.getpid()
-        os.setpgid(mypid, mypid)  # New PGID
-
-        newhome = FileUtil.tmpdir(Path(tmpdir, f'chromium.{mypid}'))
-        print(f'Creating copy of Chromium profile in "{newhome}"...')
-        if not Path(newhome).is_dir():
-            try:
-                shutil.copytree(
-                    config_path,
-                    Path(newhome, self._get_profiles_dir())
-                )
-            except (OSError, shutil.Error):  # Ignore 'lock' file error
-                pass
-        try:
-            Path(newhome, 'Desktop').symlink_to(Path(home, 'Desktop'))
-        except OSError:
-            pass
-        os.environ['HOME'] = newhome
-
     @staticmethod
     def _remove(path: Path) -> None:
         try:
@@ -195,18 +155,6 @@ class Options:
                     print(f'Removing "{path}"...')
                     self._remove(path)
 
-    def _restart(self) -> None:
-        path = Path(Path.home(), self._get_profiles_dir(), 'SingletonLock')
-        try:
-            pid = int(str(
-                # pylint: disable=no-member
-                path.readlink()  # type: ignore
-                # pylint: enable=no-member
-            ).split('-')[1])
-            Tasks.factory().killpids([pid])
-        except (IndexError, OSError):
-            pass
-
     @staticmethod
     def _set_libraries(command: Command) -> None:
         path = Path(command.get_file()).with_name('lib')
@@ -236,18 +184,12 @@ class Options:
         self._browser = self._locate()
 
         if len(args) > 1:
+            if args[1] == '-reset':
+                self._reset()
+                raise SystemExit(0)
             if args[1] == '-version':
                 self._browser.set_args(['-version'])
                 Exec(self._browser.get_cmdline()).run()
-            elif args[1] == '-copy':
-                self._copy()
-            elif args[1] == '-reset':
-                self._reset()
-                raise SystemExit(0)
-
-            if args[1] == '-restart':
-                self._restart()
-                args = args[1:]
             self._browser.set_args(args[1:])
 
         # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE

@@ -184,10 +184,18 @@ the years.
  * qemu/*.bash                     QEMU VM examples
  * qmeu/qemu-system-aarch64.bash   QEMU System aarch64 (arm64) wrapper
  * qmeu/qemu-system-x86_64.bash    QEMU System x86_64 (amd64) wrapper
- * sandbox/COMPILE-0ad.bash        0AD 0.27.1 (Debian 13) bubblewrap portable app - broken
- * sandbox/COMPILE-hardinfo.bash   Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
- * sandbox/COMPILE-hardinfo2.bash  Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
- * sandbox/COMPILE-wesnoth.bash    Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
+ * software/build-0ad              0AD 0.27.1 (Debian 13) bubblewrap portable app
+ * software/build-edge             Edge 142.0.3595.94 (Offical) portable app
+ * software/build-firefox          Firefox 140.6.0esr (Offical) portable app
+ * software/build-git-lfs          Git LFS 3.6.1 (Offical) portable app
+ * software/build-gnome-hearts     Gnome Hearts 0.3.2 (Debian 9) portable app
+ * software/build-golang           Golang 1.24.11 (Offical) portable app
+ * software/build-hardinfo         Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
+ * software/build-hardinfo2        Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
+ * software/build-libreoffice      LibreOffice 25.2.7.2 (Offical) portable app
+ * software/build-openjdk-jdk      OpenJDK JDK 21.0.9 (Offical) portable app
+ * software/build-wesnoth          Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
+ * software/build_mod.bash         Portable app builder module
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example
  * wipe/                           Disk wipe utility

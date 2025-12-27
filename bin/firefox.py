@@ -2,7 +2,6 @@
 """
 Wrapper for "firefox" command
 
-Use '-copy' to copy profile to '/tmp' and use '--new-instance'.
 Use '-reset' to clean junk from profile
 """
 
@@ -133,46 +132,6 @@ class Options:
             self._fix_xulstore(path)
 
         self._fix_installation()
-
-    @classmethod
-    def _copy(cls) -> None:
-        task = Tasks.factory()
-        tmp_path = Path(FileUtil.tmpdir('.cache'))
-        for directory in tmp_path.glob('firefox.*'):
-            try:
-                if not task.pgid2pids(int(directory.suffix)):
-                    print(
-                        f'Removing copy of Firefox profile in "{directory}"...'
-                    )
-                    try:
-                        shutil.rmtree(directory)
-                    except OSError:
-                        pass
-            except ValueError:
-                pass
-
-        firefox_path = Path(Path.home(), cls._get_profiles_dir())
-        mypid = os.getpid()
-        os.setpgid(mypid, mypid)  # New PGID
-        newhome = Path(tmp_path, f'firefox.{mypid}')
-        print(f'Creating copy of Firefox profile in "{newhome}"...')
-
-        if not newhome.is_dir():
-            try:
-                shutil.copytree(
-                    firefox_path,
-                    Path(newhome, '.mozilla', 'firefox'),
-                )
-            except (OSError, shutil.Error):  # Ignore 'lock' file error
-                pass
-        home = Path.home()
-        for name in ('Desktop', '.cups'):
-            try:
-                Path(newhome, name).symlink_to(Path(home, name))
-            except OSError:
-                pass
-        os.environ['HOME'] = str(newhome)
-        os.environ['TMPDIR'] = str(newhome)
 
     @staticmethod
     def _remove(path: Path) -> None:
@@ -330,6 +289,30 @@ class Options:
                 except OSError:
                     pass
 
+    @classmethod
+    def _redirect_tmpdir(cls, path: Path) -> None:
+        tmpdir = FileUtil.tmpdir(path.name)
+        if not path.is_symlink():
+            cls._remove(path)
+            path.symlink_to(tmpdir)
+
+    @classmethod
+    def fix_storage(cls) -> None:
+        """
+        Redirect large extensipn storgae to TMPDIR
+        """
+        firefox_path = Path(Path.home(), cls._get_profiles_dir())
+        if firefox_path.is_dir():
+            for path in firefox_path.glob('*/storage/default/moz-extension*'):
+                if path.is_symlink():
+                    cls._redirect_tmpdir(path)  # Re-create symlink
+            for path in firefox_path.glob(
+                '*/storage/default/moz-extension*/*/*.sqlite'
+            ):
+                matches = FileUtil.strings(path, 'video|downloaded', full=True)
+                if 'video' in matches and 'downloaded' in matches:
+                    cls._redirect_tmpdir(Path(str(path).split('^', 1)[0]))
+
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
@@ -344,17 +327,11 @@ class Options:
             errors='stop',
         )
 
-        updates = os.access(self._firefox.get_file(), os.W_OK)
-
         if len(args) > 1:
-            if args[1] == '-copy':
-                self._copy()
-                self._firefox.set_args(['--new-instance'])
-                updates = False
-            elif args[1] == '-reset':
+            if args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
-            elif args[1] in ('-v', '-V', '-version', '--version'):
+            if args[1] in ('-v', '-V', '-version', '--version'):
                 self._firefox.set_args(['--version'])
                 Exec(self._firefox.get_cmdline()).run()
 
@@ -381,8 +358,7 @@ class Options:
         )
 
         self._config()
-        if updates:
-            self._prefs()
+        self._prefs()
 
 
 class Main:
@@ -422,15 +398,7 @@ class Main:
 
         cmdline = options.get_firefox().get_cmdline()
         Background(cmdline).run(pattern=options.get_pattern())
-
-        # Kill filtering process after start up to avoid hang
-        tkill = Command(
-            'tkill',
-            args=['-delay', '60', '-f', f'python3.* {cmdline[0]} '],
-            errors='ignore'
-        )
-        if tkill.is_found():
-            Daemon(tkill.get_cmdline()).run()
+        options.fix_storage()
 
         return 0
 

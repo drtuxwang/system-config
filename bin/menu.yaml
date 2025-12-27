@@ -198,12 +198,12 @@ menu_games:
   checks:
   - frozen-bubble
 - button:
-    name: hearts
+    name: gnome-hearts
     color: '#ffcc00'
     label: Hearts
-    run: exec hearts &
+    run: exec gnome-hearts &
   checks:
-  - Hearts
+  - gnome-hearts
 - button:
     name: hexxagon
     color: '#ffcc00'
@@ -266,8 +266,6 @@ menu_games:
     label: 0AD
     run: exec 0ad &
   checks:
-  - 0ad.bwrap
-  - 0ad.desktop
   - pyrogenesis
 - button:
     name: assaultcube
@@ -319,8 +317,6 @@ menu_games:
   checks:
   - wesnoth-1.16
   - wesnoth-1.18
-  - wesnoth.bwrap
-  - wesnoth.desktop
 - button:
     name: close
     color: '#ff0000'

@@ -600,7 +600,6 @@ class Encoder:
                 file_new = file.rsplit('.', 1)[0] + '.avi'
                 path_tmp = Path(f'{file_new}.part')
                 self._ffmpeg.extend_args(['-f', 'avi', '-y', path_tmp])
-                print("debugX", self._ffmpeg.get_cmdline())
                 self._run()
                 file_time = FileStat(file).get_mtime()
                 os.utime(path_tmp, (file_time, file_time))

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# Hardinfo 2.2.10 (Debian 13) portable app
+# - Requires: bwrap (Bubblewrap)
+#
+
+set -e
+
+
+app_settings() {
+    NAME="hardinfo"
+    VERSION="2.2.10"
+    PORT="linux64-x86-glibc_2.41"
+
+    APP_DIRECTORY="${NAME}_$VERSION-$PORT"
+    APP_FILES="
+        https://deb.debian.org/debian/pool/main/h/hardinfo/hardinfo2_2.2.10-1_amd64.deb
+    "
+    APP_REMOVE="
+        usr/lib/systemd/
+        usr/share/applications/
+        usr/share/doc/
+        usr/share/icons/
+        usr/share/lintian/
+        usr/share/locale/
+        usr/share/man/
+        usr/share/metainfo/
+    "
+    APP_START="usr/bin/hardinfo2"
+    APP_LINK="hardinfo"
+}
+
+app_start() {
+    MYDIR=$(realpath "${0%/*}")
+    [ "${_SANDBOX_PARENT:-}" ] && exec "$MYDIR/$APP_START" "$@"
+    exec /usr/bin/bwrap \
+        --ro-bind / / \
+        --dev dev \
+        --dev-bind-try /dev/dri /dev/dri \
+        --bind-try /run/user/$(id -u) /run/user/$(id -u) \
+        --overlay-src /usr --overlay-src "$MYDIR/usr" --ro-overlay /usr \
+        -- "$MYDIR/$APP_START" "$@"
+}
+
+
+source "${0%/*}/create-portable-app.bash"
