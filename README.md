@@ -192,6 +192,7 @@ the years.
  * software/build-golang           Golang 1.24.11 (Offical) portable app
  * software/build-hardinfo         Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
  * software/build-hardinfo2        Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
+ * software/build-instant-client   Instant Client 23.26 (Offical + Debian 11) portable app
  * software/build-libreoffice      LibreOffice 25.2.7.2 (Offical) portable app
  * software/build-openjdk-jdk      OpenJDK JDK 21.0.9 (Offical) portable app
  * software/build-wesnoth          Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
