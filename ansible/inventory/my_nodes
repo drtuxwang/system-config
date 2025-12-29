@@ -1,25 +1,19 @@
 [my:children]
-primary_hosts
-secondary_hosts
-tertiary_hosts
-virtual_hosts
+my_local_hosts
+my_vm_hosts
 
-[primary_hosts]
-ryson.local            ansible_user=admin
-
-[secondary_hosts]
-ryzen.local            ansible_user=admin
-boss.local             ansible_user=admin
-koko.local             ansible_user=admin
-
-[tertiary_hosts]
+[my_local_hosts]
+wolfdale.local         ansible_user=admin
+xiaobear.local         ansible_user=admin
 hotdog.local           ansible_user=admin
 snoopy.local           ansible_user=admin
 viva.local             ansible_user=admin
-wolfdale.local         ansible_user=admin
-xiaobear.local         ansible_user=admin
+koko.local             ansible_user=admin
+ryzen.local            ansible_user=admin
+ryson.local            ansible_user=admin
+boss.local             ansible_user=admin
 
-[virtual_hosts]
+[my_vm_hosts]
 debian12.vm            ansible_user=admin
 debian13.vm            ansible_user=admin
 debianmac.vm           ansible_user=admin
