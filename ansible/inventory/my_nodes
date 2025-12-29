@@ -3,15 +3,18 @@ my_local_hosts
 my_vm_hosts
 
 [my_local_hosts]
-wolfdale.local         ansible_user=admin
-xiaobear.local         ansible_user=admin
+# Primary
+ryson.local            ansible_user=admin
+# Secondary
+boss.local             ansible_user=admin
+koko.local             ansible_user=admin
+ryzen.local            ansible_user=admin
+# Tertiary
 hotdog.local           ansible_user=admin
 snoopy.local           ansible_user=admin
 viva.local             ansible_user=admin
-koko.local             ansible_user=admin
-ryzen.local            ansible_user=admin
-ryson.local            ansible_user=admin
-boss.local             ansible_user=admin
+wolfdale.local         ansible_user=admin
+xiaobear.local         ansible_user=admin
 
 [my_vm_hosts]
 debian12.vm            ansible_user=admin
