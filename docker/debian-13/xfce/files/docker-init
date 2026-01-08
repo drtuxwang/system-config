@@ -12,7 +12,7 @@ run_vnc() {
     echo "Starting VNC server..."
     cd /home/owner
     sudo -u owner HOME=/home/owner vncserver \
-        -geometry 1280x720 \
+        -geometry 1440x900 \
         -depth 24 \
         -localhost \
         -SecurityTypes None > /dev/null 2>&1
