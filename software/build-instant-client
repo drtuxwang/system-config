@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Instant Client 23.26 (Offical + Debian 11) portable app
+#
+
+set -e
+
+
+app_settings() {
+    NAME="instant-client"
+    VERSION="23.26.0.0.0"
+    PORT="linux64-x86-glibc_2.31"
+
+    APP_DIRECTORY="${NAME}_${VERSION%.*.*.*}-$PORT"
+    APP_FILES="
+        https://download.oracle.com/otn_software/linux/instantclient/${VERSION//./}/instantclient-basiclite-linux.x64-$VERSION.zip
+        https://download.oracle.com/otn_software/linux/instantclient/${VERSION//./}/instantclient-sqlplus-linux.x64-$VERSION.zip
+        https://deb.debian.org/debian/pool/main/liba/libaio/libaio1_0.3.112-9_amd64.deb
+    "
+    APP_REMOVE="
+        META-INF
+        usr/share/
+    "
+    APP_SHELL="
+        mv instantclient_* bin/
+        ln -s bin lib
+        cat << EOF > sqlnet.ora
+DIAG_ADR_ENABLED = OFF
+TRACE_LEVEL_CLIENT = OFF
+TRACE_DIRECTORY_CLIENT = /dev/null
+LOG_DIRECTORY_CLIENT = /dev/null
+LOG_FILE_CLIENT = /dev/null
+LOG_LEVEL_CLIENT = OFF
+EOF
+        touch -r bin/sqlplus sqlnet.ora
+    "
+    APP_START="bin/sqlplus"
+    APP_LINK="sqlplus64"
+}
+
+app_start() {
+    MYDIR=$(realpath "${0%/*}")
+    # Python cx_Oracle requires sqlplus run times. Set ORACLE_HOME this directory to work.
+    export ORACLE_HOME="$MYDIR"
+    export TNS_ADMIN="$MYDIR/sqlnet.ora"
+    export LD_LIBRARY_PATH="$MYDIR/lib:$MYDIR/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
+    exec "$MYDIR/bin/sqlplus" "$@"
+}
+
+
+source "${0%/*}/create-portable-app.bash"

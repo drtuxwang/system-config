@@ -31,7 +31,8 @@ set_vga() {
 # Fix mouse:
 ##xset m 4,16
 
-# Start applications:
-##export XWEB_SIZE=1920x1080
-##XWEB_TABS=3 xweb &
+# Start browser: 1920x1080(FHD), 1920x1200(WUXGA), 2560x1440(QHD), 3840x2160(4K UHD)
+##XWEB_SIZE=1920x1080 XWEB_TABS=3 xweb &
+
+# MyQS daemon slots
 ##myqsd 4

@@ -111,7 +111,10 @@ class Main:
         for root, directories, files in os.walk(directory):
             files = [x for x in files if not x.startswith('..')]
             if not directories + files:
-                print(f"Error: Found empty directory: {Path(root).resolve()}")
+                path = Path(root).resolve()
+                if Path(path, '..fsum').is_file():
+                    Path(path, '..fsum').unlink()
+                print(f"Error: Found empty directory: {path}")
                 error = True
                 continue
             for file in files:
