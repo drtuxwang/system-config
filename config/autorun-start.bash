@@ -57,15 +57,19 @@ pactl set-sink-volume 0 100%
 xset m 4,16
 
 # Setup keyboard
-setxkbmap gb
-setxkbmap -option ctrl:nocaps              # Disable Caps Lock
-setxkbmap -option altwin:ctrl_win          # Map Win key to Ctrl (like Mac)
-setxkbmap -option terminate:ctrl_alt_bksp  # Zap with Ctrl+Alt+BackSpace
-xmodmap -e "add mod3 = Scroll_Lock" &
-xset b off
-xset r rate 500 25
-numlockx off
-[ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
+while [ ! "$(setxkbmap -query | grep "ctrl:nocaps,terminate:ctrl_alt_bksp,altwin:ctrl_win")" ]
+do
+   setxkbmap gb
+   setxkbmap -option ctrl:nocaps              # Disable Caps Lock
+   setxkbmap -option altwin:ctrl_win          # Map Win key to Ctrl (like Mac)
+   setxkbmap -option terminate:ctrl_alt_bksp  # Zap with Ctrl+Alt+BackSpace
+   xmodmap -e "add mod3 = Scroll_Lock" &
+   xset b off
+   xset r rate 500 25
+   numlockx off
+    [ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
+   sleep 1
+done
 
 # Optional setup
 [ -f $HOME/.config/autorun-start-opt.bash ] && . $HOME/.config/autorun-start-opt.bash
