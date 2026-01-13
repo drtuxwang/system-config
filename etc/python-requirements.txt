@@ -55,7 +55,7 @@ text-unidecode==1.3          #   (required by python-slugify)
 tomlkit==0.12.5              #   (required by pylint)
 typing-extensions==4.15.0    #   (required by beautifulsoup4)
 urllib3==2.6.3               #   (required by requests)
-virtualenv==20.33.1          # Python Virtual Environments
+virtualenv==20.36.1          # Python Virtual Environments
 wheel==0.45.1                # Python wheel packaging
 xmltodict==1.0.2             # Convert XML to Python dict
 yt-dlp==2025.11.12           # Audio/video downloader
