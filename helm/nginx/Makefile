@@ -6,7 +6,7 @@ CHART_VERSION := 18.3.6
 APP_VERSION := 1.26.2
 IMAGE_TAG := 1.26.2-debian-12-r10
 NAMESPACE ?= default
-HOSTNAME ?= nginx.kube.local
+HOSTNAME ?= nginx.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

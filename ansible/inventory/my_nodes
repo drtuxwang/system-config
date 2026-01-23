@@ -7,6 +7,7 @@ my_vm_hosts
 ryson.local            ansible_user=admin
 # Secondary
 boss.local             ansible_user=admin
+efor.local             ansible_user=admin
 koko.local             ansible_user=admin
 ryzen.local            ansible_user=admin
 # Tertiary
@@ -19,4 +20,3 @@ xiaobear.local         ansible_user=admin
 [my_vm_hosts]
 debian12.vm            ansible_user=admin
 debian13.vm            ansible_user=admin
-debianmac.vm           ansible_user=admin

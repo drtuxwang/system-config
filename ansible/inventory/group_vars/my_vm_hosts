@@ -1,3 +1,2 @@
-dhclient_call: true
 vm_9pnet: true
 vm_guest: true

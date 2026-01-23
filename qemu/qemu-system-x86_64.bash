@@ -2,12 +2,11 @@
 #
 # QEMU VM start script
 #
-# Host:
+# Host (192.168.56.2):
 #   ssh -p <port> localhost
 #   scp -P <port> localhost:/path .
 # Guest: (Ctrl-Alt+G)
 #   mount -t 9p -o uid=owner,gid=users,msize=131072 Shared /mnt/host &
-#   ssh 192.168.56.2
 # Images:
 #   qemu-img create -f qcow2 name.boot.qcow2 8M
 #   qemu-img create -f qcow2 name_root.qcow2.snap 8192M

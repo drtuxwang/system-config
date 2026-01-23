@@ -2,7 +2,7 @@ NAME := oracle-xe
 CHART_REPO := ./drtuxwang
 CHART_NAME := oracle-xe
 NAMESPACE ?= infra
-HOSTNAME ?= oracle.kube.local
+HOSTNAME ?= oracle.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

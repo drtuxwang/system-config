@@ -6,7 +6,7 @@ CHART_VERSION := 2.10.0
 APP_VERSION := 1.6.2
 IMAGE_TAG := v1.6.2
 NAMESPACE ?= infra
-HOSTNAME ?= pushgateway.kube.local
+HOSTNAME ?= pushgateway.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

@@ -1,0 +1,24 @@
+127.0.0.1       localhost
+127.0.1.1       {{ansible_hostname}}
+
+{% if docker_daemon %}
+172.17.0.1      docker.host.internal
+172.17.0.1      kube-masters.host.internal
+172.17.0.1      grafana.kube.internal
+172.17.0.1      jenkins.kube.internal
+172.17.0.1      kafka.kube.internal
+172.17.0.1      mongodb.kube.internal
+172.17.0.1      nexus.kube.internal
+172.17.0.1      nginx.kube.internal
+172.17.0.1      oracle.kube.internal
+172.17.0.1      proxy.kube.internal
+172.17.0.1      prometheus.kube.internal
+172.17.0.1      pushgateway.kube.internal
+172.17.0.1      rabbitmq.kube.internal
+172.17.0.1      test.kube.internal
+
+{% endif %}
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters

@@ -7,6 +7,15 @@
   - local-system
   - rc-local
 
+- name: Template file to "/etc/hosts"
+  template:
+    src: hosts
+    dest: /etc/hosts
+    mode: '0644'
+  tags:
+  - local-system
+  - hosts
+
 - name: Copy file to "/etc/rc.local"
   copy:
     src: '{{ config_directory }}/rc.local'
@@ -42,10 +51,20 @@
   - local-system
   - iptables
 
+- name: Copy file to "/etc/polkit-1/rules.d/udisks2-unlock-luks.rules"
+  copy:
+    src: '{{ config_directory }}/udisks2-unlock-luks.rules'
+    dest: /etc/polkit-1/rules.d
+  tags:
+  - local-system
+  - polkit
+
 - name: Ensure "/opt/software/bin" directory exists
   file:
     path: /opt/software/bin
     state: directory
+    owner: admin
+    group: users
     mode: '0755'
   tags:
   - local-system
@@ -59,7 +78,8 @@
     group: no
     delete: yes
     rsync_path: sudo rsync
-    rsync_opts: --exclude=..fsum
+    rsync_opts: --exclude=..fsum --chown=admin:users
+
   tags:
   - local-system
   - software-bin

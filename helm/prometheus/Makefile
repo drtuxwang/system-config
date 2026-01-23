@@ -6,7 +6,7 @@ CHART_VERSION := 27.7.1
 APP_VERSION := 2.53.4
 IMAGE_TAG := v2.53.4
 NAMESPACE ?= infra
-HOSTNAME ?= prometheus.kube.local
+HOSTNAME ?= prometheus.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

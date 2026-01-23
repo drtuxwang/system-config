@@ -2,7 +2,7 @@ NAME := test-server
 CHART_REPO := ./drtuxwang
 CHART_NAME := test-server
 NAMESPACE ?= default
-HOSTNAME ?= test.kube.local
+HOSTNAME ?= test.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

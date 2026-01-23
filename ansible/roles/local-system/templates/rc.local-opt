@@ -14,12 +14,8 @@ mount_disk() {
 }
 
 
-# No Network Manager
-{% if dhclient_call %}
-dhclient $(ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}') &
-{% else %}
+# Manual dhclient call
 ##dhclient $(ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}') &
-{% endif %}
 
 # Setup mounts
 mount -t tmpfs -o noatime tmpfs /shared &

@@ -6,7 +6,7 @@ CHART_VERSION := 16.4.12
 APP_VERSION := 7.0.15
 IMAGE_TAG := 7.0.15-debian-12-r2
 NAMESPACE ?= infra
-HOSTNAME ?= mongodb.kube.local
+HOSTNAME ?= mongodb.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

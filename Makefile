@@ -117,7 +117,7 @@ squash:               # Squash all commits in branch
 .PHONY: reset
 reset:                # Ignore differences and reset to origin/<branch>
 	git status
-	git fetch origin
+	git fetch origin --prune
 	git reset --hard origin/`git rev-parse --abbrev-ref HEAD`
 	@make --no-print-directory time
 

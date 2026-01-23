@@ -16,4 +16,33 @@ then
     # API key files
     ##export ANSIBLE_KEY_FILE=
     ##export DROPBOX_KEY_FILE=
+
+    # Directory change
+    export cda="$HOME/Desktop/archive"
+    export cdb=
+    export cdc=
+    export cdd="$HOME/Desktop/Downloads"
+    export cde=
+    export cdf=
+    export cdg="$HOME/Desktop/git/system-config"
+    export cdh="$HOME/Desktop"
+    export cdi="$HOME/Desktop/images"
+    export cdj=
+    export cdk=
+    export cdl="$HOME/Desktop/images/images-live/iso"
+    export cdm="$HOME/Desktop/archive/software-main/dist"
+    export cdn="$HOME/Desktop/archive/software-new/dist"
+    export cdo="$HOME/Desktop/archive/software-old/dist"
+    export cdp=
+    export cdq=
+    export cdr=
+    export cds=
+    export cdt=
+    export cdu="$HOME/Desktop/archive/software-new/pool/updates"
+    export cdv="$HOME/Desktop/archive/data-video"
+    export cdw="$HOME/software/web-data/pages"
+    export cdx=
+    export cdy=
+    export cdz="$HOME/Desktop/git/drtuxwang.github.io"
+
 fi

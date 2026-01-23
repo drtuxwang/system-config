@@ -14,7 +14,7 @@ mount_disk() {
 }
 
 
-# No Network Manager
+# Manual dhclient call
 ##dhclient $(ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}') &
 
 # Setup mounts

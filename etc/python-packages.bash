@@ -43,6 +43,7 @@ REQUIREMENT=${2-}
 [[ ! /$PYTHON =~ /python[1-9]* ]] && help
 
 export PYTHONPATH=
+export PATH="$(realpath "${0%/*}/../bin"):$PATH"
 
 
 get_pip() {
@@ -190,7 +191,9 @@ install_packages() {
         done
         unset IFS
     fi
-    fmod -R "$($PYTHON -m pip show pip 2> /dev/null | grep "^Location: " | sed -e "s/Location: //")" > /dev/null 2>&1
+    LOCATION=$($PYTHON -m pip show pip 2> /dev/null | grep "^Location: " | sed -e "s/Location: //")
+    fmod -R "$LOCATION" 2>&1
+    [[ $LOCATION = */python_*/lib/python* ]] && fmod -R "${LOCATION%/lib/python*}" 2>&1
 }
 
 

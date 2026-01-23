@@ -6,7 +6,7 @@ CHART_VERSION := 11.6.7
 APP_VERSION := 11.6.1
 IMAGE_TAG := 11.6.1-debian-12-r3
 NAMESPACE ?= infra
-HOSTNAME ?= grafana.kube.local
+HOSTNAME ?= grafana.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

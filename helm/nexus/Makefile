@@ -6,8 +6,8 @@ CHART_VERSION := 5.4.1
 APP_VERSION := 3.27.0
 IMAGE_TAG := 3.27.0
 NAMESPACE ?= infra
-HOSTNAME ?= nexus.kube.local
-TLS_SECRET ?= kube-local-tls
+HOSTNAME ?= nexus.kube.internal
+TLS_SECRET ?= kube-internal-tls
 LOCALPORT ?=
 
 ifndef CHART_VERSION

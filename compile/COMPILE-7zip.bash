@@ -22,8 +22,14 @@ then
     sed -i "s/sysmacros.h/types.h/" CPP/7zip/UI/Common/UpdateCallback.cpp
     sed -i "s/sysmacros.h/types.h/" CPP/7zip/Common/FileStreams.cpp
     # Disable some warnings
-    NOWARN="-Wno-unreachable-code-return -Wno-declaration-after-statement -Wno-unused-but-set-variable"
-    sed -i "s/-Wno-poison-system-directories.*/-Wno-poison-system-directories $NOWARN/" CPP/7zip/warn_clang_mac.mak
+    NOWARN="
+        -Wno-declaration-after-statement
+        -Wno-switch-default
+        -Wno-unreachable-code
+        -Wno-unreachable-code-return
+        -Wno-unused-but-set-variable
+    "
+    sed -i "s/-Wno-poison-system-directories.*/-Wno-poison-system-directories $(echo $NOWARN)/" CPP/7zip/warn_clang_mac.mak
 
     COMPL_STATIC= DISABLE_RAR_COMPRESS=1 make -C CPP/7zip/Bundles/Alone2 -f ../../cmpl_mac_x64.mak
 elif [ "$(asmc --version 2>&1 | grep "Asmc Macro Assembler")" ]

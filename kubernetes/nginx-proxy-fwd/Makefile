@@ -21,9 +21,9 @@ status-kube:          # Show Kube workload status
 
 .PHONY: create-cert
 create-cert:          # Create https certificate
-	openssl genrsa -out proxy-kube-local.key 2048
-	openssl req -new -x509 -nodes -key proxy-kube-local.key -out proxy-kube-local.crt -days 365 -subj /CN=proxy.kube.local
-	openssl x509 -enddate -text -noout -in proxy-kube-local.crt
+	openssl genrsa -out proxy-kube-internal.key 2048
+	openssl req -new -x509 -nodes -key proxy-kube-internal.key -out proxy-kube-internal.crt -days 365 -subj /CN=proxy.kube.internal
+	openssl x509 -enddate -text -noout -in proxy-kube-internal.crt
 
 .PHONY: create
 create:               # Create workload
@@ -31,8 +31,8 @@ create:               # Create workload
 	kubectl --namespace=$(NAMESPACE) create configmap $(NAME)-config \
 		--from-file $(NAME).conf
 	kubectl --namespace=$(NAMESPACE) create configmap $(NAME)-ssl \
-		--from-file=proxy-kube-local.crt \
-		--from-file=proxy-kube-local.key
+		--from-file=proxy-kube-internal.crt \
+		--from-file=proxy-kube-internal.key
 	kubectl --namespace=$(NAMESPACE) create -f $(NAME).yaml ||:
 
 .PHONY: test
@@ -57,7 +57,7 @@ delete:               # Delete workload
 
 .PHONY: clean
 clean:                # Remove temporary build files
-	rm proxy-kube-local.crt proxy-kube-local.key
+	rm proxy-kube-internal.crt proxy-kube-internal.key
 
 .PHONY: help
 help:                 # Show Makefile options

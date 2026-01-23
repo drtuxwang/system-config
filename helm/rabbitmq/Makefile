@@ -6,7 +6,7 @@ CHART_VERSION := 15.5.3
 APP_VERSION := 3.13.7
 IMAGE_TAG := 3.13.7-debian-12-r5
 NAMESPACE ?= default
-HOSTNAME ?= rabbitmq.kube.local
+HOSTNAME ?= rabbitmq.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

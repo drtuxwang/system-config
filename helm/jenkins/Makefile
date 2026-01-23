@@ -6,7 +6,7 @@ CHART_VERSION := 13.5.7
 APP_VERSION := 2.504.3
 IMAGE_TAG := 2.504.3-debian-12-r1
 NAMESPACE ?= infra
-HOSTNAME ?= jenkins.kube.local
+HOSTNAME ?= jenkins.kube.internal
 LOCALPORT ?=
 
 ifndef CHART_VERSION

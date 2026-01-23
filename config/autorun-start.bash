@@ -50,22 +50,24 @@ fi
 menu
 sleep 2
 
-# Setup audio
-pactl set-sink-volume 0 100%
+# Setip pipewire aduio volume
+wpctl set-volume @DEFAULT_AUDIO_SINK@ 1.0
 
 # Setup mouse
 xset m 4,16
-
 # Setup keyboard
-setxkbmap gb
-setxkbmap -option ctrl:nocaps              # Disable Caps Lock
-setxkbmap -option altwin:ctrl_win          # Map Win key to Ctrl (like Mac)
-setxkbmap -option terminate:ctrl_alt_bksp  # Zap with Ctrl+Alt+BackSpace
-xmodmap -e "add mod3 = Scroll_Lock" &
-xset b off
-xset r rate 500 25
-numlockx off
-[ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
+while [ ! "$(setxkbmap -query | grep ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp)" ]
+do
+   setxkbmap gb
+   # Disable CapsLock, Win key as Ctrl (like Mac), Ctrl+Alt+BackSpace
+   setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp
+   xmodmap -e "add mod3 = Scroll_Lock" &
+   xset b off
+   xset r rate 500 25
+   numlockx off
+    [ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
+   sleep 1
+done
 
 # Optional setup
 [ -f $HOME/.config/autorun-start-opt.bash ] && . $HOME/.config/autorun-start-opt.bash
