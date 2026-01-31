@@ -131,9 +131,11 @@ class Main:
 
         task = Exec(options.get_archiver().get_cmdline())
         task.run()
+        if task.get_exitcode():
+            raise OSError
         try:
-            if task.get_exitcode():
-                raise OSError
+            if Path(archive).exists():
+                Path(archive).replace(f'{archive}.orig')
             Path(f'{archive}.part').replace(archive)
         except OSError as exception:
             raise SystemExit(

@@ -20,5 +20,6 @@ shtab                        # ==None
 tomli                        # ==2.0.1 (required by pylint for 3.8)
 typing-extensions            # ==4.13.2 (old version)
 urllib3                      # ==2.2.3 (old version)
+wheel                        # ==0.45.1 (old version)
 xmltodict                    # ==0.15.0 (old version)
 yt-dlp                       # ==None

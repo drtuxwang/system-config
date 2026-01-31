@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# opencv-python==4.10.0.84 virtualenv
+#
+
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="opencv-contrib-python==4.10.0.84"
+    VENV_DEPENDS="numpy==2.3.5 pybktree==1.1 pyzstd==0.18.0"
+}
+
+
+source "${0%/*}/venv_mod.bash"

@@ -4,7 +4,7 @@
 #
 # qemu-mount, qemu-umount, qemu-trim, qemu-compress - image file utilities
 #
-# Copyright GPL v2: 2023-2025 By Dr Colin Kong
+# Copyright GPL v2: 2023-2026 By Dr Colin Kong
 #
 
 
@@ -183,8 +183,8 @@ compress_image() {
         [ $? = 0 ] || return 1
         if [ -f "$1" ]
         then
-            echo "mv \"$1\" \"$1-orig\""
-            mv "$1" "$1-orig" || return 1
+            echo "mv \"$1\" \"$1.orig\""
+            mv "$1" "$1.orig" || return 1
         fi
         echo "mv \"$1.part\" \"$1\""
         mv "$1.part" "$1"

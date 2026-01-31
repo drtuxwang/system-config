@@ -5,11 +5,19 @@
 
 set -u
 
-# Process options
+
 help() {
     echo "Usage: $0 [-pip|-i|-c|-u] <python-executable> [<requirement-file>]"
     exit 1
 }
+
+exit_error() {
+    echo -e "\033[31mERROR!\033[0m"
+    exit 1
+}
+
+
+# Process options
 MODE=install
 while [ $# != 0 ]
 do
@@ -145,7 +153,7 @@ check_packages() {
     $PYTHON -m pip check 2>&1 | grep -Ev "DEPRECATION:|No broken requirements"
     [ ${PIPESTATUS[0]} = 0 ] || ERROR=1
 
-    [ "$ERROR" ] && echo -e "\033[31mERROR!\033[0m" && exit 1
+    [ "$ERROR" ] && echo -e "\033[31mERROR!\033[0m" && exit_error
 }
 
 
@@ -153,7 +161,7 @@ install_packages() {
     MODE=${1:-}
     if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
     then
-        get_pip || exit 1
+        get_pip || exit_error
         echo -e "\033[33mInstalled!\033[0m"
     fi
 
@@ -161,7 +169,7 @@ install_packages() {
     for PACKAGE in $(echo "$PACKAGES" | grep -E "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
-        pip_install "$PACKAGE" || exit 1
+        pip_install "$PACKAGE" || exit_error
         echo -e "\033[33mInstalled!\033[0m"
     done
     [ "$MODE" = "piponly" ] && return

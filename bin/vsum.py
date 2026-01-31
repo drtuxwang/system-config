@@ -82,7 +82,7 @@ class Options:
             'files',
             nargs='*',
             metavar='file',
-            help='Image file to perceptual hash (phash).',
+            help='Video file to perceptual hash (phash).',
         )
 
         self._args = parser.parse_args(args)
@@ -185,11 +185,16 @@ class Main:
                 if key in phashes:
                     new_phashes[key] = phashes[key]
                 else:
-                    image = cv2.imread(path)
-                    if image is not None:
-                        new_phashes[key] = (
-                            hasher.compute(image).tobytes().hex()
-                        )
+                    video = cv2.VideoCapture(path)
+                    total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+                    fps = int(video.get(cv2.CAP_PROP_FPS))
+                    if total_frames > 2:
+                        hashs = []
+                        for f in range(fps, min(total_frames, 8*fps+1), fps):
+                            video.set(cv2.CAP_PROP_POS_FRAMES, f)
+                            _, image = video.read()
+                            hashs.append(hasher.compute(image).tobytes().hex())
+                        new_phashes[key] = ','.join(hashs)
 
         return new_phashes
 
@@ -201,30 +206,31 @@ class Main:
         """
         logger.info("Checking checksums...")
 
-        phash_images: dict = {}
+        phash_videos: dict = {}
         for key, value in phashes.items():
-            phash = int(value, 16)
-            file, _, _ = key
-            if phash in phash_images:
-                phash_images[phash].append(file)
-            else:
-                phash_images[phash] = [file]
+            for v in value.split(','):
+                phash = int(v, 16)
+                file, _, _ = key
+                if phash in phash_videos:
+                    phash_videos[phash].append(file)
+                else:
+                    phash_videos[phash] = [file]
 
-        matched_images = set()
-        tree = pybktree.BKTree(pybktree.hamming_distance, phash_images)
-        for phash in [int(x, 16) for x in new_phashes]:
-            images = frozenset(itertools.chain.from_iterable([
-                phash_images[match]
-                for _, match in tree.find(phash, MAX_DISTANCE_IDENTICAL)
-            ]))
-            if len(images) > 1:
-                matched_images.add(images)
-
-        if matched_images:
-            for images in sorted(matched_images):
+        matched_videos = set()
+        tree = pybktree.BKTree(pybktree.hamming_distance, phash_videos)
+        for hashes in new_phashes:
+            for phash in [int(x, 16) for x in hashes.split(',')]:
+                videos = frozenset(itertools.chain.from_iterable([
+                    phash_videos[match]
+                    for _, match in tree.find(phash, MAX_DISTANCE_IDENTICAL)
+                ]))
+                if len(videos) > 1:
+                    matched_videos.add(videos)
+        if matched_videos:
+            for videos in sorted(matched_videos):
                 logger.warning(
                     "Identical: %s",
-                    Command.args2cmd(sorted(images)),
+                    Command.args2cmd(sorted(videos)),
                 )
             raise SystemExit(1)
 

@@ -232,6 +232,8 @@ class Main:
 
         if package_name in self._packages:
             _, arch = package_name.split(':')
+            if arch == 'all':
+                arch = self._arch
             self._packages[package_name].checked = True
             pool = distro.replace('dist', 'pool')
             file = self._local(pool, self._packages[package_name].url)

@@ -81,7 +81,7 @@ class Options:
             Exec(self._vncserver.get_cmdline() + sys.argv[1:]).run()
         self._vncserver.set_args([
             '-geometry',
-            '1280x720',
+            '1440x900',
             '-depth',
             '24',
             '-localhost',

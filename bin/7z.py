@@ -238,6 +238,8 @@ class Main:
             self._make_exe(archiver, Path(f'{archive}.part'))
 
         try:
+            if Path(archive).exists():
+                Path(archive).replace(f'{archive}.orig')
             Path(f'{archive}.part').replace(archive)
         except OSError as exception:
             raise SystemExit(

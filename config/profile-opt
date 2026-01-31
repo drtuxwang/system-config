@@ -23,26 +23,29 @@ then
     export cdc=
     export cdd="$HOME/Desktop/Downloads"
     export cde=
-    export cdf=
+    export cdf="$HOME/Desktop"
     export cdg="$HOME/Desktop/git/system-config"
-    export cdh="$HOME/Desktop"
+    export cdh="$HOME"
     export cdi="$HOME/Desktop/images"
     export cdj=
     export cdk=
-    export cdl="$HOME/Desktop/images/images-live/iso"
+    export cdl="$HOME/Desktop/images/images-live/linux"
     export cdm="$HOME/Desktop/archive/software-main/dist"
     export cdn="$HOME/Desktop/archive/software-new/dist"
     export cdo="$HOME/Desktop/archive/software-old/dist"
     export cdp=
-    export cdq=
+    export cdq="$HOME/Desktop/data/qemu"
     export cdr=
-    export cds=
+    export cds="$HOME/software"
     export cdt=
     export cdu="$HOME/Desktop/archive/software-new/pool/updates"
     export cdv="$HOME/Desktop/archive/data-video"
-    export cdw="$HOME/software/web-data/pages"
+    export cdw="$HOME/Desktop/software/web-data/pages"
     export cdx=
-    export cdy=
+    export cdy="$HOME/Desktop/private/yield"
     export cdz="$HOME/Desktop/git/drtuxwang.github.io"
-
 fi
+
+# Local Poetry
+mkdir -p $HOME/.cache-local/pypoetry
+ln -sf $HOME/.cache-local/pypoetry $HOME/.cache/pypoetry 2> /dev/null

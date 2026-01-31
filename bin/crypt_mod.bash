@@ -2,7 +2,7 @@
 #
 # Bash encrypted partitions utilities module
 #
-# Copyright GPL v2: 2018-2025 By Dr Colin Kong
+# Copyright GPL v2: 2018-2026 By Dr Colin Kong
 #
 
 set -u
@@ -127,6 +127,7 @@ format_partition() {
 #
 format_crypt() {
     DEVICE="$1"
+    PATH=/sbin:$PATH
     echo
     echo "*** Creating LUKS encrypted partition: luksFormat /dev/$DEVICE"
     cryptsetup --cipher=aes-cbc-essiv:sha256 --key-size=256 --hash=sha256 --verify-passphrase \

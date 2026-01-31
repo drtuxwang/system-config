@@ -83,8 +83,9 @@ class Main:
         try:
             with path.open(errors='replace') as ifile:
                 for line in ifile:
-                    lines.append(line.strip().replace('&gt;', '>').replace(
-                        '&lt;', '<').replace('SCRIPT>', 'script>'))
+                    lines.append(
+                        line.strip().replace('&gt;', '>').replace('&lt;', '<')
+                    )
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot read {path} HTML file.',

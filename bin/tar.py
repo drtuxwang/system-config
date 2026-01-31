@@ -197,6 +197,8 @@ class Main:
         if name.endswith('.tar'):
             cls._check_tar(path_tmp)
         try:
+            if Path(archive).exists():
+                Path(archive).replace(f'{archive}.orig')
             path_tmp.replace(archive)
         except OSError as exception:
             raise SystemExit(

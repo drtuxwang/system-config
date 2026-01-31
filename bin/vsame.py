@@ -64,7 +64,7 @@ class Options:
             'files',
             nargs='+',
             metavar='file|directory',
-            help="Image file or directory containing image files to compare",
+            help="Video file or directory containing image files to compare",
         )
 
         self._args = parser.parse_args(args)
@@ -105,24 +105,31 @@ class Main:
             Path.open = _open  # type: ignore
 
     def _calc(self, options: Options, paths: List[Path]) -> dict:
-        image_phash = {}
+        video_phash = {}
         hasher = cv2.img_hash.PHash_create()
 
         for path in paths:
             if path.is_dir():
                 if options.get_recursive_flag() and not path.is_symlink():
                     try:
-                        image_phash.update(self._calc(
+                        video_phash.update(self._calc(
                             options, list(path.iterdir())
                         ))
                     except PermissionError:
                         pass
             elif path.is_file():
-                image = cv2.imread(path)
-                if image is not None:
-                    image_phash[path] = hasher.compute(image).tobytes().hex()
+                video = cv2.VideoCapture(path)
+                total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+                fps = int(video.get(cv2.CAP_PROP_FPS))
+                if total_frames > 2:
+                    hashs = []
+                    for f in range(fps, min(total_frames, 8*fps+1), fps):
+                        video.set(cv2.CAP_PROP_POS_FRAMES, f)
+                        _, image = video.read()
+                        hashs.append(hasher.compute(image).tobytes().hex())
+                    video_phash[path] = ','.join(hashs)
 
-        return image_phash
+        return video_phash
 
     @staticmethod
     def _match(phashes: dict) -> set:
@@ -130,25 +137,26 @@ class Main:
         Using BKTree to speed up check:
         if phash1 - phash2 <= MAX_DISTANCE_IDENTICAL:
         """
-        phash_images: dict = {}
+        phash_videos: dict = {}
         for key, value in phashes.items():
-            phash = int(value, 16)
-            if phash in phash_images:
-                phash_images[phash].append(key)
-            else:
-                phash_images[phash] = [key]
+            for v in value.split(','):
+                phash = int(v, 16)
+                if phash in phash_videos:
+                    phash_videos[phash].append(key)
+                else:
+                    phash_videos[phash] = [key]
 
-        matched_images: set = set()
-        tree = pybktree.BKTree(pybktree.hamming_distance, phash_images)
-        for phash in phash_images:
-            images = frozenset(itertools.chain.from_iterable([
-                phash_images[match]
+        matched_videos: set = set()
+        tree = pybktree.BKTree(pybktree.hamming_distance, phash_videos)
+        for phash in phash_videos:
+            videos = frozenset(itertools.chain.from_iterable([
+                phash_videos[match]
                 for _, match in tree.find(phash, MAX_DISTANCE_IDENTICAL)
             ]))
-            if len(images) > 1:
-                matched_images.add(images)
+            if len(videos) > 1:
+                matched_videos.add(videos)
 
-        return matched_images
+        return matched_videos
 
     def run(self) -> bool:
         """

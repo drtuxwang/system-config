@@ -153,6 +153,8 @@ class Main:
                 f'{sys.argv[0]}: Cannot create "{archive}.part" archive file.',
             ) from exception
         try:
+            if Path(archive).exists():
+                Path(archive).replace(f'{archive}.orig')
             path_tmp.replace(archive)
         except OSError as exception:
             raise SystemExit(

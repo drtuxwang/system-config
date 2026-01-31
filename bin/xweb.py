@@ -43,7 +43,13 @@ class Main:
 
     @staticmethod
     def _get_default() -> str:
-        path = Path(Path.home(), 'software', 'web-data', 'index.xhtml')
+        path = Path(
+            Path.home(),
+            'Desktop',
+            'software',
+            'web-data',
+            'index.xhtml',
+        )
         if path.is_file():
             return str(path)
 

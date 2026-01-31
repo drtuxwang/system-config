@@ -17,7 +17,7 @@ which() {
     for CDIR in $PATH
     do
         CMD="$CDIR/$1"
-        if [ -x "$CMD" -a ! -d "$CMD" ]
+        if [ -x "$CMD" -a ! -d "$CMD" -a "$(realpath $CMD 2> /dev/null)" != "$(realpath $0)" ]
         then
             echo "$CMD" | sed -e "s@//*@/@g"; return
         fi

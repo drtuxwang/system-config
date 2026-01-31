@@ -140,7 +140,6 @@ create_app() {
 }
 
 
-cd "${0%/*}"
 defaults_settings
 app_settings
 create_app

@@ -2,7 +2,7 @@
 """
 System information (configuration detection tool).
 
-1996-2025 By Dr Colin Kong
+1996-2026 By Dr Colin Kong
 """
 
 import argparse
@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.21.0'
-VERSION = 20251202
+RELEASE = '6.21.1'
+VERSION = 20260113
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -2444,8 +2444,10 @@ class Software:
         (['ibus', 'version'], ['^IBus ', 'IBus ', '']),
         (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
         (['meld', '--version'], ['^meld ', 'meld ', '']),
+        (['pipewire', '--version'], ['pipewire ', '.*pipewire ', '']),
         (['bin/python', '--version'], ['Python ', '.*Python ', '']),
         (['bin/python3', '--version'], ['Python ', '.*Python ', '']),
+        (['pulseaudio', '--version'], ['^pulseaudio ', 'pulseaudio ', '']),
         (
             ['qemu-img', '--version'],
             ['qemu-img version ', '.*version | .*', ''],
