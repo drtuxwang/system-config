@@ -9,7 +9,7 @@ build: clean          # Build zhspeak archive
 	git lfs pull -I zhspeak/*.7z
 	mkdir -p build/bin build/zhspeak-data
 	cp -p ../bin/zhspeak* \
-		../bin/pyld.* \
+		../bin/pyld_mod.* \
 		../bin/command_mod.py \
 		../bin/file_mod.py \
 		../bin/subtask_mod.py \

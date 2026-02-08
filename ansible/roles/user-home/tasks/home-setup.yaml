@@ -40,6 +40,15 @@
   tags:
   - user-home
 
+- name: Copy file to "{{ home_directory }}/.config/netls.json"
+  copy:
+    src: netls.json
+    dest: '{{ home_directory }}/.config/netls.json'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  tags:
+  - user-home
+
 - name: Remove "{{ home_directory }}/" junk files
   loop:
   - .bash_history

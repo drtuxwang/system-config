@@ -23,9 +23,9 @@ then
     export cdc=
     export cdd="$HOME/Desktop/Downloads"
     export cde=
-    export cdf="$HOME/Desktop"
+    export cdf="$HOME/Desktop/data"
     export cdg="$HOME/Desktop/git/system-config"
-    export cdh="$HOME"
+    export cdh="$HOME/Desktop"
     export cdi="$HOME/Desktop/images"
     export cdj=
     export cdk=

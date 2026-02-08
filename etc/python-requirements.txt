@@ -1,9 +1,9 @@
 arrow==1.2.3                 #   (required by cookiecutter)
-astroid==4.0.2               #   (required by pylint)
+astroid==4.0.3               #   (required by pylint)
 beautifulsoup4==4.13.5       # HTML/XML parser/emitter
 binaryornot==0.4.4           #   (required by cookiecutter)
 bson-senao==0.5.10           # BSON parser/emitter
-certifi==2025.11.12          #   (required by requests)
+certifi==2026.1.4            #   (required by requests)
 chardet==5.1.0               #   (required by binaryornot)
 charset-normalizer==3.3.2    #   (required by requests)
 click==8.1.8                 #   (required by cookiecutter/gtts/humpty)
@@ -17,7 +17,7 @@ EditorConfig==0.12.4         #   (required by jsbeautifier)
 filelock==3.20.3             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 gitdb==4.0.12                #   (required by GitPython)
-GitPython==3.1.45            # Library to interact with Git repositories
+GitPython==3.1.46            # Library to interact with Git repositories
 Glances==4.4.1               # Cross-platform system monitoring tool
 gTTS==2.5.4                  # Google Text-to-Speech
 idna==3.11                   #   (required by requests)
@@ -43,19 +43,19 @@ pylint==4.0.4                # Python code static checker
 python-dateutil==2.8.2       #   (required by bson-senao)
 python-slugify==6.1.2        #   (required by cookiecutter)
 PyYAML==6.0.3                # YAML parser/emitter
-pyzstd==0.17.0               # ZSTD compression/decompression
+pyzstd==0.18.0               # ZSTD compression/decompression
 requests==2.32.5             # Web client
 rich==13.9.4                 #   (required by cookiecutter)
-setuptools==80.9.0           # Python package manager
+setuptools==80.10.2          # Python package manager
 shtab==1.8.0                 #   (required by glances)
 six==1.17.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.2                 #   (required by gitdb)
 soupsieve==2.7               #   (required by beautifulsoup4)
 text-unidecode==1.3          #   (required by python-slugify)
-tomlkit==0.12.5              #   (required by pylint)
+tomlkit==0.13.3              #   (required by pylint)
 typing-extensions==4.15.0    #   (required by beautifulsoup4)
 urllib3==2.6.3               #   (required by requests)
 virtualenv==20.36.1          # Python Virtual Environments
-wheel==0.46.2                # Python wheel packaging
+wheel==0.46.3                # Python wheel packaging
 xmltodict==1.0.2             # Convert XML to Python dict
-yt-dlp==2025.11.12           # Audio/video downloader
+yt-dlp==2026.2.4             # Audio/video downloader

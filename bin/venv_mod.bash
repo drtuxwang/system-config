@@ -63,8 +63,9 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
     mv "$VIRTUAL_ENV.part/bin/python" "$VIRTUAL_ENV.part/bin"/python$VERSION
     echo "$WRAPPER" > "$VIRTUAL_ENV.part/bin"/python${VERSION%.*}
     chmod 755 "$VIRTUAL_ENV.part/bin"/python${VERSION%.*}
-    ln -s python${VERSION%.*} "$VIRTUAL_ENV.part/bin"/python${VERSION%%.*}
-    ln -s python${VERSION%.*} "$VIRTUAL_ENV.part/bin"/python
+    ln -sf $(realpath "$VIRTUAL_ENV.part/bin"/python$VERSION) "$VIRTUAL_ENV.part/bin"/python$VERSION
+    ln -sf python${VERSION%.*} "$VIRTUAL_ENV.part/bin"/python${VERSION%%.*}
+    ln -sf python${VERSION%.*} "$VIRTUAL_ENV.part/bin"/python
 
     for VENV_DEPEND in $VENV_DEPENDS
     do
