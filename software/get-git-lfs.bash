@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Git LFS 3.6.1 (Offical) portable app
+# Git LFS 3.6.1 (Official) portable app
 #
 
 set -e
@@ -11,7 +11,7 @@ app_settings() {
     VERSION="3.6.1"
     PORT="linux64-x86"
 
-    APP_DIRECTORY="${NAME}_stable-$PORT"
+    APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://github.com/git-lfs/git-lfs/releases/download/v$VERSION/git-lfs-linux-amd64-v$VERSION.tar.gz
     "
@@ -32,4 +32,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" app_settings

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Golang 1.24.11 (Offical) portable app
+# Golang 1.24.11 (Official) portable app
 #
 
 set -e
@@ -28,4 +28,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" app_settings

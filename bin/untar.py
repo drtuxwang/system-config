@@ -124,7 +124,9 @@ class Main:
 
         cmdline.extend(['|'] + self._tar.get_cmdline() + ['xf', '-'])
         task = Batch(self._tar.get_cmdline() + ['--help'])
-        task.run(pattern='--xattrs')
+        task.run(pattern='--numeric-owner|--xattrs')
+        if task.is_match_output('--numeric-owner'):
+            cmdline.append('--numeric-owner')
         if task.has_output():
             cmdline.extend(['--xattrs', '--xattrs-include=*'])
 

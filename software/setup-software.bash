@@ -52,7 +52,12 @@ unpack_file() {
         tar xf $1 || exit 1
         ;;
     *)
-        7z x -y -snld $1 || exit 1
+        if [ "$(file "$1" | grep x86-64)" ]
+        then
+            cp -p "$1" .
+        else
+            7z x -y -snld $1 || exit 1
+        fi
         ;;
     esac
 }
@@ -101,8 +106,8 @@ prepare_start() {
             if [ "${APP_START##*/}" != "$APP_START" ]
             then
                 echo -e "\033[33m=> $APP_DIRECTORY/${APP_START##*/}\033[0m"
-                sed -e "s/^source.*/app_settings\napp_start/" "$0" > \
-                    "$APP_DIRECTORY/${APP_START##*/}"
+                sed -e "s/^source/##source/" "$0" > "$APP_DIRECTORY/${APP_START##*/}"
+                echo "$APP_SETTINGS && app_start" >> "$APP_DIRECTORY/${APP_START##*/}"
                 chmod ugo+x "$APP_DIRECTORY/${APP_START##*/}"
                 touch -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/${APP_START##*/}"
             fi
@@ -139,7 +144,9 @@ create_app() {
     prepare_start
 }
 
-
-defaults_settings
-app_settings
-create_app
+for APP_SETTINGS in $*
+do
+    defaults_settings
+    $APP_SETTINGS
+    create_app
+done

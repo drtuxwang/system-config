@@ -1,0 +1,3 @@
+guest_user: false
+portable: true
+zram_swap: false

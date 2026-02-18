@@ -1,4 +1,4 @@
-# 1996-2025 By Dr Colin Kong
+# 1996-2026 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -184,19 +184,23 @@ the years.
  * qemu/*.bash                     QEMU VM examples
  * qmeu/qemu-system-aarch64.bash   QEMU System aarch64 (arm64) wrapper
  * qmeu/qemu-system-x86_64.bash    QEMU System x86_64 (amd64) wrapper
- * software/build-0ad              0AD 0.27.1 (Debian 13) bubblewrap portable app
- * software/build-edge             Edge 142.0.3595.94 (Offical) portable app
- * software/build-firefox          Firefox 140.6.0esr (Offical) portable app
- * software/build-git-lfs          Git LFS 3.6.1 (Offical) portable app
- * software/build-gnome-hearts     Gnome Hearts 0.3.2 (Debian 9) portable app
- * software/build-golang           Golang 1.24.11 (Offical) portable app
- * software/build-hardinfo         Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
- * software/build-hardinfo2        Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
- * software/build-instant-client   Instant Client 23.26 (Offical + Debian 11) portable app
- * software/build-libreoffice      LibreOffice 25.2.7.2 (Offical) portable app
- * software/build-openjdk-jdk      OpenJDK JDK 21.0.9 (Offical) portable app
- * software/build-wesnoth          Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
- * software/build_mod.bash         Portable app builder module
+ * software/get-0ad.bash           0AD 0.27.1 (Debian 13) bubblewrap portable app
+ * software/get-7zip.bash          7-Zip 26.00 (Official) source code & Windows portable app
+ * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
+ * software/get-edge.bash          Edge 144.0.3719.115 (Official) portable app
+ * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
+ * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
+ * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
+ * software/get-golang.bash        Golang 1.24.11 (Official) portable app
+ * software/get-hardinfo.bash      Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
+ * software/get-hardinfo2.bash     Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
+ * software/get-helm.bash          Helm 3.19.5 (Official) source code & Linux portable app
+ * software/get-instant-client.bash Instant Client 23.26 (Official) library & portable app
+ * software/get-k3s.bash           K3S 1.31.14-1 (Official) portable app
+ * software/get-libreoffice.bash   LibreOffice 25.2.7.2 (Official) portable app
+ * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.9 (Official) portable app
+ * software/get-wesnoth.bash       Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
+ * software/setup-software.bash    Fetch and setup software
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example
  * wipe/                           Disk wipe utility

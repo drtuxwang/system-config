@@ -43,4 +43,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" app_settings

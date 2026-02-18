@@ -16,8 +16,8 @@ from command_mod import Command, CommandFile
 from subtask_mod import Daemon
 from task_mod import Tasks
 
-RELEASE = '3.3.1'
-VERSION = 20251213
+RELEASE = '3.3.2'
+VERSION = 20260215
 PURGE_TIME = 604800
 
 
@@ -241,16 +241,12 @@ class Main:
                     except OSError:
                         continue
             slots_used += int(info.get('NCPUS', '0'))
-            if info.get('QUEUE') == 'express':
-                express_queued = True
 
         free_slots = self._slots - slots_used
         if not slots_used:
             free_slots = os.cpu_count()
-        if express_queued:
-            self._attempt('express', free_slots)
-        else:
-            self._attempt('normal', free_slots)
+        self._attempt('express', free_slots)
+        self._attempt('normal', free_slots)
 
     def _attempt(self, queue: str, free_slots: int) -> bool:
         for path in sorted(

@@ -4,6 +4,7 @@ GO compiler wrapper (sets GOROOT automatically)
 """
 
 import os
+import shutil
 import signal
 import sys
 from pathlib import Path
@@ -46,15 +47,22 @@ class Main:
         Start program
         """
         golang = Command('bin/go', errors='stop')
-        golang.extend_args(sys.argv[1:])
 
         goroot = Path(golang.get_file()).parents[1]
         if Path(goroot, 'pkg').is_dir():
             os.environ['GOROOT'] = str(goroot)
         # Re-direct "$HOME/go/pkg/mod" cache
         os.environ['GOMODCACHE'] = str(Path(Path.home(), '.cache/go/pkg/mod'))
+        # Disable telemetry
+        path = Path(Path.home(), '.config', 'go', 'telemetry')
+        if path.is_dir():
+            try:
+                shutil.rmtree(path)
+                path.symlink_to('/dev/null')
+            except OSError:
+                pass
 
-        Exec(golang.get_cmdline()).run()
+        Exec(golang.get_cmdline() + sys.argv[1:]).run()
 
         return 0
 

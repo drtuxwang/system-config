@@ -36,7 +36,7 @@ elif [ "$(asmc --version 2>&1 | grep "Asmc Macro Assembler")" ]
 then
     # https://github.com/nidud/asmc
     make -C CPP/7zip/Bundles/Alone2 -f ../../cmpl_gcc_x64.mak -j $THREADS
-else 
+else
     make -C CPP/7zip/Bundles/Alone2 -f makefile.gcc -j $THREADS
 fi
 

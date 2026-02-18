@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# 0AD 0.27.1 (Debian 13) portable app
+# 0AD 0.27.1 (Debian 13) bubblewrap portable app
 # - Requires: bwrap (Bubblewrap)
 #
 
@@ -60,4 +60,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" app_settings

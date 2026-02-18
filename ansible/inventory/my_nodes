@@ -11,9 +11,12 @@ efor.local             ansible_user=admin
 koko.local             ansible_user=admin
 ryzen.local            ansible_user=admin
 # Tertiary
-hotdog.local           ansible_user=admin
-snoopy.local           ansible_user=admin
 viva.local             ansible_user=admin
+#
+hotdog.local           ansible_user=admin
+smiley.local           ansible_user=admin
+snoopy.local           ansible_user=admin
+violet.local           ansible_user=admin
 wolfdale.local         ansible_user=admin
 xiaobear.local         ansible_user=admin
 

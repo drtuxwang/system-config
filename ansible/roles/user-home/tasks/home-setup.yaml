@@ -40,6 +40,16 @@
   tags:
   - user-home
 
+- name: Ensure "{{ home_directory }}/.config" directory exists
+  file:
+    path: '{{ home_directory }}/.config'
+    state: directory
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: 0700
+  tags:
+  - user-home
+
 - name: Copy file to "{{ home_directory }}/.config/netls.json"
   copy:
     src: netls.json

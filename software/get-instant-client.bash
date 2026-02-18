@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# Instant Client 23.26 (Offical + Debian 11) portable app
+# Instant Client 23.26.1 (Official) library & portable app
+# - Requires: libaio1 from Debian 10
 #
 
 set -e
@@ -8,14 +9,14 @@ set -e
 
 app_settings() {
     NAME="instant-client"
-    VERSION="23.26.0.0.0"
-    PORT="linux64-x86-glibc_2.31"
+    VERSION="23.26.1.0.0"
+    PORT="linux64-x86-glibc_2.28"
 
-    APP_DIRECTORY="${NAME}_${VERSION%.*.*.*}-$PORT"
+    APP_DIRECTORY="${NAME}_${VERSION%.*.*}-$PORT"
     APP_FILES="
         https://download.oracle.com/otn_software/linux/instantclient/${VERSION//./}/instantclient-basiclite-linux.x64-$VERSION.zip
         https://download.oracle.com/otn_software/linux/instantclient/${VERSION//./}/instantclient-sqlplus-linux.x64-$VERSION.zip
-        https://deb.debian.org/debian/pool/main/liba/libaio/libaio1_0.3.112-9_amd64.deb
+        https://archive.debian.org/debian/pool/main/liba/libaio/libaio1_0.3.112-3_amd64.deb
     "
     APP_REMOVE="
         META-INF
@@ -48,4 +49,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" source_settings app_settings

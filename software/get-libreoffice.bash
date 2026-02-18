@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# LibreOffice 25.2.7.2 (Offical) portable app
+# LibreOffice 25.2.7.2 (Official) portable app
 #
 
 set -e
@@ -37,4 +37,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" app_settings

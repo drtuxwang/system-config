@@ -2,10 +2,11 @@ ARG BASE_IMAGE=drtuxwang/python:latest
 
 FROM ${BASE_IMAGE}
 
-RUN python3 -m pip install \
-        devpi-server==6.5.1 \
-        devpi-web==4.0.8 \
-        devpi-common==3.6.0 && \
+RUN python3 -m pip install setuptools==80.10.2 && \
+    python3 -m pip install \
+        devpi-server==6.18.0 \
+        devpi-web==4.2.3 \
+        devpi-common==4.0.4 && \
     devpi-init --serverdir=/var/lib/devpi && \
     devpi-gen-secret --secretfile=/var/lib/devpi/.secret
 

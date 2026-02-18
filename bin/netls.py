@@ -20,7 +20,7 @@ class Address:
     """
     Address class
     """
-    ip: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
+    ipaddr: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
     hwaddress: str
     device: str
     identity: str = '-'
@@ -62,26 +62,29 @@ class LocalNetwork:
             task = Batch(avahi_browse.get_cmdline())
             task.run(pattern=r'^=.*IPv4')
             for line in task.get_output():
-                col = line.split(';')
-                ip = col[7]
-                self._addresses[ip] = Address(
-                    ipaddress.ip_address(ip),
-                    col[3].replace('\\058', ':')[-21:-4],
-                    col[1],
+                cols = line.split(';')
+                ipaddr = ipaddress.ip_address(cols[7])
+                ipnum = int(ipaddr)
+                self._addresses[ipnum] = Address(
+                    ipaddr,
+                    cols[3].replace('\\058', ':')[-21:-4],
+                    cols[1],
+                    hostname=cols[6],
                 )
-                self._addresses[ip].hostname = col[6]
 
     def _read_arp(self) -> None:
         arp = Command('arp', pathextra=['/sbin'], errors='stop')
         task = Batch(arp.get_cmdline())
         task.run(pattern=':..:..:..:..:')
         for line in task.get_output():
-            ip, _, hwaddress, _, iface = line.split()
-            if ip not in self._addresses:
-                self._addresses[ip] = Address(
-                    ipaddress.ip_address(ip),
-                    hwaddress,
-                    iface,
+            cols = line.split()
+            ipaddr = ipaddress.ip_address(cols[0])
+            ipnum = int(ipaddr)
+            if ipnum not in self._addresses:
+                self._addresses[ipnum] = Address(
+                    ipaddr,
+                    cols[2],
+                    cols[4],
                 )
 
     def _read_json(self) -> None:
@@ -99,9 +102,9 @@ class LocalNetwork:
         except json.decoder.JSONDecodeError:
             print(f'Warning: ignoring corrupt "{path}" file', file=sys.stderr)
         else:
-            for a in self._addresses.values():
-                if a.hwaddress in mappings:
-                    a.identity = mappings[a.hwaddress]
+            for v in self._addresses.values():
+                if v.hwaddress in mappings:
+                    v.identity = mappings[v.hwaddress]
 
     def resolve(self) -> None:
         """
@@ -119,10 +122,10 @@ class LocalNetwork:
             "Address          HWaddress          Iface   Identity        "
             "Hostname"
         )
-        for a in sorted(self._addresses.values()):
+        for _, v in sorted(self._addresses.items()):
             print(
-                f"{a.ip:15s}  {a.hwaddress:17s}  {a.device[:8]:8s}"
-                f"{a.identity[:15]:15s} {a.hostname[:20]:20s}"
+                f"{v.ipaddr:15s}  {v.hwaddress:17s}  {v.device[:8]:7s} "
+                f"{v.identity[:15]:15s} {v.hostname[:20]:20s}"
             )
 
 

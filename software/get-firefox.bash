@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Firefox 140.6.0esr (Offical) portable app
+# Firefox 140.6.0esr (Official) portable app
 #
 
 set -e
@@ -32,4 +32,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" app_settings

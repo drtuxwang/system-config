@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# OpenJDK JDK 21.0.9 (Offical) portable app
+# OpenJDK JDK 21.0.9 (Official) portable app
 #
 
 set -e
@@ -31,4 +31,4 @@ app_start() {
 }
 
 
-source "${0%/*}/create-portable-app.bash"
+source "${0%/*}/setup-software.bash" app_settings
