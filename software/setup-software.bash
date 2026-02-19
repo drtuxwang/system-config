@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 #
-# Bash portable app module
-# - Build and run Linux portable apps
+# Setup software directories
+# - Download and setup Linux portable apps
+# - Download and setup Windows portable apps
+# - Download and setup source code
 #
-# Copyright GPL v2: 2025 By Dr Colin Kong
+# Copyright GPL v2: 2026 By Dr Colin Kong
 #
 
 set -u
