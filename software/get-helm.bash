@@ -20,7 +20,6 @@ source_settings() {
         mv helm-$VERSION/* .
         rm -rf helm-$VERSION/
     "
-    APP_START="COMPILE-helm.bash"
 }
 
 app_settings() {

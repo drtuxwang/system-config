@@ -191,7 +191,7 @@ the years.
  * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
- * software/get-golang.bash        Golang 1.24.11 (Official) portable app
+ * software/get-golang.bash        Golang 1.25.7 (Official) portable app
  * software/get-hardinfo.bash      Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
  * software/get-hardinfo2.bash     Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
  * software/get-helm.bash          Helm 3.19.5 (Official) source code & Linux portable app

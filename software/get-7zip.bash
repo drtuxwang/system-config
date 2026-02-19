@@ -9,16 +9,15 @@ set -e
 source_settings() {
     NAME="7zip"
     VERSION="26.00"
-    PORT="linux64-x86"
+    PORT="source-cpp"
 
-    APP_DIRECTORY="${NAME}_$VERSION-source-cpp"
+    APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://www.7-zip.org/a/7z2600-src.tar.xz
     "
     APP_SHELL="
         cp -p ${0%/*}/../compile/COMPILE-7zip.bash .
     "
-    APP_START="COMPILE-helm.bash"
 }
 
 windows_settings() {
