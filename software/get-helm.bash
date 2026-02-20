@@ -16,9 +16,10 @@ source_settings() {
         https://github.com/helm/helm/archive/refs/tags/v$VERSION.tar.gz
     "
     APP_SHELL="
-        cp -p ${0%/*}/../compile/COMPILE-helm.bash .
         mv helm-$VERSION/* .
         rm -rf helm-$VERSION/
+        cp -p ${0%/*}/../compile/COMPILE-helm.bash .
+        touch -r README.md COMPILE-helm.bash
     "
 }
 

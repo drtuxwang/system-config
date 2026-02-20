@@ -17,6 +17,7 @@ source_settings() {
     "
     APP_SHELL="
         cp -p ${0%/*}/../compile/COMPILE-7zip.bash .
+        touch -r DOC/readme.txt COMPILE-7zip.bash
     "
 }
 
