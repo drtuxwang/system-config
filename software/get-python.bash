@@ -8,7 +8,7 @@ set -e
 
 source_settings() {
     NAME="python"
-    VERSION="3.9.25"
+    VERSION="3.12.12"
     PORT="source-c"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -18,7 +18,7 @@ source_settings() {
     APP_SHELL="
         mv Python-$VERSION/* .
         rm -rf Python-$VERSION
-        cp -p ${0%/*}/../compile/COMPILE-python3.8-3.10.bash COMPILE-python${VERSION%.*}.bash
+        cp -p ${0%/*}/../compile/COMPILE-python3.11+.bash COMPILE-python${VERSION%.*}.bash
         touch -r README.rst COMPILE-python${VERSION%.*}.bash
     "
 }
