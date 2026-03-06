@@ -76,7 +76,7 @@
     group: no
     delete: yes
     rsync_path: sudo rsync
-    rsync_opts: --exclude=..fsum --chown=0:0
+    rsync_opts: --exclude=..fsum --chown=admin:users
 
   tags:
   - local-system

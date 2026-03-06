@@ -15,16 +15,6 @@ menu_main:
     label: WWW
     run: exec xweb &
 - button:
-    name: downloads
-    color: '#ffff00'
-    label: Downloads
-    run: exec xdesktop Desktop/Downloads &
-- button:
-    name: pictures
-    color: '#ffff00'
-    label: Pictures
-    run: exec gqview Desktop/Downloads &
-- button:
     name: screenshot
     color: '#ffff00'
     label: ScreenShot

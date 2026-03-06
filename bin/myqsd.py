@@ -16,8 +16,8 @@ from command_mod import Command, CommandFile
 from subtask_mod import Daemon
 from task_mod import Tasks
 
-RELEASE = '3.3.2'
-VERSION = 20260215
+RELEASE = '3.3.3'
+VERSION = 20260223
 PURGE_TIME = 604800
 
 
@@ -230,7 +230,6 @@ class Main:
 
     def _schedule_job(self) -> None:
         slots_used = 0
-        express_queued = False
         for path in [Path(x) for x in self._myqsdir.glob('*.r')]:
             info = self._get_info(path)
             if 'PGID' in info:

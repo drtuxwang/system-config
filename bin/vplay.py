@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Play AVI/FLV/MP4 files in directory.
+Play videos files in directory.
 """
 
 import argparse
@@ -9,9 +9,10 @@ import random
 import signal
 import sys
 from pathlib import Path
-from typing import Any, List
+from typing import List
 
 from command_mod import Command
+from config_mod import Config
 from subtask_mod import Task
 
 
@@ -104,10 +105,10 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _get_files(directory: str, *patterns: Any) -> List[str]:
+    def _get_files(directory: str) -> List[str]:
         files: list = []
-        for pattern in patterns:
-            files.extend(Path(directory).glob(pattern))
+        for pattern in Config().get('video_extensions'):
+            files.extend(Path(directory).glob(f'*{pattern}'))
         return sorted([str(x) for x in files])
 
     def run(self) -> int:
@@ -125,10 +126,11 @@ class Main:
                     f'{sys.argv[0]}: Cannot find '
                     f'"{directory}" media directory.',
                 )
-            files = self._get_files(directory, '*.avi', '*.flv', '*.mp4')
-            if options.get_shuffle_flag():
-                random.shuffle(files)
-            play.extend_args(files)
+            files = self._get_files(directory)
+            if files:
+                if options.get_shuffle_flag():
+                    random.shuffle(files)
+                play.extend_args(files)
 
         task = Task(play.get_cmdline())
         task.run()

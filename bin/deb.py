@@ -49,6 +49,14 @@ class Options:
         """
         return self._package_names
 
+    def get_package_regex(self) -> str:
+        """
+        Return pakcage regex.
+        """
+        if self._args.args:
+            return '|'.join(self._args.args)
+        return ''
+
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description="Make a compressed archive in DEB format or "
@@ -61,7 +69,7 @@ class Options:
             const='names',
             dest='mode',
             default='dpkg',
-            help="Show name of all installed packages.",
+            help="Show name of installed packages (optional regex).",
         )
         parser.add_argument(
             '-l',
@@ -69,7 +77,7 @@ class Options:
             const='list',
             dest='mode',
             default='dpkg',
-            help="Show information of all installed packages.",
+            help="Show information of installed packages (optional regex).",
         )
         parser.add_argument(
             '-d',
@@ -132,7 +140,7 @@ class Options:
         parser.add_argument(
             'args',
             nargs='*',
-            metavar='package.deb|package|arch',
+            metavar='package.deb|package|arch|regex',
             help="Debian package file, package name or arch.",
         )
 
@@ -179,7 +187,7 @@ class Options:
         elif self._args.args and self._args.args[0].endswith('.deb'):
             self._dpkg = Command('dpkg-deb', errors='stop')
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
-        elif self._args.args:
+        elif self._args.args and self._args.mode not in ('names', 'list'):
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported argument supplied '
                 f'"{self._args.args[0]}".',
@@ -336,21 +344,25 @@ class Main:
         return packages
 
     def _show_names(self) -> None:
+        ismatch = re.compile(self._options.get_package_regex())
         for key in sorted(self._packages, key=lambda s: s[0].split(':')):
             name, arch = key.split(':')
-            print(f"{name}:{arch}")
+            if ismatch.search(name):
+                print(f"{name}:{arch}")
 
     def _show_packages_info(self) -> None:
+        ismatch = re.compile(self._options.get_package_regex())
         for key, package in sorted(
             self._packages.items(),
             key=lambda s: s[0].split(':'),
         ):
             name, arch = key.split(':')
-            file = f'{name}_{package.get_version()}_{arch}.deb'
-            print(
-                f"{file:50s}  # "
-                f"{package.get_size():5d} KB " f"{package.get_description()}",
-            )
+            if ismatch.search(name):
+                file = f'{name}_{package.get_version()}_{arch}.deb'
+                print(
+                    f"{file:50s}  # {package.get_size():5d} KB "
+                    f"{package.get_description()}",
+                )
 
     def _show_dependent_packages(
         self,

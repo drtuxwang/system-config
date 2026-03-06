@@ -60,8 +60,7 @@ class Main:
     Main class
     """
     _ffprobe = Command('ffprobe', errors='stop')
-    _isjunk1 = re.compile(r'( \[SAR[^,]*)?, (\d* kb/s|\d+.\d+ fps),.*')
-    _isjunk2 = re.compile(r'(ISO|Ogg|RIFF)[^,]*, |.*contains: |[ ,].*')
+    _isjunk = re.compile(r'(ISO|Ogg|RIFF)[^,]*, |.*contains: |[ ,].*')
     _audio_extensions = (
         Config().get('audio_extensions') + Config().get('video_extensions')
     )
@@ -88,7 +87,7 @@ class Main:
         task = Batch(cls._ffprobe.get_cmdline() + [file])
         task.run(error2output=True)
         info = info.replace('MPEG ADTS, layer III,', 'MP3')
-        audio_type = cls._isjunk2.sub('', info)
+        audio_type = cls._isjunk.sub('', info)
         audio_time = 0
         audio_freq = '?Hz'
         for line in task.get_output():

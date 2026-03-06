@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Play MP3/OGG/WAV audio files in directory.
+Play audio files in directory.
 """
 
 import argparse
@@ -9,10 +9,11 @@ import os
 import signal
 import sys
 from pathlib import Path
-from typing import Any, List
+from typing import List
 
-from subtask_mod import Exec, Task
 from command_mod import Command
+from config_mod import Config
+from subtask_mod import Exec, Task
 
 
 class Options:
@@ -108,10 +109,10 @@ class Main:
             Path.open = _open  # type: ignore
 
     @staticmethod
-    def _get_files(directory: str, *patterns: Any) -> List[str]:
+    def _get_files(directory: str) -> List[str]:
         files: list = []
-        for pattern in patterns:
-            files.extend(Path(directory).glob(pattern))
+        for pattern in Config().get('audio_extensions'):
+            files.extend(Path(directory).glob(f'*{pattern}'))
         return sorted([str(x) for x in files])
 
     def run(self) -> int:
@@ -129,10 +130,11 @@ class Main:
                     f'{sys.argv[0]}: Cannot find '
                     f'"{directory}" media directory.',
                 )
-            files = self._get_files(directory, '*.mp3', '*.ogg', '*.wav')
-            if options.get_shuffle_flag():
-                random.shuffle(files)
-            play.extend_args(files)
+            files = self._get_files(directory)
+            if files:
+                if options.get_shuffle_flag():
+                    random.shuffle(files)
+                play.extend_args(files)
 
         task = Task(play.get_cmdline())
         task.run()

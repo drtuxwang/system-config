@@ -191,7 +191,7 @@ the years.
  * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
- * software/get-golang.bash        Golang 1.24.11 (Official) portable app
+ * software/get-golang.bash        Golang 1.25.7 (Official) portable app
  * software/get-hardinfo.bash      Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
  * software/get-hardinfo2.bash     Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
  * software/get-helm.bash          Helm 3.19.5 (Official) source code & Linux portable app
@@ -199,7 +199,9 @@ the years.
  * software/get-k3s.bash           K3S 1.31.14-1 (Official) portable app
  * software/get-libreoffice.bash   LibreOffice 25.2.7.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.9 (Official) portable app
+ * softwrae/get-python.bash        Python 3.13.12 (Official) source code
  * software/get-wesnoth.bash       Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
+ * software/get-wine.bash          WiNE 11.0 (Offical) bubblewrap portable app
  * software/setup-software.bash    Fetch and setup software
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
  * terraform-aws/pxy-as/           Terraform AWS: pxy-as example

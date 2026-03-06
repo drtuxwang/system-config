@@ -60,8 +60,7 @@ class Main:
     Main class
     """
     _ffprobe = Command('ffprobe', errors='stop')
-    _isjunk1 = re.compile(r'( \[SAR[^,]*)?, (\d* kb/s|\d+.\d+ fps),.*')
-    _isjunk2 = re.compile(r'ISO Media, | .*')
+    _isjunk = re.compile(r'ISO Media, | .*')
     _video_extensions = Config().get('video_extensions')
 
     def __init__(self) -> None:
@@ -85,7 +84,7 @@ class Main:
     def _get_media_info(cls, file: str, info: str) -> str:
         task = Batch(cls._ffprobe.get_cmdline() + [file])
         task.run(error2output=True)
-        video_type = cls._isjunk2.sub('', info)
+        video_type = cls._isjunk.sub('', info)
         video_time = 0
         video_size = '?:?'
         video_freq = '?Hz'
@@ -98,7 +97,7 @@ class Main:
                     video_time = int(int(hrs)*3600+int(mins)*60+float(secs))
                 elif line.strip().startswith('Stream #'):
                     if ' fps,' in line:
-                        size = cls._isjunk1.sub('', line).split(', ')[-1]
+                        size = re.findall(r'\d\d+x\d\d+', line)[0]
                         video_size = size.replace('x', ':')
                     elif ' Hz,' in line:
                         video_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"

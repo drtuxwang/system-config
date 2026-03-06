@@ -119,12 +119,12 @@ class LocalNetwork:
         Show enhanced ARP table
         """
         print(
-            "Address          HWaddress          Iface   Identity        "
+            "Address         HWaddress         Iface     Identity        "
             "Hostname"
         )
         for _, v in sorted(self._addresses.items()):
             print(
-                f"{v.ipaddr:15s}  {v.hwaddress:17s}  {v.device[:8]:7s} "
+                f"{v.ipaddr:15s} {v.hwaddress:17s} {v.device[:9]:9s} "
                 f"{v.identity[:15]:15s} {v.hostname[:20]:20s}"
             )
 

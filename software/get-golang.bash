@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Golang 1.24.11 (Official) portable app
+# Golang 1.25.7 (Official) portable app
 #
 
 set -e

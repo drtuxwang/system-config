@@ -26,7 +26,7 @@ BUILD_DIRS := \
 	ubuntu-20.04 \
 	\
 	busybox-1.37 \
-	golang-1.23 \
+	golang-1.25 \
 	httpd-2.4 \
 	nginx-1.26 \
 	python-3.13 \

@@ -253,6 +253,7 @@ parameters:
   - .avi
   - .flv
   - .mp4
+  - .mkv
   - .mpeg
   - .mpegts
   - .mpg

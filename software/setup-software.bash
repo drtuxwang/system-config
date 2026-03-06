@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 #
-# Bash portable app module
-# - Build and run Linux portable apps
+# Setup software directories
+# - Download and setup Linux portable apps
+# - Download and setup Windows portable apps
+# - Download and setup source code
 #
-# Copyright GPL v2: 2025 By Dr Colin Kong
+# Copyright GPL v2: 2026 By Dr Colin Kong
 #
 
 set -u
@@ -107,7 +109,7 @@ prepare_start() {
             then
                 echo -e "\033[33m=> $APP_DIRECTORY/${APP_START##*/}\033[0m"
                 sed -e "s/^source/##source/" "$0" > "$APP_DIRECTORY/${APP_START##*/}"
-                echo "$APP_SETTINGS && app_start" >> "$APP_DIRECTORY/${APP_START##*/}"
+                echo "$APP_SETTINGS && app_start \"\$@\"" >> "$APP_DIRECTORY/${APP_START##*/}"
                 chmod ugo+x "$APP_DIRECTORY/${APP_START##*/}"
                 touch -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/${APP_START##*/}"
             fi

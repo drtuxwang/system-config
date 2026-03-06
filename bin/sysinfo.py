@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.21.2'
-VERSION = 20260217
+RELEASE = '6.21.4'
+VERSION = 20260301
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -2439,7 +2439,10 @@ class Software:
         (['bin/javac', '--version'], ['^javac ', 'javac | .*', '']),
         (['k3s', '--version'], ['^k3s.* version v', '.*version v| .*', '']),
         (['kubectl', 'version'], ['Client', '.*:.v|".*', '']),
-        (['helm', 'version'], ['Client|BuildInfo', '.*(SemVer|Version):"v|".*', '']),
+        (
+            ['helm', 'version'],
+            ['Client|BuildInfo', '.*(SemVer|Version):"v|".*', ''],
+        ),
         (['htop', '-v'], ['^htop ', 'htop | .*', '']),
         (['ibus', 'version'], ['^IBus ', 'IBus ', '']),
         (['make', '--version'], ['GNU Make', '.*Make ', 'GNU Make']),
@@ -2480,6 +2483,7 @@ class Software:
             ['TigerVNC ', '.*TigerVNC | .*', 'TigerVNC'],
         ),
         (['vncviewer', '--help'], ['TigerVNC.*v', '.*v', 'TigerVNC']),
+        (['wine', '--version'], ['wine-', 'wine-', '']),
         (['wget', '--version'], ['Wget ', '.*Wget | .*', '']),
         (['zhspeak', '--version'], ['Zhong Hua Speak ', '.*Speak | .*', '']),
     ]

@@ -1,7 +1,7 @@
-BASE_IMAGE := golang:1.23-alpine
-IMAGE := drtuxwang/golang:1.23-alpine
-NAME := golang123
-HOSTNAME := golang123
+BASE_IMAGE := golang:1.25-alpine
+IMAGE := drtuxwang/golang:1.25-alpine
+NAME := golang125
+HOSTNAME := golang125
 DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build

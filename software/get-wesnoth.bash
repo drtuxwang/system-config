@@ -68,6 +68,7 @@ app_settings() {
 app_start() {
     MYDIR=$(realpath "${0%/*}")
     [ "${_SANDBOX_PARENT:-}" ] && exec "$MYDIR/$APP_START" "$@"
+    [ ! -d "$HOME/.config/wesnoth" ] && mkdir -p "$HOME/.config/wesnoth"
     exec /usr/bin/bwrap \
         --ro-bind / / \
         --tmpfs /home \

@@ -92,7 +92,7 @@ class Options:
         for arg in cls._select_urls(args):
             if '.m3u8' in arg:
                 nargs.extend(['mget', arg])
-            elif 'www.youtube.com/watch?' in arg:
+            elif 'youtube.com/' in arg:
                 nargs.extend(['vget', arg])
             elif 'azvprv.com/' in arg:
                 nargs.extend(['vlcget', arg])
