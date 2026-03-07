@@ -166,7 +166,7 @@ the years.
  * helm/bin/
  * helm/etcd/                      Helm Chart: bitnami/etcd 11.3.6 (app-3.5.21)
  * helm/grafana/                   Helm Chart: bitnami/grafana 11.6.7 (app-11.6.1)
- * helm/jenkins/                   Helm Chart: bitnami/jenkins 13.5.7 (app-2.504.3)
+ * helm/jenkins/                   Helm Chart: jenkins/jenkins 5.8.124 (app-2.528.3)
  * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.4.12 (app-7.0.15)
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
  * helm/nginx/                     Helm Chart: bitnami/nginx 18.3.6 (app-1.26.2)

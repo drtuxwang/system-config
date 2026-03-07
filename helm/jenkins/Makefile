@@ -1,10 +1,10 @@
 NAME := jenkins
-CHART_REPO := bitnami
-CHART_URL := https://charts.bitnami.com/bitnami
+CHART_REPO := jenkins
+CHART_URL := jenkins https://charts.jenkins.io
 CHART_NAME := jenkins
-CHART_VERSION := 13.5.7
-APP_VERSION := 2.504.3
-IMAGE_TAG := 2.504.3-debian-12-r1
+CHART_VERSION := 5.8.124
+APP_VERSION := 2.528.3
+IMAGE_TAG :=
 NAMESPACE ?= infra
 HOSTNAME ?= jenkins.kube.internal
 LOCALPORT ?=
@@ -39,11 +39,11 @@ HELM_FLAGS := \
 	--values values.yaml \
 	--set fullnameOverride=$(NAME) \
 	--set service.type=ClusterIP \
-	--set ingress.enabled=$(INGRESS_ENABLED) \
-	--set ingress.hostname=$(HOSTNAME) \
+	--set controller.ingress.enabled=$(INGRESS_ENABLED) \
+	--set controller.ingress.hostName=$(HOSTNAME) \
 	--version $(CHART_VERSION)
 ifdef IMAGE_TAG
-	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+	HELM_FLAGS += --set controller.image.tag=$(IMAGE_TAG)
 endif
 
 
@@ -122,8 +122,9 @@ forward:              # Forward traffic to endpoint
 
 .PHONY: connect
 connect:              # Connect to endpoint
-	@kubectl --namespace=$(NAMESPACE) get secret $(NAME) -o jsonpath="{.data.jenkins-password}" | \
-		base64 -d | awk '{printf("Username: user\nPassword: %s\n", $$1)}'
+	@kubectl exec --namespace infra -it svc/jenkins -c jenkins -- \
+		/bin/cat /run/secrets/additional/chart-admin-password | \
+		awk '{printf("Username: admin\nPassword %s\n", $$1)}'
 	@if [ "$(EXTERNAL_IP)" ]; \
 	then \
 		../../kubernetes/bin/kube-connect.bash http://${HOSTNAME}; \

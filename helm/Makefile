@@ -40,6 +40,7 @@ status:               # Status of Helm release
 update:               # Update Helm chart repository
 	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo list | grep -q ingress-nginx || helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	helm repo list | grep -q jenkins || helm repo add jenkins jenkins https://charts.jenkins.io
 	helm repo list | grep -q oteemo || helm repo add oteemo https://oteemo.github.io/charts
 	helm repo list | grep -q prometheus-community || helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	helm repo update
