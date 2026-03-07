@@ -123,17 +123,17 @@ the years.
  * docker/almalinux-10/            almalinux:10 based Docker images
  * docker/almalinux-9/             almalinux:9 based Docker images
  * docker/almalinux-8/             almalinux:8 based Docker images
- * docker/alpine-3.20/             alpine:3.20 based Docker images
- * docker/alpine-3.19/             alpine:3.19 based Docker images
+ * docker/alpine-3.22/             alpine:3.22 based Docker images
+ * docker/alpine-3.21/             alpine:3.21 based Docker images
  * docker/busybox-1.37/            busybox:1.37 based Docker images
  * docker/centos-7/                centos:7 based Docker images
  * docker/debian-10/               debian:10-slim based Docker images
  * docker/debian-11/               debian:11-slim based Docker images
  * docker/debian-12/               debian:12-slim based Docker images
  * docker/debian-13/               debian:13-slim based Docker images
- * docker/golang-1.22/             golang:1.22-alpine based GO compiler app
+ * docker/golang-1.25/             golang:1.25-alpine based GO compiler app
  * docker/httpd-2.4/               httpd:2.4-alpine (Apache) based web server
- * docker/i386-alpine-3.20/        i386/alpine:3.20 based based Docker images
+ * docker/i386-alpine-3.22/        i386/alpine:3.22 based based Docker images
  * docker/i386-debian-13/          i386/debian:13-slim based Docker images
  * docker/nginx-1.26/              nginx:1.26-bookworm based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
