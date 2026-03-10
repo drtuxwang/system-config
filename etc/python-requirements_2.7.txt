@@ -59,6 +59,7 @@ pycrypto                     # ==2.0.1 (required by gen-ctl for 2.7)
 pycryptodome                 # ==3.19.1 (required by abettersqlplus for 2.7)
 pyflakes                     # ==2.3.1 (old version)
 Pygments                     # ==None
+pyinstrument                 # ==None
 pylint                       # ==1.9.5 (old version)
 pymongo                      # ==3.13.0 (MongoDB client for 2.7)
 PyNaCl                       # ==1.4.0 (required by paramiko for 2.7)

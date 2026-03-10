@@ -18,7 +18,7 @@ filelock==3.20.3             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 gitdb==4.0.12                #   (required by GitPython)
 GitPython==3.1.46            # Library to interact with Git repositories
-Glances==4.4.1               # Cross-platform system monitoring tool
+Glances==4.5.1               # Cross-platform system monitoring tool
 gTTS==2.5.4                  # Google Text-to-Speech
 idna==3.11                   #   (required by requests)
 isort==6.1.0                 #   (required by pylint)
@@ -39,6 +39,7 @@ psutil==7.1.3                #   (required by glances)
 pycodestyle==2.14.0          # Python style guide checker
 pyflakes==3.4.0              # Python source file checker
 Pygments==2.17.2             #   (required by ipython)
+pyinstrument==5.1.2          #   (required by Glances)
 pylint==4.0.4                # Python code static checker
 python-dateutil==2.8.2       #   (required by bson-senao)
 python-slugify==6.1.2        #   (required by cookiecutter)
