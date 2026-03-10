@@ -3,6 +3,7 @@
 # Optional input environment
 ARG=${1:-}
 
+
 # Fix logging
 [ "$ARG" != "-start" ] && mkdir -p /tmp/$(id -un) && exec $0 -start > /tmp/$(id -un)/.autorun-start.log 2>&1
 
@@ -60,7 +61,7 @@ while [ ! "$(setxkbmap -query | grep ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_
 do
    setxkbmap gb
    # Disable CapsLock, Win key as Ctrl (like Mac), Ctrl+Alt+BackSpace
-   setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp
+   setxkbmap -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp
    xmodmap -e "add mod3 = Scroll_Lock" &
    xset b off
    xset r rate 500 25
