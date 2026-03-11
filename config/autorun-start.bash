@@ -56,17 +56,18 @@ wpctl set-volume @DEFAULT_AUDIO_SINK@ 1.0
 # Setup mouse
 xset m 4,16
 # Setup keyboard
-while [ ! "$(setxkbmap -query | grep ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp)" ]
+while true
 do
-   setxkbmap gb
-   # Disable CapsLock, Win key as Ctrl (like Mac), Ctrl+Alt+BackSpace
-   setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp
-   xmodmap -e "add mod3 = Scroll_Lock" &
-   xset b off
-   xset r rate 500 25
-   numlockx off
+    setxkbmap gb
+    # Disable CapsLock, Win key as Ctrl (like Mac), Ctrl+Alt+BackSpace
+    setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp
+    xmodmap -e "add mod3 = Scroll_Lock" &
+    xset b off
+    xset r rate 500 25
+    numlockx off
     [ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
-   sleep 1
+    sleep 1
+    [ "$(setxkbmap -query | grep ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp)" ] && break
 done
 
 # Optional setup
