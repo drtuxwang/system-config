@@ -187,7 +187,7 @@ the years.
  * software/get-0ad.bash           0AD 0.27.1 (Debian 13) bubblewrap portable app
  * software/get-7zip.bash          7-Zip 26.00 (Official) source code & Windows portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
- * software/get-edge.bash          Edge 144.0.3719.115 (Official) portable app
+ * software/get-edge.bash          Edge 145.0.3800.97 (Official) portable app
  * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
