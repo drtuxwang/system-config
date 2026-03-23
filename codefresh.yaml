@@ -25,7 +25,7 @@ steps:
     - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
-    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.20/Makefile | sed -e "s/.* //")
+    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.22/Makefile | sed -e "s/.* //")
     - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.13/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
@@ -39,7 +39,7 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - cd docker/alpine-3.20/bash && ../../bin/create-root-tar.sh bash bin vim
+        - cd docker/alpine-3.22 && ../../bin/create-root-tar.sh bash bin-sysinfo vim
       create_python_deps:
         title: Build Python dependencies
         image: codefresh/cli:latest
@@ -58,7 +58,7 @@ steps:
         type: build
         image_name: drtuxwang/alpine
         tag: 3.20
-        working_directory: docker/alpine-3.20
+        working_directory: docker/alpine-3.22
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{ALPINE_BASE}}

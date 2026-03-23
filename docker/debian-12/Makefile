@@ -6,7 +6,6 @@ DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
-BUILD_DIRS := ops xfce
 DOCKER_RUN := docker run \
 	--rm \
 	--interactive \
@@ -51,14 +50,11 @@ save: pull            # Pull Docker base image and save to tar archive
 	../../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
-build:                # Build Docker images
+build:                # Build Docker image
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	../bin/create-rootfs.bash bash bin-sysinfo vim
 	$(DOCKER_BUILD) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR build || exit 1; \
-	done
 
 .PHONY: build-no-cache
 build-no-cache:       # Build Docker image with no cache
@@ -74,14 +70,11 @@ version:              # Check version
 	@docker run --rm $(IMAGE) /opt/software/bin/sysinfo -s | grep "OS Name:" | sed -e "s@.*: *@$(shell pwd): @"
 
 .PHONY: rmi
-rmi:                  # Remove Docker images
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR rmi; \
-	done
+rmi:                  # Remove Docker image
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi         # Remove Docker images including base image
+rmi-base: rmi         # Remove Docker image including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help

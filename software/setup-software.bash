@@ -53,6 +53,9 @@ unpack_file() {
     *.tar*)
         tar xf $1 || exit 1
         ;;
+    *.AppImage)
+        7z x -y -snld $1 || exit 1
+        ;;
     *)
         if [ "$(file "$1" | grep x86-64)" ]
         then
@@ -105,26 +108,32 @@ prepare_start() {
         echo -e "\033[33m=> $APP_DIRECTORY/$APP_START\033[0m"
         if [ "$APP_LINK" ]
         then
-            if [ "${APP_START##*/}" != "$APP_START" ]
+            if [ "${APP_START##*/}" = "$APP_START" ]
             then
+                echo -e "\033[33m=> $APP_DIRECTORY/${APP_LINK##*/}\033[0m"
+                sed -e "s/^source/##source/" "$0" > "$APP_DIRECTORY/${APP_LINK##*/}"
+                echo "$APP_SETTINGS && app_start \"\$@\"" >> "$APP_DIRECTORY/${APP_LINK##*/}"
+                chmod ugo+x "$APP_DIRECTORY/${APP_LINK##*/}"
+                touch -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/${APP_LINK##*/}"
+            else
                 echo -e "\033[33m=> $APP_DIRECTORY/${APP_START##*/}\033[0m"
                 sed -e "s/^source/##source/" "$0" > "$APP_DIRECTORY/${APP_START##*/}"
                 echo "$APP_SETTINGS && app_start \"\$@\"" >> "$APP_DIRECTORY/${APP_START##*/}"
                 chmod ugo+x "$APP_DIRECTORY/${APP_START##*/}"
                 touch -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/${APP_START##*/}"
-            fi
-            if [ "$APP_LINK" != "${APP_START##*/}" ]
-            then
-                echo -e "\033[33m=> $APP_DIRECTORY/$APP_LINK\033[0m"
-                ln -sf "${APP_START##*/}" "$APP_DIRECTORY/$APP_LINK"
-                touch -h -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/$APP_LINK"
+                if [ "$APP_LINK" != "${APP_START##*/}" ]
+                then
+                    echo -e "\033[33m=> $APP_DIRECTORY/$APP_LINK\033[0m"
+                    ln -sf "${APP_START##*/}" "$APP_DIRECTORY/$APP_LINK"
+                    touch -h -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/$APP_LINK"
+                fi
             fi
         fi
     fi
 
     PATH=../bin:$PATH fmod -R "$APP_DIRECTORY" > /dev/null 2>&1
     EMPTY=$(find "$APP_DIRECTORY" -type d -empty)
-    [ "$EMPTY" ] && echo "$EMPTY" && exit 1
+    [ "$EMPTY" ] && du -sk $EMPTY && exit 1
     echo -e "\033[33m=> DONE!\033[0m"
 }
 

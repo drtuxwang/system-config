@@ -123,17 +123,17 @@ the years.
  * docker/almalinux-10/            almalinux:10 based Docker images
  * docker/almalinux-9/             almalinux:9 based Docker images
  * docker/almalinux-8/             almalinux:8 based Docker images
- * docker/alpine-3.20/             alpine:3.20 based Docker images
- * docker/alpine-3.19/             alpine:3.19 based Docker images
+ * docker/alpine-3.22/             alpine:3.22 based Docker images
+ * docker/alpine-3.21/             alpine:3.21 based Docker images
  * docker/busybox-1.37/            busybox:1.37 based Docker images
  * docker/centos-7/                centos:7 based Docker images
  * docker/debian-10/               debian:10-slim based Docker images
  * docker/debian-11/               debian:11-slim based Docker images
  * docker/debian-12/               debian:12-slim based Docker images
  * docker/debian-13/               debian:13-slim based Docker images
- * docker/golang-1.22/             golang:1.22-alpine based GO compiler app
+ * docker/golang-1.25/             golang:1.25-alpine based GO compiler app
  * docker/httpd-2.4/               httpd:2.4-alpine (Apache) based web server
- * docker/i386-alpine-3.20/        i386/alpine:3.20 based based Docker images
+ * docker/i386-alpine-3.22/        i386/alpine:3.22 based based Docker images
  * docker/i386-debian-13/          i386/debian:13-slim based Docker images
  * docker/nginx-1.26/              nginx:1.26-bookworm based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
@@ -166,7 +166,7 @@ the years.
  * helm/bin/
  * helm/etcd/                      Helm Chart: bitnami/etcd 11.3.6 (app-3.5.21)
  * helm/grafana/                   Helm Chart: bitnami/grafana 11.6.7 (app-11.6.1)
- * helm/jenkins/                   Helm Chart: bitnami/jenkins 13.5.7 (app-2.504.3)
+ * helm/jenkins/                   Helm Chart: jenkins/jenkins 5.8.124 (app-2.528.3)
  * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.4.12 (app-7.0.15)
  * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
  * helm/nginx/                     Helm Chart: bitnami/nginx 18.3.6 (app-1.26.2)
@@ -186,8 +186,9 @@ the years.
  * qmeu/qemu-system-x86_64.bash    QEMU System x86_64 (amd64) wrapper
  * software/get-0ad.bash           0AD 0.27.1 (Debian 13) bubblewrap portable app
  * software/get-7zip.bash          7-Zip 26.00 (Official) source code & Windows portable app
+ * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
- * software/get-edge.bash          Edge 144.0.3719.115 (Official) portable app
+ * software/get-edge.bash          Edge 145.0.3800.97 (Official) portable app
  * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app

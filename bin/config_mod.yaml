@@ -37,6 +37,9 @@ apps:
     command:
     - xedit
     daemon: true
+  video_editor:
+    command:
+    - shotcut
   video_player:
     command:
     - play
@@ -51,7 +54,8 @@ bindings:
     open: archive_unpacker
     view: archive_unpacker
   .avi:
-    open: video_player
+    open: video_editor
+    view: video_player
   .bmp:
     open: image_editor
     view: image_viewer
@@ -71,7 +75,8 @@ bindings:
   .docx:
     open: doc_editor
   .flv:
-    open: video_player
+    open: video_editor
+    view: video_player
   .gif:
     open: image_editor
     view: image_viewer
@@ -114,13 +119,17 @@ bindings:
     open: audio_editor
     view: audio_player
   .mp4:
-    open: video_player
+    open: video_editor
+    view: video_player
   .mpeg:
-    open: video_player
+    open: video_editor
+    view: video_player
   .mpegts:
-    open: video_player
+    open: video_editor
+    view: video_player
   .mpg:
-    open: video_player
+    open: video_editor
+    view: video_player
   .odf:
     open: doc_editor
   .odg:
@@ -198,7 +207,8 @@ bindings:
     open: audio_editor
     view: audio_player
   .webm:
-    open: video_player
+    open: video_editor
+    view: video_player
   .webp:
     open: image_editor
     view: image_viewer
