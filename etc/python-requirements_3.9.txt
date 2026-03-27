@@ -5,6 +5,7 @@ importlib-metadata           # ==7.2.1 (required by isort for 3.9)
 pyinstrument                 # ==None
 pylint                       # ==3.3.9 (old version)
 pipdeptree                   # ==2.28.0 (old version)
+requests                     # ==2.32.5 (old version)
 tomli                        # ==2.0.1 (required by pylint for 3.9)
 yt-dlp                       # ==None
 zipp                         # ==3.14.0 (required by importlib-metadata for 3.9)

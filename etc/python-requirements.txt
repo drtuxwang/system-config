@@ -45,7 +45,7 @@ python-dateutil==2.8.2       #   (required by bson-senao)
 python-slugify==6.1.2        #   (required by cookiecutter)
 PyYAML==6.0.3                # YAML parser/emitter
 pyzstd==0.18.0               # ZSTD compression/decompression
-requests==2.32.5             # Web client
+requests==2.33.0             # Web client
 rich==13.9.4                 #   (required by cookiecutter)
 setuptools==80.10.2          # Python package manager
 shtab==1.8.0                 #   (required by glances)
