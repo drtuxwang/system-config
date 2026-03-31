@@ -19,6 +19,7 @@ platformdirs                 # ==2.6.2 (old version)
 psutil                       # ==None
 pycodestyle                  # ==2.9.1 (old version)
 pyflakes                     # ==3.0.1 (old version)
+Pygments                     # ==2.17.2 (old version)
 pyinstrument                 # ==None
 pylint                       # ==2.17.7 (old version)
 PyYAML                       # ==6.0.1 (old version)
