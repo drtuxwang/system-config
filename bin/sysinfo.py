@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.21.4'
-VERSION = 20260301
+RELEASE = '7.0.1'
+VERSION = 20260330
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -274,12 +274,10 @@ class Detect:
             value=info['CPU Clocks'],
             comment='MHz',
         )
-        for key, value in sorted(info['CPU Cache'].items()):
-            Writer.output(
-                name=f'CPU L{key} Cache',
-                value=value,
-                comment='KB',
-            )
+        for key, value in reversed(sorted(info['CPU Cache'].items())):
+            Writer.output(name=f'CPU L{key} Cache', value=value)
+        for n, value in info['CPU Processors']:
+            Writer.output(name=f'CPU Processor {n}', value=value)
         for name, status in info['CPU Vulnerabilities']:
             Writer.output(name='CPU Vulnerability', value=name, comment=status)
 
@@ -304,12 +302,12 @@ class Detect:
         if short in (None, 'sys'):
             Writer.output(
                 name='System Memory',
-                value=info['System Memory'] + ' MB',
+                value=info['System Memory'] + ' MiB',
                 comment=info['System Memory X'],
             )
             Writer.output(
                 name='System Swap Space',
-                value=info['System Swap Space'] + ' MB',
+                value=info['System Swap Space'] + ' MiB',
                 comment=info['System Swap Space X'],
             )
             Writer.output(name='System Uptime', value=info['System Uptime'])
@@ -459,7 +457,7 @@ class Detect:
         for name, version, path, comment in Software().detect():
             Writer.output(
                 f'Command {name}',
-                value=f'{version} {path}',
+                value=f'{version:12s} {path}',
                 comment=comment,
             )
 
@@ -607,6 +605,7 @@ class OperatingSystem:
         info['CPU Threads X'] = ''
         info['CPU Clock'] = 'Unknown'
         info['CPU Clocks'] = 'Unknown'
+        info['CPU Processors'] = []
         info['CPU Cache'] = {}
         info['CPU Vulnerabilities'] = []
         if Platform.get_arch() == 'x86':
@@ -1014,7 +1013,7 @@ class LinuxSystem(PosixSystem):
             Writer.output(
                 name='Disk device',
                 device=f'/dev/{hdx}',
-                value=size + ' KB',
+                value=f'{size} KiB',
                 comment=model,
             )
         elif hdx in partition:
@@ -1030,7 +1029,7 @@ class LinuxSystem(PosixSystem):
                     Writer.output(
                         name='Disk device',
                         device=device,
-                        value=size + ' KB',
+                        value=f'{size} KiB',
                         comment=comment,
                     )
                 return
@@ -1039,7 +1038,7 @@ class LinuxSystem(PosixSystem):
             Writer.output(
                 name='Disk device',
                 device=device,
-                value=size + ' KB',
+                value=f'{size} KiB',
                 comment=comment,
             )
 
@@ -1100,14 +1099,14 @@ class LinuxSystem(PosixSystem):
                         Writer.output(
                             name='Disk device',
                             device=device,
-                            value=f'{size} KB',
+                            value=f'{size} KiB',
                             comment=f'{comment}, {model}',
                         )
                     continue
                 Writer.output(
                     name='Disk device',
                     device=f'/dev/{dev}',
-                    value=f'{size} KB',
+                    value=f'{size} KiB',
                     comment=model,
                 )
             elif dev in partition:
@@ -1121,7 +1120,7 @@ class LinuxSystem(PosixSystem):
                         Writer.output(
                             name='Disk device',
                             device=device,
-                            value=f'{size} KB',
+                            value=f'{size} KiB',
                             comment=comment,
                         )
                     continue
@@ -1132,7 +1131,7 @@ class LinuxSystem(PosixSystem):
                 Writer.output(
                     name='Disk device',
                     device=device,
-                    value=f'{size} KB',
+                    value=f'{size} KiB',
                     comment=comment,
                 )
 
@@ -1149,7 +1148,7 @@ class LinuxSystem(PosixSystem):
                     Writer.output(
                         name='Disk device',
                         device=f'/dev/{sdx}',
-                        value=f'{size} KB',
+                        value=f'{size} KiB',
                         comment=model,
                     )
                 elif sdx in partition:
@@ -1163,7 +1162,7 @@ class LinuxSystem(PosixSystem):
                             Writer.output(
                                 name='Disk device',
                                 device=device,
-                                value=f'{size} KB',
+                                value=f'{size} KiB',
                                 comment=comment,
                             )
                         continue
@@ -1172,7 +1171,7 @@ class LinuxSystem(PosixSystem):
                     Writer.output(
                         name='Disk device',
                         device=device,
-                        value=f'{size} KB',
+                        value=f'{size} KiB',
                         comment=comment,
                     )
 
@@ -1206,9 +1205,9 @@ class LinuxSystem(PosixSystem):
 
             try:
                 line = cls._read_file(directory, 'size')[0]
-                size = f'{int(line) >> 1} KB'
+                size = f'{int(line) >> 1} KiB'
             except (IndexError, ValueError):
-                size = '??? KB'
+                size = '??? KiB'
 
             try:
                 line = cls._read_file(directory, 'dm', 'uuid')[0]
@@ -1238,7 +1237,7 @@ class LinuxSystem(PosixSystem):
         for device in sorted(info['mounts']):
             if ':' in device:
                 mount_point, mount_type = info['mounts'][device][0]
-                size = '??? KB'
+                size = '??? KiB'
                 if command.is_found():
                     command.set_args([mount_point])
                     thread = CommandThread(command)
@@ -1249,7 +1248,7 @@ class LinuxSystem(PosixSystem):
                             thread.kill()
                             break
                     try:
-                        size = thread.get_output().split()[-5] + ' KB'
+                        size = f'{thread.get_output().split()[-5]} KiB'
                     except IndexError:
                         pass
                 Writer.output(
@@ -1396,10 +1395,10 @@ class LinuxSystem(PosixSystem):
                 Writer.output(
                     name='ZRAM device',
                     device=device,
-                    value=f'{int(int(size) / 1024 + 0.5)} KB',
+                    value=f'{int(int(size) / 1024 + 0.5)} KiB',
                     comment=(
-                        f'{int(int(data) / 1024 + 0.5)} KB data, '
-                        f'{int(int(compress) / 1024 + 0.5)} KB '
+                        f'{int(int(data) / 1024 + 0.5)} KiB data, '
+                        f'{int(int(compress) / 1024 + 0.5)} KiB '
                         f'{algorithm}, '
                         f'{int(data) / int(compress):3.1f}X'
                     )
@@ -1694,8 +1693,7 @@ class LinuxSystem(PosixSystem):
         except (IndexError, ValueError):
             try:
                 lines = cls._read_file(
-                    '/sys/devices/system/cpu/cpu0/cpufreq',
-                    'scaling_max_freq',
+                    '/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq',
                 )
                 info['CPU Clocks'] = str(int(int(lines[0]) / 1000 + 0.5))
                 lines = cls._read_file(
@@ -1836,8 +1834,8 @@ class LinuxSystem(PosixSystem):
                     level += 'd'
                 elif type_ == 'Instruction':
                     level += 'i'
-                info['CPU Cache'][level] = str(
-                    int(cls._read_file(cache, 'size')[0].rstrip('K')),
+                info['CPU Cache'][level] = (
+                    f"{int(cls._read_file(cache, 'size')[0].rstrip('K'))} KiB"
                 )
             except (IndexError, ValueError):
                 pass
@@ -1845,11 +1843,43 @@ class LinuxSystem(PosixSystem):
             for line in lines:
                 if line.startswith('cache size'):
                     try:
-                        info['CPU Cache']['?'] = str(int(
-                            float(line.split()[3])))
+                        info['CPU Cache']['?'] = (
+                            f'{int(float(line.split()[3]))} KiB'
+                        )
                     except (IndexError, ValueError):
                         pass
                     break
+
+    @staticmethod
+    def _lscpu(info: dict) -> bool:
+        lscpu = Command('lscpu', errors='ignore')
+        if lscpu.is_found():
+            try:
+                task = Batch(lscpu.get_cmdline())
+                task.run()
+                sockets = int(task.get_output('^Socket.*: ')[0].split()[-1])
+                cores = int(task.get_output('^Core.*: ')[0].split()[-1])
+                threads = int(task.get_output('^Thread.*')[0].split()[-1])
+                info['CPU Sockets'] = str(sockets)
+                info['CPU Cores'] = str(sockets * cores)
+                info['CPU Threads'] = str(sockets * cores * threads)
+                for line in task.get_output('^L.*cache: '):
+                    level, value = line[1:].split(' cache: ')
+                    info['CPU Cache'][level] = value.strip()
+                task = Batch(lscpu.get_cmdline() + ['--extended'])
+                task.run()
+                for line in task.get_output('yes'):
+                    p,  _, _, _, cache, _, cmax, cmin, cfreq = line.split()
+                    cache = f"{':'.join(reversed(cache.split(':')))}"
+                    info['CPU Processors'].append((
+                        p,
+                        f"{cache:12s} {int(float(cfreq)+0.5)} MHz "
+                        f"({int(float(cmax)+0.5)} {int(float(cmin)+0.5)} MHz)"
+                    ))
+                return True
+            except (IndexError, ValueError):
+                pass
+        return False
 
     def get_cpu_info(self) -> dict:
         """
@@ -1890,6 +1920,7 @@ class LinuxSystem(PosixSystem):
 
         self._scan_frequency(info, lines)
         self._scan_cache(info, lines)
+        self._lscpu(info)
 
         directory = '/sys/devices/system/cpu/vulnerabilities'
         if Path(directory).is_dir():
@@ -2050,7 +2081,7 @@ class MacSystem(PosixSystem):
                 Writer.output(
                     name='Disk device',
                     device=device,
-                    value=f'{size} KB',
+                    value=f'{size} KiB',
                     comment=f'{type_} on {directory}',
                 )
 
@@ -2134,8 +2165,9 @@ class MacSystem(PosixSystem):
 
         for line in self._kernel_settings:
             if line.startswith('hw.cpufrequency: '):
-                info['CPU Clock'] = str(int(
-                    float(line.split(': ', 1)[1])/1000000 + 0.5))
+                info['CPU Clock'] = (
+                    f"{int(float(line.split(': ', 1)[1])/1000000 + 0.5)}"
+                )
                 break
 
         for line in self._kernel_settings:
@@ -2468,6 +2500,7 @@ class Software:
             ['rsync', '--version'],
             ['^rsync +version', 'rsync +version | .*', ''],
         ),
+        (['shotcut', '--version'], ['^Shotcut ', 'Shotcut ', '']),
         (
             [Path('program', 'soffice'), '--version'],
             ['^LibreOffice ', 'LibreOffice | .*', 'LibreOffice'],

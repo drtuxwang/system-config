@@ -56,6 +56,7 @@ wpctl set-volume @DEFAULT_AUDIO_SINK@ 1.0
 # Setup mouse
 xset m 4,16
 # Setup keyboard
+
 while true
 do
     setxkbmap gb
@@ -69,6 +70,7 @@ do
     sleep 1
     [ "$(setxkbmap -query | grep ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp)" ] && break
 done
+setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp  # double check
 
 # Optional setup
 [ -f $HOME/.config/autorun-start-opt.bash ] && . $HOME/.config/autorun-start-opt.bash

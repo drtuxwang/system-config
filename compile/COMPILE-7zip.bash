@@ -12,7 +12,7 @@ export COMPL_STATIC=1
 sed -i "s/if (!IsSafePath(.*/if (0)/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
 # Fix "Dangerous link path was ignored"
 # Fix "Dangerous link via another link was ignored"
-sed -i "s/isDang = true/isDang = false/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+sed -i "s/isDang = true/isDang = false/;s/if (message)/if (0)/" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
 # Stop removing "/" from absolute symlink
 sed -i "s@^ *Remove_AbsPathPrefixes()@  // Remove_AbsPathPrefixes()@" CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
 

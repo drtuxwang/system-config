@@ -40,17 +40,6 @@ the years.
  * ansible/inventory/*             Ansible for local hosts & VMs
  * ansible/my_playbook.yaml
  * ansible/roles
- * appimage/Makefile
- * appimage/bin/*
- * appimage/0ad-0.0.26-deb11/      0AD 0.0.26 (Debian 11 backports) appimage
- * appimage/0ad-0.0.26-deb12/      0AD 0.0.26 (Debian 12) appimage
- * appimage/bash-5.1.4-deb11/      Bash 5.1.4 (Debian 11) appimage
- * appimage/bash-5.2.15-deb12/     Bash 5.2.15 (Debian 12) appimage
- * appimage/bash-5.2.37-deb13/     Bash 5.2.37 (Debian 13) appimage - broken patched binary
- * appimage/vlc-3.0.18-deb12/      VLC 3.0.18 (Debian 12) appimage
- * appimage/wesnoth-1.14.15-deb11/ Wesnoth 1.14.15 (Debian 11) appimage
- * appimage/wesnoth-1.16.8-deb11/  Wesnoth 1.16.8 (Debian 11 backports) appimage
- * appimage/wesnoth-1.16.9-deb12/  Wesnoth 1.16.9 (Debian 12) appimage
  * compile/COMPILE-7zip.bash       Compile script for 7-Zip (patched for absolute path symlink bug)
  * compile/COMPILE-aria2.bash      Compile script fro Aria2 downloader
  * compile/COMPILE-cutils.bash     Compile script for C Utilities
@@ -201,6 +190,7 @@ the years.
  * software/get-libreoffice.bash   LibreOffice 25.2.7.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.9 (Official) portable app
  * softwrae/get-python.bash        Python 3.13.12 (Official) source code
+ * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
  * software/get-wesnoth.bash       Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
  * software/get-wine.bash          WiNE 11.0 (Offical) bubblewrap portable app
  * software/setup-software.bash    Fetch and setup software

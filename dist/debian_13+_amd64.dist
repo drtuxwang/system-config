@@ -5,3 +5,8 @@ https://deb.debian.org/debian/dists/trixie-backports/main/binary-amd64/Packages.
 https://deb.debian.org/debian/dists/trixie-backports/contrib/binary-amd64/Packages.xz
 https://deb.debian.org/debian/dists/trixie-backports/non-free/binary-amd64/Packages.xz
 https://deb.debian.org/debian/dists/trixie-backports/non-free-firmware/binary-amd64/Packages.xz
+
+#
+#deb https://dl.winehq.org/wine-builds/debian trixie main
+#
+https://dl.winehq.org/wine-builds/debian/dists/trixie/main/binary-amd64/Packages.bz2

@@ -55,6 +55,8 @@ class Main:
             home_videos.mkdir(parents=True)
         configs = [
             '/dev/dri',
+            '/dev/shm',
+            f'/run/user/{os.getuid()}/pulse',
             Path(home, '.cache/ibus'),
             Path(home, '.config/ibus'),
             Path(home, '.config/Meltytech'),
@@ -83,7 +85,10 @@ class Main:
 
         shotcut.sandbox(configs)
 
-        Daemon(shotcut.get_cmdline()).run()
+        if '--version' in sys.argv:
+            Exec(shotcut.get_cmdline()).run()
+        else:
+            Daemon(shotcut.get_cmdline()).run()
 
         return 0
 
