@@ -3,7 +3,7 @@
 # Bash Python Virtual Environments module
 # - Build and run Python virtual environment
 #
-# Copyright GPL v2: 2023-2025 By Dr Colin Kong
+# Copyright GPL v2: 2023-2026 By Dr Colin Kong
 #
 
 set -u
@@ -55,7 +55,7 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
     if [ ! -d "$VIRTUAL_ENV" ]
     then
         rm -rf "$VIRTUAL_ENV.part"
-        $VENV_PYTHON -m virtualenv "$VIRTUAL_ENV.part" || exit 1
+        $PYTHONHOME/bin/$VENV_PYTHON -m virtualenv "$VIRTUAL_ENV.part" || exit 1
         rm -f "$VIRTUAL_ENV.part/.gitignore"
     fi
 
@@ -83,7 +83,7 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
         sed -i "s@^#!/.*@#!/usr/bin/env $VENV_PYTHON@" "$FILE"
     done
     unset IFS
-    [[ $VERSION =~ 2.* ]] && cp -p $PYTHON_DIR/lib/libpython*.so.* $VIRTUAL_ENV.part/lib 2> /dev/null
+    [[ $VERSION =~ 2.* ]] && cp -p $PYTHONHOME/lib/libpython*.so.* $VIRTUAL_ENV.part/lib 2> /dev/null
 
     [ "$VENV_POSTINST" ] && VIRTUAL_ENV="$VIRTUAL_ENV.part" $VENV_POSTINST
     fmod -R "$VIRTUAL_ENV.part" > /dev/null 2>&1
@@ -98,9 +98,9 @@ exec \"\${0%/*}/python$VERSION\" \"\$@\""
 defaults_settings
 virtualenv_setup
 
-PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$VENV_PYTHON")
+export PYTHONHOME=$(realpath $(echo "import sys; print(sys.exec_prefix)" | "$VENV_PYTHON"))
 VENV_PACKAGE=${VENV_PACKAGE,,}
-VIRTUAL_ENV="$PYTHON_DIR-venv/${VENV_PACKAGE/==/_}"
+VIRTUAL_ENV="$PYTHONHOME-venv/${VENV_PACKAGE/==/_}"
 [ -d "$VIRTUAL_ENV" ] || [ -w "${VIRTUAL_ENV%/*/*}" ] || VIRTUAL_ENV="${TMPDIR:-/tmp/$(id -un)}/python-$($VENV_PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}')-venv/${VENV_PACKAGE/==/_}"
 FLAGS="${1:-}"
 export VIRTUAL_ENV

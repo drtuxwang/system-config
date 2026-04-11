@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# opencv-python==4.10.0.84 virtualenv
+# opencv-python virtualenv (for image and video handling)
 #
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="opencv-contrib-python==4.10.0.84"
+    VENV_PACKAGE="opencv-contrib-python==4.12.0.88"
     VENV_DEPENDS="numpy==2.3.5 pybktree==1.1 pyzstd==0.18.0"
 }
 

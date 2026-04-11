@@ -2,6 +2,7 @@ astroid                      # ==3.3.11 (old version)
 filelock                     # ==3.19.1 (old version)
 Glances                      # ==4.4.1 (old version)
 importlib-metadata           # ==7.2.1 (required by isort for 3.9)
+platformdirs                 # ==4.4.0 (old version)
 pyinstrument                 # ==None
 pylint                       # ==3.3.9 (old version)
 pipdeptree                   # ==2.28.0 (old version)

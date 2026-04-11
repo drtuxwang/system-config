@@ -76,8 +76,7 @@ EOF
 %~dp0..\7zip_'$VERSION'-windows-x86\un7z.bat %*
 EOF
         touch -r 7z.exe 7z.bat un7z.bat ../bin/7z.bat ../bin/un7z.bat
-    '
-    APP_START="helm"
+    "
 }
 
 app_start() {
