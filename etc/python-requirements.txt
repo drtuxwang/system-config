@@ -18,7 +18,7 @@ filelock==3.24.3             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 gitdb==4.0.12                #   (required by GitPython)
 GitPython==3.1.46            # Library to interact with Git repositories
-Glances==4.5.3               # Cross-platform system monitoring tool
+Glances==4.5.4               # Cross-platform system monitoring tool
 gTTS==2.5.4                  # Google Text-to-Speech
 idna==3.11                   #   (required by requests)
 isort==6.1.0                 #   (required by pylint)
