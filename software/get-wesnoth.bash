@@ -13,40 +13,41 @@ app_settings() {
     PORT="linux64-x86-glibc_2.41"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
+    REPO="https://deb.debian.org/debian/pool"
     APP_FILES="
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18_1.18.5-1_amd64.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-data_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-did_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-dm_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-dw_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-ei_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-httt_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-l_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-low_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-music_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-nr_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-server_1.18.5-1_amd64.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-sof_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-sota_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-sotbe_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-thot_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-tools_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-trow_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-tsg_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-ttb_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-utbs_1.18.5-1_all.deb
-        https://deb.debian.org/debian/pool/main/w/wesnoth-1.18/wesnoth-1.18-wof_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18_1.18.5-1_amd64.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-data_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-did_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-dm_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-dw_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-ei_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-httt_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-l_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-low_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-music_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-nr_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-server_1.18.5-1_amd64.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sof_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sota_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sotbe_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-thot_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-tools_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-trow_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-tsg_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-ttb_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-utbs_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-wof_1.18.5-1_all.deb
 
-        https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb
-        https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-iostreams1.83.0_1.83.0-4.2_amd64.deb
-        https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-locale1.83.0_1.83.0-4.2_amd64.deb
-        https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-program-options1.83.0_1.83.0-4.2_amd64.deb
-        https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-random1.83.0_1.83.0-4.2_amd64.deb
-        https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-thread1.83.0_1.83.0-4.2_amd64.deb
-        https://deb.debian.org/debian/pool/main/f/fonts-adf/fonts-adf-oldania_0.20190904-3_all.deb
-        https://deb.debian.org/debian/pool/main/f/fonts-android/fonts-droid-fallback_8.1.0r7-1~1.gbp36536b_all.deb
-        https://deb.debian.org/debian/pool/main/f/fonts-lato/fonts-lato_2.015-1_all.deb
-        https://deb.debian.org/debian/pool/main/f/fonts-lohit-beng-bengali/fonts-lohit-beng-bengali_2.91.5-3_all.deb
+        $REPO/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb
+        $REPO/main/b/boost1.83/libboost-iostreams1.83.0_1.83.0-4.2_amd64.deb
+        $REPO/main/b/boost1.83/libboost-locale1.83.0_1.83.0-4.2_amd64.deb
+        $REPO/main/b/boost1.83/libboost-program-options1.83.0_1.83.0-4.2_amd64.deb
+        $REPO/main/b/boost1.83/libboost-random1.83.0_1.83.0-4.2_amd64.deb
+        $REPO/main/b/boost1.83/libboost-thread1.83.0_1.83.0-4.2_amd64.deb
+        $REPO/main/f/fonts-adf/fonts-adf-oldania_0.20190904-3_all.deb
+        $REPO/main/f/fonts-android/fonts-droid-fallback_8.1.0r7-1~1.gbp36536b_all.deb
+        $REPO/main/f/fonts-lato/fonts-lato_2.015-1_all.deb
+        $REPO/main/f/fonts-lohit-beng-bengali/fonts-lohit-beng-bengali_2.91.5-3_all.deb
     "
     APP_REMOVE="
         etc/

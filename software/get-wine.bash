@@ -13,10 +13,11 @@ app_settings() {
     PORT="linux64-x86-glibc_2.41"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
+    REPO="https://dl.winehq.org/wine-builds/debian/pool"
     APP_FILES="
-        https://dl.winehq.org/wine-builds/debian/pool/main/w/wine/wine-stable_11.0.0.0~trixie-1_amd64.deb
-        https://dl.winehq.org/wine-builds/debian/pool/main/w/wine/wine-stable-amd64_11.0.0.0~trixie-1_amd64.deb
-        https://dl.winehq.org/wine-builds/debian/pool/main/w/wine/wine-stable-i386_11.0.0.0~trixie-1_i386.deb
+        $REPO/main/w/wine/wine-stable_11.0.0.0~trixie-1_amd64.deb
+        $REPO/main/w/wine/wine-stable-amd64_11.0.0.0~trixie-1_amd64.deb
+        $REPO/main/w/wine/wine-stable-i386_11.0.0.0~trixie-1_i386.deb
     "
     APP_REMOVE="
         opt/wine-stable/share/man/*.UTF-8

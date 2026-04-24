@@ -15,13 +15,13 @@ app_settings() {
     APP_FILES="
         https://ftp.mozilla.org/pub/firefox/releases/$VERSION/linux-x86_64/en-GB/firefox-$VERSION.tar.xz
     "
-    APP_REMOVE="
-        firefox/icons/
-    "
     APP_SHELL="
         mv firefox/ firefox-stable/
         mv firefox-stable/* .
-        rm -r firefox-stable/
+    "
+    APP_REMOVE="
+        firefox-stable/
+        icons/
     "
     APP_START="firefox"
 }

@@ -56,6 +56,9 @@ unpack_file() {
     *.AppImage)
         7z x -y -snld $1 || exit 1
         ;;
+    *.exe)
+        cp -p $1 .
+        ;;
     *)
         if [ "$(file "$1" | grep x86-64)" ]
         then
@@ -88,15 +91,15 @@ prepare_files() {
     do
         unpack_file $FILE
     done
-    for FILE in $APP_REMOVE
-    do
-        remove_file "${FILE%/}"
-    done
     if [ "$APP_SHELL" ]
     then
         echo -e "\033[33m=> #!/usr/bin/env bash\033[0m"
         echo "$APP_SHELL" | bash -ex || exit 1
     fi
+    for FILE in $APP_REMOVE
+    do
+        remove_file "${FILE%/}"
+    done
 }
 
 prepare_start() {

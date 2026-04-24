@@ -12,20 +12,22 @@ app_settings() {
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_${VERSION%-*}-$PORT"
+    REPO="https://packages.microsoft.com/repos/edge/pool"
     APP_FILES="
-        https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_${VERSION}_amd64.deb
-    "
-    APP_REMOVE="
-        etc/
-        opt/microsoft/msedge/cron/
-        opt/microsoft/msedge/MEIPreload/
-        opt/microsoft/msedge/WidevineCdm/
-        usr/
+        $REPO/main/m/microsoft-edge-stable/microsoft-edge-stable_${VERSION}_amd64.deb
     "
     APP_SHELL="
         mv opt/microsoft/msedge/* .
         rm -r opt/
         find locales -type f -not -name en-* -exec rm -v {} +
+    "
+    APP_REMOVE="
+        _gpgorigin
+        etc/
+        cron/
+        MEIPreload/
+        WidevineCdm/
+        usr/
     "
     APP_START="microsoft-edge"
 }

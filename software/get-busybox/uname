@@ -1,0 +1,33 @@
+#!/bin/sh
+
+VERSION=`"$COMSPEC" /r ver | tail -1 | sed -e "s/\[//;s/\]//"`
+if [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
+then
+    CPU="x86_64"
+else
+    CPU="x86"
+fi
+
+case $* in
+-a)
+    echo "NT `echo $VERSION | sed -e "s/.* //" | cut -f1-2 -d.` `unam# -n | tr '^[A-Z]' '^[a-z]'` #$VERSION $CPU $CPU `unam# -o`"
+    ;;
+-n)
+    unam# -n | tr '^[A-Z]' '^[a-z]'
+    ;;
+-r)
+    echo $VERSION | sed -e "s/.* //" | cut -f1-2 -d.
+    ;;
+-v)
+    echo "$VERSION"
+    ;;
+-m|-p)
+    echo "$MACHINE"
+    ;;
+-o)
+    unam# -o
+    ;;
+*)
+    echo "NT"
+    ;;
+esac

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+CLASS=${1:-}
+if [ ! "$CLASS" ]
+then
+    echo "Usage: $0 $(ls -1t "${0%/*}/.."/*linux64*x86*/k3s-[1-9]* 2> /dev/null | sort -n | sed -e "s/.*k3s-//;s/[.][^.]*$//" | uniq | tr "\\n" "|" | sed -e "s/|$//")"
+    exit 1
+fi
+shift
+
+VERSION=$(ls -1t "${0%/*}/.."/*linux64*x86*/k3s-\$CLASS.* 2> /dev/null | sort -n | tail -n 1)
+if [ ! -f "$0-{{ version }}N" ]
+then
+    echo "$0: ***ERROR*** Cannot find \"k3s-\$CLASS.*\" executable."
+    exit 1
+fi
+
+echo "$(realpath "$VERSION") server $@"
+sleep 2
+exec "$VERSION" server --write-kubeconfig-mode 755 "$@"

@@ -17,9 +17,11 @@ source_settings() {
     "
     APP_SHELL="
         mv tmux-$VERSION/* .
-        rm -rf tmux-$VERSION
         cp -p ${0%/*}/../compile/COMPILE-tmux.bash .
         touch -r CHANGES COMPILE-tmux.bash
+    "
+    APP_REMOVE="
+        tmux-$VERSION/
     "
 }
 

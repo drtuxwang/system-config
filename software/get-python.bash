@@ -17,9 +17,11 @@ source_settings() {
     "
     APP_SHELL="
         mv Python-$VERSION/* .
-        rm -rf Python-$VERSION
         cp -p ${0%/*}/../compile/COMPILE-python.bash .
         touch -r README.rst COMPILE-python.bash
+    "
+    APP_REMOVE="
+        Python-$VERSION
     "
 }
 
@@ -34,9 +36,11 @@ source_settings_3_14() {
     "
     APP_SHELL="
         mv Python-$VERSION/* .
-        rm -rf Python-$VERSION
         cp -p ${0%/*}/../compile/COMPILE-python.bash .
         touch -r README.rst COMPILE-python.bash
+    "
+    APP_REMOVE="
+        Python-$VERSION
     "
 }
 

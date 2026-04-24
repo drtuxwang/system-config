@@ -30,7 +30,18 @@ windows_settings() {
     APP_FILES="
         https://www.7-zip.org/a/7z${VERSION//./}.exe
     "
+    APP_SHELL="
+        7z x -y -snld 7z[1-9]*.exe
+        mkdir -p ../bin
+        cp ${0%.*}/7z.bat .
+        cp ${0%.*}/un7z.bat .
+        sed -e 's/{{ version }}/$VERSION/' ${0%.*}/7z.bat-bin > ../bin/7z.bat
+        sed -e 's/{{ version }}/$VERSION/' ${0%.*}/un7z.bat-bin > ../bin/un7z.bat
+        chmod 755 ../bin/7z.bat ../bin/un7z.bat
+        touch -r 7z.exe 7z.bat un7z.bat ../bin/7z.bat ../bin/un7z.bat ../bin
+    "
     APP_REMOVE="
+        7z[1-9]*.exe
         7-zip.chm
         7-zip.dll
         7zCon.sfx
@@ -39,43 +50,6 @@ windows_settings() {
         Lang
         Uninstall.exe
         descript.ion
-    "
-    APP_SHELL='
-        mkdir -p ../bin
-        cat << EOF > 7z.bat
-@echo off
-
-if "%1"=="a" goto exec
-if "%1"=="l" goto exec
-if "%1"=="t" goto exec
-if "%1"=="x" goto exec
-    %~dp0\7z.exe a -m0=lzma2 -mmt=2 -mx=9 -myx=9 -md=128m -mfb=256 -ms=on -snh -snl -stl -y %*
-    goto exit
-:exec
-    %~dp0\7z.exe %1 %2 %3 %4 %5 %6 %7 %8 %9
-    goto exit
-:exit
-EOF
-        cat << EOF > un7z.bat
-@echo off
-
-if "%1"=="-v" goto view
-    %~dp0\7z.exe x -y %*
-    goto exit
-:view
-    %~dp0\7z.exe l %2 %3 %4 %5 %6 %7 %8 %9
-    goto exit
-:exit
-EOF
-        cat << EOF > ../bin/7z.bat
-@echo off
-%~dp0..\7zip_'$VERSION'-windows-x86\7z.bat %*
-EOF
-        cat << EOF > ../bin/un7z.bat
-@echo off
-%~dp0..\7zip_'$VERSION'-windows-x86\un7z.bat %*
-EOF
-        touch -r 7z.exe 7z.bat un7z.bat ../bin/7z.bat ../bin/un7z.bat
     "
 }
 

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+DEFAULT=$(ls -1t "${0%/*}/.."/*linux64*x86*/k3s-[1-9]* 2> /dev/null | sort -n | tail -n 1)
+CLASS=$("$DEFAULT" kubectl version 2> /dev/null | grep "^Server.*v" | sed -e "s/.*v//" | cut -f1-2 -d.)
+VERSION=$(ls -1t "${0%/*}/.."/*linux64*x86*/k3s-$CLASS.* 2> /dev/null | sort -n | tail -n 1)
+
+if [ -x "$VERSION" ]
+then
+    exec "$VERSION" "${0##*/}" "$@"
+else
+    exec "$DEFAULT" "${0##*/}" "$@"
+fi

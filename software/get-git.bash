@@ -17,9 +17,11 @@ source_settings() {
     "
     APP_SHELL="
         mv git-$VERSION/* .
-        rm -rf git-$VERSION
         cp -p ${0%/*}/../compile/COMPILE-git.bash .
         touch -r README.md COMPILE-tmux.bash
+    "
+    APP_REMOVE="
+        git-$VERSION/
     "
 }
 

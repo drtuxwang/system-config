@@ -15,13 +15,13 @@ app_settings() {
     APP_FILES="
         https://github.com/git-lfs/git-lfs/releases/download/v$VERSION/git-lfs-linux-amd64-v$VERSION.tar.gz
     "
-    APP_REMOVE="
-        git-lfs-$VERSION/install.sh
-        git-lfs-$VERSION/man/
-    "
     APP_SHELL="
         mv git-lfs-$VERSION/* .
-        rm -r git-lfs-$VERSION/
+    "
+    APP_REMOVE="
+        git-lfs-$VERSION/
+        install.sh
+        man/
     "
     APP_START="git-lfs"
 }

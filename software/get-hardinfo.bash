@@ -13,8 +13,9 @@ app_settings() {
     PORT="linux64-x86-glibc_2.36"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
+    REPO="https://deb.debian.org/debian/pool"
     APP_FILES="
-        https://deb.debian.org/debian/pool/main/h/hardinfo/hardinfo_0.5.1+git20180227-2.1+b1_amd64.deb
+        $REPO/main/h/hardinfo/hardinfo_0.5.1+git20180227-2.1+b1_amd64.deb
     "
     APP_REMOVE="
         usr/share/applications/

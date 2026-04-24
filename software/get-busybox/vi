@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$(${0/sbin/bin}.bat -h 2> /dev/null)" ]
+then
+    ${0/sbin/bin}.bat "$@"
+else
+    exec v# "$@"
+fi

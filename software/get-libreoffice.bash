@@ -18,15 +18,17 @@ app_settings() {
     APP_UNPACK="
         LibreOffice_*_deb/DEBS/*.deb
     "
-    APP_REMOVE="
-        LibreOffice_*_deb/
-        opt/libreoffice${VERSION%.*.*}/share/extensions/nlpsolver/
-        opt/libreoffice${VERSION%.*.*}/share/extensions/wiki-publisher/
-        usr/
-    "
     APP_SHELL="
         mv opt/libreoffice*/* .
-        rm -r opt/
+    "
+    APP_REMOVE="
+        LibreOffice_*_deb/
+        opt/
+        share/autotext/common/
+        share/extensions/nlpsolver/
+        share/extensions/wiki-publisher/
+        share/uno_packages/
+        usr/
     "
     APP_START="program/soffice"
 }

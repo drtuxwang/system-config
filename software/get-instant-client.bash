@@ -13,27 +13,22 @@ app_settings() {
     PORT="linux64-x86-glibc_2.28"
 
     APP_DIRECTORY="${NAME}_${VERSION%.*.*}-$PORT"
+    REPO1="https://download.oracle.com/otn_software/linux/instantclient"
+    REPO2="https://archive.debian.org/debian/pool"
     APP_FILES="
-        https://download.oracle.com/otn_software/linux/instantclient/${VERSION//./}/instantclient-basiclite-linux.x64-$VERSION.zip
-        https://download.oracle.com/otn_software/linux/instantclient/${VERSION//./}/instantclient-sqlplus-linux.x64-$VERSION.zip
-        https://archive.debian.org/debian/pool/main/liba/libaio/libaio1_0.3.112-3_amd64.deb
-    "
-    APP_REMOVE="
-        META-INF
-        usr/share/
+        $REPO1/${VERSION//./}/instantclient-basiclite-linux.x64-$VERSION.zip
+        $REPO1/${VERSION//./}/instantclient-sqlplus-linux.x64-$VERSION.zip
+        $REPO2/main/liba/libaio/libaio1_0.3.112-3_amd64.deb
     "
     APP_SHELL="
         mv instantclient_* bin/
         ln -s bin lib
-        cat << EOF > sqlnet.ora
-DIAG_ADR_ENABLED = OFF
-TRACE_LEVEL_CLIENT = OFF
-TRACE_DIRECTORY_CLIENT = /dev/null
-LOG_DIRECTORY_CLIENT = /dev/null
-LOG_FILE_CLIENT = /dev/null
-LOG_LEVEL_CLIENT = OFF
-EOF
+        cp ${0%.*}/sqlnet.ora .
         touch -r bin/sqlplus sqlnet.ora
+    "
+    APP_REMOVE="
+        META-INF
+        usr/share/
     "
     APP_START="bin/sqlplus"
     APP_LINK="sqlplus64"
@@ -49,4 +44,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" source_settings app_settings
+source "${0%/*}/setup-software.bash" app_settings

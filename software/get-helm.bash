@@ -17,9 +17,11 @@ source_settings() {
     "
     APP_SHELL="
         mv helm-$VERSION/* .
-        rm -rf helm-$VERSION/
         cp -p ${0%/*}/../compile/COMPILE-helm.bash .
         touch -r README.md COMPILE-helm.bash
+    "
+    APP_REMOV="
+        helm-$VERSION/
     "
 }
 

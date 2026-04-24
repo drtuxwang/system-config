@@ -177,17 +177,21 @@ the years.
  * software/get-7zip.bash          7-Zip 26.00 (Official) source code & Windows portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
+ * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
  * software/get-edge.bash          Edge 145.0.3800.97 (Official) portable app
  * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
  * software/get-git.bash           GIT 2.48.2 (Official) source code
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
  * software/get-golang.bash        Golang 1.25.7 (Official) portable app
+ * software/get-grub-efi.bash      GRUB EFI 2.12 (Debian 13) boot loader
+ * software/get-grub-pc.bash       GRUB PC 2.12 (Debian 13) boot loader
  * software/get-hardinfo.bash      Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
  * software/get-hardinfo2.bash     Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
  * software/get-helm.bash          Helm 3.19.5 (Official) source code & Linux portable app
  * software/get-inkscape.bash      Inkscape 1.3.2 (Official) portable app
  * software/get-instant-client.bash Instant Client 23.26 (Official) library & portable app
+ * software/get-isolinux.bash      ISOLIUX 4.05 (Debian 7) boot loader
  * software/get-k3s.bash           K3S 1.31.14-1 (Official) portable app
  * software/get-libreoffice.bash   LibreOffice 25.2.7.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.9 (Official) portable app

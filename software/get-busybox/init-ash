@@ -1,0 +1,75 @@
+#
+# BusyBox init on Windows
+#
+export PATH="${BUSYBOX}bin;$PATH"
+for DRIVE in `df | tail +2 | grep "^.:" | cut -c1`
+do
+    if [ -w "$DRIVE:/software/bin" ]
+    then
+        for FILE in $DRIVE:/software/bin/*.bat
+        do
+            FILE=${FILE%.bat}
+            if [ ! -f "$FILE" ]
+            then
+                echo -e "#!/bin/sh\n\$0.bat \"\$@\"" > "$FILE"
+            fi
+        done
+        export PATH="$DRIVE:/software/bin;$PATH"
+    fi
+done
+
+# Session control
+export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
+export MYUNAME=`whoami 2> /dev/null`
+PS1='\[\033[01;32m\][\t] \[\033[01;34m\]`pwd`\[\033[01;31m\]\n\[\033[01;32m\]'$MYUNAME'@'$MYHNAME'\[\033[00m\] $ '
+
+# General stuff
+umask 022
+export LC_COLLATE=C
+export EDITOR=vi
+export HISTCONTROL=ignoredups
+export HISTFILE=
+export HISTSIZE=256
+export HISTTIMEFORMAT=
+export LESSHISTFILE=/dev/null
+export PYTHONDONTWRITEBYTECODE=1
+
+# Save/load default path settings
+if [ ! "$BASE_PATH" ]
+then
+    if [ ! "$PYTHONPATH" ]
+    then
+        export PYTHONPATH=
+    fi
+    export BASE_PATH="$PATH"
+    export BASE_PYTHONPATH="$PYTHONPATH"
+else
+    export PATH="$BASE_PATH"
+    export PYTHONPATH="$BASE_PYTHONPATH"
+fi
+
+# Fix command aliases
+alias df="df -k"
+alias du="du -k"
+alias ftp="ftp -i -v"
+alias h="history 256"
+alias ls="ls -C --color=auto"
+rm -f "$HOME/.ash_history"
+
+if [ "$VIRTUAL_ENV" ]
+then
+    export PATH="$VIRTUAL_ENV/bin:$PATH"
+fi
+
+# Change to $HOME/Desktop
+if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]
+then
+    mkdir -p $HOME/Desktop/Downloads 2> /dev/null
+    cd "$HOME/Desktop" 2> /dev/null
+fi
+
+# Show information
+echo
+sysinfo -s 2> /dev/null
+echo "ash BusyBox shell"
+echo

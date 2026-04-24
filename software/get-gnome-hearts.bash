@@ -13,25 +13,27 @@ app_settings() {
     PORT="linux64-x86-glibc_2.24"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
+    REPO1="https://archive.debian.org/debian/pool"
+    REPO1="https://archive.debian.org/debian-archive/debian-security/pool"
     APP_FILES="
-        https://archive.debian.org/debian/pool/main/g/gnome-hearts/gnome-hearts_0.3-2.2+b1_amd64.deb
+        $REPO1/main/g/gnome-hearts/gnome-hearts_0.3-2.2+b1_amd64.deb
 
-        https://archive.debian.org/debian-archive/debian-security/pool/updates/main/p/python2.7/libpython2.7_2.7.13-2+deb9u6_amd64.deb
-        https://archive.debian.org/debian-archive/debian-security/pool/updates/main/p/python2.7/libpython2.7-stdlib_2.7.13-2+deb9u6_amd64.deb
-        https://archive.debian.org/debian-archive/debian-security/pool/updates/main/p/python2.7/libpython2.7-minimal_2.7.13-2+deb9u6_amd64.deb
+        $REPO2/updates/main/p/python2.7/libpython2.7_2.7.13-2+deb9u6_amd64.deb
+        $REPO2/updates/main/p/python2.7/libpython2.7-stdlib_2.7.13-2+deb9u6_amd64.deb
+        $REPO2/updates/main/p/python2.7/libpython2.7-minimal_2.7.13-2+deb9u6_amd64.deb
 
-        https://archive.debian.org/debian/pool/main/g/gconf/libgconf-2-4_3.2.6-4+b1_amd64.deb
-        https://archive.debian.org/debian/pool/main/g/gnome-vfs/libgnomevfs2-0_2.24.4-6.1+b2_amd64.deb
-        https://archive.debian.org/debian/pool/main/g/gtk+2.0/libgail18_2.24.31-2_amd64.deb
-        https://archive.debian.org/debian/pool/main/liba/libart-lgpl/libart-2.0-2_2.3.21-2_amd64.deb
-        https://archive.debian.org/debian/pool/main/libb/libbonobo/libbonobo2-0_2.32.1-3+b1_amd64.deb
-        https://archive.debian.org/debian/pool/main/libb/libbonoboui/libbonoboui2-0_2.24.5-4_amd64.deb
-        https://archive.debian.org/debian/pool/main/libg/libglade2/libglade2-0_2.6.4-2_amd64.deb
-        https://archive.debian.org/debian/pool/main/libg/libgnome-keyring/libgnome-keyring0_3.12.0-1+b2_amd64.deb
-        https://archive.debian.org/debian/pool/main/libg/libgnome/libgnome-2-0_2.32.1-5+b1_amd64.deb
-        https://archive.debian.org/debian/pool/main/libg/libgnomecanvas/libgnomecanvas2-0_2.30.3-3_amd64.deb
-        https://archive.debian.org/debian/pool/main/libg/libgnomeui/libgnomeui-0_2.24.5-3.1_amd64.deb
-        https://archive.debian.org/debian/pool/main/o/orbit2/liborbit-2-0_2.14.19-2+b1_amd64.deb
+        $REPO1/main/g/gconf/libgconf-2-4_3.2.6-4+b1_amd64.deb
+        $REPO1/main/g/gnome-vfs/libgnomevfs2-0_2.24.4-6.1+b2_amd64.deb
+        $REPO1/main/g/gtk+2.0/libgail18_2.24.31-2_amd64.deb
+        $REPO1/main/liba/libart-lgpl/libart-2.0-2_2.3.21-2_amd64.deb
+        $REPO1/main/libb/libbonobo/libbonobo2-0_2.32.1-3+b1_amd64.deb
+        $REPO1/main/libb/libbonoboui/libbonoboui2-0_2.24.5-4_amd64.deb
+        $REPO1/main/libg/libglade2/libglade2-0_2.6.4-2_amd64.deb
+        $REPO1/main/libg/libgnome-keyring/libgnome-keyring0_3.12.0-1+b2_amd64.deb
+        $REPO1/main/libg/libgnome/libgnome-2-0_2.32.1-5+b1_amd64.deb
+        $REPO1/main/libg/libgnomecanvas/libgnomecanvas2-0_2.30.3-3_amd64.deb
+        $REPO1/main/libg/libgnomeui/libgnomeui-0_2.24.5-3.1_amd64.deb
+        $REPO1/main/o/orbit2/liborbit-2-0_2.14.19-2+b1_amd64.deb
     "
     APP_REMOVE="
         etc/

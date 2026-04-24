@@ -13,22 +13,23 @@ app_settings() {
     PORT="linux64-x86-glibc_2.41"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
+    REPO="https://deb.debian.org/debian"
     APP_FILES="
-        https://deb.debian.org/debian/pool/main/0/0ad/0ad_0.27.0-2+b1_amd64.deb
-        https://deb.debian.org/debian/pool/main/0/0ad-data/0ad-data_0.27.0-1_all.deb
-        https://deb.debian.org/debian/pool/main/0/0ad-data/0ad-data-common_0.27.0-1_all.deb
+        $REPO/pool/main/0/0ad/0ad_0.27.0-2+b1_amd64.deb
+        $REPO/pool/main/0/0ad-data/0ad-data_0.27.0-1_all.deb
+        $REPO/pool/main/0/0ad-data/0ad-data-common_0.27.0-1_all.deb
 
-        https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb
-        https://deb.debian.org/debian/pool/main/e/enet/libenet7_1.3.18+ds-1+b1_amd64.deb
-        https://deb.debian.org/debian/pool/main/f/fmtlib/libfmt10_10.1.1+ds1-4_amd64.deb
-        https://deb.debian.org/debian/pool/main/f/fonts-freefont/fonts-freefont-ttf_20211204+svn4273-2_all.deb
-        https://deb.debian.org/debian/pool/main/g/gloox/libgloox18_1.0.28-1+b3_amd64.deb
-        https://deb.debian.org/debian/pool/main/m/miniupnpc/libminiupnpc18_2.2.8-2+b2_amd64.deb
-        https://deb.debian.org/debian/pool/main/p/pcre2/libpcre2-32-0_10.46-1~deb13u1_amd64.deb
-        https://deb.debian.org/debian/pool/main/t/tex-gyre/fonts-texgyre_20180621-6_all.deb
-        https://deb.debian.org/debian/pool/main/w/wxwidgets3.2/libwxbase3.2-1t64_3.2.8+dfsg-2_amd64.deb
-        https://deb.debian.org/debian/pool/main/w/wxwidgets3.2/libwxgtk-gl3.2-1t64_3.2.8+dfsg-2_amd64.deb
-        https://deb.debian.org/debian/pool/main/w/wxwidgets3.2/libwxgtk3.2-1t64_3.2.8+dfsg-2_amd64.deb
+        $REPO/pool/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb
+        $REPO/pool/main/e/enet/libenet7_1.3.18+ds-1+b1_amd64.deb
+        $REPO/pool/main/f/fmtlib/libfmt10_10.1.1+ds1-4_amd64.deb
+        $REPO/pool/main/f/fonts-freefont/fonts-freefont-ttf_20211204+svn4273-2_all.deb
+        $REPO/pool/main/g/gloox/libgloox18_1.0.28-1+b3_amd64.deb
+        $REPO/pool/main/m/miniupnpc/libminiupnpc18_2.2.8-2+b2_amd64.deb
+        $REPO/pool/main/p/pcre2/libpcre2-32-0_10.46-1~deb13u1_amd64.deb
+        $REPO/pool/main/t/tex-gyre/fonts-texgyre_20180621-6_all.deb
+        $REPO/pool/main/w/wxwidgets3.2/libwxbase3.2-1t64_3.2.8+dfsg-2_amd64.deb
+        $REPO/pool/main/w/wxwidgets3.2/libwxgtk-gl3.2-1t64_3.2.8+dfsg-2_amd64.deb
+        $REPO/pool/main/w/wxwidgets3.2/libwxgtk3.2-1t64_3.2.8+dfsg-2_amd64.deb
     "
     APP_REMOVE="
         etc/

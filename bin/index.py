@@ -121,6 +121,7 @@ class Main:
                 file_path = Path(root, file).resolve()
                 if isbadfile.search(file):
                     print(f"Error: Found bad file: {file_path}")
+                    Path(file_path, '..fsum').unlink()
                     error = True
                 try:
                     if Path(file_path).stat().st_size == 0:

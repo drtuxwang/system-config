@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$(python3 --version 2> /dev/null)" ]
+then
+    ${0/sbin/bin}.py "$@"
+else
+    exec ${0/sbin/bin}.sh "$@"
+fi

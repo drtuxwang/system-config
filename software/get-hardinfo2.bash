@@ -13,8 +13,9 @@ app_settings() {
     PORT="linux64-x86-glibc_2.41"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
+    REPO="https://deb.debian.org/debian/pool"
     APP_FILES="
-        https://deb.debian.org/debian/pool/main/h/hardinfo/hardinfo2_2.2.10-1_amd64.deb
+        $REPO/main/h/hardinfo/hardinfo2_2.2.10-1_amd64.deb
     "
     APP_REMOVE="
         usr/lib/systemd/
