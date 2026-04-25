@@ -8,8 +8,9 @@ set -eu
 
 extract() {
     DIR="$1"
-    rm -rf $DIR
-    mkdir $DIR
+    rm -rf $DIR/grub-pc
+    mkdir -p $DIR/grub-pc
+
     LINE=$(grep -a -n "^### TAR.XZ PAYLOAD ###$" "$0" | cut -f1 -d:)
     BYTES=$(head -n $LINE "$0" | wc -c)
     echo
