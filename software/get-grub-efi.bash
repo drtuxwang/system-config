@@ -9,7 +9,7 @@ set -e
 app_settings() {
     NAME="grub-efi"
     VERSION="2.12"
-    PORT="esp64-x86"
+    PORT="boot64-x86"
     ARCH=x64
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -37,7 +37,7 @@ app_settings() {
 app_settings_arm() {
     NAME="grub-efi"
     VERSION="2.12"
-    PORT="esp64-arm"
+    PORT="boot64-arm"
     ARCH=aa64
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
