@@ -35,6 +35,7 @@ MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 MOUNT=$(df "$1" 2> /dev/null | awk 'END {print $NF}')
 echo "Updating EFI partition: $MOUNT"
 MYDIR="${0%/*}"
+install "$MYDIR/README-grub-efi.md" "$MOUNT/EFI"
 install "$MYDIR/boot" "$MOUNT/EFI/boot"
 [ ! -d "$MOUNT/EFI/debian" ] && install "$MYDIR/debian" "$MOUNT/EFI/debian"
 
