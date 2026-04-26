@@ -75,7 +75,7 @@ MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 [ "$MYUNAME" != root ] && exec sudo sh $0 "$@"
 
 umask 077
-extract /tmp/$MYUNAME
+extract $PWD
 cd "$1"
 autorun /tmp/$MYUNAME/grub-pc
 echo "rm -rf /tmp/$MYUNAME/grub"
