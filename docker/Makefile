@@ -21,6 +21,7 @@ BUILD_DIRS := \
 	rockylinux-10 \
 	rockylinux-9 \
 	rockylinux-8 \
+	ubuntu-26.04 \
 	ubuntu-24.04 \
 	ubuntu-22.04 \
 	ubuntu-20.04 \
