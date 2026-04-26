@@ -61,7 +61,7 @@ autorun() {
 ARG=${1:-}
 if [ "$ARG" = "-x" ]
 then
-    extract grub-pc
+    extract .
     du -sk grub-pc
     exit
 elif [ ! -d "${1:-}" ]

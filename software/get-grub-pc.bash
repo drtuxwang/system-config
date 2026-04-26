@@ -20,9 +20,9 @@ app_settings() {
         $REPO/main/e/efivar/libefivar1t64_38-3.1+b1_amd64.deb
     "
     APP_SHELL="
-        mkdir -p grub-pc/i386-pc
+        mkdir -p grub-pc
         mv usr/sbin/grub-install grub-pc/
-        mv usr/lib/grub/i386-pc/* grub-pc/i386-pc/
+        mv usr/lib/grub/i386-pc/ grub-pc/
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
         mv usr/lib/x86_64-linux-gnu/libefivar.so.1.* grub-pc/libefivar.so.1
         cp ${0%.*}/grub.cfg grub-pc/
@@ -54,9 +54,9 @@ app_settings_deb11() {
         $REPO/main/e/efivar/libefivar1_37-6_amd64.deb
     "
     APP_SHELL="
-        mkdir -p grub-pc/i386-pc
+        mkdir -p grub-pc
         mv usr/sbin/grub-install grub-pc/
-        mv usr/lib/grub/i386-pc/* grub-pc/i386-pc/
+        mv usr/lib/grub/i386-pc/ grub-pc/
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
         mv usr/lib/x86_64-linux-gnu/libefivar.so.1.* grub-pc/libefivar.so.1
         cp ${0%.*}/grub.cfg grub-pc/
