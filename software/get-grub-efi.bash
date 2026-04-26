@@ -26,8 +26,9 @@ app_settings() {
         mv usr/lib/shim/mm$ARCH.efi.signed EFI/boot/mm$ARCH.efi
         cp ${0%.*}/grub.cfg EFI/debian/
         cp ${0%.*}/README-grub-efi.md EFI/
-        cp ${0%.*}/install-grub.bash EFI/
-        touch -r EFI/boot/boot*.efi EFI/debian/grub.cfg EFI/README-grub-efi.md EFI/grub-efi.bash
+        cp ${0%.*}/install-grub-efi.bash EFI/
+        touch -r EFI/boot/boot*.efi \
+            EFI/debian/grub.cfg EFI/README-grub-efi.md EFI/installgrub-efi.bash
     "
     APP_REMOVE="
         usr/
@@ -54,8 +55,9 @@ app_settings_arm() {
         mv usr/lib/shim/mm$ARCH.efi.signed EFI/boot/mm$ARCH.efi
         cp ${0%.*}/grub.cfg-arm EFI/debian/grub.cfg
         cp ${0%.*}/README-grub-efi.md-arm EFI/README-grub-efi.md
-        cp ${0%.*}/install-grub.bash EFI/
-        touch -r EFI/boot/boot*.efi EFI/debian/grub.cfg EFI/README-grub-efi.md EFI/grub-efi.bash
+        cp ${0%.*}/install-grub-efi.bash EFI/
+        touch -r EFI/boot/boot*.efi \
+            EFI/debian/grub.cfg EFI/README-grub-efi.md EFI/install-grub-efi.bash
     "
     APP_REMOVE="
         usr/

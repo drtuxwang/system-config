@@ -9,9 +9,9 @@
 5) Edit "/mnt/boot/grub/grub.cfg" (UUID from "sudo /sbin/blkid")
 
 <pre>
-EFI/boot/bootaa64.efi   SHIM-EFI boot loader (shimaa64.efi.signed)
-EFI/boot/grubaa64.efi   GRUB-EFI boot loader (grubaa64.efi.signed)
-EFI/boot/mmaa64.efi     SHIM-EFI key manager (mmaa64.efi.signed)
-EFI/debian/grub.cfg     GRUB-EFI 2 boot menu (edit as required)
-grub-efi.bash           GRUB-EFI installer
+EFI/boot/bootaa64.efi          SHIM-EFI boot loader (shimaa64.efi.signed)
+EFI/boot/grubaa64.efi          GRUB-EFI boot loader (grubaa64.efi.signed)
+EFI/boot/mmaa64.efi            SHIM-EFI key manager (mmaa64.efi.signed)
+EFI/debian/grub.cfg            GRUB-EFI 2 boot menu (edit as required)
+EFI/install-grub-efi.bash      GRUB-EFI boot loader installer
 </pre>

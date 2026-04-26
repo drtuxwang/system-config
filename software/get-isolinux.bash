@@ -21,9 +21,9 @@ app_settings() {
         mv usr/lib/syslinux/vesamenu.c32 isolinux/
         cp ${0%.*}/isolinux.cfg isolinux/
         cp ${0%.*}/README-isolinux.md isolinux/
-        cp ${0%.*}/create-iso.bash isolinux/
+        cp ${0%.*}/create-boot-iso.bash isolinux/
         touch -r isolinux/isolinux.bin \
-            isolinux/README-isolinux.md isolinux/create-iso.bash isolinux/isolinux.cfg
+            isolinux/README-isolinux.md isolinux/create-boot-iso.bash isolinux/isolinux.cfg
     "
     APP_REMOVE="
         usr/
