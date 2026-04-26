@@ -19,8 +19,8 @@ app_settings() {
         $REPO1/main/g/gnome-hearts/gnome-hearts_0.3-2.2+b1_amd64.deb
 
         $REPO2/updates/main/p/python2.7/libpython2.7_2.7.13-2+deb9u6_amd64.deb
-        $REPO2/updates/main/p/python2.7/libpython2.7-stdlib_2.7.13-2+deb9u6_amd64.deb
         $REPO2/updates/main/p/python2.7/libpython2.7-minimal_2.7.13-2+deb9u6_amd64.deb
+        $REPO2/updates/main/p/python2.7/libpython2.7-stdlib_2.7.13-2+deb9u6_amd64.deb
 
         $REPO1/main/g/gconf/libgconf-2-4_3.2.6-4+b1_amd64.deb
         $REPO1/main/g/gnome-vfs/libgnomevfs2-0_2.24.4-6.1+b2_amd64.deb
