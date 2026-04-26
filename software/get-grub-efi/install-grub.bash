@@ -32,9 +32,10 @@ fi
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 [ "$MYUNAME" != root ] && exec sudo sh "$0" "$@"
 
-echo "Updating EFI partition: $1"
-MYDIR=$(readlink -m "${0%/*}")
-install "$MYDIR/EFI/boot" "$1/EFI/boot"
-[ ! -d "$1/EFI/debian" ] && install "$MYDIR/EFI/debian" "$1/EFI/debian"
+MOUNT=$(df "$1" 2> /dev/null | awk 'END {print $NF}')
+echo "Updating EFI partition: $MOUNT"
+MYDIR="${0%/*}"
+install "$MYDIR/boot" "$MOUNT/EFI/boot"
+[ ! -d "$MOUNT/EFI/debian" ] && install "$MYDIR/debian" "$MOUNT/EFI/debian"
 
 echo "DONE!"
