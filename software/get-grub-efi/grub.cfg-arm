@@ -5,6 +5,12 @@ set superusers=""
 # Use <ESC> for menu
 timeout_style="hidden"
 
+menuentry "Linux Virtual Machine    [EFI|VM]" --unrestricted {
+    search --no-floppy --fs-uuid --set=root 00000000-0000-0000-0000-000000000000
+    linux /vmlinuz root=UUID=00000000-0000-0000-0000-000000000000 quiet loglevel=3 noresume elevator=noop video=800x600 3
+    initrd /boot/initrd.img
+}
+
 menuentry "Linux Virtual Machine    [EFI|vdb1]" --unrestricted {
     set root=(hd1,1)
     linux /boot/vmlinuz root=/dev/vdb1 quiet loglevel=3 noresume elevator=noop video=800x600 3
@@ -14,11 +20,5 @@ menuentry "Linux Virtual Machine    [EFI|vdb1]" --unrestricted {
 menuentry "Linux Virtual Machine    [EFI|sdb1]" --unrestricted {
     set root=(hd1,1)
     linux /boot/vmlinuz root=/dev/sdb1 quiet loglevel=3 noresume elevator=noop video=800x600 3
-    initrd /boot/initrd.img
-}
-
-menuentry "Linux Virtual Machine    [EFI|ESP]" --unrestricted {
-    search --no-floppy --fs-uuid --set=root 00000000-0000-0000-0000-000000000000
-    linux /vmlinuz root=UUID=00000000-0000-0000-0000-000000000000 quiet loglevel=3 noresume elevator=noop video=800x600 3
     initrd /boot/initrd.img
 }
