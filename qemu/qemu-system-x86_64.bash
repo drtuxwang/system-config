@@ -147,6 +147,7 @@ setup_machine() {
         esac
     fi
     add_args "-machine $MACHINE_TYPE" "-cpu $CPU" "-m $MACHINE_RAM"
+    [ ! "$MACHINE_BIOS" ] && [[ ${DRIVE_FILES%% *} == *efi* ]] && MACHINE_BIOS="OVMF.fd"
     [ "$MACHINE_BIOS" ] && add_args "-bios $MACHINE_BIOS"
     add_args "-boot order=dc -no-fd-bootchk"
 }
