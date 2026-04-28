@@ -35,8 +35,6 @@ defaults_settings() {
     CONNECT_SOUND=no
     VERBOSE=no
     DRYRUN=no
-
-    [ $(uname) = Darwin ] && BIOS="/usr/local/Cellar/qemu/$(qemu-system-aarch64 --version | awk '/^QEMU emulator / {print $NF}')/share/qemu/edk2-aarch64-code.fd"
 }
 
 show_settings() {
