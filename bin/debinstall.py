@@ -242,7 +242,7 @@ class Main:
                 if not indent:
                     print(f"{indent}{file}  # Reinstall", file=ofile)
             else:
-                logger.warning("%s%s", indent, file)
+                logger.info("Install: %s%s", indent, file)
                 print(f"{indent}{file}", file=ofile)
 
             for dep in [
