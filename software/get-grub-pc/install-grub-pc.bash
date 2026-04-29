@@ -22,7 +22,7 @@ extract() {
 autorun() {
     GRUB=$1
 
-    DEVICE=$(df . | grep /dev/ | sed -e "s/[0-9]* .*//")
+    DEVICE=$(df . | grep /dev/ | sed -e "s/[0-9]* .*//;s/p$//")
     if [ ! "$DEVICE" ]
     then
         echo "Cannot detect removable drive device name."
