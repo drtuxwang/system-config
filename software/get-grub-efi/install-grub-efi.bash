@@ -37,7 +37,7 @@ MOUNT=$(df "$1" 2> /dev/null | awk 'END {print $NF}')
 echo "Updating EFI partition: $MOUNT"
 MYDIR="${0%/*}"
 
-copy "$MYDIR/README-grub-efi.md" "$MOUNT/EFI/README-grub-efi.md"
+copy "$MYDIR/../README-grub-efi.md" "$MOUNT/README-grub-efi.md"
 install "$MYDIR/boot" "$MOUNT/EFI/boot"
 [ ! -d "$MOUNT/EFI/debian" ] && install "$MYDIR/debian" "$MOUNT/EFI/debian"
 
