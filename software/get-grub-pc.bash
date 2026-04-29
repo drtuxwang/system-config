@@ -20,7 +20,7 @@ app_settings() {
         $REPO/main/e/efivar/libefivar1t64_38-3.1+b1_amd64.deb
     "
     APP_SHELL="
-        mkdir -p grub-pc
+        mkdir -p grub grub-pc
         mv usr/sbin/grub-install grub-pc/
         mv usr/lib/grub/i386-pc/ grub-pc/
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
