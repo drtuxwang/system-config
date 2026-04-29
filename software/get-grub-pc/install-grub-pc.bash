@@ -28,7 +28,6 @@ autorun() {
         echo "Cannot detect removable drive device name."
         exit 1
     fi
-    INSTALL=$(df $PWD | awk 'NR==2 {print $NF}')
 
     echo
     echo "Install GRUB on $DEVICE & copy files to $INSTALL/boot/grub? (y/n)"
@@ -75,8 +74,11 @@ MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 [ "$MYUNAME" != root ] && exec sudo sh $0 "$@"
 
 umask 077
+INSTALL=$(df $1 | awk 'NR==2 {print $NF}')
+cp README-grub-pc.md "$iNSTALL"
+touch -r README-grub-pc.md "$INSTALL/README-grub-pc.md"
 extract $PWD
-cd "$1"
+cd "$INSTALL"
 autorun /tmp/$MYUNAME/grub-pc
 echo "rm -rf /tmp/$MYUNAME/grub"
 rm -rf /tmp/$MYUNAME/grub
