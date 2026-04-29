@@ -15,5 +15,5 @@ EFI/boot/bootx64.efi           SHIM-EFI boot loader (shimx64.efi.signed)
 EFI/boot/grubx64.efi           GRUB-EFI boot loader (grubx64.efi.signed)
 EFI/boot/mmx64.efi             SHIM-EFI boot key manager (mmx64.efi.signed)
 EFI/debian/grub.cfg            GRUB-EFI boot menu (edit as required)
-EFI/install-grub-efi.bash      GRUB-EFI boot loader installer
+install-grub-efi.bash          GRUB-EFI boot loader installer
 </pre>

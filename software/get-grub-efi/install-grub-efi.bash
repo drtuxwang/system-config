@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install boot files into EFI boot partition for UEFI secure boot
+# Install boot files into EFI system partition for UEFI secure boot
 #
 
 set -eu
@@ -33,12 +33,12 @@ fi
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 [ "$MYUNAME" != root ] && exec sudo sh "$0" "$@"
 
-MOUNT=$(df "$1" 2> /dev/null | awk 'END {print $NF}')
-echo "Updating EFI partition: $MOUNT"
 MYDIR="${0%/*}"
+MOUNT=$(df "$1" 2> /dev/null | awk 'END {print $NF}')
+echo "Updating EFI system partition: $MOUNT"
 
-copy "$MYDIR/../README-grub-efi.md" "$MOUNT/README-grub-efi.md"
-install "$MYDIR/boot" "$MOUNT/EFI/boot"
-[ ! -d "$MOUNT/EFI/debian" ] && install "$MYDIR/debian" "$MOUNT/EFI/debian"
+copy "$MYDIR/README-grub-efi.md" "$MOUNT/README-grub-efi.md"
+install "$MYDIR/EFI/boot" "$MOUNT/EFI/boot"
+[ ! -d "$MOUNT/EFI/debian" ] && install "$MYDIR/EFI/debian" "$MOUNT/EFI/debian"
 
 echo "DONE!"
