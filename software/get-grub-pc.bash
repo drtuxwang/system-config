@@ -28,7 +28,7 @@ app_settings() {
         cp ${0%.*}/grub.cfg grub-pc/
         cp ${0%.*}/README-grub-pc.md grub/
         cp ${0%.*}/install-grub-pc.bash grub/
-        touch -r grub-pc/grub-install install-grub-pc.bash grub-pc/grub.cfg
+        touch -r grub-pc/grub-install grub-pc/grub.cfg
         export XZ_OPT='-9 -e --x86 --lzma2=dict=128MiB --threads=1'
         tar cfJ - grub-pc --owner=0:0 --group=0:0 >> grub/install-grub-pc.bash
         touch -r grub-pc/grub-install grub/README-grub-pc.md grub/install-grub-pc.bash
@@ -62,7 +62,7 @@ app_settings_deb11() {
         cp ${0%.*}/grub.cfg grub-pc/
         cp ${0%.*}/README-grub-pc.md-deb11 grub/
         cp ${0%.*}/install-grub-pc.bash grub/
-        touch -r grub-pc/grub-install install-grub-pc.bash grub-pc/grub.cfg
+        touch -r grub-pc/grub-install grub-pc/grub.cfg
         export XZ_OPT='-9 -e --x86 --lzma2=dict=128MiB --threads=1'
         tar cfJ - grub-pc --owner=0:0 --group=0:0 >> grub/install-grub-pc.bash
         touch -r grub-pc/grub-install grub/README-grub-pc.md grub/install-grub-pc.bash
