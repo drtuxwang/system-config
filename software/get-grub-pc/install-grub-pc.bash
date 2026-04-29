@@ -75,13 +75,13 @@ MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 umask 077
 INSTALL=$(df $1 | awk 'NR==2 {print $NF}')
-cp README-grub-pc.md "$INSTALL"
+[ ! -f "$INSTALL/README-grub-pc.md" ] && cp README-grub-pc.md "$INSTALL"
 touch -r README-grub-pc.md "$INSTALL/README-grub-pc.md"
-extract $PWD
+extract /tmp/$MYUNAME
 cd "$INSTALL"
 autorun /tmp/$MYUNAME/grub-pc
-echo "rm -rf /tmp/$MYUNAME/grub"
-rm -rf /tmp/$MYUNAME/grub
+echo "rm -rf /tmp/$MYUNAME/grub-pc"
+rm -rf /tmp/$MYUNAME/grub-pc
 
 echo "DONE!"
 exit
