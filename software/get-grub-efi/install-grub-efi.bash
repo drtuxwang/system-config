@@ -8,7 +8,7 @@ set -eu
 
 copy() {
     [ ! "$(cmp "$1" "$2" 2>&1)" ] && return
-    mkdir -p "${2/*}"
+    mkdir -p "${2%/*}"
     echo "cp -p \"$1\" \"$2\""
     cp "$1" "$2"
     touch -r "$1" "$2"
