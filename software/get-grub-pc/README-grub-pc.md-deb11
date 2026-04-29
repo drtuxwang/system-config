@@ -4,5 +4,5 @@
 * Grub PC 2.04+ fails to boot older Linux kernels (ie Debian 4-7)
 
 1) Mount "/mnt/boot".
-2) Run "grub-pc/install-grub-pc.bash /mnt/boot" to install MBR boot sector & stage 2 files.
+2) Run "install-grub-pc.bash /mnt/boot" to install MBR boot sector & stage 2 files.
 3) Edit "/mnt/boot/grub/grub.cfg" as required.
