@@ -75,8 +75,9 @@ MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 INSTALL=$(df $1 | awk 'NR==2 {print $NF}')
 umask 022
-[ ! -f "$INSTALL/README-grub-pc.md" ] && cp README-grub-pc.md "$INSTALL"
-touch -r README-grub-pc.md "$INSTALL/README-grub-pc.md"
+[ "$(cmp "README-grub-pc.md" "$INSTALL/README-grub-pc.md" 2>&1)" ] && \
+    cp README-grub-pc.md "$INSTALL" && \
+    touch -r README-grub-pc.md "$INSTALL/README-grub-pc.md"
 umask 077
 extract /tmp/$MYUNAME
 cd "$INSTALL"
