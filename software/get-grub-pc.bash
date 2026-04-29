@@ -20,7 +20,7 @@ app_settings() {
         $REPO/main/e/efivar/libefivar1t64_38-3.1+b1_amd64.deb
     "
     APP_SHELL="
-        mkdir -p grub grub-pc
+        mkdir -p grub-pc
         mv usr/sbin/grub-install grub-pc/
         mv usr/lib/grub/i386-pc/ grub-pc/
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
@@ -30,7 +30,7 @@ app_settings() {
         cp ${0%.*}/install-grub-pc.bash .
         touch -r grub-pc/grub-install grub-pc/grub.cfg
         export XZ_OPT='-9 -e --x86 --lzma2=dict=128MiB --threads=1'
-        tar cfJ - grub-pc --owner=0:0 --group=0:0 >> grub/install-grub-pc.bash
+        tar cfJ - grub-pc --owner=0:0 --group=0:0 >> install-grub-pc.bash
         touch -r grub-pc/grub-install README-grub-pc.md install-grub-pc.bash
     "
     APP_REMOVE="
@@ -54,7 +54,7 @@ app_settings_deb11() {
         $REPO/main/e/efivar/libefivar1_37-6_amd64.deb
     "
     APP_SHELL="
-        mkdir -p grub grub-pc
+        mkdir -p grub-pc
         mv usr/sbin/grub-install grub-pc
         mv usr/lib/grub/i386-pc/ grub-pc/
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
@@ -64,7 +64,7 @@ app_settings_deb11() {
         cp ${0%.*}/install-grub-pc.bash .
         touch -r grub-pc/grub-install grub-pc/grub.cfg
         export XZ_OPT='-9 -e --x86 --lzma2=dict=128MiB --threads=1'
-        tar cfJ - grub-pc --owner=0:0 --group=0:0 >> grub/install-grub-pc.bash
+        tar cfJ - grub-pc --owner=0:0 --group=0:0 >> install-grub-pc.bash
         touch -r grub-pc/grub-install README-grub-pc.md install-grub-pc.bash
     "
     APP_REMOVE="
