@@ -40,8 +40,8 @@ autorun() {
     echo "rm -rf \"$INSTALL/boot/grub/i386-pc\""
     rm -rf "$INSTALL/boot/grub/i386-pc"
     export LD_LIBRARY_PATH="$GRUB:${LD_LIBRARY_PATH:-}"
-    echo "$GRUB/grub-install --directory=$GRUB/i386-pc --boot-directory=\"$INSTALL/boot\" $DEVICE"
-    $GRUB/grub-install --directory=$GRUB/i386-pc --boot-directory="$INSTALL/boot" $DEVICE
+    echo "$GRUB/grub-install --directory=$GRUB/boot/i386-pc --boot-directory=\"$INSTALL/boot\" $DEVICE"
+    $GRUB/grub-install --directory=$GRUB/boot/i386-pc --boot-directory="$INSTALL/boot" $DEVICE
     rm -rf $INSTALL/boot/grub/fonts $INSTALL/boot/grub/locale
 
     if [ -f "$INSTALL/EFI/debian/grub.cfg" ]
