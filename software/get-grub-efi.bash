@@ -52,7 +52,7 @@ app_settings_arm() {
         mv usr/lib/shim/shim$ARCH.efi.signed EFI/boot/boot$ARCH.efi
         mv usr/lib/grub/*-efi-signed/grub$ARCH.efi.signed EFI/boot/grub$ARCH.efi
         mv usr/lib/shim/mm$ARCH.efi.signed EFI/boot/mm$ARCH.efi
-        cp ${0%.*}/grub.cfg-arm EFI/debian/grub.cfg
+        cp ${0%.*}/grub.cfg EFI/debian/grub.cfg
         cp ${0%.*}/README-grub-efi.md-arm README-grub-efi.md
         cp ${0%.*}/install-grub-efi.bash .
         touch -r EFI/boot/boot*.efi README-grub-efi.md install-grub-efi.bash EFI/debian/grub.cfg
