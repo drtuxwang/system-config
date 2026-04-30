@@ -7,8 +7,6 @@
 3) Mount boot partiton to /mnt/boot
 4) Run "install-grub-efi.bash /mnt/boot" to copy files
 5) Edit "/mnt/boot/grub/grub.cfg" (UUID from "sudo /sbin/blkid")
-6) For Virtual Machines set UUID of root partition:
-   tune2fs -U 00000000-0000-0000-0000-000000000000 /dev/vdb1
 
 <pre>
 EFI/boot/bootx64.efi           SHIM-EFI boot loader (shimx64.efi.signed)
