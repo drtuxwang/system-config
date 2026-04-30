@@ -9,7 +9,7 @@
 5) Edit "/mnt/boot/grub/grub.cfg" (UUID from "sudo /sbin/blkid")
 6) For Virtual Machines set UUID of root partition:
    e2fsck -f /dev/vdb1
-   tune2fs -U 1000000000000-2000-3000-400000000000 /dev/vdb1
+   tune2fs -U 11111111-2222-3333-4444-555555555555 /dev/vdb1
 
 <pre>
 EFI/boot/bootaa64.efi          SHIM-EFI boot loader (shimaa64.efi.signed)
