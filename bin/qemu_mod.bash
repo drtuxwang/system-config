@@ -140,9 +140,9 @@ mount_image() {
 #
 unmount_image() {
     local process_list=$(ps -ef)
-    device=$(echo "$process_list" | grep "qemu-nbd .*/dev/nbd.*/$1" | sed -e "s@.*/dev/@/dev/@;s/ .*//")
-    [ ! "$device" ] && device=$(echo "$process_list" | grep "qemu-nbd .*/dev/nbd.* $(realpath "${1#$hostname:}") " | sed -e "s@.*/dev/@/dev/@;s/ .*//")
-    [ "$device" ] || return
+    device=$(echo "$process_list" | grep "qemu-nbd .*/dev/nbd.*/$1" | sed -e "s@.*/dev/@/dev/@;s/ .*//" | awk '{print $1}')
+    [ ! "$device" ] && device=$(echo "$process_list" | grep "qemu-nbd .*/dev/nbd.* $(realpath "${1#$hostname:}") " | sed -e "s@.*/dev/@/dev/@;s/ .*//" | head -n 1)
+    [ ! "$device" ] && return
 
     become_root
     modprobe nbd max_part=8
