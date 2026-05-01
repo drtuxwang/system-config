@@ -101,7 +101,15 @@ parse_options() {
             VERBOSE=yes
             DRYRUN=yes
             ;;
-        *.qcow2|*.iso)
+        *.iso)
+            if [ "$(dd if=$1 bs=1024 count=1024 2> /dev/null | strings | grep "EL TORITO SPEC")" ]
+            then
+                DRIVE_FILES="$(realpath "$1") $DRIVE_FILES"
+            else
+                DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
+            fi
+            ;;
+        *.qcow2)
             DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
             ;;
         *)
