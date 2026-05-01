@@ -101,6 +101,9 @@ parse_options() {
             VERBOSE=yes
             DRYRUN=yes
             ;;
+        *efi*.qcow2)
+            DRIVE_FILES="$(realpath "$1") $DRIVE_FILES"
+            ;;
         *.qcow2|*.iso)
             DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
             ;;

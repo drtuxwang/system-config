@@ -109,6 +109,9 @@ parse_options() {
                 DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
             fi
             ;;
+        *efi*.qcow2)
+            DRIVE_FILES="$(realpath "$1") $DRIVE_FILES"
+            ;;
         *.qcow2)
             DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
             ;;
