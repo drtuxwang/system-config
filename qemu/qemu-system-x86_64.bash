@@ -25,7 +25,7 @@ defaults_settings() {
     MACHINE_RAM=4096
     MACHINE_BIOS=
     DRIVE_INTERFACE=virtio
-    DRIVE_FILES=
+    DRIVE_FILES="$(ls -1 ${0%/*}/${MACHINE_NAME}/*qcow2* 2> /dev/null | awk '{printf("%s ", $1)}')"
     DRIVE_TMPDIR="/tmp/qemu-$(id -un)"
     CONNECT_DISPLAY=yes
     CONNECT_NETWORK=no
@@ -119,7 +119,6 @@ parse_options() {
          esac
          shift
     done
-    DRIVE_FILES="$(ls -1 ${0%/*}/${MACHINE_NAME}/*qcow2* 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
 }
 
 snapshot_drive() {
