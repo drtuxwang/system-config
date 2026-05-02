@@ -1,6 +1,6 @@
 ## GRUB EFI 2.12
 
-* UEFI boot loader for GPT partition secure booting from Debian 13
+* UEFI boot loader for GPT partitioned drive  secure booting from Debian 13
 
 1) Run "dmesg | grep boot" to check secure booted
 2) Create 128MB FAT16/FAT32 EFI boot partition (ie "/dev/sda1")

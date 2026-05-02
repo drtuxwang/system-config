@@ -1,6 +1,7 @@
 ## GRUB PC 2.12
 
-* BIOS boot loader for MBR/GPT partition booting from Debian 13
+* BIOS boot loader for MBR/GPT partitioned drives booting from Debian 13
+* GPT partition drive requires small boot partiton to store GRUB.
 * Grub PC 2.12 and later fails to boot older Linux kernels (ie Debian 4-5)
 
 1) Mount "/mnt/boot".
