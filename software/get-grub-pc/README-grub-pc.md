@@ -1,7 +1,7 @@
 ## GRUB PC 2.12
 
 * BIOS boot loader for MBR/GPT partition booting from Debian 13
-* Grub PC 2.06 needed to boot older Linux kernels (ie Debian 4-5)
+* Grub PC 2.12 and later fails to boot older Linux kernels (ie Debian 4-5)
 
 1) Mount "/mnt/boot".
 2) Run "install-grub-pc.bash /mnt/boot" to install MBR boot sector & stage 2 files.
