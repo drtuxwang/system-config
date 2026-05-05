@@ -8,8 +8,9 @@ set -eu
 
 extract() {
     DIR="$1"
-    rm -rf $DIR
-    mkdir $DIR
+    rm -rf $DIR/grub-pc
+    mkdir -p $DIR/grub-pc
+
     LINE=$(grep -a -n "^### TAR.XZ PAYLOAD ###$" "$0" | cut -f1 -d:)
     BYTES=$(head -n $LINE "$0" | wc -c)
     echo
@@ -21,13 +22,12 @@ extract() {
 autorun() {
     GRUB=$1
 
-    DEVICE=$(df . | grep /dev/ | sed -e "s/[0-9]* .*//")
+    DEVICE=$(df . | grep /dev/ | sed -e "s/[0-9]* .*//;s/p$//")
     if [ ! "$DEVICE" ]
     then
         echo "Cannot detect removable drive device name."
         exit 1
     fi
-    INSTALL=$(df $PWD | awk 'NR==2 {print $NF}')
 
     echo
     echo "Install GRUB on $DEVICE & copy files to $INSTALL/boot/grub? (y/n)"
@@ -60,7 +60,7 @@ autorun() {
 ARG=${1:-}
 if [ "$ARG" = "-x" ]
 then
-    extract grub-pc
+    extract .
     du -sk grub-pc
     exit
 elif [ ! -d "${1:-}" ]
@@ -73,12 +73,15 @@ fi
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 [ "$MYUNAME" != root ] && exec sudo sh $0 "$@"
 
-umask 077
+INSTALL=$(df $1 | awk 'NR==2 {print $NF}')
+[ "$(cmp "README-grub-pc.md" "$INSTALL/README-grub-pc.md" 2>&1)" ] && \
+    cp README-grub-pc.md "$INSTALL" && \
+    touch -r README-grub-pc.md "$INSTALL/README-grub-pc.md"
 extract /tmp/$MYUNAME
-cd "$1"
+cd "$INSTALL"
 autorun /tmp/$MYUNAME/grub-pc
-echo "rm -rf /tmp/$MYUNAME/grub"
-rm -rf /tmp/$MYUNAME/grub
+echo "rm -rf /tmp/$MYUNAME/grub-pc"
+rm -rf /tmp/$MYUNAME/grub-pc
 
 echo "DONE!"
 exit

@@ -1,11 +1,10 @@
-## GRUB PC 2.12
+## GRUB PC 2.06
 
 * BIOS boot loader for MBR/GPT partitioned drives booting from Debian 13
 * GPT partition drive requires small 1MB boot partition to store BIOSGRUB.
+* Grub 2.06 does not support newer versions of file systems like ext4 formatted in Debian 13.
 * Grub PC 2.12 and later fails to boot older Linux kernels (ie Debian 4-5)
 
 1) Mount "/mnt/boot".
 2) Run "install-grub-pc.bash /mnt/boot" to install MBR boot sector & stage 2 files.
 3) Edit "/mnt/boot/grub/grub.cfg" as required.
-4) For Virtual Machines set UUID of root partition:
-   tune2fs -U 00000000-0000-0000-0000-000000000000 /dev/vdb1

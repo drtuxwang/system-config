@@ -12,7 +12,7 @@ FILE="${DIR%/*}/debianlive_${VERSION}_amd64.iso"
 
 echo "Generating ISO boot disk: $FILE"
 
-cd ..
+cd "$DIR/.."
 genisoimage \
     -iso-level 3 -joliet-long -rational-rock -input-charset utf-8 \
     -appid GENISOIMAGE-$(genisoimage -version | awk 'NR==1 {print $2}') \

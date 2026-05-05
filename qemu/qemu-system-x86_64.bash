@@ -25,7 +25,7 @@ defaults_settings() {
     MACHINE_RAM=4096
     MACHINE_BIOS=
     DRIVE_INTERFACE=virtio
-    DRIVE_FILES=
+    DRIVE_FILES="$(ls -1 ${0%/*}/${MACHINE_NAME}/*qcow2* 2> /dev/null | awk '{printf("%s ", $1)}')"
     DRIVE_TMPDIR="/tmp/qemu-$(id -un)"
     CONNECT_DISPLAY=yes
     CONNECT_NETWORK=no
@@ -101,7 +101,18 @@ parse_options() {
             VERBOSE=yes
             DRYRUN=yes
             ;;
-        *.qcow2|*.iso)
+        *.iso)
+            if [ "$(dd if=$1 bs=1024 count=1024 2> /dev/null | strings | grep "EL TORITO SPEC")" ]
+            then
+                DRIVE_FILES="$(realpath "$1") $DRIVE_FILES"
+            else
+                DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
+            fi
+            ;;
+        *efi*.qcow2)
+            DRIVE_FILES="$(realpath "$1") $DRIVE_FILES"
+            ;;
+        *.qcow2)
             DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
             ;;
         *)
@@ -111,7 +122,6 @@ parse_options() {
          esac
          shift
     done
-    DRIVE_FILES="$(ls -1 ${0%/*}/${MACHINE_NAME}/*qcow2* 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
 }
 
 snapshot_drive() {
@@ -147,6 +157,7 @@ setup_machine() {
         esac
     fi
     add_args "-machine $MACHINE_TYPE" "-cpu $CPU" "-m $MACHINE_RAM"
+    [ ! "$MACHINE_BIOS" ] && [[ ${DRIVE_FILES%% *} == *efi* ]] && MACHINE_BIOS="OVMF.fd"
     [ "$MACHINE_BIOS" ] && add_args "-bios $MACHINE_BIOS"
     add_args "-boot order=dc -no-fd-bootchk"
 }

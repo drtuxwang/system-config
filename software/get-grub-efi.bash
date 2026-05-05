@@ -9,7 +9,7 @@ set -e
 app_settings() {
     NAME="grub-efi"
     VERSION="2.12"
-    PORT="esp64-x86"
+    PORT="boot64-x86"
     ARCH=x64
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -26,8 +26,8 @@ app_settings() {
         mv usr/lib/shim/mm$ARCH.efi.signed EFI/boot/mm$ARCH.efi
         cp ${0%.*}/grub.cfg EFI/debian/
         cp ${0%.*}/README-grub-efi.md .
-        cp ${0%.*}/grub-efi.bash .
-        touch -r EFI/boot/boot*.efi README-grub-efi.md grub-efi.bash EFI/debian/grub.cfg
+        cp ${0%.*}/install-grub-efi.bash .
+        touch -r EFI/boot/boot*.efi README-grub-efi.md install-grub-efi.bash EFI/debian/grub.cfg
     "
     APP_REMOVE="
         usr/
@@ -37,7 +37,7 @@ app_settings() {
 app_settings_arm() {
     NAME="grub-efi"
     VERSION="2.12"
-    PORT="esp64-arm"
+    PORT="boot64-arm"
     ARCH=aa64
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -54,8 +54,8 @@ app_settings_arm() {
         mv usr/lib/shim/mm$ARCH.efi.signed EFI/boot/mm$ARCH.efi
         cp ${0%.*}/grub.cfg-arm EFI/debian/grub.cfg
         cp ${0%.*}/README-grub-efi.md-arm README-grub-efi.md
-        cp ${0%.*}/grub-efi.bash .
-        touch -r EFI/boot/boot*.efi README-grub-efi.md grub-efi.bash EFI/debian/grub.cfg
+        cp ${0%.*}/install-grub-efi.bash .
+        touch -r EFI/boot/boot*.efi README-grub-efi.md install-grub-efi.bash EFI/debian/grub.cfg
     "
     APP_REMOVE="
         usr/

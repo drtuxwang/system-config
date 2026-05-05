@@ -25,7 +25,7 @@ defaults_settings() {
     MACHINE_RAM=4096
     MACHINE_BIOS=$(ls -1t /usr/share/qemu-efi-aarch64/QEMU_EFI.fd /usr/local/Cellar/qemu/*/share/qemu/*aarch64*.fd 2> /dev/null | head -1)
     DRIVE_INTERFACE=virtio
-    DRIVE_FILES=
+    DRIVE_FILES="$(ls -1 ${0%/*}/${MACHINE_NAME}/*qcow2* 2> /dev/null | awk '{printf("%s ", $1)}')"
     DRIVE_TMPDIR="/tmp/qemu-$(id -un)"
     CONNECT_DISPLAY=yes
     CONNECT_NETWORK=no
@@ -35,8 +35,6 @@ defaults_settings() {
     CONNECT_SOUND=no
     VERBOSE=no
     DRYRUN=no
-
-    [ $(uname) = Darwin ] && BIOS="/usr/local/Cellar/qemu/$(qemu-system-aarch64 --version | awk '/^QEMU emulator / {print $NF}')/share/qemu/edk2-aarch64-code.fd"
 }
 
 show_settings() {
@@ -103,6 +101,9 @@ parse_options() {
             VERBOSE=yes
             DRYRUN=yes
             ;;
+        *efi*.qcow2)
+            DRIVE_FILES="$(realpath "$1") $DRIVE_FILES"
+            ;;
         *.qcow2|*.iso)
             DRIVE_FILES="$DRIVE_FILES$(realpath "$1") "
             ;;
@@ -113,7 +114,6 @@ parse_options() {
          esac
          shift
     done
-    DRIVE_FILES="$(ls -1 ${0%/*}/${MACHINE_NAME}/*qcow2* 2> /dev/null | awk '{printf("%s ", $1)}')$DRIVE_FILES"
 }
 
 snapshot_drive() {
