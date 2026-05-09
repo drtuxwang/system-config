@@ -70,7 +70,7 @@ class Options:
         self._pattern = (
             '^$|^Failed to parse|Gtk-WARNING|LibGimpBase-WARNING:|'
             'ModuleNotFoundError:|^Traceback|dbind-WARNING| import |'
-            'in <module>|\\[script|^set device'
+            'in <module>|\\[script|^set device|LibGimp-WARNING'
         )
 
 
