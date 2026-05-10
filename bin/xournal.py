@@ -60,7 +60,7 @@ class Main:
         pattern = (
             '^$|: Gtk-WARNING|: dbind-WARNING|^ALSA|^[jJ]ack|^Cannot connect|'
             ': TEXTDOMAINDIR|: Plugin| does not exist|: No such file|'
-            r'No device found|not finding devices!| defaults\['
+            r'No device found|not finding devices!| defaults\[|xopp-Message:'
         )
         Background(xournal.get_cmdline()).run(pattern=pattern)
 
