@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Firefox 140.6.0esr (Official) portable app
+# Firefox 140.10.2esr (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="firefox"
-    VERSION="140.6.0esr"
+    VERSION="140.10.2esr"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_stable-$PORT"
