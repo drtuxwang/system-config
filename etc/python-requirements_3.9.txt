@@ -2,11 +2,13 @@ astroid                      # ==3.3.11 (old version)
 filelock                     # ==3.19.1 (old version)
 Glances                      # ==4.4.1 (old version)
 importlib-metadata           # ==7.2.1 (required by isort for 3.9)
+pip                          # ==26.0.1 (old version)
 platformdirs                 # ==4.4.0 (old version)
 pyinstrument                 # ==None
 pylint                       # ==3.3.9 (old version)
 pipdeptree                   # ==2.28.0 (old version)
 requests                     # ==2.32.5 (old version)
 tomli                        # ==2.0.1 (required by pylint for 3.9)
+urllib3                      # ==2.6.3 (old version)
 yt-dlp                       # ==None
 zipp                         # ==3.14.0 (required by importlib-metadata for 3.9)
