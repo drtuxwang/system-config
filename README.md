@@ -153,19 +153,8 @@ the years.
  * kubernetes/test-storage/        Kubernetes: Persistent Volume example
  * helm/Makefile
  * helm/bin/
- * helm/etcd/                      Helm Chart: bitnami/etcd 11.3.6 (app-3.5.21)
- * helm/grafana/                   Helm Chart: bitnami/grafana 11.6.7 (app-11.6.1)
- * helm/jenkins/                   Helm Chart: jenkins/jenkins 5.8.124 (app-2.528.3)
- * helm/mongodb/                   Helm Chart: bitnami/mongodb 16.4.12 (app-7.0.15)
- * helm/nexus/                     Helm Chart: oteemo/sonatype-nexus 5.4.1 (app-3.27.0)
- * helm/nginx/                     Helm Chart: bitnami/nginx 18.3.6 (app-1.26.2)
- * helm/oracle-xe/                 Helm Chart: Oracle XE test (gvenzl/oracle-xe:21.3.0-slim)
- * helm/prometheus/                Helm Chart: prometheus-community/prometheus 27.7.1 (app-2.53.4)
- * helm/pushgateway/               Helm Chart: prometheus-community/prometheus-pushgateway 2.10.0 (app-1.6.2)
- * helm/rabbitmq/                  Helm Chart: bitnami/rabbitmq 15.5.3 (app-3.13.7)
  * helm/test-box/                  Helm Chart: drtuxwang/test-box (drtuxwang/debian-ops:stable)
  * helm/test-server/               Helm Chart: drtuxwang/test-server (drtuxwang/debian-ops:stable)
- * helm/xfce-server/               Helm Chart: drtuxwang/xfce-server (drtuxwang/debian-xfce:stable)
  * python/simple-cython/           Simple Cython example
  * python/simple-flask/            Simple Flask demo
  * python/simple-package/          Simple Egg & WHL package

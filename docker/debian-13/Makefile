@@ -6,7 +6,7 @@ DOCKER_BUILD := docker buildx build $(DOCKER_BUILD_FLAGS)
 ifeq ($(shell docker --help | grep -c buildx), 0)
 	DOCKER_BUILD := docker build
 endif
-BUILD_DIRS := ops xfce
+BUILD_DIRS := ops
 DOCKER_RUN := docker run \
 	--rm \
 	--interactive \

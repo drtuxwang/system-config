@@ -1,17 +1,6 @@
 BUILD_DIRS := \
-	etcd \
-	grafana \
-	jenkins \
-	mongodb \
-	nexus \
-	nginx \
-	oracle-xe \
-	prometheus \
-	pushgateway \
-	rabbitmq \
 	test-box \
-	test-server \
-	xfce-server
+	test-server
 
 
 ifeq ($(shell helm version | grep -c v3), 1)

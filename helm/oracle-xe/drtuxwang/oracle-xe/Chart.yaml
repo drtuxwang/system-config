@@ -1,5 +1,0 @@
-apiVersion: v1
-description: Helm chart for Oracle-XE
-name: oracle-xe
-version: 1.4.0
-appVersion: 21.3.0

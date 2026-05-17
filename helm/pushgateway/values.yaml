@@ -1,3 +1,0 @@
-nodeSelector:
-  kubernetes.io/os: linux
-  ##kubernetes.io/hostname: ryson.local
