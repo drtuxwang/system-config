@@ -35,7 +35,6 @@ BUILD_DIRS := \
 	scratch
 STABLE_DIRS := \
 	debian-13/ops \
-	debian-13/xfce \
 	nginx-1.26 \
 	python-3.13/pip \
 	scratch
