@@ -206,13 +206,16 @@ install_packages() {
 
 
 umask 022
+MYUNAME=$(id -un)
 
 MAJOR_VER=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
 PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
+PY_OWNER=$(stat --format=%U "$PY_EXE" 2> /dev/null)
 PY_INC=$($PY_EXE-config --includes 2> /dev/null)  # "Python.h" etc
 PIP_LIST="$PYTHON -m pip list"
 PIP_INSTALL="$PYTHON -m pip install"
 PIP_UNINSTALL="$PYTHON -m pip uninstall"
+[ "$MYUNAME" = root -a "$PY_OWNER" != root ] && exec sudo -iu $PY_OWNER $(realpath "$0") "$@"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || PIP_INSTALL="$PIP_INSTALL --user"
 
 if [ "$(uname)" = Darwin ]

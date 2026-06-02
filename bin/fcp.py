@@ -24,17 +24,17 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_sources(self) -> List[str]:
+    def get_sources(self) -> List[Path]:
         """
         Return list of source files.
         """
-        return [os.path.expandvars(x) for x in self._args.sources]
+        return [Path(os.path.expandvars(x)) for x in self._args.sources]
 
-    def get_target(self) -> str:
+    def get_target(self) -> Path:
         """
         Return target file or directory.
         """
-        return self._target
+        return Path(self._target)
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -103,10 +103,10 @@ class Main:
             Path.readlink = _readlink  # type: ignore
 
     @staticmethod
-    def _automount(directory: str, wait: int) -> None:
-        if directory.startswith('/media/'):
+    def _automount(path: Path, wait: int) -> None:
+        if path.parents[0] == '/media/':
             for _ in range(0, wait * 10):
-                if Path(directory).is_dir():
+                if path.is_dir():
                     break
                 time.sleep(0.1)
 
@@ -127,6 +127,14 @@ class Main:
         print(f'Creating "{path2}" link...')
         try:
             path2.symlink_to(source_link)
+            if os.getuid() == 0:
+                stat = path2.parent.stat()
+                os.chown(
+                    path2,
+                    stat.st_uid,
+                    stat.st_gid,
+                    follow_symlinks=False,
+                )
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path2}" link.',
@@ -149,6 +157,9 @@ class Main:
             print(f'Creating "{path2}" directory...')
             try:
                 path2.mkdir(mode=FileStat(path1).get_mode(), parents=True)
+                if os.getuid() == 0:
+                    stat = path2.parent.stat()
+                    os.chown(path2, stat.st_uid, stat.st_gid)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{path2}" directory.',
@@ -176,6 +187,9 @@ class Main:
         path_tmp = Path(f'{path2}.part')
         try:
             shutil.copy2(path1, path_tmp)
+            if os.getuid() == 0:
+                stat = path_tmp.parent.stat()
+                os.chown(path_tmp, stat.st_uid, stat.st_gid)
         except (PermissionError, shutil.Error) as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path_tmp}" file.',
@@ -209,21 +223,24 @@ class Main:
         self._automount(target, 8)
 
         if len(sources) == 1:
-            if not Path(target).is_dir() and Path(sources[0]).is_file():
-                self._copy_file(Path(sources[0]), Path(target))
+            if not target.is_dir() and sources[0].is_file():
+                self._copy_file(sources[0], target)
                 return 0
-        elif not Path(target).is_dir():
+        elif not target.is_dir():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "{target}" target directory.',
             )
 
         for source in sources:
-            if Path(source).is_dir():
+            if source.is_dir():
                 if (
-                    Path(source).is_absolute or
-                    source.split(os.sep)[0] in (os.curdir, os.pardir)
+                    source.is_absolute or
+                    str(source).split(
+                        os.sep,
+                        maxsplit=1,
+                    )[0] in (os.curdir, os.pardir)
                 ):
-                    self._copy(Path(source), Path(target, Path(source).name))
+                    self._copy(source, Path(target, source.name))
                 else:
                     path = Path(target, source).parent
                     if not path.is_dir():
@@ -237,9 +254,9 @@ class Main:
                                 f'{sys.argv[0]}: Cannot create '
                                 f'"{path}" directory.',
                             ) from exception
-                    self._copy(Path(source), Path(target, source))
+                    self._copy(source, Path(target, source))
             else:
-                self._copy(Path(source), Path(target, Path(source).name))
+                self._copy(source, Path(target, source.name))
 
         return 0
 

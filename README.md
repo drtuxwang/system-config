@@ -124,7 +124,7 @@ the years.
  * docker/httpd-2.4/               httpd:2.4-alpine (Apache) based web server
  * docker/i386-alpine-3.22/        i386/alpine:3.22 based based Docker images
  * docker/i386-debian-13/          i386/debian:13-slim based Docker images
- * docker/nginx-1.26/              nginx:1.26-bookworm based reverse proxy server
+ * docker/nginx-1.26/              nginx:1.26-alpine based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
  * docker/oraclelinux-9/           oralcelinux:9 based Docker images
  * docker/python-3.13/             python:3.13-slim-trixie based Docker images
@@ -184,6 +184,7 @@ the years.
  * software/get-k3s.bash           K3S 1.31.14-1 (Official) portable app
  * software/get-libreoffice.bash   LibreOffice 25.2.7.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.9 (Official) portable app
+ * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code
  * softwrae/get-python.bash        Python 3.13.12 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
  * software/get-tmux.bash          TMUX 3.6a (Official) source code

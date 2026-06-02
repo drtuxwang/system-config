@@ -27,17 +27,17 @@ class Options:
         """
         return self._args.overwrite_flag
 
-    def get_sources(self) -> List[str]:
+    def get_sources(self) -> List[Path]:
         """
         Return list of source files.
         """
-        return [os.path.expandvars(x) for x in self._args.sources]
+        return [Path(os.path.expandvars(x)) for x in self._args.sources]
 
-    def get_target(self) -> str:
+    def get_target(self) -> Path:
         """
         Return target file or directory.
         """
-        return self._target
+        return Path(self._target)
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description="Move or rename files.")
@@ -105,22 +105,13 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    def _move(self) -> None:
-        if not Path(self._options.get_target()).is_dir():
+    def _move(self, sources: List[Path], target: Path) -> None:
+        if not target.is_dir():
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot find '
-                f'"{self._options.get_target()}" target directory.',
+                f'{sys.argv[0]}: Cannot find "{target}" target directory.'
             )
-        for source_path in [Path(x) for x in self._options.get_sources()]:
-            target_path = Path(
-                self._options.get_target(),
-                Path(source_path).name,
-            )
-            if target_path.is_dir():
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot safely overwrite '
-                    f'"{target_path}" directory.'
-                )
+        for source_path in sources:
+            target_path = Path(target, Path(source_path).name)
             if target_path.is_file():
                 if not self._options.get_overwrite_flag():
                     raise SystemExit(
@@ -128,8 +119,17 @@ class Main:
                         f'"{target_path}" file.'
                     )
             if source_path.is_dir():
+                if target_path.is_dir():
+                    self._move(list(source_path.glob('*')), target_path)
+                    source_path.rmdir()
+                    continue
                 print(f'Moving directory to "{target_path}"...')
             elif source_path.is_file():
+                if target_path.is_dir():
+                    raise SystemExit(
+                        f'{sys.argv[0]}: Cannot safely overwrite '
+                        f'"{target_path}" directory.'
+                    )
                 print(f'Moving file to "{target_path}"...')
             else:
                 raise SystemExit(
@@ -193,12 +193,12 @@ class Main:
         """
         self._options = Options()
         sources = self._options.get_sources()
-        target_path = Path(self._options.get_target())
+        target = self._options.get_target().resolve()
 
-        if len(sources) > 1 or target_path.is_dir():
-            self._move()
+        if len(sources) > 1 or target.is_dir():
+            self._move(sources, target)
         else:
-            self._rename(Path(sources[0]), target_path)
+            self._rename(Path(sources[0]), target)
 
         return 0
 

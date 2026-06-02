@@ -249,6 +249,14 @@ class Main:
             )
         try:
             target_path.symlink_to(source_link)
+            if os.getuid() == 0:
+                stat = target_path.parent.stat()
+                os.chown(
+                    target_path,
+                    stat.st_uid,
+                    stat.st_gid,
+                    follow_symlinks=False,
+                )
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{target_path}" link.',
@@ -308,6 +316,9 @@ class Main:
         self._size += int((source_path.stat().st_size + 1023) / 1024)
         try:
             shutil.copy2(source_path, target_path)
+            if os.getuid() == 0:
+                stat = target_path.parent.stat()
+                os.chown(target_path, stat.st_uid, stat.st_gid)
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:
@@ -334,7 +345,11 @@ class Main:
                     f'"{target_path}" directory modification time.',
                 ) from exception
 
-    def _mirror(self, path1: Path, path2: Path) -> None:
+    def _mirror(  # pylint: disable=too-many-branches
+        self,
+        path1: Path,
+        path2: Path,
+    ) -> None:
         try:
             source_paths = sorted([
                 x
@@ -363,6 +378,9 @@ class Main:
                 if path2.is_file() or path2.is_symlink():
                     path2.unlink()
                 path2.mkdir(mode=FileStat(path1).get_mode())
+                if os.getuid() == 0:
+                    stat = path2.parent.stat()
+                    os.chown(path2, stat.st_uid, stat.st_gid)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{path2}" directory.',

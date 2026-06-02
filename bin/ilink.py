@@ -5,6 +5,7 @@ Create links to image/video files.
 
 import argparse
 import os
+import random
 import signal
 import sys
 from pathlib import Path
@@ -29,6 +30,12 @@ class Options:
         """
         return self._args.depth[0]
 
+    def get_shuffle_flag(self) -> bool:
+        """
+        Return shuffle flag.
+        """
+        return self._args.shuffle_flag
+
     def get_directories(self) -> List[str]:
         """
         Return list of directories.
@@ -45,13 +52,19 @@ class Options:
             nargs=1,
             type=int,
             default=[1],
-            help="Number of directories to ad to link name.",
+            help="Number of directory depth to link files.",
+        )
+        parser.add_argument(
+            '-s',
+            dest='shuffle_flag',
+            action='store_true',
+            help="Shuffle files in each directory.",
         )
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help="Directory containing JPEG files to link.",
+            help="Directory containing image/video files to link.",
         )
 
         self._args = parser.parse_args(args)
@@ -110,6 +123,7 @@ class Main:
         """
         options = Options()
         depth = options.get_depth()
+        shuffle = options.get_shuffle_flag()
         config = Config()
         images_extensions = (
             config.get('image_extensions') + config.get('video_extensions')
@@ -117,11 +131,16 @@ class Main:
 
         for album, directory in enumerate(options.get_directories()):
             linkdir = '_'.join(directory.split(os.sep)[-depth:])
-            for number, file in enumerate(sorted([
+            files = [
                 x
                 for x in Path(directory).glob('*.*')
                 if x.suffix.lower() in images_extensions
-            ])):
+            ]
+            if shuffle:
+                random.shuffle(files)
+            else:
+                files.sort()
+            for number, file in enumerate(files):
                 ext = Path(file).suffix.lower()
                 if ext in images_extensions:
                     link = Path(f'{album+1:02d}.{number+1:03d}_{linkdir}{ext}')

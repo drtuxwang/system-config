@@ -188,6 +188,7 @@ class Options:
             '"browser.display.show_image_placeholders", false',
             '"browser.download.animateNotifications", false',
             '"browser.download.improvements_to_download_panel", false',
+            '"browser.ipProtection.enabled", true',
             '"browser.link.open_external", 3',
             '"browser.link.open_newwindow.restriction", 0',
             '"browser.ml.enabled", false',

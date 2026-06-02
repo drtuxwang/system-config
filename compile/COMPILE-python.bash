@@ -5,7 +5,7 @@ umask 022
 
 VERSION=$(grep "define PY_VERSION " Include/patchlevel.h | cut -f2 -d'"')
 MAJOR_VER=${VERSION%.*}
-DEFAULT_PYTHON=3.13
+DEFAULT_PYTHON=3.14
 THREADS=$(awk '/processor/ {n++} END {print n/2+1}' /proc/cpuinfo 2> /dev/null)
 
 if [ "$(gcc --version 2>&1 | grep -E "gcc .* ([1-3][.]|4[.][1-6])")" ]

@@ -30,16 +30,16 @@ BUILD_DIRS := \
 	golang-1.25 \
 	httpd-2.4 \
 	nginx-1.26 \
-	python-3.13 \
+	python-3.14 \
 	registry-2.6 \
 	scratch
 STABLE_DIRS := \
 	debian-13/ops \
 	nginx-1.26 \
-	python-3.13/pip \
+	python-3.14/pip \
 	scratch
 TEST_DIRS := \
-	python-3.13
+	python-3.14
 
 
 .PHONY: default

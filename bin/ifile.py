@@ -58,8 +58,8 @@ class Main:
     Main class
     """
     _image_extensions = Config().get('image_extensions')
-    _isjunk = re.compile(r'image data, |, .*')
-    _issize = re.compile(r', \d+ ?x ?\d+, ')
+    _isjunk = re.compile(r'\+\d+')
+    _issize = re.compile(r', \d+ ?x ?\d+')
 
     def __init__(self) -> None:
         try:
@@ -82,7 +82,9 @@ class Main:
     def _get_media_info(cls, info: str) -> str:
         image_type = info.split(' ', 1)[0]
         try:
-            size = cls._issize.search(info).group().split(', ')[1]
+            size = cls._issize.search(
+                cls._isjunk.sub('', info)
+            ).group().split(', ')[1]
             image_size = size.replace(' x ', 'x').replace('x', ':')
         except AttributeError:
             image_size = '?:?'

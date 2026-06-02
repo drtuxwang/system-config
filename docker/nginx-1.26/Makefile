@@ -1,5 +1,5 @@
-BASE_IMAGE := nginx:1.26-bookworm
-IMAGE := drtuxwang/nginx-proxy:1.26-bookworm
+BASE_IMAGE := nginx:1.26-alpine
+IMAGE := drtuxwang/nginx-proxy:1.26-alpine
 NAME := nginx126-proxy
 HOSTNAME := nginx126-proxy
 LOCALPORT ?= 8080
