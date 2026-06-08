@@ -14,7 +14,7 @@ app_settings() {
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     REPO1="https://archive.debian.org/debian/pool"
-    REPO1="https://archive.debian.org/debian-archive/debian-security/pool"
+    REPO2="https://archive.debian.org/debian-archive/debian-security/pool"
     APP_FILES="
         $REPO1/main/g/gnome-hearts/gnome-hearts_0.3-2.2+b1_amd64.deb
 
@@ -68,4 +68,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" app_settings
+source "${0%/*}/setup-software.bash" "$@" app_settings

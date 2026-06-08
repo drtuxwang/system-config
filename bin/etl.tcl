@@ -32,7 +32,7 @@ frame .menu -bg "#cccccc"
     }
     pack .menu.fa_b2 -side top
     button .menu.etc_nit -width 10 -bg "#ffff00" -text "Etc(Nit)" -command {
-        exec etl -32 +connect 84.200.135.3:27980 &
+        exec etl +connect 84.200.135.3:27980 &
     }
     pack .menu.etc_nit -side top
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# LibreOffice 25.2.7.2 (Official) portable app
+# LibreOffice 25.8.7.3 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="libreoffice"
-    VERSION="25.2.7.2"
+    VERSION="25.8.7.3"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -39,4 +39,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" app_settings
+source "${0%/*}/setup-software.bash" "$@" app_settings

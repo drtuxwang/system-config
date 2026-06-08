@@ -14,14 +14,15 @@ app_settings() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         http://archive.debian.org/debian/pool/main/s/syslinux/syslinux-common_4.05+dfsg-6+deb7u1_all.deb
+        ${0%.*}/isolinux.cfg
+        ${0%.*}/README-isolinux.md
+        ${0%.*}/create-isolinux.bash
     "
     APP_SHELL="
         mkdir isolinux
         mv usr/lib/syslinux/isolinux.bin isolinux/
         mv usr/lib/syslinux/vesamenu.c32 isolinux/
-        cp ${0%.*}/isolinux.cfg isolinux/
-        cp ${0%.*}/README-isolinux.md .
-        cp ${0%.*}/create-isolinux.bash .
+        mv isolinux.cfg isolinux/
         touch -r isolinux/isolinux.bin \
             README-isolinux.md create-isolinux.bash isolinux/isolinux.cfg
     "
@@ -31,4 +32,4 @@ app_settings() {
 }
 
 
-source "${0%/*}/setup-software.bash" app_settings
+source "${0%/*}/setup-software.bash" "$@" app_settings

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# 0AD 0.27.1 (Debian 13) bubblewrap portable app
+# 0AD 0.28.0 (Debian 13) bubblewrap portable app
 # - Requires: bwrap (Bubblewrap)
 #
 
@@ -9,15 +9,15 @@ set -e
 
 app_settings() {
     NAME="0ad"
-    VERSION="0.27.1"
+    VERSION="0.28.0"
     PORT="linux64-x86-glibc_2.41"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     REPO="https://deb.debian.org/debian"
     APP_FILES="
-        $REPO/pool/main/0/0ad/0ad_0.27.0-2+b1_amd64.deb
-        $REPO/pool/main/0/0ad-data/0ad-data_0.27.0-1_all.deb
-        $REPO/pool/main/0/0ad-data/0ad-data-common_0.27.0-1_all.deb
+        $REPO/pool/main/0/0ad/0ad_0.28.0-3~bpo13+1_amd64.deb
+        $REPO/pool/main/0/0ad-data/0ad-data_0.28.0-1~bpo13+1_all.deb
+        $REPO/pool/main/0/0ad-data/0ad-data-common_0.28.0-1~bpo13+1_all.deb
 
         $REPO/pool/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb
         $REPO/pool/main/e/enet/libenet7_1.3.18+ds-1+b1_amd64.deb
@@ -62,4 +62,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" app_settings
+source "${0%/*}/setup-software.bash" "$@" app_settings

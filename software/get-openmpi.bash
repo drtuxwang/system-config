@@ -14,10 +14,10 @@ source_settings() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://download.open-mpi.org/release/open-mpi/v${VERSION%.*}/openmpi-${VERSION}.tar.bz2
+        ${0%/*}/../compile/COMPILE-openmpi.bash
     "
     APP_SHELL="
         mv openmpi-*/* .
-        cp -p ${0%/*}/../compile/COMPILE-openmpi.bash .
         touch -r README.md COMPILE-openmpi.bash
     "
     APP_REMOVE="
@@ -27,4 +27,4 @@ source_settings() {
 }
 
 
-source "${0%/*}/setup-software.bash" source_settings
+source "${0%/*}/setup-software.bash" "$@" source_settings

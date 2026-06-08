@@ -14,10 +14,10 @@ source_settings() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://github.com/helm/helm/archive/refs/tags/v$VERSION.tar.gz
+        ${0%/*}/../compile/COMPILE-helm.bash
     "
     APP_SHELL="
         mv helm-$VERSION/* .
-        cp -p ${0%/*}/../compile/COMPILE-helm.bash .
         touch -r README.md COMPILE-helm.bash
     "
     APP_REMOV="
@@ -47,4 +47,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" source_settings app_settings
+source "${0%/*}/setup-software.bash" "$@" source_settings app_settings

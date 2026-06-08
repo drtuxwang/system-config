@@ -15,10 +15,10 @@ app_settings() {
     APP_FILES="
         https://github.com/k3s-io/k3s/releases/download/v$VERSION/k3s
         https://github.com/k3s-io/k3s/releases/download/v$VERSION/k3s-airgap-images-amd64.tar.zst
+        ${0%.*}/k3s-server
+        ${0%.*}/kubectl
     "
     APP_SHELL="
-        cp -p ${0%.*}/k3s-server k3s-server
-        cp -p ${0%.*}/kubectl kubectl
         ln -s kubectl crictl
         mv k3s k3s-${VERSION//+k3s/-}
         ln -sf k3s-${VERSION//+k3s/-} k3s
@@ -40,4 +40,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" app_settings
+source "${0%/*}/setup-software.bash" "$@" app_settings

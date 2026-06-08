@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Wesnoth 1.18.3 (Debian 13) portable app
+# Wesnoth 1.18.7 (Debian 13) portable app
 # - Requires: bwrap (Bubblewrap)
 #
 
@@ -9,34 +9,34 @@ set -e
 
 app_settings() {
     NAME="wesnoth"
-    VERSION="1.18.5"
+    VERSION="1.18.7"
     PORT="linux64-x86-glibc_2.41"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     REPO="https://deb.debian.org/debian/pool"
     APP_FILES="
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18_1.18.5-1_amd64.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-data_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-did_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-dm_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-dw_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-ei_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-httt_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-l_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-low_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-music_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-nr_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-server_1.18.5-1_amd64.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sof_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sota_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sotbe_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-thot_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-tools_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-trow_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-tsg_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-ttb_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-utbs_1.18.5-1_all.deb
-        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-wof_1.18.5-1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18_1.18.7-1~bpo13+1_amd64.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-data_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-did_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-dm_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-dw_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-ei_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-httt_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-l_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-low_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-music_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-nr_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-server_1.18.7-1~bpo13+1_amd64.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sof_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sota_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-sotbe_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-thot_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-tools_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-trow_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-tsg_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-ttb_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-utbs_1.18.7-1~bpo13+1_all.deb
+        $REPO/main/w/wesnoth-1.18/wesnoth-1.18-wof_1.18.7-1~bpo13+1_all.deb
 
         $REPO/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb
         $REPO/main/b/boost1.83/libboost-iostreams1.83.0_1.83.0-4.2_amd64.deb
@@ -85,4 +85,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" app_settings
+source "${0%/*}/setup-software.bash" "$@" app_settings

@@ -162,10 +162,11 @@ the years.
  * qemu/*.bash                     QEMU VM examples
  * qmeu/qemu-system-aarch64.bash   QEMU System aarch64 (arm64) wrapper
  * qmeu/qemu-system-x86_64.bash    QEMU System x86_64 (amd64) wrapper
+ * software/check-files.bash       Check source files exists
  * software/get-0ad.bash           0AD 0.27.1 (Debian 13) bubblewrap portable app
  * software/get-7zip.bash          7-Zip 26.00 (Official) source code & Windows portable app
- * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
+ * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
  * software/get-edge.bash          Edge 145.0.3800.97 (Official) portable app
  * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
@@ -185,7 +186,7 @@ the years.
  * software/get-libreoffice.bash   LibreOffice 25.2.7.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.9 (Official) portable app
  * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code
- * softwrae/get-python.bash        Python 3.13.12 (Official) source code
+ * software/get-python.bash        Python 3.13.12 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
  * software/get-tmux.bash          TMUX 3.6a (Official) source code
  * software/get-wesnoth.bash       Wesnoth 1.18.3 (Debian 13) bubblewrap portable app

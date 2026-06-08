@@ -14,14 +14,21 @@ windows_settings() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://frippery.org/files/busybox/busybox-w64-FRP-5467-g9376eebd8.exe
+        ${0%.*}/busybox.bat
+        ${0%.*}/sysinfo
+        ${0%.*}/sysinfo.py
+        ${0%.*}/sysinfo.sh
+        ${0%.*}/uname
+        ${0%.*}/vi
+        ${0%.*}/vim
+        ${0%.*}/init-ash
     "
     APP_SHELL="
         mkdir -p bin etc ../bin
         sed -e 's/\x00uname\x00/\x00unam#\x00/;s/\x00vi\x00watch\x00/\x00v#\x00watch\x00/' \
             busybox-*.exe > busybox.exe
-        cp ${0%.*}/busybox.bat .
-        cp ${0%.*}/sysinfo* ${0%.*}/uname ${0%.*}/vi* bin/
-        cp ${0%.*}/init-ash etc/
+        mv sysinfo* uname vi* bin/
+        mv init-ash etc/
         sed -e 's/{{ version }}/$VERSION/' ${0%.*}/busybox.bat-bin > ../bin/busybox.bat
         chmod 755 busybox.exe ../bin/busybox.bat
         touch -r busybox-*.exe busybox.exe busybox.bat bin/* etc/* ../bin/busybox.bat ../bin
@@ -37,14 +44,21 @@ windows_settings_32bit() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://frippery.org/files/busybox/busybox-w32-FRP-5467-g9376eebd8.exe
+        ${0%.*}/busybox.bat
+        ${0%.*}/sysinfo
+        ${0%.*}/sysinfo.py
+        ${0%.*}/sysinfo.sh
+        ${0%.*}/uname
+        ${0%.*}/vi
+        ${0%.*}/vim
+        ${0%.*}/init-ash
     "
     APP_SHELL="
         mkdir -p bin etc ../bin
         sed -e 's/\x00uname\x00/\x00unam#\x00/;s/\x00vi\x00watch\x00/\x00v#\x00watch\x00/' \
             busybox-*.exe > busybox.exe
-        cp ${0%.*}/busybox.bat .
-        cp ${0%.*}/sysinfo* ${0%.*}/uname ${0%.*}/vi* bin/
-        cp ${0%.*}/init-ash etc/
+        mv sysinfo* uname vi* bin/
+        mv init-ash etc/
         sed -e 's/{{ version }}/$VERSION/' ${0%.*}/busybox.bat-bin > ../bin/busybox.bat
         chmod 755 busybox.exe ../bin/busybox.bat
         touch -r busybox-*.exe busybox.exe busybox.bat bin/* etc/* ../bin/busybox.bat ../bin
@@ -59,4 +73,4 @@ app_start() {
 }
 
 
-source "${0%/*}/setup-software.bash" windows_settings windows_settings_32bit
+source "${0%/*}/setup-software.bash" "$@" windows_settings windows_settings_32bit

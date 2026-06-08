@@ -14,10 +14,10 @@ source_settings() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://www.python.org/ftp/python/$VERSION/Python-$VERSION.tar.xz
+        ${0%/*}/../compile/COMPILE-python.bash
     "
     APP_SHELL="
         mv Python-$VERSION/* .
-        cp -p ${0%/*}/../compile/COMPILE-python.bash .
         touch -r README.rst COMPILE-python.bash
     "
     APP_REMOVE="
@@ -26,4 +26,4 @@ source_settings() {
 }
 
 
-source "${0%/*}/setup-software.bash" source_settings
+source "${0%/*}/setup-software.bash" "$@" source_settings

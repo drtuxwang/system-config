@@ -21,6 +21,24 @@ defaults_settings() {
     APP_LINK=
 }
 
+check_files () {
+    for FILE in $APP_FILES
+    do
+        case $FILE in
+        *://*)
+            wget --spider --quiet "$FILE" || echo "ERROR: $FILE"
+            ;;
+        */*)
+            [ -f "$FILE" ] || echo "ERROR: $FILE"
+            ;;
+        *)
+            echo "Missing: Downloads/$FILE"
+            exit 1
+            ;;
+        esac
+    done
+}
+
 get_files() {
     for FILE in $APP_FILES
     do
@@ -31,7 +49,7 @@ get_files() {
             wget --timestamping "$FILE" || exit 1
             ;;
         */*)
-            cp -p $FILE .
+            cp -p "$FILE" .
             ;;
         *)
             echo "Missing: Downloads/$FILE"
@@ -53,19 +71,11 @@ unpack_file() {
     *.tar*)
         tar xf $1 || exit 1
         ;;
-    *.AppImage)
+    *.AppImage|*.zip)
         7z x -y -snld $1 || exit 1
         ;;
-    *.exe)
-        cp -p $1 .
-        ;;
     *)
-        if [ "$(file "$1" | grep x86-64)" ]
-        then
-            cp -p "$1" .
-        else
-            7z x -y -snld $1 || exit 1
-        fi
+        cp -p "$1" .
         ;;
     esac
 }
@@ -158,9 +168,23 @@ create_app() {
     prepare_start
 }
 
-for APP_SETTINGS in $*
-do
-    defaults_settings
-    $APP_SETTINGS
-    create_app
-done
+
+case ${1:-} in
+-c|-check|--check)
+    shift
+    for APP_SETTINGS in $*
+    do
+        defaults_settings
+        $APP_SETTINGS
+        check_files
+    done
+    ;;
+*)
+    for APP_SETTINGS in $*
+    do
+        defaults_settings
+        $APP_SETTINGS
+        create_app
+    done
+    ;;
+esac

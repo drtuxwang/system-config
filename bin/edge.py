@@ -226,7 +226,8 @@ class Options:
             'ERROR:persistent_asset|ERROR:policy_logger|ERROR:simple_backend|'
             'ERROR:video_hover|Fontconfig error:|DidStartWorkerFail|'
             'software WebGL.*deprecated|ERROR:extension|Gtk-WARNING|'
-            'vdhcoapp is running|ERROR:shared_image|ERROR:.*disk_cache'
+            'vdhcoapp is running|ERROR:shared_image|ERROR:.*disk_cache|'
+            'ERROR:.*update failed'
         )
         self._config()
         self._set_libraries(self._browser)
