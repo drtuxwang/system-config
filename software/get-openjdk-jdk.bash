@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# OpenJDK JDK 21.0.10 (Official) portable app
+# OpenJDK JDK 21.0.11 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="openjdk-jdk"
-    VERSION="21.0.10_7"
+    VERSION="21.0.11_10"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_${VERSION%_*}-$PORT"

@@ -21,3 +21,4 @@ make -j $THREADS
 make install
 
 ls -ld $PWD/install/* $PWD/install/bin/*
+fmod -R $PWD/install/ 2> /dev/null

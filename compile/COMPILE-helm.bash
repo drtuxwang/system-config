@@ -12,3 +12,4 @@ cp -p LICENSE README.md bin/
 chmod -R u+w .
 
 ls -l $PWD/bin/*
+fmod -R $PWD/bin/ 2> /dev/null

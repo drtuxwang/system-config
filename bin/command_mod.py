@@ -2,7 +2,7 @@
 """
 Python command handling module
 
-Copyright GPL v2: 2006-2024 By Dr Colin Kong
+Copyright GPL v2: 2006-2026 By Dr Colin Kong
 """
 
 import functools
@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.7.2'
-VERSION = 20241208
+RELEASE = '2.7.3'
+VERSION = 20260628
 
 
 class Command:
@@ -215,11 +215,11 @@ class Command:
 
         args = List of arguments
 
-        subprocess.list2cmdline() does not handle "&" properly)
+        subprocess.list2cmdline() does not handle "&" or "(" properly
         """
         nargs = []
         for arg in [str(x) for x in args]:
-            for char in '"\' &;':
+            for char in '"\' ()&;':
                 if char in arg and arg != ';':
                     quoted = arg.replace('\\', '\\\\').replace('"', '\\"')
                     nargs.append(f'"{quoted}"')

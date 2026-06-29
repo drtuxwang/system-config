@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# TMUX 3.6b (Official) source code
+# TMUX 3.7 (Official) source code
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 source_settings() {
     NAME="tmux"
-    VERSION="3.6b"
+    VERSION="3.7"
     PORT="source-c"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"

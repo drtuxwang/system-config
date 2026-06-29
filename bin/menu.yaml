@@ -265,6 +265,20 @@ menu_games:
   checks:
   - assaultcube
 - button:
+    name: gta3
+    color: '#ffff00'
+    label: GTA 3
+    run: exec gta3 &
+  checks:
+  - re3
+- button:
+    name: gtavc
+    color: '#ffff00'
+    label: GTA VC
+    run: exec gta-vc &
+  checks:
+  - reVC
+- button:
     name: padman
     color: '#ffff00'
     label: Padman
@@ -285,20 +299,6 @@ menu_games:
     run: exec etr &
   checks:
   - etr
-- button:
-    name: urban_terror
-    color: '#ffff00'
-    label: Urban Terror
-    run: exec ut &
-  checks:
-  - Quake3-UrT.x86_64
-- button:
-    name: warsow
-    color: '#ffff00'
-    label: Warsow
-    run: exec warsow &
-  checks:
-  - warsow.x86_64
 - button:
     name: wesnoth
     color: '#ffff00'

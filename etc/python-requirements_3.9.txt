@@ -1,4 +1,6 @@
 astroid                      # ==3.3.11 (old version)
+binaryornot                  # ==0.4.4 (old version)
+dnspython                    # ==2.7.0 (old version)
 filelock                     # ==3.19.1 (old version)
 Glances                      # ==4.4.1 (old version)
 importlib-metadata           # ==7.2.1 (required by isort for 3.9)

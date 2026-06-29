@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Python 3.14.5 (Official) & newer versions source code
+# Python 3.14.6 (Official) & newer versions source code
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 source_settings() {
     NAME="python"
-    VERSION="3.14.5"
+    VERSION="3.14.6"
     PORT="source-c"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"

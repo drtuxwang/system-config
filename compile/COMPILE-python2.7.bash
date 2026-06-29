@@ -117,3 +117,4 @@ exec \"\$MYDIR/python$MAJOR_VER\" \"\$MYDIR/$PYFILE\" \"\$@\"" > "install/bin/$F
 fi
 
 ls -ld install/bin/python* install/lib/libpython*
+fmod -R $PWD/install/ 2> /dev/null

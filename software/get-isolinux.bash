@@ -14,9 +14,9 @@ app_settings() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         http://archive.debian.org/debian/pool/main/s/syslinux/syslinux-common_4.05+dfsg-6+deb7u1_all.deb
-        ${0%.*}/isolinux.cfg
-        ${0%.*}/README-isolinux.md
-        ${0%.*}/create-isolinux.bash
+        ${0%/*}/files/isolinux.cfg
+        ${0%/*}/files/README-isolinux.md
+        ${0%/*}/files/create-isolinux.bash
     "
     APP_SHELL="
         mkdir isolinux

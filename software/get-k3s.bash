@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# K3S 1.34.7-1 (Official) portable app
+# K3S 1.34.7 (Official) portable app
 #
 
 set -e
@@ -15,8 +15,8 @@ app_settings() {
     APP_FILES="
         https://github.com/k3s-io/k3s/releases/download/v$VERSION/k3s
         https://github.com/k3s-io/k3s/releases/download/v$VERSION/k3s-airgap-images-amd64.tar.zst
-        ${0%.*}/k3s-server
-        ${0%.*}/kubectl
+        ${0%/*}/files/k3s-server
+        ${0%/*}/files/kubectl
     "
     APP_SHELL="
         ln -s kubectl crictl

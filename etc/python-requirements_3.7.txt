@@ -1,4 +1,5 @@
 astroid                      # ==2.15.8 (old version)
+binaryornot                  # ==0.4.4 (old version)
 bson                         # ==0.5.10 (required instead of bson-senao for 3.7)
 bson-senao                   # ==None
 commonmark                   # ==0.9.1 (required by rich for 3.7)

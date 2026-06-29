@@ -127,7 +127,7 @@ the years.
  * docker/nginx-1.26/              nginx:1.26-alpine based reverse proxy server
  * docker/oraclelinux-8/           oralcelinux:8 based Docker images
  * docker/oraclelinux-9/           oralcelinux:9 based Docker images
- * docker/python-3.13/             python:3.13-slim-trixie based Docker images
+ * docker/python-3.14/             python:3.14-slim-trixie based Docker images
  * docker/registry-2.6/            registry:2.6 based Docker Registry server app
  * docker/scratch/                 scratch Docker image
  * docker/rockylinux-10/           rockylinux:10 based Docker images
@@ -163,17 +163,18 @@ the years.
  * qmeu/qemu-system-aarch64.bash   QEMU System aarch64 (arm64) wrapper
  * qmeu/qemu-system-x86_64.bash    QEMU System x86_64 (amd64) wrapper
  * software/check-files.bash       Check source files exists
- * software/get-0ad.bash           0AD 0.27.1 (Debian 13) bubblewrap portable app
- * software/get-7zip.bash          7-Zip 26.00 (Official) source code & Windows portable app
+ * software/files/*                Files for building
+ * software/get-0ad.bash           0AD 0.28.0 (Debian 13) bubblewrap portable app
+ * software/get-7zip.bash          7-Zip 26.01 (Official) source code & Windows portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
- * software/get-edge.bash          Edge 145.0.3800.97 (Official) portable app
- * software/get-firefox.bash       Firefox 140.6.0esr (Official) portable app
- * software/get-git.bash           GIT 2.48.2 (Official) source code
+ * software/get-edge.bash          Edge 148.0.3967.96 (Official) portable app
+ * software/get-firefox.bash       Firefox 151.0.3 (Official) portable app
+ * software/get-git.bash           GIT 2.51.2 (Official) source code
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
- * software/get-golang.bash        Golang 1.25.7 (Official) portable app
+ * software/get-golang.bash        Golang 1.25.11 (Official) portable app
  * software/get-grub-efi.bash      GRUB EFI 2.12 (Debian 13) boot loader
  * software/get-grub-pc.bash       GRUB PC 2.12 (Debian 13) boot loader
  * software/get-hardinfo.bash      Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
@@ -182,14 +183,14 @@ the years.
  * software/get-inkscape.bash      Inkscape 1.3.2 (Official) portable app
  * software/get-instant-client.bash Instant Client 23.26 (Official) library & portable app
  * software/get-isolinux.bash      ISOLIUX 4.05 (Debian 7) boot loader
- * software/get-k3s.bash           K3S 1.31.14-1 (Official) portable app
- * software/get-libreoffice.bash   LibreOffice 25.2.7.2 (Official) portable app
- * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.9 (Official) portable app
+ * software/get-k3s.bash           K3S 1.34.7 (Official) portable app
+ * software/get-libreoffice.bash   LibreOffice 25.8.7.3 (Official) portable app
+ * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.11 (Official) portable app
  * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code
- * software/get-python.bash        Python 3.13.12 (Official) source code
+ * software/get-python.bash        Python 3.14.6 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
  * software/get-tmux.bash          TMUX 3.6a (Official) source code
- * software/get-wesnoth.bash       Wesnoth 1.18.3 (Debian 13) bubblewrap portable app
+ * software/get-wesnoth.bash       Wesnoth 1.18.7 (Debian 13) bubblewrap portable app
  * software/get-wine.bash          WiNE 11.0 (Offical) bubblewrap portable app
  * software/setup-software.bash    Fetch and setup software
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example

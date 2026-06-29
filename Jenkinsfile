@@ -2,7 +2,7 @@
 
 // Environment variables
 def alpine_version = "3.22"
-def python_version = "3.13"
+def python_version = "3.14"
 def docker_builder_image = "drtuxwang/debian-docker:stable"
 String branch_name = env.JOB_NAME - "system-config-"
 

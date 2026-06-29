@@ -14,14 +14,14 @@ windows_settings() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://frippery.org/files/busybox/busybox-w64-FRP-5467-g9376eebd8.exe
-        ${0%.*}/busybox.bat
-        ${0%.*}/sysinfo
-        ${0%.*}/sysinfo.py
-        ${0%.*}/sysinfo.sh
-        ${0%.*}/uname
-        ${0%.*}/vi
-        ${0%.*}/vim
-        ${0%.*}/init-ash
+        ${0%/*}/files/busybox.bat
+        ${0%/*}/files/init-ash
+        ${0%/*}/files/sysinfo
+        ${0%/*}/files/sysinfo.py
+        ${0%/*}/files/sysinfo.sh
+        ${0%/*}/files/uname
+        ${0%/*}/files/vi
+        ${0%/*}/files/vim
     "
     APP_SHELL="
         mkdir -p bin etc ../bin
@@ -44,14 +44,14 @@ windows_settings_32bit() {
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://frippery.org/files/busybox/busybox-w32-FRP-5467-g9376eebd8.exe
-        ${0%.*}/busybox.bat
-        ${0%.*}/sysinfo
-        ${0%.*}/sysinfo.py
-        ${0%.*}/sysinfo.sh
-        ${0%.*}/uname
-        ${0%.*}/vi
-        ${0%.*}/vim
-        ${0%.*}/init-ash
+        ${0%/*}/files/busybox.bat
+        ${0%/*}/files/init-ash
+        ${0%/*}/files/sysinfo
+        ${0%/*}/files/sysinfo.py
+        ${0%/*}/files/sysinfo.sh
+        ${0%/*}/files/uname
+        ${0%/*}/files/vi
+        ${0%/*}/files/vim
     "
     APP_SHELL="
         mkdir -p bin etc ../bin

@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2024 By Dr Colin Kong
+Copyright GPL v2: 2006-2026 By Dr Colin Kong
 """
 
 import copy
@@ -15,9 +15,10 @@ import types
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Union
 
+from command_mod import Command
 
-RELEASE = '2.4.1'
-VERSION = 20241026
+RELEASE = '2.4.2'
+VERSION = 20260628
 
 BUFFER_SIZE = 131072
 
@@ -206,7 +207,7 @@ class Task:
 
         if '|' in cmdline:
             pipe = True
-            command = subprocess.list2cmdline(cmdline)
+            command = Command.args2cmd(cmdline)
         else:
             pipe = False
 
@@ -221,7 +222,7 @@ class Task:
 
         if '|' in cmdline:
             pipe = True
-            command = subprocess.list2cmdline(cmdline)
+            command = Command.args2cmd(cmdline)
         else:
             pipe = False
 
@@ -319,7 +320,7 @@ class Background(Task):
 
         if '|' in cmdline:
             pipe = True
-            command = subprocess.list2cmdline(cmdline)
+            command = Command.args2cmd(cmdline)
         else:
             pipe = False
 
@@ -504,9 +505,7 @@ class Daemon(Task):
 
         if '|' in cmdline:
             subprocess.Popen(  # pylint: disable=consider-using-with
-                subprocess.list2cmdline(
-                    [sys.executable, '-B', __file__] + cmdline
-                ),
+                Command.args2cmd([sys.executable, '-B', __file__] + cmdline),
                 shell=True,
                 env=info['env'],
             )

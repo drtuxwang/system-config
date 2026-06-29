@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# 7-Zip 26.01 (Official) source code & Windows portable app
+# 7-Zip 26.02 (Official) source code & Windows portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 source_settings() {
     NAME="7zip"
-    VERSION="26.01"
+    VERSION="26.02"
     PORT="source-cpp"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -23,20 +23,20 @@ source_settings() {
 
 windows_settings() {
     NAME="7zip"
-    VERSION="26.01"
+    VERSION="26.02"
     PORT="windows-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
         https://www.7-zip.org/a/7z${VERSION//./}.exe
-        ${0%.*}/7z.bat
-        ${0%.*}/un7z.bat
+        ${0%/*}/files/7z.bat
+        ${0%/*}/files/un7z.bat
     "
     APP_SHELL="
         7z x -y -snld 7z[1-9]*.exe
         mkdir -p ../bin
-        sed -e 's/{{ version }}/$VERSION/' ${0%.*}/7z.bat-bin > ../bin/7z.bat
-        sed -e 's/{{ version }}/$VERSION/' ${0%.*}/un7z.bat-bin > ../bin/un7z.bat
+        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/7z.bat-bin > ../bin/7z.bat
+        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/un7z.bat-bin > ../bin/un7z.bat
         chmod 755 ../bin/7z.bat ../bin/un7z.bat
         touch -r 7z.exe 7z.bat un7z.bat ../bin/7z.bat ../bin/un7z.bat ../bin
     "

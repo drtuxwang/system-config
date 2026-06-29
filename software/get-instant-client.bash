@@ -19,7 +19,7 @@ app_settings() {
         $REPO1/${VERSION//./}/instantclient-basiclite-linux.x64-$VERSION.zip
         $REPO1/${VERSION//./}/instantclient-sqlplus-linux.x64-$VERSION.zip
         $REPO2/main/liba/libaio/libaio1_0.3.112-3_amd64.deb
-        ${0%.*}/sqlnet.ora
+        ${0%/*}/files/sqlnet.ora
     "
     APP_SHELL="
         mv instantclient_* bin/

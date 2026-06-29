@@ -4,6 +4,7 @@ backports-abc                # ==0.5 (required by tornado for 2.7)
 backports.functools-lru-cache # ==1.6.4 (required by pylint for 2.7)
 bcrypt                       # ==3.1.7 (old version)
 beautifulsoup4               # ==4.9.3 (old version)
+binaryornot                  # ==0.4.4 (old version)
 bson                         # ==0.5.10 (required instead of bson-senao for 2.7)
 bson-senao                   # ==None
 certifi                      # ==2021.10.8 (old version)

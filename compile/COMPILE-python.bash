@@ -65,6 +65,9 @@ CONFIGURE="./configure --prefix="$PWD/install" --enable-ipv6 --enable-shared"
 # Enable link time optimizations (LTO) except old gcc
 [ "$(gcc --version 2>&1 | grep "gcc .* [1-4][.]")" ] || CONFIGURE="$CONFIGURE --with-lto"
 
+# Fix configure hang when python missing
+sed -i "s/for ac_prog in python.*/for ac_prog in python3/" configure
+
 $CONFIGURE
 make -j $THREADS
 make install
@@ -110,3 +113,4 @@ fi
 
 ls -ld $PWD/install/bin/python* $PWD/install/lib/libpython*
 grep MODULE.*=missing config.log
+fmod -R $PWD/install/ 2> /dev/null

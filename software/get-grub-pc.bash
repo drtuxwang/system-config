@@ -18,9 +18,9 @@ app_settings() {
         $REPO/main/g/grub2/grub2-common_2.12-9+deb13u2_amd64.deb
         $REPO/main/e/efivar/libefiboot1t64_38-3.1+b1_amd64.deb
         $REPO/main/e/efivar/libefivar1t64_38-3.1+b1_amd64.deb
-        ${0%.*}/grub.cfg
-        ${0%.*}/README-grub-pc.md
-        ${0%.*}/install-grub-pc.bash
+        ${0%/*}/files/grub.cfg-pc
+        ${0%/*}/files/install-grub-pc.bash
+        ${0%/*}/files/README-grub-pc.md
     "
     APP_SHELL="
         mkdir -p grub-pc
@@ -28,7 +28,8 @@ app_settings() {
         mv usr/lib/grub/i386-pc/ grub-pc/
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
         mv usr/lib/x86_64-linux-gnu/libefivar.so.1.* grub-pc/libefivar.so.1
-        mv grub.cfg grub-pc/
+        mv grub.cfg-pc grub-pc/grub.cfg
+        mv README-grub-pc.md-deb12 grub-pc/README-grub-pc.md
         touch -r grub-pc/grub-install grub-pc/grub.cfg
         export XZ_OPT='-9 -e --x86 --lzma2=dict=128MiB --threads=1'
         tar cfJ - grub-pc --owner=0:0 --group=0:0 >> install-grub-pc.bash
@@ -53,9 +54,9 @@ app_settings_deb12() {
         $REPO/main/g/grub2/grub2-common_2.06-13+deb12u2_amd64.deb
         $REPO/main/e/efivar/libefiboot1_37-6_amd64.deb
         $REPO/main/e/efivar/libefivar1_37-6_amd64.deb
-        ${0%.*}/grub.cfg
-        ${0%.*}/README-grub-pc.md-deb12
-        ${0%.*}/install-grub-pc.bash
+        ${0%/*}/files/grub.cfg-pc
+        ${0%/*}/files/install-grub-pc.bash
+        ${0%/*}/files/README-grub-pc.md-deb12
     "
     APP_SHELL="
         mkdir -p grub-pc
@@ -63,6 +64,7 @@ app_settings_deb12() {
         mv usr/lib/grub/i386-pc/ grub-pc/
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
         mv usr/lib/x86_64-linux-gnu/libefivar.so.1.* grub-pc/libefivar.so.1
+        mv grub.cfg-pc grub-pc/grub.cfg
         mv README-grub-pc.md-deb12 grub-pc/README-grub-pc.md
         touch -r grub-pc/grub-install grub-pc/grub.cfg
         export XZ_OPT='-9 -e --x86 --lzma2=dict=128MiB --threads=1'

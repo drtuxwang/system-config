@@ -408,7 +408,7 @@ then
     # Show information
     echo
     sysinfo -s 2> /dev/null
-    MYINFO="$MYSHELL shell (tty=$MYTTY"
+    MYINFO="$MYUNAME@$MYHNAME $MYSHELL shell (tty=$MYTTY"
     if [ "$SSH_KEYS" != 0 ]
     then
         MYINFO="$MYINFO, ssh-add=$SSH_KEYS"
