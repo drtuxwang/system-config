@@ -3,7 +3,7 @@ astroid==4.0.4               #   (required by pylint)
 beautifulsoup4==4.14.3       # HTML/XML parser/emitter
 binaryornot==0.5.0           #   (required by cookiecutter)
 bson-senao==0.5.10           # BSON parser/emitter
-certifi==2026.5.20           #   (required by requests)
+certifi==2026.6.17           #   (required by requests)
 chardet==5.2.0               #   (required by binaryornot)
 charset-normalizer==3.3.2    #   (required by requests)
 click==7.1.2                 #   (required by cookiecutter/gtts/humpty)
@@ -11,19 +11,19 @@ cookiecutter==2.6.0          # Creates projects from project templates
 defusedxml==0.7.1            #   (required by Glances)
 dicttoxml==1.7.16            # Convert Python dict to XML
 dill==0.3.9                  #   (required by pylint)
-distlib==0.4.2               #   (required by virtualenv)
+distlib==0.4.3               #   (required by virtualenv)
 dnspython==2.8.0             # DNS client
 EditorConfig==0.12.4         #   (required by jsbeautifier)
 filelock==3.25.2             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 gitdb==4.0.12                #   (required by GitPython)
 GitPython==3.1.50            # Library to interact with Git repositories
-Glances==4.5.4               # Cross-platform system monitoring tool
+Glances==4.5.5               # Cross-platform system monitoring tool
 gTTS==2.5.4                  # Google Text-to-Speech
 idna==3.17                   #   (required by requests)
 isort==6.1.0                 #   (required by pylint)
 Jinja2==3.1.6                # Stand-alone template engine
-jsbeautifier==1.14.11        # JavaScript unobfuscator/beautifier
+jsbeautifier==1.15.4         # JavaScript unobfuscator/beautifier
 jsonpickle==4.0.5            # Serializing any arbitrary object into JSON
 markdown2==2.4.13            # Convert Markdown to HTML
 markdown-it-py==2.2.0        #   (required by rich)
@@ -40,7 +40,7 @@ pycodestyle==2.14.0          # Python style guide checker
 pyflakes==3.4.0              # Python source file checker
 Pygments==2.20.0             #   (required by ipython)
 pyinstrument==5.1.2          #   (required by Glances)
-pylint==4.0.5                # Python code static checker
+pylint==4.0.6                # Python code static checker
 python-dateutil==2.8.2       #   (required by bson-senao)
 python-slugify==6.1.2        #   (required by cookiecutter)
 PyYAML==6.0.3                # YAML parser/emitter
