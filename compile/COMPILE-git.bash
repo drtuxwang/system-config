@@ -10,6 +10,7 @@ then
     mv INSTALL INSTALL.txt  # INSTALL/install conflict bug
 fi
 
+make configure
 ./configure --prefix=$PWD/install
 make -i NO_INSTALL_HARDLINKS=YesPlease install -j $THREADS
 
