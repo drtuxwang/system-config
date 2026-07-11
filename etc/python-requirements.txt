@@ -51,7 +51,7 @@ setuptools==82.0.1           # Python package manager
 shtab==1.8.0                 #   (required by Glances)
 six==1.17.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.3                 #   (required by gitdb)
-soupsieve==2.7               #   (required by beautifulsoup4)
+soupsieve==2.8.4             #   (required by beautifulsoup4)
 text-unidecode==1.3          #   (required by python-slugify)
 tomlkit==0.15.0              #   (required by pylint)
 typing-extensions==4.15.0    #   (required by beautifulsoup4)
