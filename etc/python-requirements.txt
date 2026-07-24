@@ -17,7 +17,7 @@ EditorConfig==0.12.4         #   (required by jsbeautifier)
 filelock==3.25.2             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 gitdb==4.0.12                #   (required by GitPython)
-GitPython==3.1.51            # Library to interact with Git repositories
+GitPython==3.1.55            # Library to interact with Git repositories
 Glances==4.5.5               # Cross-platform system monitoring tool
 gTTS==2.5.4                  # Google Text-to-Speech
 idna==3.17                   #   (required by requests)
@@ -47,7 +47,7 @@ PyYAML==6.0.3                # YAML parser/emitter
 pyzstd==0.18.0               # ZSTD compression/decompression
 requests==2.33.1             # Web client
 rich==14.3.4                 #   (required by cookiecutter)
-setuptools==82.0.1           # Python package manager
+setuptools==83.0.0           # Python package manager
 shtab==1.8.0                 #   (required by Glances)
 six==1.17.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.3                 #   (required by gitdb)
