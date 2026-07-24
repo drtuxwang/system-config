@@ -69,7 +69,7 @@ class Options:
         self._sshfs = Command('sshfs', errors='stop')
         self._sshfs.set_args([
             '-o',
-            'noatime,allow_root',
+            'noatime,no_contain_symlinks,transform_symlinks,allow_root',
         ] + self._args.remote + self._args.local)
 
 

@@ -190,7 +190,7 @@ class Main:
             if os.getuid() == 0:
                 stat = path_tmp.parent.stat()
                 os.chown(path_tmp, stat.st_uid, stat.st_gid)
-        except (PermissionError, shutil.Error) as exception:
+        except (FileNotFoundError, PermissionError, shutil.Error) as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{path_tmp}" file.',
             ) from exception

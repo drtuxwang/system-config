@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '7.0.1'
-VERSION = 20260330
+RELEASE = '7.1.0'
+VERSION = 20260715
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -2496,6 +2496,7 @@ class Software:
             ['qemu-system-x86_64', '--version'],
             ['QEMU emulator version ', '.*version | .*', ''],
         ),
+        (['rustc', '--version'], ['^rustc ', '^rustc | .*', '']),
         (
             ['rsync', '--version'],
             ['^rsync +version', 'rsync +version | .*', ''],

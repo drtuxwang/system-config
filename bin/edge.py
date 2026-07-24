@@ -227,7 +227,7 @@ class Options:
             'ERROR:video_hover|Fontconfig error:|DidStartWorkerFail|'
             'software WebGL.*deprecated|ERROR:extension|Gtk-WARNING|'
             'vdhcoapp is running|ERROR:shared_image|ERROR:.*disk_cache|'
-            'ERROR:.*update failed'
+            'ERROR:.*update failed|ERROR:.*dropped'
         )
         self._config()
         self._set_libraries(self._browser)

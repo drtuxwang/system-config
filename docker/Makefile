@@ -1,9 +1,9 @@
 IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
+	alpine-3.23 \
+	i386-alpine-3.23 \
 	alpine-3.22 \
-	i386-alpine-3.22 \
-	alpine-3.21 \
 	\
 	debian-13 \
 	i386-debian-13 \
@@ -116,7 +116,7 @@ prune:                # Prune Docker images/containers
 	docker system df
 	@echo
 	df /var/lib/docker
-	docker system prune
+	docker system prune -f
 	@echo
 	../bin/docker-images
 	@echo

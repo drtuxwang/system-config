@@ -191,7 +191,7 @@ mount_host() {
 #
 # Function to unmount remote host file system
 #
-unmount_host() {
+umount_host() {
     fix_mounts
     [ ! "$hosts" ] && show_mounts && return
 

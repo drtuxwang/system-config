@@ -132,7 +132,7 @@
             image_overlay.background_blue = "240" 
             image_overlay.background_alpha = "210" 
             image_overlay.font = "Sans Bold 10" 
-            slideshow.delay = "5.0" 
+            slideshow.delay = "10.0" 
             slideshow.random = "false" 
             slideshow.repeat = "false" 
             collections.rectangular_selection = "false" 

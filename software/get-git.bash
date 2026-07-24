@@ -13,7 +13,7 @@ source_settings() {
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
-        https://www.kernel.org/pub/software/scm/git/git-$VERSION.tar.xz
+        https://github.com/git/git/archive/refs/tags/v$VERSION.tar.gz
         ${0%/*}/../compile/COMPILE-git.bash
     "
     APP_SHELL="

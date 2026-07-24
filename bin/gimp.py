@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command, Platform
-from subtask_mod import Background, Exec
+from subtask_mod import Background, Batch, Exec
 
 
 class Options:
@@ -35,9 +35,11 @@ class Options:
         """
         return self._gimp
 
-    @staticmethod
-    def _reset() -> None:
+    def _reset(self) -> None:
         config_path = Path(Path.home(), '.config', 'GIMP')
+        task = Batch(self._gimp.get_cmdline() + ['--version'])
+        task.run(pattern='^GNU Image Manipulation Program version ')
+        version = ' '.join(task.get_output()).split()[-1]
         if config_path.is_dir():
             for path in [Path(config_path, x) for x in config_path.iterdir()]:
                 if path.is_dir():
@@ -45,8 +47,11 @@ class Options:
                     shutil.rmtree(path)
                     path.mkdir()
                     with Path(path, 'gimprc').open('w') as ofile:
-                        print('(theme "System")', file=ofile)
+                        print(f'(config-version "{version}")', file=ofile)
+                        print('(theme-color-scheme light)', file=ofile)
+                        print('(theme-color-scheme light)', file=ofile)
                         print('(override-theme-icon-size yes)', file=ofile)
+                        print('(show-welcome-dialog no)', file=ofile)
 
     def parse(self, args: List[str]) -> None:
         """

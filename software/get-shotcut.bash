@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Shotcut 26.1.30 (Official) portable app
+# Shotcut 26.6.25 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="shotcut"
-    VERSION="26.1.30"
+    VERSION="26.6.25"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
