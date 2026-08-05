@@ -418,7 +418,7 @@ menu_system:
     name: parestart
     color: '#ffff00'
     label: Reset Audio
-    run: exec bash -c "pulseaudio --kill; sleep 1; pulseaudio --daemonize" &
+    run: exec bash -c "systemctl --user restart pipewire" &
 - button:
     name: settimezone
     color: '#ffff00'
