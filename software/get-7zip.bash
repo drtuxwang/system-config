@@ -35,8 +35,8 @@ windows_settings() {
     APP_SHELL="
         7z x -y -snld 7z[1-9]*.exe
         mkdir -p ../bin
-        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/7z.bat-bin > ../bin/7z.bat
-        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/un7z.bat-bin > ../bin/un7z.bat
+        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/7z.bat.template > ../bin/7z.bat
+        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/un7z.bat.template > ../bin/un7z.bat
         chmod 755 ../bin/7z.bat ../bin/un7z.bat
         touch -r 7z.exe 7z.bat un7z.bat ../bin/7z.bat ../bin/un7z.bat ../bin
     "

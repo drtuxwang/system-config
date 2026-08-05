@@ -73,6 +73,8 @@ app_start() {
     exec /usr/bin/bwrap \
         --ro-bind / / \
         --tmpfs /home \
+        --tmpfs /media \
+        --tmpfs /mnt \
         --tmpfs /tmp \
         --dev dev \
         --ro-bind-try "$MYDIR" "$MYDIR" \

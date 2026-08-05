@@ -35,7 +35,7 @@ class Options:
         """
         return self._gimp
 
-    def _reset(self) -> None:
+    def _fix(self, reset: bool = False) -> None:
         config_path = Path(Path.home(), '.config', 'GIMP')
         task = Batch(self._gimp.get_cmdline() + ['--version'])
         task.run(pattern='^GNU Image Manipulation Program version ')
@@ -43,15 +43,18 @@ class Options:
         if config_path.is_dir():
             for path in [Path(config_path, x) for x in config_path.iterdir()]:
                 if path.is_dir():
-                    print(f'Removing "{path}"...')
-                    shutil.rmtree(path)
-                    path.mkdir()
-                    with Path(path, 'gimprc').open('w') as ofile:
-                        print(f'(config-version "{version}")', file=ofile)
-                        print('(theme-color-scheme light)', file=ofile)
-                        print('(theme-color-scheme light)', file=ofile)
-                        print('(override-theme-icon-size yes)', file=ofile)
-                        print('(show-welcome-dialog no)', file=ofile)
+                    if reset:
+                        print(f'Removing "{path}"...')
+                        shutil.rmtree(path)
+                        path.mkdir()
+                        with Path(path, 'gimprc').open('w') as ofile:
+                            print(f'(config-version "{version}")', file=ofile)
+                            print('(save-session-info yes)', file=ofile)
+                            print('(theme-color-scheme light)', file=ofile)
+                            print('(override-theme-icon-size yes)', file=ofile)
+                            print('(show-welcome-dialog no)', file=ofile)
+                    else:
+                        Path(path, 'devicerc').unlink(missing_ok=True)
 
     def parse(self, args: List[str]) -> None:
         """
@@ -65,11 +68,12 @@ class Options:
         self._gimp = Command('gimp', pathextra=pathextra, errors='stop')
         if len(args) > 1:
             if args[1] == '-reset':
-                self._reset()
+                self._fix(reset=True)
                 raise SystemExit(0)
             if args[1] in ('-v', '-V', '-version', '--version'):
                 self._gimp.set_args(['--version'])
                 Exec(self._gimp.get_cmdline()).run()
+        self._fix()
 
         self._gimp.set_args(['--no-splash'] + args[1:])
         self._pattern = (

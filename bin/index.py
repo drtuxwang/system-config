@@ -112,8 +112,7 @@ class Main:
             files = [x for x in files if not x.startswith('..')]
             if not directories + files:
                 path = Path(root).resolve()
-                if Path(path, '..fsum').is_file():
-                    Path(path, '..fsum').unlink()
+                Path(path, '..fsum').unlink(missing_ok=True)
                 print(f"Error: Found empty directory: {path}")
                 error = True
                 continue

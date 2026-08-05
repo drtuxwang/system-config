@@ -104,7 +104,9 @@ class Main:
     @classmethod
     def _search(cls, options: Options) -> str:
         user_agent = Config().get('web_agent')
-        curl = Command('curl', errors='stop')
+        curl = Command('curl-firefox', errors='ignore')
+        if not curl.is_found():
+            curl = Command('curl', errors='stop')
         curl.set_args(['-A', user_agent, options.get_url()])
         task = Batch(curl.get_cmdline())
         quiet = options.get_quiet_flag()

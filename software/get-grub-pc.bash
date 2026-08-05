@@ -29,7 +29,7 @@ app_settings() {
         mv usr/lib/x86_64-linux-gnu/libefiboot.so.1.* grub-pc/libefiboot.so.1
         mv usr/lib/x86_64-linux-gnu/libefivar.so.1.* grub-pc/libefivar.so.1
         mv grub.cfg-pc grub-pc/grub.cfg
-        mv README-grub-pc.md-deb12 grub-pc/README-grub-pc.md
+        mv README-grub-pc.md grub-pc/README-grub-pc.md
         touch -r grub-pc/grub-install grub-pc/grub.cfg
         export XZ_OPT='-9 -e --x86 --lzma2=dict=128MiB --threads=1'
         tar cfJ - grub-pc --owner=0:0 --group=0:0 >> install-grub-pc.bash

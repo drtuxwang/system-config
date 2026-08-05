@@ -169,8 +169,9 @@ the years.
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
- * software/get-edge.bash          Edge 148.0.3967.96 (Official) portable app
- * software/get-firefox.bash       Firefox 151.0.3 (Official) portable app
+ * software/get-curl-impersonate.bash  curl-impersonate 2.0.0 portable app
+ * software/get-edge.bash          Edge 150.0.4078.105 (Official) portable app
+ * software/get-firefox.bash       Firefox 153.0esr (Official) portable app
  * software/get-git.bash           GIT 2.51.2 (Official) source code
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app

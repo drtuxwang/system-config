@@ -2,7 +2,7 @@
 """
 Debian software repository handling module
 
-Copyright GPL v2: 2015-2025 By Dr Colin Kong
+Copyright GPL v2: 2015-2026 By Dr Colin Kong
 """
 
 import bz2
@@ -26,8 +26,8 @@ from file_mod import FileUtil
 from logging_mod import ColoredFormatter
 from subtask_mod import Task
 
-RELEASE = '2.1.0'
-VERSION = 20250731
+RELEASE = '2.1.1'
+VERSION = 20260731
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -104,10 +104,7 @@ class DebianDist:
 
     def _remove(self) -> None:
         for path in Path(self.tmpdir).glob('Packages*'):
-            try:
-                path.unlink()
-            except OSError:
-                pass
+            path.unlink(missing_ok=True)
 
     def _fetch_packages(self, url: str) -> bytes:
         """

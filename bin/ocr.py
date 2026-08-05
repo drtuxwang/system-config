@@ -135,10 +135,7 @@ class Main:
                         f'received from "{task.get_file()}".',
                     )
                 self._ocr(tmp_path, path.stem)
-                try:
-                    tmp_path.unlink()
-                except OSError:
-                    pass
+                tmp_path.unlink(missing_ok=True)
             elif ext in ('tif', 'tiff'):
                 print(f'Converting "{path}" to "{path.stem}.txt"...')
                 self._ocr(path, path.stem)

@@ -105,13 +105,6 @@ class Main:
                     f'{sys.argv[0]}: Cannot create "{path}" directory.',
                 ) from exception
 
-    @staticmethod
-    def _delete_file(path: Path) -> None:
-        try:
-            path.unlink()
-        except OSError:
-            pass
-
     @classmethod
     def _check_3dot_directory(cls, directory_path: Path) -> None:
         if directory_path.is_dir():
@@ -123,7 +116,7 @@ class Main:
                         continue
                     path = Path(directory_path, par_path)
                     logger.warning("Deleting old: %s", path)
-                    cls._delete_file(path)
+                    path.unlink(missing_ok=True)
             if not paths:
                 os.removedirs(directory_path)
 
@@ -157,10 +150,8 @@ class Main:
                 ):
                     par0_path = Path(directory_path, '....par2')
                     par1_path = Path(directory_path, '....vol0+1.par2')
-                    if par0_path.exists():
-                        par0_path.unlink()
-                    if par1_path.exists():
-                        par1_path.unlink()
+                    par0_path.unlink(missing_ok=True)
+                    par1_path.unlink(missing_ok=True)
                     size = path.stat().st_size // 400 * 4 + 4
                     task = Task(cmdline + [f'-s{size}', par0_path, path])
                     cls._create_3dot_directory(fpar_path)

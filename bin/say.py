@@ -186,10 +186,7 @@ class Main:
                 tts = gtts.gTTS(phrase)
                 tts.save(tmpfile)
                 Batch(player.get_cmdline()).run()
-        try:
-            Path(tmpfile).unlink()
-        except FileNotFoundError:
-            pass
+        Path(tmpfile).unlink(missing_ok=True)
 
         raise SystemExit(exitcode)
 

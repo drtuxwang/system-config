@@ -44,8 +44,7 @@ class Options:
         path = Path(configdir, 'history')
         if not path.is_dir():
             try:
-                if Path(path).is_file():
-                    path.unlink()
+                path.unlink(missing_ok=True)
                 path.mkdir()
             except OSError:
                 pass

@@ -29,7 +29,7 @@ windows_settings() {
             busybox-*.exe > busybox.exe
         mv sysinfo* uname vi* bin/
         mv init-ash etc/
-        sed -e 's/{{ version }}/$VERSION/' ${0%.*}/busybox.bat-bin > ../bin/busybox.bat
+        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/busybox.bat.template > ../bin/busybox.bat
         chmod 755 busybox.exe ../bin/busybox.bat
         touch -r busybox-*.exe busybox.exe busybox.bat bin/* etc/* ../bin/busybox.bat ../bin
         rm busybox-*.exe
@@ -59,7 +59,7 @@ windows_settings_32bit() {
             busybox-*.exe > busybox.exe
         mv sysinfo* uname vi* bin/
         mv init-ash etc/
-        sed -e 's/{{ version }}/$VERSION/' ${0%.*}/busybox.bat-bin > ../bin/busybox.bat
+        sed -e 's/{{ version }}/$VERSION/' ${0%/*}/files/busybox.bat.template > ../bin/busybox.bat
         chmod 755 busybox.exe ../bin/busybox.bat
         touch -r busybox-*.exe busybox.exe busybox.bat bin/* etc/* ../bin/busybox.bat ../bin
         rm busybox-*.exe

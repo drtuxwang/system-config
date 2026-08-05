@@ -2,7 +2,7 @@
 """
 Python main program loader module
 
-Copyright GPL v2: 2006-2024 By Dr Colin Kong
+Copyright GPL v2: 2006-2026 By Dr Colin Kong
 """
 
 import argparse
@@ -14,8 +14,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-if sys.version_info < (3, 7) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.7, < 4.0).")
+if sys.version_info < (3, 8) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.8, < 4.0).")
 if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 

@@ -1,5 +1,5 @@
 PYTHONDONTWRITEBYTECODE := 1
-PYTHONS_VERSIONS := 3.14 3.13 3.12 3.11 3.10 3.9 3.8 3.7 2.7
+PYTHONS_VERSIONS := 3.14 3.13 3.12 3.11 3.10 3.9 3.8 2.7
 BROWSER := firefox
 
 ifndef PYTHON
@@ -27,10 +27,6 @@ test-docker:          # Run tests in docker
 test-all: test        # Run tests for all versions
 	@for VERSION in $(PYTHONS_VERSIONS); do \
 		case $$VERSION in \
-		3.7) \
-			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
-			PYTHON=python$$VERSION make --no-print-directory check-python-test || exit 1; \
-			;; \
 		3.[8-9]|3.??) \
 			PYTHON=python$$VERSION make --no-print-directory check-python-pip || exit 1; \
 			PYTHON=python$$VERSION make --no-print-directory check-python-test || exit 1; \

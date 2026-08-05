@@ -161,8 +161,7 @@ class VideoDownloader:
         Download chunk from available URLs.
         """
         for url in urls:
-            if Path(f'{path}.part').is_file():
-                Path(f'{path}.part').unlink()
+            Path(f'{path}.part').unlink(missing_ok=True)
             self._wget.set_args(['-O', path, url])
             task = Task(self._wget.get_cmdline())
             task.run()
@@ -222,8 +221,7 @@ class VideoDownloader:
                     ) from exception
 
         mp4_path = Path(f'{self._m3u8_file}-full.mp4')
-        if mp4_path.is_file():
-            mp4_path.unlink()
+        mp4_path.unlink(missing_ok=True)
         ffmpeg = Command('ffmpeg', errors='stop')
         ffmpeg.set_args([
             '-i',

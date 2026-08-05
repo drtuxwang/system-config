@@ -61,10 +61,7 @@ class Options:
                     sort_keys=True,
                 ), file=ofile)
         except (KeyError, OSError, ValueError):
-            try:
-                path_new.unlink()
-            except OSError:
-                pass
+            path_new.unlink(missing_ok=True)
         else:
             try:
                 path_new.replace(path)
@@ -83,10 +80,7 @@ class Options:
             'Last*',
         ):
             for path in config_path.glob(fileglob):
-                try:
-                    path.unlink()
-                except OSError:
-                    pass
+                path.unlink(missing_ok=True)
         ispattern = re.compile(
             r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*'
         )
@@ -99,10 +93,7 @@ class Options:
                             if not ispattern.search(line):
                                 print(line, end='', file=ofile)
             except OSError:
-                try:
-                    path_new.unlink()
-                except OSError:
-                    continue
+                path_new.unlink(missing_ok=True)
             else:
                 try:
                     path_new.replace(path)

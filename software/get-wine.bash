@@ -35,6 +35,8 @@ app_start() {
     exec /usr/bin/bwrap \
         --ro-bind / / \
         --tmpfs /home \
+        --tmpfs /media \
+        --tmpfs /mnt \
         --tmpfs /tmp \
         --dev dev \
         --dev-bind-try /dev/dri /dev/dri \

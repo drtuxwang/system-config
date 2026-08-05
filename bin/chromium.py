@@ -61,10 +61,7 @@ class Options:
                     sort_keys=True,
                 ), file=ofile)
         except (KeyError, OSError, ValueError):
-            try:
-                path_new.unlink()
-            except OSError:
-                pass
+            path_new.unlink(missing_ok=True)
         else:
             try:
                 path_new.replace(path)

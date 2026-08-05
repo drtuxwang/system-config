@@ -13,8 +13,8 @@ from typing import List
 
 from task_mod import Tasks
 
-RELEASE = '3.2.0'
-VERSION = 20241021
+RELEASE = '3.2.1'
+VERSION = 20260731
 
 
 class Options:
@@ -157,10 +157,7 @@ class Main:
                     )
                 except ValueError:
                     pass
-                try:
-                    path.unlink()
-                except OSError:
-                    pass
+                path.unlink(missing_ok=True)
                 print(
                     f"MyQS jobid {jobid} killed and deleted: {info['COMMAND']}"
                 )
