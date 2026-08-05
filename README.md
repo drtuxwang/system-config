@@ -70,6 +70,7 @@ the years.
  * config/config                   Copy to "~/.ssh/config" for ssh client setup
  * config/config-opt               Copy to "~/.ssh/config-opt" for ssh client optional setup
  * config/daemon.json              Copy to "/etc/docker/" for Docker daemon setup
+ * config/wireplumber.confg        Copy to "/etc/docker/" for Pipewire setup
  * config/geeqie-animate.desktop   Copy to "~/.config/geeqie/applications" for Geeqie plugin
  * config/geeqie-edit.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
  * config/geeqie-play.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
