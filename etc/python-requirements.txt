@@ -3,7 +3,7 @@ astroid==4.0.4               #   (required by pylint)
 beautifulsoup4==4.14.3       # HTML/XML parser/emitter
 binaryornot==0.5.0           #   (required by cookiecutter)
 bson-senao==0.5.10           # BSON parser/emitter
-certifi==2026.6.17           #   (required by requests)
+certifi==2026.7.22           #   (required by requests)
 chardet==5.2.0               #   (required by binaryornot)
 charset-normalizer==3.3.2    #   (required by requests)
 click==7.1.2                 #   (required by cookiecutter/gtts/humpty)
@@ -14,13 +14,13 @@ dill==0.3.9                  #   (required by pylint)
 distlib==0.4.3               #   (required by virtualenv)
 dnspython==2.8.0             # DNS client
 EditorConfig==0.12.4         #   (required by jsbeautifier)
-filelock==3.25.2             #   (required by virtualenv)
+filelock==3.31.2             #   (required by virtualenv)
 filemagic==1.6               # Python API for libmagic
 gitdb==4.0.12                #   (required by GitPython)
-GitPython==3.1.58            # Library to interact with Git repositories
-Glances==4.5.5               # Cross-platform system monitoring tool
+GitPython==3.1.55            # Library to interact with Git repositories
+Glances==4.5.6               # Cross-platform system monitoring tool
 gTTS==2.5.4                  # Google Text-to-Speech
-idna==3.17                   #   (required by requests)
+idna==3.18                   #   (required by requests)
 isort==6.1.0                 #   (required by pylint)
 Jinja2==3.1.6                # Stand-alone template engine
 jsbeautifier==1.15.4         # JavaScript unobfuscator/beautifier
@@ -31,24 +31,24 @@ MarkupSafe==2.1.5            #   (required by Jinja2)
 mccabe==0.7.0                #   (required by pylint)
 mdurl==0.1.2                 #   (required by cookiecutter)
 ntplib==0.4.0                # NTP client
-packaging==26.2              #   (required by pipdeptree)
-pip==26.1.2                  # Python package manager
-pipdeptree==2.35.3           # Python package dependency tree
-platformdirs==4.10.0         #   (required by pylint/virtualenv)
+packaging==26.3              #   (required by pipdeptree)
+pip==26.2.1                  # Python package manager
+pipdeptree==3.1.1            # Python package dependency tree
+platformdirs==4.10.1         #   (required by pylint/virtualenv)
 psutil==7.1.3                #   (required by Glances)
 pycodestyle==2.14.0          # Python style guide checker
 pyflakes==3.4.0              # Python source file checker
 Pygments==2.20.0             #   (required by ipython)
-pyinstrument==5.1.2          #   (required by Glances)
+pyinstrument==5.1.3          #   (required by Glances)
 pylint==4.0.6                # Python code static checker
 python-dateutil==2.8.2       #   (required by bson-senao)
 python-slugify==6.1.2        #   (required by cookiecutter)
 PyYAML==6.0.3                # YAML parser/emitter
-pyzstd==0.18.0               # ZSTD compression/decompression
+pyzstd==0.19.1               # ZSTD compression/decompression
 requests==2.33.1             # Web client
 rich==14.3.4                 #   (required by cookiecutter)
 setuptools==83.0.0           # Python package manager
-shtab==1.8.0                 #   (required by Glances)
+shtab==1.8.2                 #   (required by Glances)
 six==1.17.0                  # Python 2 and 3 compatibility utilities
 smmap==5.0.3                 #   (required by gitdb)
 soupsieve==2.8.4             #   (required by beautifulsoup4)
@@ -59,4 +59,4 @@ urllib3==2.7.0               #   (required by requests)
 virtualenv==20.39.1          # Python Virtual Environments
 wheel==0.46.3                # Python wheel packaging
 xmltodict==1.0.4             # Convert XML to Python dict
-yt-dlp==2026.7.4             # Audio/video downloader
+yt-dlp==2026.6.9             # Audio/video downloader

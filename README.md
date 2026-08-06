@@ -140,7 +140,7 @@ the years.
  * etc/python-packages.bash        Install/check Python packages requirements
  * etc/python-requirements.txt     Default requirements file for Python
  * etc/python-requirements_*.txt   Additional requirements for Python versions
- * etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
+ * etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh init
  * etc/setbin.bat                  Windows Command prompt initialization
  * etc/setbin.ps1                  Windows Power shell initialization
  * kubernetes/Makefile
