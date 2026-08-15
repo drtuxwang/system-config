@@ -26,7 +26,7 @@ check_files () {
     do
         case $FILE in
         *://*)
-            wget --spider --quiet "$FILE" || echo "ERROR: $FILE"
+            timeout 5 wget --spider --quiet "$FILE" || echo "ERROR: $FILE"
             ;;
         */*)
             [ -f "$FILE" ] || echo "ERROR: $FILE"

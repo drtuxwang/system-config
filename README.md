@@ -70,6 +70,7 @@ the years.
  * config/config                   Copy to "~/.ssh/config" for ssh client setup
  * config/config-opt               Copy to "~/.ssh/config-opt" for ssh client optional setup
  * config/daemon.json              Copy to "/etc/docker/" for Docker daemon setup
+ * config/wireplumber.confg        Copy to "/etc/docker/" for Pipewire setup
  * config/geeqie-animate.desktop   Copy to "~/.config/geeqie/applications" for Geeqie plugin
  * config/geeqie-edit.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
  * config/geeqie-play.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
@@ -139,7 +140,7 @@ the years.
  * etc/python-packages.bash        Install/check Python packages requirements
  * etc/python-requirements.txt     Default requirements file for Python
  * etc/python-requirements_*.txt   Additional requirements for Python versions
- * etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
+ * etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh init
  * etc/setbin.bat                  Windows Command prompt initialization
  * etc/setbin.ps1                  Windows Power shell initialization
  * kubernetes/Makefile
@@ -169,7 +170,8 @@ the years.
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
- * software/get-curl-impersonate.bash  curl-impersonate 2.0.0 portable app
+ * software/get-curl-impersonate.bash  curl-impersonate 2.1.0 (Official) portable app
+ * software/get-dneo.bash          Deno 2.9.5 (Official) portable app
  * software/get-edge.bash          Edge 150.0.4078.105 (Official) portable app
  * software/get-firefox.bash       Firefox 153.0esr (Official) portable app
  * software/get-git.bash           GIT 2.51.2 (Official) source code
@@ -184,7 +186,7 @@ the years.
  * software/get-inkscape.bash      Inkscape 1.3.2 (Official) portable app
  * software/get-instant-client.bash Instant Client 23.26 (Official) library & portable app
  * software/get-isolinux.bash      ISOLIUX 4.05 (Debian 7) boot loader
- * software/get-k3s.bash           K3S 1.34.7 (Official) portable app
+ * software/get-k3s.bash           K3S 1.34.10 (Official) portable app
  * software/get-libreoffice.bash   LibreOffice 25.8.7.3 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.11 (Official) portable app
  * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code

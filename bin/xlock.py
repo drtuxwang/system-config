@@ -214,17 +214,15 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-        if 'VNCDESKTOP' in os.environ:
-            os.environ['DISPLAY'] = ':0'
-
     @staticmethod
     def run() -> int:
         """
         Start program
         """
         desktop = Desktop.detect()
-        locker = ScreenLocker.factory(desktop)
-        locker.run()
+        if 'VNCDESKTOP' not in os.environ:
+            locker = ScreenLocker.factory(desktop)
+            locker.run()
 
         return 0
 

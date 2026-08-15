@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 from typing import List
 
+from command_mod import Command
+from subtask_mod import Task
 from task_mod import Tasks
 
 
@@ -102,6 +104,11 @@ class Main:
             except KeyboardInterrupt:
                 sys.exit(114)
 
+        if 'VNCDESKTOP' not in os.environ:
+            systemctl = Command('systemctl', errors='stop')
+            if systemctl.is_found():
+                systemctl.set_args(['--user', 'stop', 'pipewire'])
+                Task(systemctl.get_cmdline()).run()
         Tasks.factory().killpids([self._pid])
 
         return 0

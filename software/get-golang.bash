@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Golang 1.25.11 (Official) portable app
+# Golang 1.25.13 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="golang"
-    VERSION="1.25.11"
+    VERSION="1.25.13"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"

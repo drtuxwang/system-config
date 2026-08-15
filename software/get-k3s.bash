@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# K3S 1.34.7 (Official) portable app
+# K3S 1.34.10 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="k3s"
-    VERSION="1.34.7+k3s1"
+    VERSION="1.34.10+k3s1"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_${VERSION//+k3s/-}-$PORT"

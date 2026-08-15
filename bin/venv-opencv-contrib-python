@@ -5,8 +5,8 @@
 
 virtualenv_setup() {
     VENV_PYTHON="python3"
-    VENV_PACKAGE="opencv-contrib-python==4.13.0.92"
-    VENV_DEPENDS="numpy==2.4.6 pybktree==1.1 pyzstd==0.18.0"
+    VENV_PACKAGE="opencv-contrib-python==4.14.0.94"
+    VENV_DEPENDS="numpy==2.4.6 pybktree==1.1 pyzstd==0.19.1"
 }
 
 
