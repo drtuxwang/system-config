@@ -61,16 +61,16 @@ while true
 do
     setxkbmap gb
     # Disable CapsLock, Win key as Ctrl (like Mac), Ctrl+Alt+BackSpace
-    setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp
+    setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win
     xmodmap -e "add mod3 = Scroll_Lock" &
     xset b off
     xset r rate 500 25
     numlockx off
     [ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ] && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
     sleep 1
-    [ "$(setxkbmap -query | grep ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp)" ] && break
+    [ "$(setxkbmap -query | grep ctrl:nocaps,altwin:ctrl_win)" ] && break
 done
-setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win,terminate:ctrl_alt_bksp  # double check
+setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win  # double check
 
 # Optional setup
 [ -f $HOME/.config/autorun-start-opt.bash ] && . $HOME/.config/autorun-start-opt.bash
