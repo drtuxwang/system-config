@@ -51,11 +51,12 @@ class Options:
             description="Streaming video downloader using yt-dlp."
         )
         parser.add_argument(
-            '-f',
+            '-s',
+            type=int,
             nargs=1,
-            dest='code',
-            default=None,
-            help='Select video format code (default "136+140/mp4" for 720p).',
+            dest='size',
+            default=0,
+            help='Select minimum height.',
         )
         parser.add_argument(
             '-v',
@@ -77,28 +78,6 @@ class Options:
         )
 
         self._args = parser.parse_args(args)
-
-    def _detect_code(self, url: str) -> str:
-        task = Batch(self._vget.get_cmdline() + ['--list-formats', url])
-        task.run(pattern=r'^[^ ]+ +mp4 +\d+x\d+ ')
-
-        codes = {}
-        for line in task.get_output():
-            if 'mp4' in line and 'dash' in line:
-                code, _, size = line.split()[:3]
-                codes[int(size.split('x')[1])] = code
-        if not codes:  # No dash workaround
-            for line in task.get_output():
-                if 'mp4' in line:
-                    code, _, size = line.split()[:3]
-                    codes[int(size.split('x')[1])] = code
-        for height in sorted(codes, reverse=True):
-            if height <= 720:
-                return codes[height] + '+bestaudio[ext=m4a]/mp4'
-        for height in sorted(codes):
-            return codes[height] + '+bestaudio[ext=m4a]/mp4'
-
-        raise SystemExit(f"{sys.argv[0]}: No video stream: {url}")
 
     def _detect_mtime(self, url: str) -> float:
         task = Batch(self._vget.get_cmdline() + ['--get-url', url])
@@ -134,21 +113,12 @@ class Options:
             url = url.split('&')[0]
         self._vget = Command('yt-dlp')
         self._vget.set_args(['--playlist-end', '1'])
-
         if self._args.view_flag:
             self._vget.extend_args(['--list-formats', url])
             return
-
-        if self._args.code:
-            code = self._args.code[0]
-        elif url.endswith('.m3u8'):  # Multi part streaming
-            code = '0'
-        else:
-            code = self._detect_code(url)
-        self._vget.extend_args(['--format', code])
-
+        if self._args.size:
+            self._vget.extend_args(['-S', f'+height:{self._args.size}'])
         self._mtime = self._detect_mtime(url)
-
         if self._args.output:
             self._output = self._args.output[0]
             if Path(self._output).is_file():
