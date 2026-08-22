@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# curl-impersonate 2.1.0 (Official) portable app
+# curl-impersonate 2.1.1 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="curl-impersonate"
-    VERSION="2.1.0"
+    VERSION="2.1.1"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"

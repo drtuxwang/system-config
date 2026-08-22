@@ -8,6 +8,7 @@
   include_tasks: user-setup.yaml
   tags:
   - user-home
+  - git
   - netnice
   - ssh
 

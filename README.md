@@ -70,7 +70,6 @@ the years.
  * config/config                   Copy to "~/.ssh/config" for ssh client setup
  * config/config-opt               Copy to "~/.ssh/config-opt" for ssh client optional setup
  * config/daemon.json              Copy to "/etc/docker/" for Docker daemon setup
- * config/wireplumber.confg        Copy to "/etc/docker/" for Pipewire setup
  * config/geeqie-animate.desktop   Copy to "~/.config/geeqie/applications" for Geeqie plugin
  * config/geeqie-edit.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
  * config/geeqie-play.desktop      Copy to "~/.config/geeqie/applications" for Geeqie plugin
@@ -80,30 +79,30 @@ the years.
  * config/geeqierc.xml-deb12       Copy to "~/.config/geeqie/" for Geeqie setup
  * config/gitconfig                Copy to "~/.gitconfig" and edit
  * config/iptables.conf            IPTABLES setup script
+ * config/keyboard                 Copy to "/etc/default/keyboard"
  * config/login                    Copy to "~.login" for csh/tcsh shells
  * config/mimeapps.list            Copy to "~/.local/share/applications" for MIME definitions
- * config/minttyrc                 Copy to "~/.minttyrc" for MSYS2 terminal
+ * config/NetworkManager.conf      Copy to "/etc/NetworkManager/NetworkManager.conf"
  * config/profile                  Copy to "~/.profile" for ksh/ash/bash setup
  * config/profile-opt              Copy to "~/.profile-opt" for optional ksh/ash/bash setup
  * config/rc.local                 Copy to "/etc/rc.local" for system startup commands
  * config/rc.local-opt             Copy to "/etc/rc.local-opt" for optional system startup commands
- * config/setup.bat                Windows busybox setup
- * config/setupwin.ash             Windows busybox setup
  * config/terminalrc-deb32         Copy to "~/.config/xfce4/terminal/terminalrc" for XFCE term
  * config/thunar.xml               Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
  * config/thunar.xml-deb12
  * config/tmux.conf                Copy to "~/.tmux.conf" fro TMUX terminal
+ * config/udisks2-unlock-luks.rules  Copy to "/etc/polkit-1/rules.d" to fix LUK partiton mounts
  * config/userapp-evince.desktop   Copy to "~/.local/share/applications" for Evince/Atril
  * config/userapp-gqview.desktop   Copy to "~/.local/share/applications" for GQview/Geeqie
  * config/userapp-soffice.desktop  Copy to "~/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop      Copy to "~/.local/share/applications" for VLC
  * config/vimrc                    Copy to "~/.vimrc" for VIM defaults
  * config/vlcrc                    Copy to "~/.config/vlc" for VLC setup
- * config/vm-linux0.vbox           VirtualBox Linux example
- * config/vm-win10.vbox            VirtualBox Windows example
+ * config/wireplumber.confg        Copy to "/etc/docker/" for Pipewire setup
  * config/xfce4-keyboard-shortcuts.xml  Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
  * config/xfce4-keyboard-shortcuts.xml-deb12  Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
  * config/xfce4-terminal.xml       Copy to "~/.config/xfce4/xfconf/xfce-perchannel-xml"
+ * config/xsessionrc               Copy to "~/.xsessionrc"
  * cloudformation/1pxy/            pxy CloudFormation example
  * cloudformation/multi-stacks/    multi-stacks CloudFormation example
  * cookiecutter/                   Cookie cutter example for Docker projects

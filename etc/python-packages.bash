@@ -16,43 +16,51 @@ exit_error() {
     exit 1
 }
 
+process_optiosn() {
+    MODE=install
+    while [ $# != 0 ]
+    do
+        case $1 in
+        -pip)
+            MODE="piponly"
+            ;;
+        -sys)
+            export PIP_BREAK_SYSTEM_PACKAGES=1  # Fix >= 3.11
+            ;;
+       -i)
+            MODE="install"
+            ;;
+       -c)
+            MODE="checkonly"
+            ;;
+        -u)
+            MODE="uninstall"
+            ;;
+        -*)
+            help
+            ;;
+        *)
+            break
+            ;;
+        esac
+        shift
+    done
+    PYTHON=${1-}
+    REQUIREMENT=${2-}
+    [[ ! /$PYTHON =~ /python[1-9]* ]] && help
 
-# Process options
-MODE=install
-while [ $# != 0 ]
-do
-    case $1 in
-    -pip)
-        MODE="piponly"
-        ;;
-    -sys)
-        export PIP_BREAK_SYSTEM_PACKAGES=1  # Fix >= 3.11
-        ;;
-    -i)
-        MODE="install"
-        ;;
-    -c)
-        MODE="checkonly"
-        ;;
-    -u)
-        MODE="uninstall"
-        ;;
-    -*)
-        help
-        ;;
-    *)
-        break
-        ;;
-    esac
-    shift
-done
-PYTHON=${1-}
-REQUIREMENT=${2-}
-[[ ! /$PYTHON =~ /python[1-9]* ]] && help
-
-export PYTHONPATH=
-export PATH="$(realpath "${0%/*}/../bin"):$PATH"
-
+    export PYTHONPATH=
+    export PATH="$(realpath "${0%/*}/../bin"):$PATH"
+    umask 022
+    MYUNAME=$(id -un)
+    MAJOR_VER=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
+    PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
+    PY_OWNER=$(stat --format=%U "$PY_EXE" 2> /dev/null)
+    PY_INC=$($PY_EXE-config --includes 2> /dev/null)  # "Python.h" etc
+    PIP_LIST="$PYTHON -m pip list"
+    PIP_INSTALL="$PYTHON -m pip install"
+    PIP_UNINSTALL="$PYTHON -m pip uninstall"
+}
 
 get_pip() {
     case $MAJOR_VER in
@@ -100,7 +108,6 @@ read_requirements() {
         done
     fi
 }
-
 
 check_packages() {
     ERROR=
@@ -156,7 +163,6 @@ check_packages() {
     [ "$ERROR" ] && echo -e "\033[31mERROR!\033[0m" && exit_error
 }
 
-
 install_packages() {
     MODE=${1:-}
     if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
@@ -205,16 +211,7 @@ install_packages() {
 }
 
 
-umask 022
-MYUNAME=$(id -un)
-
-MAJOR_VER=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
-PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
-PY_OWNER=$(stat --format=%U "$PY_EXE" 2> /dev/null)
-PY_INC=$($PY_EXE-config --includes 2> /dev/null)  # "Python.h" etc
-PIP_LIST="$PYTHON -m pip list"
-PIP_INSTALL="$PYTHON -m pip install"
-PIP_UNINSTALL="$PYTHON -m pip uninstall"
+process_optiosn "$@"
 [ "$MYUNAME" = root -a "$PY_OWNER" != root ] && exec sudo -iu $PY_OWNER $(realpath "$0") "$@"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || PIP_INSTALL="$PIP_INSTALL --user"
 

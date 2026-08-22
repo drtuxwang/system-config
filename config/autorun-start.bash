@@ -60,7 +60,7 @@ xset m 4,16
 while true
 do
     setxkbmap gb
-    # Disable CapsLock, Win key as Ctrl (like Mac), Ctrl+Alt+BackSpace
+    # Disable CapsLock, Win key as Ctrl (like Mac)
     setxkbmap -option -option ctrl:nocaps,altwin:ctrl_win
     xmodmap -e "add mod3 = Scroll_Lock" &
     xset b off

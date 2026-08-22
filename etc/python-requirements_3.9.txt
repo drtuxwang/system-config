@@ -23,5 +23,4 @@ tomli                        # ==2.0.1 (required by pylint for 3.9)
 tomli-w                      # ==None
 truststore                   # ==None
 urllib3                      # ==2.6.3 (old version)
-yt-dlp                       # ==None
 zipp                         # ==3.14.0 (required by importlib-metadata for 3.9)

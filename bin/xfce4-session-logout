@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+PYLD_MAIN="xlogout"
+source "${0%/*}/pyld_mod.bash"

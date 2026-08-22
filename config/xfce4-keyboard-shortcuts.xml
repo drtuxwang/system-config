@@ -70,6 +70,7 @@
       <property name="AudioRaiseVolume" type="string" value="/opt/software/bin/xvolume -inc"/>
       <property name="F8" type="string" value="/opt/software/bin/zhspeak -xclip"/>
       <property name="F9" type="string" value="/opt/software/bin/zhspeak -xclip -zhy"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;BackSpace" type="string" value="/opt/software/bin/xlogout"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">

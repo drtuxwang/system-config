@@ -38,4 +38,3 @@ typing-extensions            # ==4.13.2 (old version)
 urllib3                      # ==2.2.3 (old version)
 wheel                        # ==0.45.1 (old version)
 xmltodict                    # ==0.15.0 (old version)
-yt-dlp                       # ==None

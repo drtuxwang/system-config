@@ -58,3 +58,22 @@
   tags:
   - local-system
   - netnice
+
+- name: Check "{{ home_directory }}/.gitconfig" file status
+  stat:
+    path: '{{ home_directory }}/.gitconfig'
+  register: gitconfig
+  tags:
+  - user-home
+  - git
+
+- name: Copy file to "{{ home_directory }}/.gitconfig"
+  when: not gitconfig.stat.exists
+  copy:
+    src: '{{ config_directory }}/gitconfig'
+    dest: '{{ home_directory }}/.gitconfig'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  tags:
+  - user-home
+  - git

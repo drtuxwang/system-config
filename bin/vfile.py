@@ -101,7 +101,7 @@ class Main:
                         video_size = size.replace('x', ':')
                     elif ' Hz,' in line:
                         video_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
-            except IndexError:
+            except (IndexError, ValueError):
                 pass
         return f'{video_type} {video_time}s {video_size} {video_freq}Hz'
 

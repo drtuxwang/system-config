@@ -13,6 +13,7 @@
   - profile
   - bashrc
   - vimrc
+  - xsessionrc
   copy:
     src: '{{ config_directory }}/{{ item }}'
     dest: '{{ home_directory }}/.{{ item }}'

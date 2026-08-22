@@ -1,0 +1,6 @@
+# KEYBOARD CONFIGURATION FILE
+XKBMODEL="pc105"
+XKBLAYOUT="gb"
+XKBVARIANT=""
+XKBOPTIONS="ctrl:nocaps,altwin:ctrl_win"
+BACKSPACE="guess"

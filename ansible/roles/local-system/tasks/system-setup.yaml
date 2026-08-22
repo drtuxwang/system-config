@@ -59,6 +59,32 @@
   - local-system
   - polkit
 
+- name: Copy file to "/etc/default/keyboard"
+  copy:
+    src: '{{ config_directory }}/keyboard'
+    dest: /etc/default/keyboard
+  tags:
+  - local-system
+  - keyboard
+
+- name: Ensure "/etc/NetworkManager" directory exists
+  file:
+    path: /etc/NetworkManager
+    state: directory
+    mode: '0755'
+  tags:
+  - local-system
+  - network
+
+- name: Copy file to "/etc/NetworkManager/NetworkManager.conf"
+  when: docker_daemon
+  copy:
+    src: '{{ config_directory }}/NetworkManager.conf'
+    dest: '/etc/NetworkManager/NetworkManager.conf'
+  tags:
+  - local-system
+  - network
+
 - name: Ensure "/etc/wireplumber/wireplumber.conf.d" directory exists
   file:
     path: /etc/wireplumber/wireplumber.conf.d
@@ -75,6 +101,25 @@
   tags:
   - local-system
   - pipewire
+
+- name: Ensure "/etc/docker" directory exists
+  when: docker_daemon
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+  tags:
+  - local-system
+  - docker
+
+- name: Copy file to "/etc/docker/daemon.json"
+  when: docker_daemon
+  copy:
+    src: '{{ config_directory }}/daemon.json'
+    dest: '/etc/docker/daemon.json'
+  tags:
+  - local-system
+  - docker
 
 - name: Ensure "/opt/software/bin" directory exists
   file:
@@ -94,7 +139,6 @@
     delete: yes
     rsync_path: sudo rsync
     rsync_opts: --exclude=..fsum --chown=admin:users
-
   tags:
   - local-system
   - software-bin

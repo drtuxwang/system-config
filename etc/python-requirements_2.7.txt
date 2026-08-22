@@ -97,5 +97,4 @@ wheel                        # ==0.37.1 (old version)
 whichcraft                   # ==0.6.1 (required by cookiecutter for 2.7)
 wrapt                        # ==1.15.0 (old version)
 xmltodict                    # ==0.12.0 (old version)
-yt-dlp                       # ==None
 zipp                         # ==1.2.0 (required by importlib-metadata for 2.7)
