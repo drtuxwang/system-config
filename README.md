@@ -58,6 +58,8 @@ the years.
  * compile/COMPILE-xz-utils.bash   Compile script for XZ archiver
  * compile/COMPILE-zip.bash        Compile script for Zip archiver
  * compile/COMPILE-zstd.bash       Compile script for Zstd archiver
+ * config/NetworkManagerRecon.bash Copy to "/etc/NetworkManager/" to fix IPv6 prefix change
+ * config/NetworkManagerRecon.service  Copy to "/usr/lib/systemd/system/"
  * config/Xresources               Copy to "~/.Xresources" to set xterm resources
  * config/accels                   Copy to "~/.config/geeqie/" for keyboard shortcuts
  * config/accels-deb12
@@ -171,7 +173,7 @@ the years.
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
  * software/get-curl-impersonate.bash  curl-impersonate 2.1.0 (Official) portable app
  * software/get-dneo.bash          Deno 2.9.5 (Official) portable app
- * software/get-edge.bash          Edge 150.0.4078.105 (Official) portable app
+ * software/get-edge.bash          Edge 151.0.4129.107 (Official) portable app
  * software/get-firefox.bash       Firefox 153.0esr (Official) portable app
  * software/get-git.bash           GIT 2.51.2 (Official) source code
  * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app

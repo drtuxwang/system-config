@@ -75,6 +75,7 @@ pyproject-hooks              # ==None
 pytz                         # ==2023.3 (required by legacy code for 2.7)
 PyYAML                       # ==5.4.1 (old version)
 pyzstd                       # ==None
+readchar                     # ==None
 requests                     # ==2.27.1 (old version)
 rich                         # ==None
 scandir                      # ==1.10.0 (required by pathlib2 for 2.7)

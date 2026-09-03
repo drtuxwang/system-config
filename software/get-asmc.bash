@@ -8,12 +8,12 @@ set -e
 
 app_settings() {
     NAME="asmc"
-    VERSION="2.37.67"
+    VERSION="2.37.99"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
-        https://github.com/nidud/asmc/raw/28f72c9f68cea24632a7338839141b2eefdb4aa7/bin/asmc64
+        https://github.com/nidud/asmc/raw/42f867abe9473493228e294ff31e1fb62b28d46e/bin/asmc64
     "
     APP_SHELL="
         chmod 755 asmc64

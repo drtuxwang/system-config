@@ -71,5 +71,15 @@ function SetPython()
     match OverLength /\%80v.\+/
 endfunction
 
+" GNUPG
+augroup gpg
+  autocmd!
+  autocmd BufReadPre,FileReadPre *.gpg set viminfo=
+  autocmd BufReadPre,FileReadPre *.gpg set bin nobackup noswapfile noundofile
+  autocmd BufReadPost *.gpg :%!gpg --decrypt 2> /dev/null
+  autocmd BufReadPost *.gpg redraw!
+  autocmd BufWriteCmd,FileWriteCmd *.gpg execute 'write !gpg --default-recipient-self --encrypt --yes -o %'
+augroup END
+
 " Replace &nbsp; with proper space
 autocmd BufWritePre * %s/\%u00a0/\ /ge

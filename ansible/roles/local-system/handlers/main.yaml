@@ -1,0 +1,13 @@
+- name: Reload NetworkManagerRecon
+  systemd:
+    name: NetworkManagerRecon
+    state: reloaded
+    daemon_reload: yes
+  become: yes
+
+- name: Restart NetworkManagerRecon
+  service:
+    name: NetworkManagerRecon
+    state: restarted
+    enabled: no
+  become: yes

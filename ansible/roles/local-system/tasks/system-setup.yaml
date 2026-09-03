@@ -77,13 +77,35 @@
   - network
 
 - name: Copy file to "/etc/NetworkManager/NetworkManager.conf"
-  when: docker_daemon
   copy:
     src: '{{ config_directory }}/NetworkManager.conf'
     dest: '/etc/NetworkManager/NetworkManager.conf'
   tags:
   - local-system
   - network
+
+- name: Copy file to "/usr/lib/systemd/system/NetworkManagerRecon.service"
+  copy:
+    src: '{{ config_directory }}/NetworkManagerRecon.service'
+    dest: '/usr/lib/systemd/system/NetworkManagerRecon.service'
+  tags:
+  - local-system
+  - network
+  - systemd
+  notify:
+  - Reload NetworkManagerRecon
+  - Restart NetworkManagerRecon
+
+- name: Copy file to "/etc/NetworkManager/NetworkManagerRecon.bash"
+  copy:
+    src: '{{ config_directory }}/NetworkManagerRecon.bash'
+    dest: '/etc/NetworkManager/NetworkManagerRecon.bash'
+    mode: '0755'
+  tags:
+  - local-system
+  - network
+  - systemd
+  notify: Restart NetworkManagerRecon
 
 - name: Ensure "/etc/wireplumber/wireplumber.conf.d" directory exists
   file:

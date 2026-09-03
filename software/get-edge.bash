@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Edge 150.0.4078.105 (Official) portable app
+# Edge 151.0.4129.107 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="edge"
-    VERSION="150.0.4078.105-1"
+    VERSION="151.0.4129.107-1"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_${VERSION%-*}-$PORT"
@@ -18,14 +18,15 @@ app_settings() {
     "
     APP_SHELL="
         mv opt/microsoft/msedge/* .
-        rm -r opt/
         find locales -type f -not -name en-* -exec rm -v {} +
     "
     APP_REMOVE="
         _gpgorigin
-        etc/
+        apparmor.d
         cron/
+        etc/
         MEIPreload/
+        opt
         WidevineCdm/
         usr/
     "

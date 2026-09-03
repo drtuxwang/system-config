@@ -1,0 +1,10 @@
+[Unit]
+Description=NetworkManagerReset
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/etc/NetworkManager/NetworkManagerRecon.bash
+Restart=always

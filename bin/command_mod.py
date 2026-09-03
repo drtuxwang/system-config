@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.8.0'
-VERSION = 20260809
+RELEASE = '2.8.1'
+VERSION = 20260827
 
 
 class Command:
@@ -188,7 +188,7 @@ class Command:
             not pathextra and
             Path(sys.argv[0]).name in (program, f'{program}.py')
         ):
-            mydir = str(Path(sys.argv[0]).parent)
+            mydir = str(Path(sys.argv[0]).resolve().parent)
             if mydir in directories:
                 directories = directories[directories.index(mydir) + 1:]
 
