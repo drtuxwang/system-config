@@ -5,7 +5,7 @@
 
 qemu_settings() {
     MACHINE_VCPUS=2
-    MACHINE_RAM=2048
+    MACHINE_RAM=4096
     CONNECT_SSHPORT=2291
 }
 
