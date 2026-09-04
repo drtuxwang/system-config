@@ -23,9 +23,6 @@ Host debian10.vm
 Host debian11.vm
   Hostname localhost
   Port 2211
-Host debian11-32.vm
-  Hostname localhost
-  Port 2291
 Host debian12.vm
   Hostname localhost
   Port 2212
