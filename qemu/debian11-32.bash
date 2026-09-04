@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Debian 10 x86 VM
+# Debian 11 x86 32bit VM
 #
 
 qemu_settings() {
