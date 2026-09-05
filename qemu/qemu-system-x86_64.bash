@@ -21,6 +21,7 @@ defaults_settings() {
     MACHINE_NAME=${FILE%.*}
     MACHINE_ACCEL=yes
     MACHINE_TYPE=q35
+    MACHINE_64BIT=on
     MACHINE_VCPUS=2
     MACHINE_RAM=4096
     MACHINE_BIOS=
@@ -43,6 +44,7 @@ show_settings() {
     echo "Debug: MACHINE_NAME=$MACHINE_NAME"
     echo "Debug: MACHINE_ACCEL=$MACHINE_ACCEL"
     echo "Debug: MACHINE_TYPE=$MACHINE_TYPE"
+    echo "Debug: MACHINE_64BIT=$MACHINE_64BIT"
     echo "Debug: MACHINE_VCPUS=$MACHINE_VCPUS"
     echo "Debug: MACHINE_RAM=$MACHINE_RAM"
     echo "Debug: MACHINE_BIOS=$MACHINE_BIOS"
@@ -142,17 +144,17 @@ add_args() {
 
 setup_machine() {
     add_args "-name $MACHINE_NAME"
-    CPU="qemu64 -smp $MACHINE_VCPUS"
+    CPU="qemu64,lm=$MACHINE_64BIT -smp $MACHINE_VCPUS"
     if [ "$MACHINE_ACCEL" = yes ]
     then
         case $(uname -a) in
         Darwin*x86_64*)
             MACHINE_TYPE="$MACHINE_TYPE -accel hvf"
-            CPU="host,-pdpe1gb -smp $MACHINE_VCPUS"
+            CPU="host,lm=$MACHINE_64BIT,-pdpe1gb -smp $MACHINE_VCPUS"
             ;;
         Linux*x86_64*)
             MACHINE_TYPE="$MACHINE_TYPE -accel kvm"
-            CPU="host -smp $MACHINE_VCPUS"
+            CPU="host,lm=$MACHINE_64BIT -smp $MACHINE_VCPUS"
             ;;
         esac
     fi
