@@ -4,6 +4,7 @@
 #
 
 qemu_settings() {
+    MACHINE_64BIT=off
     MACHINE_TYPE=pc
     MACHINE_VCPUS=2
     MACHINE_RAM=4096

@@ -111,15 +111,12 @@ the years.
  * dist/*.dist                     Debian repository dist files
  * docker/Makefile
  * docker/bin/
- * docker/almalinux-10/            almalinux:10 based Docker images
  * docker/almalinux-9/             almalinux:9 based Docker images
- * docker/almalinux-8/             almalinux:8 based Docker images
+ * docker/almalinux-10/            almalinux:10 based Docker images
  * docker/alpine-3.23/             alpine:3.23 based Docker images
  * docker/alpine-3.22/             alpine:3.22 based Docker images
  * docker/busybox-1.37/            busybox:1.37 based Docker images
  * docker/centos-7/                centos:7 based Docker images
- * docker/debian-10/               debian:10-slim based Docker images
- * docker/debian-11/               debian:11-slim based Docker images
  * docker/debian-12/               debian:12-slim based Docker images
  * docker/debian-13/               debian:13-slim based Docker images
  * docker/golang-1.25/             golang:1.25-alpine based GO compiler app
@@ -138,6 +135,7 @@ the years.
  * docker/ubuntu-20.04/            ubuntu:20.04 based Docker images
  * docker/ubuntu-22.04/            ubuntu:22.04 based Docker images
  * docker/ubuntu-24.04/            ubuntu:24.04 based Docker images
+ * docker/ubuntu-26.04/            ubuntu:26.04 based Docker images
  * etc/python-packages.bash        Install/check Python packages requirements
  * etc/python-requirements.txt     Default requirements file for Python
  * etc/python-requirements_*.txt   Additional requirements for Python versions
@@ -176,7 +174,7 @@ the years.
  * software/get-edge.bash          Edge 151.0.4129.107 (Official) portable app
  * software/get-firefox.bash       Firefox 153.0esr (Official) portable app
  * software/get-git.bash           GIT 2.51.2 (Official) source code
- * software/get-git-lfs.bash       Git LFS 3.6.1 (Official) portable app
+ * software/get-git-lfs.bash       Git LFS 3.7.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
  * software/get-golang.bash        Golang 1.25.11 (Official) portable app
  * software/get-grub-efi.bash      GRUB EFI 2.12 (Debian 13) boot loader

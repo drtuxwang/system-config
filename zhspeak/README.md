@@ -1,6 +1,6 @@
-# Zhong Hua Speak 6.2.0
+# Zhong Hua Speak 6.3.0
 
-## 2009-2023 By Dr Colin Kong (https://github.com/drtuxwang/system-config)
+## 2009-2024 By Dr Colin Kong (https://github.com/drtuxwang/system-config)
 
 # Introduction
 
@@ -37,8 +37,12 @@ The supported audio players are:
 
 # Changes
 
+## Since 6.3.0 (2024-10-21)
+* 80) Add "--version" to display software version.
+* 79) Update Python modules.
+
 ## Since 6.2.0 (2023-09-23)
-* 78) Update Python start wrapper scripts.
+* 78) Update Python star twrapper scripts.
 * 77) Updated Putonghua dictionary (Ekho 9.0).
 
 ## Since 6.1.2 (2023-01-24)

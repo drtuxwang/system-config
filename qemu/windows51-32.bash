@@ -4,10 +4,11 @@
 #
 
 qemu_settings() {
+    MACHINE_64BIT=off
     MACHINE_TYPE=pc
     DRIVE_INTERFACE=ide
     MACHINE_VCPUS=2
-    MACHINE_RAM=2048
+    MACHINE_RAM=4096
 }
 
 

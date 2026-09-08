@@ -8,23 +8,16 @@ BUILD_DIRS := \
 	debian-13 \
 	i386-debian-13 \
 	debian-12 \
-	debian-11 \
-	debian-10 \
 	\
 	almalinux-10 \
 	almalinux-9 \
-	almalinux-8 \
 	centos-7 \
 	oraclelinux-10 \
 	oraclelinux-9 \
-	oraclelinux-8 \
 	rockylinux-10 \
 	rockylinux-9 \
-	rockylinux-8 \
 	ubuntu-26.04 \
 	ubuntu-24.04 \
-	ubuntu-22.04 \
-	ubuntu-20.04 \
 	\
 	busybox-1.37 \
 	golang-1.25 \
