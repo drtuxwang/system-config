@@ -302,9 +302,15 @@ class Options:
     @classmethod
     def fix_storage(cls) -> None:
         """
-        Redirect large extensipn storgae to TMPDIR
+        Redirect large extension storage to TMPDIR
         """
         firefox_path = Path(Path.home(), cls._get_profiles_dir())
+        if Path(firefox_path, 'profile').is_dir():
+            for path in firefox_path.glob('firefox-*'):
+                try:
+                    shutil.rmtree(path)
+                except OSError:
+                    pass
         if firefox_path.is_dir():
             for path in firefox_path.glob('*/storage/default/moz-extension*'):
                 if path.is_symlink():
