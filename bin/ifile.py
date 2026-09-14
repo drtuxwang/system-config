@@ -76,15 +76,21 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
+    @staticmethod
+    def _get_info(file: str) -> str:
+        info = magic.from_file(file, mime=True)
+        if info.startswith('image/'):
+            x, y = imagesize.get(file)
+            info = f'{info}  {x}:{y}'
+        return info
+
     @classmethod
     def _show(cls, files: List[str]) -> None:
         files = [x for x in files if Path(x).suffix in cls._image_extensions]
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                mime = magic.from_file(file, mime=True)
-                x, y = imagesize.get(file)
-                print(f"{Message(file).get(width)}  {mime} {x}:{y}")
+                print(f"{Message(file).get(width)}  {cls._get_info(file)}")
 
     @classmethod
     def run(cls) -> int:

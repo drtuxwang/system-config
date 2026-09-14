@@ -5,14 +5,18 @@ Determine file information
 
 import argparse
 import os
+import re
 import signal
 import sys
 from pathlib import Path
 from typing import List
 
+import imagesize  # type: ignore
 import magic  # type: ignore
 
+from command_mod import Command
 from logging_mod import Message
+from subtask_mod import Batch
 
 
 class Options:
@@ -32,7 +36,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Determine image file information."
+            description="Determine file information."
         )
 
         parser.add_argument(
@@ -55,6 +59,8 @@ class Main:
     """
     Main class
     """
+    _ffprobe = Command('ffprobe', errors='stop')
+
     def __init__(self) -> None:
         try:
             self.config()
@@ -73,13 +79,49 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
+    def _get_info(cls, file: str) -> str:
+        info = magic.from_file(file, mime=True)
+        if info.startswith('image/'):
+            x, y = imagesize.get(file)
+            info = f'{info}  {x}:{y}'
+        if info.startswith(('audio/', 'video/')):
+            task = Batch(cls._ffprobe.get_cmdline() + [file])
+            task.run(error2output=True)
+            time = 0
+            size = ''
+            freq = ''
+            for line in task.get_output():
+                try:
+                    if line.strip().startswith('Duration:'):
+                        hrs, mins, secs = (
+                            line.replace(',', '').split()[1].split(':')
+                        )
+                        time = int(int(hrs)*3600+int(mins)*60+float(secs))
+                    elif line.strip().startswith('Stream #'):
+                        if ' fps,' in line:
+                            size = re.findall(
+                                r'\d\d+x\d\d+',
+                                line,
+                            )[0].replace('x', ':')
+                        elif ' Hz,' in line:
+                            freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
+                except (IndexError, ValueError):
+                    pass
+            if time:
+                info = f'{info}  {time}s'
+            if size:
+                info = f'{info}  {size}'
+            if freq:
+                info = f'{info}  {freq}Hz'
+        return info
+
+    @classmethod
     def _show(cls, files: List[str]) -> None:
         files = [x for x in files if Path(x).is_file()]
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                mime = magic.from_file(file, mime=True)
-                print(f"{Message(file).get(width)}  {mime}")
+                print(f"{Message(file).get(width)}  {cls._get_info(file)}")
 
     @classmethod
     def run(cls) -> int:

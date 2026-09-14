@@ -80,28 +80,38 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_media_info(cls, file: str) -> str:
-        task = Batch(cls._ffprobe.get_cmdline() + [file])
-        task.run(error2output=True)
-        video_time = 0
-        video_size = '?:?'
-        video_freq = '?Hz'
-        for line in task.get_output():
-            try:
-                if line.strip().startswith('Duration:'):
-                    hrs, mins, secs = (
-                        line.replace(',', '').split()[1].split(':')
-                    )
-                    video_time = int(int(hrs)*3600+int(mins)*60+float(secs))
-                elif line.strip().startswith('Stream #'):
-                    if ' fps,' in line:
-                        size = re.findall(r'\d\d+x\d\d+', line)[0]
-                        video_size = size.replace('x', ':')
-                    elif ' Hz,' in line:
-                        video_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
-            except (IndexError, ValueError):
-                pass
-        return f'{video_time}s {video_size} {video_freq}Hz'
+    def _get_info(cls, file: str) -> str:
+        info = magic.from_file(file, mime=True)
+        if info.startswith('video/'):
+            task = Batch(cls._ffprobe.get_cmdline() + [file])
+            task.run(error2output=True)
+            time = 0
+            size = ''
+            freq = ''
+            for line in task.get_output():
+                try:
+                    if line.strip().startswith('Duration:'):
+                        hrs, mins, secs = (
+                            line.replace(',', '').split()[1].split(':')
+                        )
+                        time = int(int(hrs)*3600+int(mins)*60+float(secs))
+                    elif line.strip().startswith('Stream #'):
+                        if ' fps,' in line:
+                            size = re.findall(
+                                r'\d\d+x\d\d+',
+                                line,
+                            )[0].replace('x', ':')
+                        elif ' Hz,' in line:
+                            freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
+                except (IndexError, ValueError):
+                    pass
+            if time:
+                info = f'{info}  {time}s'
+            if size:
+                info = f'{info}  {size}'
+            if freq:
+                info = f'{info}  {freq}Hz'
+        return info
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
@@ -109,11 +119,7 @@ class Main:
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                mime = magic.from_file(file, mime=True)
-                print(
-                    f"{Message(file).get(width)}  "
-                    f"{mime} {cls._get_media_info(file)}"
-                )
+                print(f"{Message(file).get(width)}  {cls._get_info(file)}")
 
     @classmethod
     def run(cls) -> int:
