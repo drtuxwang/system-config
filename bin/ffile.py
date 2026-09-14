@@ -7,6 +7,7 @@ import argparse
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import magic  # type: ignore
@@ -73,6 +74,7 @@ class Main:
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
+        files = [x for x in files if Path(x).is_file()]
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
