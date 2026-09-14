@@ -5,6 +5,7 @@ dnspython                    # ==2.7.0 (old version)
 filelock                     # ==3.19.1 (old version)
 Glances                      # ==4.4.1 (old version)
 importlib-metadata           # ==7.2.1 (required by isort for 3.9)
+imagesize                    # ==1.5.0 (old version)
 installer                    # ==None
 nab-index                    # ==None
 nab-python                   # ==None

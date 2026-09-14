@@ -33,6 +33,7 @@ GitPython                    # ==2.1.15 (old version)
 Glances                      # ==None
 gTTS                         # ==None
 idna                         # ==2.10 (old version)
+imagesize                    # ==1.5.0 (old version)
 importlib-metadata           # ==2.1.1 (required by virtualenv for 2.7)
 importlib-resources          # ==3.3.1 (required by virtualenv for 2.7)
 installer                    # ==None
