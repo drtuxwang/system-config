@@ -5,7 +5,6 @@ Determine audio file information
 
 import argparse
 import os
-import re
 import signal
 import sys
 from pathlib import Path
@@ -60,7 +59,6 @@ class Main:
     Main class
     """
     _ffprobe = Command('ffprobe', errors='stop')
-    _isjunk = re.compile(r'(ISO|Ogg|RIFF)[^,]*, |.*contains: |[ ,].*')
     _audio_extensions = (
         Config().get('audio_extensions') + Config().get('video_extensions')
     )

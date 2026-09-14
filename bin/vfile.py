@@ -60,7 +60,6 @@ class Main:
     Main class
     """
     _ffprobe = Command('ffprobe', errors='stop')
-    _isjunk = re.compile(r'ISO Media, | .*')
     _video_extensions = Config().get('video_extensions')
 
     def __init__(self) -> None:

@@ -5,7 +5,6 @@ Determine image file information
 
 import argparse
 import os
-import re
 import signal
 import sys
 from pathlib import Path
@@ -59,8 +58,6 @@ class Main:
     Main class
     """
     _image_extensions = Config().get('image_extensions')
-    _isjunk = re.compile(r'\+\d+')
-    _issize = re.compile(r', \d+ ?x ?\d+')
 
     def __init__(self) -> None:
         try:

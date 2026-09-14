@@ -5,15 +5,12 @@ Determine file information
 
 import argparse
 import os
-import re
 import signal
 import sys
-from pathlib import Path
 from typing import List
 
 import magic  # type: ignore
 
-from config_mod import Config
 from logging_mod import Message
 
 
@@ -57,10 +54,6 @@ class Main:
     """
     Main class
     """
-    _image_extensions = Config().get('image_extensions')
-    _isjunk = re.compile(r'\+\d+')
-    _issize = re.compile(r', \d+ ?x ?\d+')
-
     def __init__(self) -> None:
         try:
             self.config()
@@ -80,7 +73,6 @@ class Main:
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
-        files = [x for x in files if Path(x).suffix in cls._image_extensions]
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
