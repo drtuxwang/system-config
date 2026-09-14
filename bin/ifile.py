@@ -13,7 +13,6 @@ from typing import List
 import imagesize  # type: ignore
 import magic  # type: ignore
 
-from config_mod import Config
 from logging_mod import Message
 
 
@@ -57,8 +56,6 @@ class Main:
     """
     Main class
     """
-    _image_extensions = Config().get('image_extensions')
-
     def __init__(self) -> None:
         try:
             self.config()
@@ -76,21 +73,17 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    @staticmethod
-    def _get_info(file: str) -> str:
-        info = magic.from_file(file, mime=True)
-        if info.startswith('image/'):
-            x, y = imagesize.get(file)
-            info = f'{info}  {x}:{y}'
-        return info
-
     @classmethod
     def _show(cls, files: List[str]) -> None:
-        files = [x for x in files if Path(x).suffix in cls._image_extensions]
+        files = [x for x in files if Path(x).is_file()]
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                print(f"{Message(file).get(width)}  {cls._get_info(file)}")
+                info = magic.from_file(file, mime=True)
+                if info.startswith('image/'):
+                    x, y = imagesize.get(file)
+                    info = f'{info}  {x}:{y}'
+                    print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:

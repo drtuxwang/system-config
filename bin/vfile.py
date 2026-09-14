@@ -14,7 +14,6 @@ from typing import List
 import magic  # type: ignore
 
 from command_mod import Command
-from config_mod import Config
 from logging_mod import Message
 from subtask_mod import Batch
 
@@ -60,7 +59,6 @@ class Main:
     Main class
     """
     _ffprobe = Command('ffprobe', errors='stop')
-    _video_extensions = Config().get('video_extensions')
 
     def __init__(self) -> None:
         try:
@@ -80,46 +78,48 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_info(cls, file: str) -> str:
-        info = magic.from_file(file, mime=True)
-        if info.startswith('video/'):
-            task = Batch(cls._ffprobe.get_cmdline() + [file])
-            task.run(error2output=True)
-            time = 0
-            size = ''
-            freq = ''
-            for line in task.get_output():
-                try:
-                    if line.strip().startswith('Duration:'):
-                        hrs, mins, secs = (
-                            line.replace(',', '').split()[1].split(':')
-                        )
-                        time = int(int(hrs)*3600+int(mins)*60+float(secs))
-                    elif line.strip().startswith('Stream #'):
-                        if ' fps,' in line:
-                            size = re.findall(
-                                r'\d\d+x\d\d+',
-                                line,
-                            )[0].replace('x', ':')
-                        elif ' Hz,' in line:
-                            freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
-                except (IndexError, ValueError):
-                    pass
-            if time:
-                info = f'{info}  {time}s'
-            if size:
-                info = f'{info}  {size}'
-            if freq:
-                info = f'{info}  {freq}Hz'
+    def _get_ffprobe(cls, file: str) -> str:
+        task = Batch(cls._ffprobe.get_cmdline() + [file])
+        task.run(error2output=True)
+        info = ''
+        time = -1
+        size = ''
+        freq = ''
+        for line in task.get_output():
+            try:
+                if line.strip().startswith('Duration:'):
+                    hrs, mins, secs = (
+                        line.replace(',', '').split()[1].split(':')
+                    )
+                    time = int(int(hrs)*3600+int(mins)*60+float(secs))
+                elif line.strip().startswith('Stream #'):
+                    if ' fps,' in line:
+                        size = re.findall(
+                            r'\d\d+x\d\d+',
+                            line,
+                        )[0].replace('x', ':')
+                    elif ' Hz,' in line:
+                        freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
+            except (IndexError, ValueError):
+                pass
+        if time >= 0:
+            info = f'{info}  {time}s'
+        if size:
+            info = f'{info}  {size}'
+        if freq:
+            info = f'{info}  {freq}Hz'
         return info
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
-        files = [x for x in files if Path(x).suffix in cls._video_extensions]
+        files = [x for x in files if Path(x).is_file()]
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                print(f"{Message(file).get(width)}  {cls._get_info(file)}")
+                info = magic.from_file(file, mime=True)
+                if info.startswith('video/'):
+                    info = f'{info}{cls._get_ffprobe(file)}'
+                    print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:
