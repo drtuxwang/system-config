@@ -247,7 +247,6 @@ parameters:
   - .ogg
   - .wav
   image_extensions:
-  - .avif
   - .bmp
   - .gif
   - .heic
