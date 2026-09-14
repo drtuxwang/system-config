@@ -99,7 +99,8 @@ class Main:
             info = f'{info}  {time}s'
         if freq:
             info = f'{info}  {freq}Hz'
-        return info
+            return info
+        return ''
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
@@ -110,7 +111,8 @@ class Main:
                 info = magic.from_file(file, mime=True)
                 if info.startswith(('audio/', 'video/')):
                     info = f'{info}{cls._get_ffprobe(file)}'
-                    print(f"{Message(file).get(width)}  {info}")
+                    if '  ' in info:
+                        print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:
