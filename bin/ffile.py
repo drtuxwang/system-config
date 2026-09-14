@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-import magic
+import magic  # type: ignore
 
 from config_mod import Config
 from logging_mod import Message

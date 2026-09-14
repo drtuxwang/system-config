@@ -81,10 +81,9 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_media_info(cls, file: str, info: str) -> str:
+    def _get_media_info(cls, file: str) -> str:
         task = Batch(cls._ffprobe.get_cmdline() + [file])
         task.run(error2output=True)
-        video_type = cls._isjunk.sub('', info)
         video_time = 0
         video_size = '?:?'
         video_freq = '?Hz'
@@ -103,20 +102,19 @@ class Main:
                         video_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
             except (IndexError, ValueError):
                 pass
-        return f'{video_type} {video_time}s {video_size} {video_freq}Hz'
+        return f'{video_time}s {video_size} {video_freq}Hz'
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
         files = [x for x in files if Path(x).suffix in cls._video_extensions]
         if files:
             width = max(Message(x).width() for x in files)
-            with magic.Magic() as checker:
-                for file in files:
-                    info = checker.id_filename(file)
-                    print(
-                        f"{Message(file).get(width)}  "
-                        f"{cls._get_media_info(file, info)}"
-                    )
+            for file in files:
+                mime = magic.from_file(file, mime=True)
+                print(
+                    f"{Message(file).get(width)}  "
+                    f"{mime} {cls._get_media_info(file)}"
+                )
 
     @classmethod
     def run(cls) -> int:

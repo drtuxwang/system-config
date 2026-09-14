@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
+import imagesize  # type: ignore
 import magic  # type: ignore
 
 from config_mod import Config
@@ -79,29 +80,14 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_media_info(cls, info: str) -> str:
-        image_type = info.split(' ', 1)[0]
-        try:
-            size = cls._issize.search(
-                cls._isjunk.sub('', info)
-            ).group().split(', ')[1]
-            image_size = size.replace(' x ', 'x').replace('x', ':')
-        except AttributeError:
-            image_size = '?:?'
-        return f'{image_type} {image_size}'
-
-    @classmethod
     def _show(cls, files: List[str]) -> None:
         files = [x for x in files if Path(x).suffix in cls._image_extensions]
         if files:
             width = max(Message(x).width() for x in files)
-            with magic.Magic() as checker:
-                for file in files:
-                    info = checker.id_filename(file)
-                    print(
-                        f"{Message(file).get(width)}  "
-                        f"{cls._get_media_info(info)}"
-                    )
+            for file in files:
+                mime = magic.from_file(file, mime=True)
+                x, y = imagesize.get(file)
+                print(f"{Message(file).get(width)}  {mime} {x}:{y}")
 
     @classmethod
     def run(cls) -> int:

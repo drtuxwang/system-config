@@ -83,11 +83,9 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_media_info(cls, file: str, info: str) -> str:
+    def _get_media_info(cls, file: str) -> str:
         task = Batch(cls._ffprobe.get_cmdline() + [file])
         task.run(error2output=True)
-        info = info.replace('MPEG ADTS, layer III,', 'MP3')
-        audio_type = cls._isjunk.sub('', info)
         audio_time = 0
         audio_freq = '?Hz'
         for line in task.get_output():
@@ -102,20 +100,19 @@ class Main:
                         audio_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
             except IndexError:
                 pass
-        return f'{audio_type} {audio_time}s {audio_freq}Hz'
+        return f'{audio_time}s {audio_freq}Hz'
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
         files = [x for x in files if Path(x).suffix in cls._audio_extensions]
         if files:
             width = max(Message(x).width() for x in files)
-            with magic.Magic() as checker:
-                for file in files:
-                    info = checker.id_filename(file)
-                    print(
-                        f"{Message(file).get(width)}  "
-                        f"{cls._get_media_info(file, info)}"
-                    )
+            for file in files:
+                mime = magic.from_file(file, mime=True)
+                print(
+                    f"{Message(file).get(width)}  "
+                    f"{mime} {cls._get_media_info(file)}"
+                )
 
     @classmethod
     def run(cls) -> int:
