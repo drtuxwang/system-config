@@ -11,8 +11,9 @@ import sys
 from pathlib import Path
 from typing import List
 
+import magic  # type: ignore
+
 from command_mod import Command
-from config_mod import Config
 from subtask_mod import Exec, Task
 
 
@@ -110,9 +111,11 @@ class Main:
 
     @staticmethod
     def _get_files(directory: str) -> List[str]:
-        files: list = []
-        for pattern in Config().get('audio_extensions'):
-            files.extend(Path(directory).glob(f'*{pattern}'))
+        files = [
+            x
+            for x in Path(directory).iterdir()
+            if magic.from_file(x, mime=True).startswith('audio/')
+        ]
         return sorted([str(x) for x in files])
 
     def run(self) -> int:

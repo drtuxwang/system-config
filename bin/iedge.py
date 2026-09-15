@@ -10,8 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
+import magic  # type: ignore
+
 from command_mod import Command
-from config_mod import Config
 from subtask_mod import Batch
 
 
@@ -174,9 +175,11 @@ class Main:
         options = Options()
         cmdline = options.get_convert().get_cmdline() + options.get_flags()
 
-        images_extensions = Config().get('image_extensions')
         for path in [Path(x) for x in options.get_files()]:
-            if path.is_file() and path.suffix.lower() in images_extensions:
+            if (
+                path.is_file() and
+                magic.from_file(path, mime=True).startswith('image/')
+            ):
                 task = Batch(cmdline + [path, path])
                 task.run()
                 if task.get_exitcode():

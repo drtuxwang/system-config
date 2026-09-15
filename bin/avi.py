@@ -12,8 +12,9 @@ import sys
 from pathlib import Path
 from typing import Generator, List, Tuple
 
+import magic  # type: ignore
+
 from command_mod import Command
-from config_mod import Config
 from file_mod import FileStat
 from logging_mod import ColoredFormatter
 from subtask_mod import Batch, Child, Task
@@ -502,11 +503,12 @@ class Encoder:
 
     @staticmethod
     def _all_images(files: List[str]) -> bool:
-        image_extensions = Config().get('image_extensions')
-
-        for file in files:
-            if Path(file).suffix not in image_extensions:
-                return False
+        if [
+            x
+            for x in files
+            if not magic.from_file(x, mime=True).startswith('image/')
+        ]:
+            return False
         return True
 
     def _run(self) -> None:
