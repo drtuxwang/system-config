@@ -22,8 +22,8 @@ import dicttoxml  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.5.1'
-VERSION = 20250426
+RELEASE = '2.6.0'
+VERSION = 20260915
 
 
 class Data:
@@ -376,6 +376,37 @@ class Config:
         self._apps = mappings.get('apps', {})
         self._bindings = mappings.get('bindings', {})
         self._parameters = mappings.get('parameters', {})
+
+        # Deprecated parameters (now fixed insetad of configurable)
+        self._parameters['audio_extensions'] = [
+            '.mp3',
+            '.ogg',
+            '.wav',
+        ]
+        self._parameters['image_extensions'] = [
+            '.bmp',
+            '.gif',
+            '.heic',
+            '.jpeg',
+            '.jpg',
+            '.jxl',
+            '.pcx',
+            '.png',
+            '.svg',
+            '.tif',
+            '.tiff',
+            '.webp',
+        ]
+        self._parameters['video_extensions'] = [
+            '.avi',
+            '.flv',
+            '.mp4',
+            '.mkv',
+            '.mpeg',
+            '.mpegts',
+            '.mpg',
+            '.webm',
+        ]
 
     def get(self, parameter: str) -> str:
         """

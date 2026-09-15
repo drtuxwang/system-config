@@ -242,32 +242,6 @@ bindings:
     open: archive_unpacker
     view: archive_unpacker
 parameters:
-  audio_extensions:
-  - .mp3
-  - .ogg
-  - .wav
-  image_extensions:
-  - .bmp
-  - .gif
-  - .heic
-  - .jpeg
-  - .jpg
-  - .jxl
-  - .pcx
-  - .png
-  - .svg
-  - .tif
-  - .tiff
-  - .webp
-  video_extensions:
-  - .avi
-  - .flv
-  - .mp4
-  - .mkv
-  - .mpeg
-  - .mpegts
-  - .mpg
-  - .webm
   web_agent: Mozilla/5.0 (X11; Linux x86_64; rv:153.0) Gecko/20100101 Firefox/153.0
   web_homepage: http://drtuxwang.fast-page.org/bookmarks.xhtml
   web_mail: https://mail.google.com
