@@ -10,7 +10,8 @@ import sys
 from pathlib import Path
 from typing import Generator, List
 
-from config_mod import Config
+import magic  # type: ignore
+
 from file_mod import FileStat
 
 
@@ -80,13 +81,12 @@ class Gallery:
     def __init__(self, path: Path, height: int) -> None:
         self._path = path
         self._height = height
-        images_extensions = Config().get('image_extensions')
 
         try:
             self._files = [
-                str(x.name)
+                x.name
                 for x in path.iterdir()
-                if x.suffix.lower() in images_extensions
+                if magic.from_file(x, mime=True).startswith('image/')
             ]
         except PermissionError as exception:
             raise SystemExit(

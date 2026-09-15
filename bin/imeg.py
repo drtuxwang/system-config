@@ -11,8 +11,9 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
+import magic  # type: ignore
+
 from command_mod import Command
-from config_mod import Config
 from subtask_mod import Batch
 
 
@@ -138,11 +139,10 @@ class Main:
         options = Options()
         self._convert = options.get_convert()
         megs = options.get_megs()
-        images_extensions = Config().get('image_extensions')
 
         for directory in options.get_directories():
             for path in sorted(Path(directory).glob('*')):
-                if path.suffix.lower() in images_extensions:
+                if magic.from_file(path, mime=True).startswith('image/'):
                     ix_size, iy_size = self._imagesize(path)
                     imegs = ix_size * iy_size / 1000000
                     print(
