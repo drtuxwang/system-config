@@ -10,8 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
+import magic  # type: ignore
+
 from command_mod import Command
-from config_mod import Config
 from file_mod import FileUtil
 from subtask_mod import Batch, Task
 
@@ -273,8 +274,6 @@ class Main:
             '-sPAPERSIZE=a4',
         ])
 
-        images_extensions = Config().get('image_extensions')
-
         args: list = [
             f'-sOutputFile={options.get_archive()}',
             '-c',
@@ -291,18 +290,19 @@ class Main:
                 ]
             if not path.is_file():
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
-            ext = path.suffix.lower()
-            if ext == '.pdf':
+            mimetype = magic.from_file(path, mime=True)
+            if mimetype == 'application/pdf':
                 info = f'PDF file {path}'
                 args.extend(['-f', path])
             else:
                 self._tmpfile = f'{tmp_path}{len(self._tempfiles) + 1}'
-                if ext in images_extensions:
+                if mimetype.startswith('image/'):
                     info = self._image(path)
                     self._tempfiles.append(self._tmpfile + '.jpg')
-                elif ext in ('ps', 'eps'):
+                elif mimetype == 'application/postscript':
                     info = self._postscript(path)
-                elif ext == '.odt':
+                elif mimetype.startswith('application/vnd.oasis.opendocument'):
+
                     info = self._soffice(path)
                 else:
                     info = self._paps(path)

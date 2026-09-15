@@ -10,8 +10,9 @@ import sys
 from pathlib import Path
 from typing import List
 
+import magic  # type: ignore
+
 from command_mod import Command
-from config_mod import Config
 from file_mod import FileUtil
 from subtask_mod import Task
 
@@ -117,15 +118,16 @@ class Main:
         tmpdir = FileUtil.tmpdir('.cache')
         tmp_path = Path(tmpdir, f'ocr.tmp{os.getpid()}')
 
-        images_extensions = Config().get('image_extensions')
-
         for path in [Path(x) for x in options.get_files()]:
             if not path.is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{path}" image file.',
                 )
-            ext = path.suffix.lower()
-            if ext in images_extensions:
+            mimetype = magic.from_file(path, mime=True)
+            if mimetype == 'image/tiff':
+                print(f'Converting "{path}" to "{path.stem}.txt"...')
+                self._ocr(path, path.stem)
+            elif mimetype.startswith('image/'):
                 print(f'Converting "{path}" to "{path.stem}.txt"...')
                 task = Task(convert.get_cmdline() + [path, tmp_path])
                 task.run()
@@ -136,9 +138,6 @@ class Main:
                     )
                 self._ocr(tmp_path, path.stem)
                 tmp_path.unlink(missing_ok=True)
-            elif ext in ('tif', 'tiff'):
-                print(f'Converting "{path}" to "{path.stem}.txt"...')
-                self._ocr(path, path.stem)
             else:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot OCR non image file "{path}".',
