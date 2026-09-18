@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-from config_mod import Config
+from config_mod import Mime
 
 
 class Options:
@@ -141,19 +141,12 @@ class Main:
         options = Options()
 
         startdir = os.getcwd()
-        config = Config()
-        images_extensions = (
-            config.get('image_extensions') + config.get('video_extensions')
-        )
 
         isvalid = re.compile(r'pic\d{5}\.')
+        mimetypes = ('image/', 'video/')
         for path in [x for x in options.get_directories() if x.is_dir()]:
             os.chdir(path)
-            paths = sorted([
-                x
-                for x in Path().glob('*.*')
-                if x.suffix.lower() in images_extensions
-            ])
+            paths = Mime.list(Path('.'), mimetypes)
             paths_valid = [x for x in paths if isvalid.match(x.name)]
             paths_sorted = self._sorted(options, paths)
             missing = paths and paths[-1].stem != f'pic{len(paths):05d}'

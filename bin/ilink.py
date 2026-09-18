@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-from config_mod import Config
+from config_mod import Mime
 from file_mod import FileStat
 
 
@@ -124,42 +124,34 @@ class Main:
         options = Options()
         depth = options.get_depth()
         shuffle = options.get_shuffle_flag()
-        config = Config()
-        images_extensions = (
-            config.get('image_extensions') + config.get('video_extensions')
-        )
 
+        mimetypes = ('image/', 'video/')
         for album, directory in enumerate(options.get_directories()):
             linkdir = '_'.join(directory.split(os.sep)[-depth:])
-            files = [
-                x
-                for x in Path(directory).glob('*.*')
-                if x.suffix.lower() in images_extensions
-            ]
+            files = Mime.list(Path(directory), mimetypes)
             if shuffle:
                 random.shuffle(files)
             else:
                 files.sort()
             for number, file in enumerate(files):
                 ext = Path(file).suffix.lower()
-                if ext in images_extensions:
-                    link = Path(f'{album+1:02d}.{number+1:03d}_{linkdir}{ext}')
-                    if not link.is_symlink():
-                        try:
-                            link.symlink_to(file)
-                        except OSError as exception:
-                            raise SystemExit(
-                                f'{sys.argv[0]}: Cannot create "{link}" link.',
-                            ) from exception
-                        file_time = FileStat(file).get_mtime()
-                        try:
-                            os.utime(
-                                link,
-                                (file_time, file_time),
-                                follow_symlinks=False,
-                            )
-                        except NotImplementedError:
-                            pass
+                link = Path(f'{album+1:02d}.{number+1:03d}_{linkdir}{ext}')
+                if not link.is_symlink():
+                    try:
+                        link.symlink_to(file)
+                    except OSError as exception:
+                        raise SystemExit(
+                            f'{sys.argv[0]}: Cannot create "{link}" link.',
+                        ) from exception
+                    file_time = FileStat(file).get_mtime()
+                    try:
+                        os.utime(
+                            link,
+                            (file_time, file_time),
+                            follow_symlinks=False,
+                        )
+                    except NotImplementedError:
+                        pass
 
         return 0
 

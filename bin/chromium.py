@@ -14,7 +14,10 @@ import sys
 from pathlib import Path
 from typing import Any, List
 
+from filelock import FileLock, Timeout  # type: ignore
+
 from command_mod import Command, Platform
+from file_mod import FileUtil
 from subtask_mod import Background, Daemon, Exec
 from task_mod import Tasks
 
@@ -263,19 +266,22 @@ class Main:
         """
         Start program
         """
-        options = Options()
-
-        cmdline = options.get_browser().get_cmdline()
-        Background(cmdline).run(pattern=options.get_pattern())
-
-        # Kill filtering process after start up to avoid hang
-        tkill = Command(
-            'tkill',
-            args=['-delay', '60', '-f', f'python3.* {cmdline[0]} '],
-            errors='ignore'
-        )
-        if tkill.is_found():
-            Daemon(tkill.get_cmdline()).run()
+        lock = FileLock(Path(FileUtil.tmpdir(), 'chromium.lock'))
+        try:
+            with lock.acquire(timeout=60):
+                options = Options()
+                cmdline = options.get_browser().get_cmdline()
+                Background(cmdline).run(pattern=options.get_pattern())
+                # Kill filtering process after start up to avoid hang
+                tkill = Command(
+                    'tkill',
+                    args=['-delay', '60', '-f', f'python3.* {cmdline[0]} '],
+                    errors='ignore'
+                )
+                if tkill.is_found():
+                    Daemon(tkill.get_cmdline()).run()
+        except Timeout:
+            return 1
 
         return 0
 

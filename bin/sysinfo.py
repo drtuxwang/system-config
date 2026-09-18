@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '7.1.0'
-VERSION = 20260715
+RELEASE = '7.1.1'
+VERSION = 20260916
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -1199,7 +1199,7 @@ class LinuxSystem(PosixSystem):
             mount_info = info['mounts'].get(device, ())
 
             slaves = '+'.join([
-                Path(path).name
+                path.name
                 for file in Path(directory, 'slaves').glob('*')
             ])
 

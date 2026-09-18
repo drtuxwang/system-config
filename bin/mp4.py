@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Generator, List, Tuple
 
 from command_mod import Command
-from config_mod import Config
+from config_mod import Mime
 from file_mod import FileStat
 from logging_mod import ColoredFormatter
 from subtask_mod import Batch, Child, Task
@@ -492,15 +492,6 @@ class Encoder:
             except OSError:
                 pass
 
-    @staticmethod
-    def _all_images(files: List[str]) -> bool:
-        images_extensions = Config().get('image_extensions')
-
-        for path in [Path(x) for x in files]:
-            if path.suffix not in images_extensions:
-                return False
-        return True
-
     def _run(self) -> None:
         child = Child(self._ffmpeg.get_cmdline()).run(error2output=True)
         line = ''
@@ -534,7 +525,10 @@ class Encoder:
 
     def _single(self) -> None:
         output_file = self._options.get_file_new()
-        if self._all_images(self._options.get_files()):
+        if Mime.match_all(
+            [Path(x) for x in self._options.get_files()],
+            'image/',
+        ):
             self._config_images(self._options.get_files())
             self._ffmpeg.extend_args(['-f', 'mp4', '-y', output_file+'.part'])
         else:
@@ -580,7 +574,7 @@ class Encoder:
     def _multi(self) -> None:
         for file in self._options.get_files():
             if not file.endswith('.mp4'):
-                if self._all_images([file]):
+                if Mime.match([Path(file)], 'image/'):
                     self._config_images([file])
                 else:
                     self._config(file)

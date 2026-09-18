@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from config_mod import Config
+from config_mod import Mime
 from file_mod import FileStat
 from subtask_mod import Batch
 
@@ -31,11 +31,11 @@ class Options:
         """
         return self._convert
 
-    def get_files(self) -> List[str]:
+    def get_files(self) -> List[Path]:
         """
         Return list of files.
         """
-        return self._args.files
+        return [Path(x) for x in self._args.files]
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -94,15 +94,10 @@ class Main:
         """
         options = Options()
         convert = options.get_convert()
-        images_extensions = [
-            x
-            for x in Config().get('image_extensions')
-            if x != '.jpg'
-        ]
 
-        for file in options.get_files():
-            path = Path(file)
-            if path.is_file() and path.suffix.lower() in images_extensions:
+        for path in [x for x in options.get_files() if x.is_file()]:
+            mimetype = Mime.get(path)
+            if mimetype.startswith('image/') and mimetype != 'image/jpeg':
                 path_new = path.with_suffix('.jpg')
                 if not path_new.exists():
                     print(f"{path} => {path_new}")

@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from config_mod import Config
+from config_mod import Mime
 from subtask_mod import Task
 
 
@@ -104,13 +104,6 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-    @staticmethod
-    def _get_files(directory: str) -> List[str]:
-        files: list = []
-        for pattern in Config().get('video_extensions'):
-            files.extend(Path(directory).glob(f'*{pattern}'))
-        return sorted([str(x) for x in files])
-
     def run(self) -> int:
         """
         Start program
@@ -126,10 +119,12 @@ class Main:
                     f'{sys.argv[0]}: Cannot find '
                     f'"{directory}" media directory.',
                 )
-            files = self._get_files(directory)
+            files = Mime.list(Path(directory), 'video/')
             if files:
                 if options.get_shuffle_flag():
                     random.shuffle(files)
+                else:
+                    files.sort()
                 play.extend_args(files)
 
         task = Task(play.get_cmdline())
