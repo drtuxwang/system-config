@@ -146,7 +146,7 @@ class Main:
         mimetypes = ('image/', 'video/')
         for path in [x for x in options.get_directories() if x.is_dir()]:
             os.chdir(path)
-            paths = Mime.list(Path('.'), mimetypes)
+            paths = sorted(Mime.list(Path('.'), mimetypes))
             paths_valid = [x for x in paths if isvalid.match(x.name)]
             paths_sorted = self._sorted(options, paths)
             missing = paths and paths[-1].stem != f'pic{len(paths):05d}'
