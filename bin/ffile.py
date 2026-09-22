@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Determine video file information
+Determine file information
 """
 
 import argparse
@@ -10,6 +10,8 @@ import signal
 import sys
 from pathlib import Path
 from typing import List
+
+import imagesize  # type: ignore
 
 from command_mod import Command
 from config_mod import Mime
@@ -34,7 +36,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Determine video file information."
+            description="Determine file information."
         )
 
         parser.add_argument(
@@ -81,7 +83,7 @@ class Main:
         task = Batch(cls._ffprobe.get_cmdline() + [file])
         task.run(error2output=True)
         info = ''
-        time = -1
+        time = 0
         size = ''
         freq = ''
         for line in task.get_output():
@@ -101,14 +103,13 @@ class Main:
                         freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
             except (IndexError, ValueError):
                 pass
-        if time >= 0:
+        if time:
             info = f'{info}  {time}s'
         if size:
             info = f'{info}  {size}'
-            if freq:
-                info = f'{info}  {freq}Hz'
-            return info
-        return ''
+        if freq:
+            info = f'{info}  {freq}Hz'
+        return info
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
@@ -117,10 +118,12 @@ class Main:
             width = max(Message(x).width() for x in files)
             for file in files:
                 info = Mime.get(Path(file))
-                if info.startswith('video/'):
+                if info.startswith('image/'):
+                    x, y = imagesize.get(file)
+                    info = f'{info}  {x}:{y}'
+                if info.startswith(('audio/', 'video/')):
                     info = f'{info}{cls._get_ffprobe(file)}'
-                    if '  ' in info:
-                        print(f"{Message(file).get(width)}  {info}")
+                print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:

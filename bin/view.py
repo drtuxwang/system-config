@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 from command_mod import Command, CommandFile
-from config_mod import Config
+from config_mod import Config, Mime
 from subtask_mod import Daemon, Task
 
 
@@ -89,8 +89,6 @@ class Main:
     @classmethod
     def _spawn(cls, action: Tuple[List[str], bool], file: str) -> None:
         command, daemon = action
-        if not command:
-            raise SystemExit(f"{sys.argv[0]}: cannot find action: {file}")
         program = cls._get_program(command)
         program.set_args(command[1:] + [file])
         cmdline = program.get_cmdline()
@@ -110,18 +108,17 @@ class Main:
         for path in [Path(x) for x in options.get_files()]:
             if path.is_dir():
                 action = config.get_app('file_manager')
-            elif str(path).split(':', 1)[0] in config.get('web_uri'):
+            elif '://' in str(path):
                 action = config.get_app('web_browser')
-            elif not path.is_file():
-                raise SystemExit(f"{sys.argv[0]}: cannot find file: {path}")
-            else:
-                action = config.get_view_app(path.suffix.lower())
+            elif path.is_file():
+                mimetype = Mime.get(path)
+                action = config.get_mimeapp(mimetype, view=True)
                 if not action:
-                    action = config.get_open_app(path.suffix.lower())
-                    if not action:
-                        raise SystemExit(
-                            f"{sys.argv[0]}: unknown file extension: {path}",
-                        )
+                    raise SystemExit(
+                        f"{sys.argv[0]}: unknown {mimetype} mimetype: {path}",
+                    )
+            else:
+                raise SystemExit(f"{sys.argv[0]}: cannot find file: {path}")
             self._spawn(action, str(path))
 
         return 0

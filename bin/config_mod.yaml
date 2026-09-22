@@ -1,277 +1,52 @@
 apps:
-  archive_unpacker:
-    command:
-    - unz
-    view_flag: -v
-  audio_editor:
-    command:
-    - audacity
-    daemon: true
-  audio_player:
-    command:
-    - play
-  doc_editor:
-    command:
-    - soffice
-    daemon: true
-  file_manager:
-    command:
-    - xdesktop
-  image_editor:
-    command:
-    - gimp
-    daemon: true
-  image_viewer:
-    command:
-    - gqview
-    daemon: true
-  pdf_annotator:
-    command:
-    - xournal
-    daemon: true
-  pdf_viewer:
-    command:
-    - evince
-    daemon: true
-  text_editor:
-    command:
-    - xedit
-    daemon: true
-  video_editor:
-    command:
-    - shotcut
-  video_player:
-    command:
-    - play
-  web_browser:
-    command:
-    - firefox
-bindings:
-  .7z:
-    open: archive_unpacker
-    view: archive_unpacker
-  .ace:
-    open: archive_unpacker
-    view: archive_unpacker
-  .avi:
-    open: video_editor
-    view: video_player
-  .bmp:
-    open: image_editor
-    view: image_viewer
-  .bz2:
-    open: archive_unpacker
-    view: archive_unpacker
-  .csv:
-    open: doc_editor
-  .deb:
-    open: archive_unpacker
-    view: archive_unpacker
-  .dmg:
-    open: archive_unpacker
-    view: archive_unpacker
-  .doc:
-    open: doc_editor
-  .docx:
-    open: doc_editor
-  .flv:
-    open: video_editor
-    view: video_player
-  .gif:
-    open: image_editor
-    view: image_viewer
-  .gpg:
-    open: archive_unpacker
-    view: archive_unpacker
-  .gz:
-    open: archive_unpacker
-    view: archive_unpacker
-  .heic:
-    open: image_editor
-    view: image_viewer
-  .htm:
-    open: text_editor
-    view: web_browser
-  .html:
-    open: text_editor
-    view: web_browser
-  .iso:
-    open: archive_unpacker
-    view: archive_unpacker
-  .jar:
-    open: archive_unpacker
-    view: archive_unpacker
-  .jpeg:
-    open: image_editor
-    view: image_viewer
-  .jpg:
-    open: image_editor
-    view: image_viewer
-  .json:
-    open: text_editor
-  .jxl:
-    open: image_editor
-    view: image_viewer
-  .lzma:
-    open: archive_unpacker
-    view: archive_unpacker
-  .mp3:
-    open: audio_editor
-    view: audio_player
-  .mp4:
-    open: video_editor
-    view: video_player
-  .mpeg:
-    open: video_editor
-    view: video_player
-  .mpegts:
-    open: video_editor
-    view: video_player
-  .mpg:
-    open: video_editor
-    view: video_player
-  .odf:
-    open: doc_editor
-  .odg:
-    open: doc_editor
-  .odp:
-    open: doc_editor
-  .ods:
-    open: doc_editor
-  .odt:
-    open: doc_editor
-  .ogg:
-    open: audio_editor
-    view: audio_player
-  .pcx:
-    open: image_editor
-    view: image_viewer
-  .pdf:
-    open: pdf_annotator
-    view: pdf_viewer
-  .png:
-    open: image_editor
-    view: image_viewer
-  .ppt:
-    open: doc_editor
-  .pptx:
-    open: doc_editor
-  .rar:
-    open: archive_unpacker
-    view: archive_unpacker
-  .rpm:
-    open: archive_unpacker
-    view: archive_unpacker
-  .run:
-    open: archive_unpacker
-    view: archive_unpacker
-  .sqlite:
-    open: archive_unpacker
-    view: archive_unpacker
-  .svg:
-    open: image_editor
-    view: image_viewer
-  .t7z:
-    open: archive_unpacker
-    view: archive_unpacker
-  .tar:
-    open: archive_unpacker
-    view: archive_unpacker
-  .tbz:
-    open: archive_unpacker
-    view: archive_unpacker
-  .tgz:
-    open: archive_unpacker
-    view: archive_unpacker
-  .tif:
-    open: image_editor
-    view: image_viewer
-  .tiff:
-    open: image_editor
-    view: image_viewer
-  .tlz:
-    open: archive_unpacker
-    view: archive_unpacker
-  .txt:
-    open: text_editor
-  .txz:
-    open: archive_unpacker
-    view: archive_unpacker
-  .tzs:
-    open: archive_unpacker
-    view: archive_unpacker
-  .tzst:
-    open: archive_unpacker
-    view: archive_unpacker
-  .wav:
-    open: audio_editor
-    view: audio_player
-  .webm:
-    open: video_editor
-    view: video_player
-  .webp:
-    open: image_editor
-    view: image_viewer
-  .wpd:
-    open: doc_editor
-  .wsdl:
-    open: doc_editor
-  .xhtml:
-    open: text_editor
-    view: web_browser
-  .xls:
-    open: doc_editor
-  .xlsx:
-    open: doc_editor
-  .xoj:
-    open: pdf_annotator
-  .xz:
-    open: archive_unpacker
-    view: archive_unpacker
-  .yaml:
-    open: text_editor
-  .yml:
-    open: text_editor
-  .zip:
-    open: archive_unpacker
-    view: archive_unpacker
-  .zst:
-    open: archive_unpacker
-    view: archive_unpacker
-  .zstd:
-    open: archive_unpacker
-    view: archive_unpacker
+  archive_unpacker: unz
+  archive_viewer: unz -v
+  audio_editor: audacity &
+  audio_player: play
+  doc_editor: soffice &
+  file_manager: xdesktop &
+  image_editor: gimp &
+  image_viewer: gqview &
+  pdf_annotator: xournal &
+  pdf_viewer: evince &
+  text_editor: xedit &
+  video_editor: shotcut &
+  video_player: play
+  web_browser: firefox
+mimeapps:
+  application/gzip:                 archive_unpacker  archive_viewer
+  application/java-archive:         archive_unpacker  archive_viewer
+  application/json:                 text_editor
+  application/msword:               doc_editor
+  application/pdf:                  pdf_annotator     pdf_viewer
+  application/pgp-encrypted:        archive_unpacker  archive_viewer
+  application/vnd.debian:           archive_unpacker  archive_viewer
+  application/vnd.ms-excel:         doc_editor
+  application/vnd.oasis:            doc_editor
+  application/vnd.openxmlformats-officedocument:      doc_editor
+  application/vnd.rar:              archive_unpacker  archive_viewer
+  application/vnd.sqlite3:          archive_unpacker  archive_viewer
+  application/vnd.wordperfect:      doc_editor
+  application/x-7z-compressed:      archive_unpacker  archive_viewer
+  application/x-ace:                archive_unpacker  archive_viewer
+  application/x-apple-diskimage:    archive_unpacker  archive_viewer
+  application/x-bzip2:              archive_unpacker  archive_viewer
+  application/xhtml+xml:            text_editor       web_browser
+  application/x-iso9660-appimage:   archive_unpacker  archive_viewer
+  application/x-lzma:               archive_unpacker  archive_viewer
+  application/x-rpm:                archive_unpacker  archive_viewer
+  application/x-tar:                archive_unpacker  archive_viewer
+  application/x-xojpp:              pdf_annotator
+  application/x-xz:                 archive_unpacker  archive_viewer
+  application/yaml:                 text_editor
+  application/zip:                  archive_unpacker  archive_viewer
+  application/zstd:                 archive_unpacker  archive_viewer
+  image/:                           image_editor      image_viewer
+  video/:                           video_player
+  text/:                            text_editor
+  text/csv:                         doc_editor
+  text/html:                        text_editor       web_browser
 parameters:
-  audio_extensions:
-  - .mp3
-  - .ogg
-  - .wav
-  image_extensions:
-  - .bmp
-  - .gif
-  - .heic
-  - .jpeg
-  - .jpg
-  - .jxl
-  - .pcx
-  - .png
-  - .svg
-  - .tif
-  - .tiff
-  - .webp
-  video_extensions:
-  - .avi
-  - .flv
-  - .mp4
-  - .mkv
-  - .mpeg
-  - .mpegts
-  - .mpg
-  - .webm
   web_agent: Mozilla/5.0 (X11; Linux x86_64; rv:153.0) Gecko/20100101 Firefox/153.0
   web_homepage: http://drtuxwang.fast-page.org/bookmarks.xhtml
   web_mail: https://mail.google.com
-  web_uri:
-  - ftp
-  - http
-  - https

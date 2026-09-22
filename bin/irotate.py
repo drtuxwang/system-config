@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from config_mod import Config
+from config_mod import Mime
 from file_mod import FileStat
 from subtask_mod import Batch
 
@@ -105,9 +105,8 @@ class Main:
         convert = Command('convert', errors='stop')
         convert.set_args(['-rotate', options.get_rotation()])
 
-        images_extensions = Config().get('image_extensions')
         for path in [Path(x) for x in options.get_files()]:
-            if path.is_file() and path.suffix.lower() in images_extensions:
+            if Mime.match([path], 'image/'):
                 path_tmp = Path(f'{path}-rotate{path.suffix}')
                 task = Batch(convert.get_cmdline() + [path, path_tmp])
                 task.run()

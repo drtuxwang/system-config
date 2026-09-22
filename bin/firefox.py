@@ -13,6 +13,8 @@ import sys
 from pathlib import Path
 from typing import List
 
+from filelock import FileLock, Timeout  # type: ignore
+
 from command_mod import Command, Platform
 from file_mod import FileUtil
 from subtask_mod import Background, Daemon, Exec
@@ -300,9 +302,15 @@ class Options:
     @classmethod
     def fix_storage(cls) -> None:
         """
-        Redirect large extensipn storgae to TMPDIR
+        Redirect large extension storage to TMPDIR
         """
         firefox_path = Path(Path.home(), cls._get_profiles_dir())
+        if Path(firefox_path, 'profile').is_dir():
+            for path in firefox_path.glob('firefox-*'):
+                try:
+                    shutil.rmtree(path)
+                except OSError:
+                    pass
         if firefox_path.is_dir():
             for path in firefox_path.glob('*/storage/default/moz-extension*'):
                 if path.is_symlink():
@@ -395,11 +403,15 @@ class Main:
         """
         Start program
         """
-        options = Options()
-
-        cmdline = options.get_firefox().get_cmdline()
-        Background(cmdline).run(pattern=options.get_pattern())
-        options.fix_storage()
+        lock = FileLock(Path(FileUtil.tmpdir(), 'firefox.lock'))
+        try:
+            with lock.acquire(timeout=60):
+                options = Options()
+                cmdline = options.get_firefox().get_cmdline()
+                Background(cmdline).run(pattern=options.get_pattern())
+                options.fix_storage()
+        except Timeout:
+            return 1
 
         return 0
 

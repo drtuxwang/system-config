@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Helm 3.19.5 (Official) source code & Linux portable app
+# Helm 3.21.4 (Official) source code & Linux portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 source_settings() {
     NAME="helm"
-    VERSION="3.19.5"
+    VERSION="3.21.4"
     PORT="source-golang"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -27,7 +27,7 @@ source_settings() {
 
 app_settings() {
     NAME="helm"
-    VERSION="3.19.5"
+    VERSION="3.21.4"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"

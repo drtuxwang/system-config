@@ -5,15 +5,14 @@ Determine image file information
 
 import argparse
 import os
-import re
 import signal
 import sys
 from pathlib import Path
 from typing import List
 
-import magic  # type: ignore
+import imagesize  # type: ignore
 
-from config_mod import Config
+from config_mod import Mime
 from logging_mod import Message
 
 
@@ -57,10 +56,6 @@ class Main:
     """
     Main class
     """
-    _image_extensions = Config().get('image_extensions')
-    _isjunk = re.compile(r'\+\d+')
-    _issize = re.compile(r', \d+ ?x ?\d+')
-
     def __init__(self) -> None:
         try:
             self.config()
@@ -79,29 +74,16 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_media_info(cls, info: str) -> str:
-        image_type = info.split(' ', 1)[0]
-        try:
-            size = cls._issize.search(
-                cls._isjunk.sub('', info)
-            ).group().split(', ')[1]
-            image_size = size.replace(' x ', 'x').replace('x', ':')
-        except AttributeError:
-            image_size = '?:?'
-        return f'{image_type} {image_size}'
-
-    @classmethod
     def _show(cls, files: List[str]) -> None:
-        files = [x for x in files if Path(x).suffix in cls._image_extensions]
+        files = [x for x in files if Path(x).is_file()]
         if files:
             width = max(Message(x).width() for x in files)
-            with magic.Magic() as checker:
-                for file in files:
-                    info = checker.id_filename(file)
-                    print(
-                        f"{Message(file).get(width)}  "
-                        f"{cls._get_media_info(info)}"
-                    )
+            for file in files:
+                info = Mime.get(Path(file))
+                if info.startswith('image/'):
+                    x, y = imagesize.get(file)
+                    info = f'{info}  {x}:{y}'
+                    print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:

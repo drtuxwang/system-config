@@ -111,7 +111,7 @@ then
             if [ "$(grep -m1 "/kubelet.*/containers/" /proc/1/mountinfo 2> /dev/null)" ]
             then
                 PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/& \\[\\033[01;31m\\](Kubernetes)/')
-            elif [ "$(grep -m1 "/docker/containers/" /proc/1/mountinfo /proc/1/mountinfo 2> /dev/null)" ]
+            elif [ "$(grep -m1 " /var/lib/docker/" /proc/1/mountinfo 2> /dev/null)" ]
             then
                 PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/& \\[\\033[01;31m\\](Docker '$(grep -m1 "/docker/containers/" /proc/1/mountinfo | sed -e "s@.*/containers/@@" | cut -c1-12)')/')
             elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo 2> /dev/null`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo 2> /dev/null`" ]

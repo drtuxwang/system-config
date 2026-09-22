@@ -4,7 +4,7 @@ Python configuration module (uses "config_mod.yaml")
 
 Supports BSON, multi-JSON, XML, multi-YAML files.
 
-Copyright GPL v2: 2017-2025 By Dr Colin Kong
+Copyright GPL v2: 2017-2026 By Dr Colin Kong
 """
 
 import json
@@ -19,11 +19,70 @@ from typing import Any, Generator, List, Tuple, Union
 
 import bson  # type: ignore
 import dicttoxml  # type: ignore
+import magic  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '2.5.1'
-VERSION = 20250426
+RELEASE = '3.0.0'
+VERSION = 20260922
+
+
+class Config:
+    """
+    This class deals with "config_mod.yaml" configuration file.
+    """
+    def __init__(self) -> None:
+        path = Path(__file__).with_name('config_mod.yaml')
+        mappings = next(Data(path).get())
+        self._apps = mappings.get('apps', {})
+        self._mimeapps = mappings.get('mimeapps', {})
+        self._parameters = mappings.get('parameters', {})
+
+    def get(self, parameter: str) -> str:
+        """
+        Return parameter or None
+        """
+        return self._parameters.get(parameter)
+
+    def get_app(
+        self,
+        mimeapp: str,
+    ) -> Tuple[List[str], bool]:
+        """
+        Return (cmdline, daemon_flag) or None
+        """
+        command = self._apps.get(mimeapp.lower())
+        if not command:
+            raise ConfigError(
+                f'Undefined "{mimeapp.lower()}" app in configuration.'
+            )
+
+        cmdline = command.split()
+        daemon = cmdline[-1] == '&'
+        if daemon:
+            cmdline = cmdline[:-1]
+        return cmdline, daemon
+
+    def get_mimeapp(
+        self,
+        name: str,
+        view: bool = False,
+    ) -> Tuple[List[str], bool]:
+        """
+        Return (cmdline, daemon_flag) or None
+        """
+        for x in (
+            name,
+            '.'.join(name.split('.')[:3]),
+            '.'.join(name.split('.')[:2]),
+            f"{name.split('/', 1)[0]}/",
+        ):
+            mimeapp = self._mimeapps.get(x)
+            if mimeapp:
+                if view:
+                    return self.get_app(mimeapp.split()[-1])
+                return self.get_app(mimeapp.split()[0])
+        return None
 
 
 class Data:
@@ -366,62 +425,59 @@ class Data:
         tmp_path.replace(path)
 
 
-class Config:
+class Mime:
     """
-    This class deals with "config_mod.yaml" configuration file.
+    This class deals with file MIME types.
     """
-    def __init__(self) -> None:
-        path = Path(__file__).with_name('config_mod.yaml')
-        mappings = next(Data(path).get())
-        self._apps = mappings.get('apps', {})
-        self._bindings = mappings.get('bindings', {})
-        self._parameters = mappings.get('parameters', {})
 
-    def get(self, parameter: str) -> str:
+    @staticmethod
+    def get(path: Path) -> str:
         """
-        Return parameter or None
+        Return list of mimetype of file.
         """
-        return self._parameters.get(parameter)
+        return magic.from_file(path.resolve(), mime=True)
 
-    def get_app(
-        self,
-        app_name: str,
-        view: bool = False,
-    ) -> Tuple[List[str], bool]:
+    @classmethod
+    def list(cls, path: Path, mimetype: Union[str, tuple] = '',) -> List[Path]:
         """
-        Return (command, daemon_flag) or None
+        Return list of files in directory matching mimetype.
         """
-        app = self._apps.get(app_name.lower())
-        if not app:
-            raise ConfigError(
-                f'Undefined "{app_name.lower()}" app in configuration.'
-            )
+        paths = [
+            x
+            for x in path.iterdir()
+            if x.is_file() and cls.get(x).startswith(mimetype)
+        ]
+        return paths
 
-        command = app['command']
-        if view and 'view_flag' in app:
-            command.append(app['view_flag'])
-        daemon = app.get('daemon') is True
-        return command, daemon
-
-    def get_open_app(self, suffix: str) -> Tuple[List[str], bool]:
+    @classmethod
+    def match(
+        cls,
+        paths: List[Path],
+        mimetype: Union[str, tuple] = '',
+    ) -> List[Path]:
         """
-        Return (command, daemon_flag) or None
+        Return files matching mimetype.
         """
-        app_name = self._bindings.get(suffix.lower(), {}).get('open')
-        if app_name:
-            return self.get_app(app_name)
+        return [
+            x
+            for x in paths
+            if x.is_file() and not cls.get(x).startswith(mimetype)
+        ]
 
-        return None
-
-    def get_view_app(self, suffix: str) -> Tuple[List[str], bool]:
+    @classmethod
+    def match_all(
+        cls,
+        paths: List[Path],
+        mimetype: Union[str, tuple] = '',
+    ) -> bool:
         """
-        Return (command, daemon_flag) or None
+        Return True if all matching mimetype.
         """
-        app_name = self._bindings.get(suffix.lower(), {}).get('view')
-        if app_name:
-            return self.get_app(app_name, view=True)
-
-        return None
+        return not [
+            x
+            for x in paths
+            if x.is_file() and not cls.get(x).startswith(mimetype)
+        ]
 
 
 class ConfigError(Exception):

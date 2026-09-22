@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 from command_mod import Command
-from config_mod import Config
+from config_mod import Mime
 from subtask_mod import Batch
 
 
@@ -138,11 +138,10 @@ class Main:
         options = Options()
         self._convert = options.get_convert()
         megs = options.get_megs()
-        images_extensions = Config().get('image_extensions')
 
         for directory in options.get_directories():
             for path in sorted(Path(directory).glob('*')):
-                if path.suffix.lower() in images_extensions:
+                if Mime.match([path], 'image/'):
                     ix_size, iy_size = self._imagesize(path)
                     imegs = ix_size * iy_size / 1000000
                     print(

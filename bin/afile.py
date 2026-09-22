@@ -5,16 +5,13 @@ Determine audio file information
 
 import argparse
 import os
-import re
 import signal
 import sys
 from pathlib import Path
 from typing import List
 
-import magic  # type: ignore
-
 from command_mod import Command
-from config_mod import Config
+from config_mod import Mime
 from logging_mod import Message
 from subtask_mod import Batch
 
@@ -60,10 +57,6 @@ class Main:
     Main class
     """
     _ffprobe = Command('ffprobe', errors='stop')
-    _isjunk = re.compile(r'(ISO|Ogg|RIFF)[^,]*, |.*contains: |[ ,].*')
-    _audio_extensions = (
-        Config().get('audio_extensions') + Config().get('video_extensions')
-    )
 
     def __init__(self) -> None:
         try:
@@ -83,39 +76,42 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @classmethod
-    def _get_media_info(cls, file: str, info: str) -> str:
+    def _get_ffprobe(cls, file: str) -> str:
         task = Batch(cls._ffprobe.get_cmdline() + [file])
         task.run(error2output=True)
-        info = info.replace('MPEG ADTS, layer III,', 'MP3')
-        audio_type = cls._isjunk.sub('', info)
-        audio_time = 0
-        audio_freq = '?Hz'
+        info = ''
+        time = 0
+        freq = ''
         for line in task.get_output():
             try:
                 if line.strip().startswith('Duration:'):
                     hrs, mins, secs = (
                         line.replace(',', '').split()[1].split(':')
                     )
-                    audio_time = int(int(hrs)*3600+int(mins)*60+float(secs))
+                    time = int(int(hrs)*3600+int(mins)*60+float(secs))
                 elif line.strip().startswith('Stream #'):
                     if ' Hz,' in line:
-                        audio_freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
-            except IndexError:
+                        freq = f"{line.split(' Hz,')[0].split(', ')[-1]}"
+            except (IndexError, ValueError):
                 pass
-        return f'{audio_type} {audio_time}s {audio_freq}Hz'
+        if time:
+            info = f'{info}  {time}s'
+        if freq:
+            info = f'{info}  {freq}Hz'
+            return info
+        return ''
 
     @classmethod
     def _show(cls, files: List[str]) -> None:
-        files = [x for x in files if Path(x).suffix in cls._audio_extensions]
+        files = [x for x in files if Path(x).is_file()]
         if files:
             width = max(Message(x).width() for x in files)
-            with magic.Magic() as checker:
-                for file in files:
-                    info = checker.id_filename(file)
-                    print(
-                        f"{Message(file).get(width)}  "
-                        f"{cls._get_media_info(file, info)}"
-                    )
+            for file in files:
+                info = Mime.get(Path(file))
+                if info.startswith(('audio/', 'video/')):
+                    info = f'{info}{cls._get_ffprobe(file)}'
+                    if '  ' in info:
+                        print(f"{Message(file).get(width)}  {info}")
 
     @classmethod
     def run(cls) -> int:
