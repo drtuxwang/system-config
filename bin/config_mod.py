@@ -23,8 +23,8 @@ import magic  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '3.0.0'
-VERSION = 20260922
+RELEASE = '3.0.1'
+VERSION = 20260926
 
 
 class Config:
@@ -461,7 +461,7 @@ class Mime:
         return [
             x
             for x in paths
-            if x.is_file() and not cls.get(x).startswith(mimetype)
+            if x.is_file() and cls.get(x).startswith(mimetype)
         ]
 
     @classmethod
