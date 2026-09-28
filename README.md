@@ -50,6 +50,7 @@ the years.
  * compile/COMPILE-openmpi.bash    Compile script for Open MPI
  * compile/COMPILE-par2.bash       Compile script for Par2
  * compile/COMPILE-python*.bash    Compile script for Python
+ * compile/COMPILE-sequoia-pgp.bash  Compile script for Sequoia PGP
  * compile/COMPILE-tinyproxy.bash  Compile script for Tinyproxy
  * compile/COMPILE-tmux.bash       Compile script for TMUX
  * compile/COMPILE-unace.bash      Compile script for Unace unpacker
@@ -190,6 +191,7 @@ the years.
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.11 (Official) portable app
  * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code
  * software/get-python.bash        Python 3.14.6 (Official) source code
+ * software/get-sequoia-pgp.bash   Sequoia PGP 1.4.1 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
  * software/get-tmux.bash          TMUX 3.6a (Official) source code
  * software/get-wesnoth.bash       Wesnoth 1.18.7 (Debian 13) bubblewrap portable app

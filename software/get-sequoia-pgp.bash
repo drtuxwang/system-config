@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# Sequoia PGP 1.4.1 (Debian 14) portable app
-# - Requires: bwrap (Bubblewrap)
+# Sequoia PGP 1.4.1 (Official) source code
 #
 
 set -e
@@ -10,18 +9,20 @@ set -e
 app_settings() {
     NAME="sequoia-pgp"
     VERSION="1.4.1"
-    PORT="linux64-x86-glibc_2.41"
+    PORT="source-rust"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
-    REPO="https://deb.debian.org/debian/pool"
     APP_FILES="
-        $REPO/main/r/rust-sequoia-sq/sq_1.4.1-1_amd64.deb
+        https://crates.io/api/v1/crates/sequoia-sq/$VERSION/download
+        ${0%/*}/../compile/COMPILE-sequoia-pgp.bash
     "
     APP_SHELL="
-        mv usr/bin/sq .
+        7z x -so download | tar xf -
+        mv sequoia-sq-$VERSION/* .
     "
     APP_REMOVE="
-        usr/
+        download
+        sequoia-sq-$VERSION/
     "
 }
 
