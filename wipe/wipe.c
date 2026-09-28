@@ -1,18 +1,46 @@
 /*
- * Copyright GPL v2: 2016 By Dr Colin Kong
+ * Copyright GPL v2a: 2016 By Dr Colin Kong
  * Wipe device or create file with random data
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-extern long mod();
+int ran(int seed);
+long mod(long num1, long num2);
+int main(int argc, char *argv[]);
 
-main(argc, argv)
-int argc;
-char *argv[];
+
+/* Uses 1 linear random number generator to produce integers */
+int ran(int seed)
 {
-    FILE *fopen();
+    long num1 = 7141;
+    long inc1 = 54773;
+    long mod1 = 259200;
+    static long seed1;
+
+    if (seed > 0)
+    {
+        seed1 = mod(seed+inc1, mod1);
+        return(0);
+    }
+    else
+    {
+        seed1 = mod(num1*seed1+inc1, mod1);
+        return(mod(seed1, 256));
+    }
+}
+
+/* returns the remainder for integer division */
+long mod(long num1, long num2)
+{
+    long temp = num1/num2;
+    return(num1 - temp*num2);
+}
+
+int main(int argc, char *argv[])
+{
+    FILE *fopen(const char *filename, const char *mode);
     FILE *fp_write;
     int i = 0;
     int meg = 0;
@@ -47,34 +75,4 @@ char *argv[];
         printf("Usage: wipe /dev/device seed\n");
         printf("       wipe file seed\n");
     }
-}
-
-/* Uses 1 linear random number generator to produce integers */
-int ran(seed)
-int seed;
-{
-    long num1 = 7141;
-    long inc1 = 54773;
-    long mod1 = 259200;
-    static long seed1;
-
-    if (seed > 0)
-    {
-        seed1 = mod(seed+inc1, mod1);
-        return(0);
-    }
-    else
-    {
-        seed1 = mod(num1*seed1+inc1, mod1);
-        return(mod(seed1, 256));
-    }
-}
-
-/* returns the remainder for integer division */
-long mod(num1, num2)
-long num1;
-long num2;
-{
-    long temp = num1/num2;
-    return(num1 - temp*num2);
 }
