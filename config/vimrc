@@ -82,7 +82,7 @@ augroup gpg
 augroup END
 
 " Sequoia PGP
-augroup gpg
+augroup pgp
   autocmd!
   autocmd BufReadPre,FileReadPre *.pgp set viminfo=
   autocmd BufReadPre,FileReadPre *.pgp set bin nobackup noswapfile noundofile
