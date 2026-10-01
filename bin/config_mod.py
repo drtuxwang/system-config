@@ -23,8 +23,8 @@ import magic  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '3.0.1'
-VERSION = 20260926
+RELEASE = '3.0.2'
+VERSION = 20261001
 
 
 class Config:
@@ -389,7 +389,7 @@ class Data:
             raise WriteConfigError(
                 f'Cannot handle multi-encoded {config} data.',
             )
-        elif config in ('XML'):
+        elif config == 'XML':
             data = self._encode_xml(blocks[0], compact)
         elif config == 'BSON':
             data = self._encode_bson(blocks[0])
