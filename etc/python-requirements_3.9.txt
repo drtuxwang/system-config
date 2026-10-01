@@ -1,19 +1,27 @@
 astroid                      # ==3.3.11 (old version)
 binaryornot                  # ==0.4.4 (old version)
 build                        # ==None
+chardet                      # ==5.2.0 (old version)
 dnspython                    # ==2.7.0 (old version)
 filelock                     # ==3.19.1 (old version)
 Glances                      # ==4.4.1 (old version)
 importlib-metadata           # ==7.2.1 (required by isort for 3.9)
 imagesize                    # ==1.5.0 (old version)
 installer                    # ==None
+isort                        # ==6.1.0 (old version)
+markdown-it-py               # ==2.2.0 (old version)
+nab                          # ==None
 nab-index                    # ==None
-nab-python                   # ==None
+nab-markersets               # ==None
+nab-project                  # ==None
+nab-provider                 # ==None
 nab-resolver                 # ==None
 packaging                    # ==26.3
 pip                          # ==26.0.1 (old version)
 pipdeptree                   # ==2.28.0 (old version)
 platformdirs                 # ==4.4.0 (old version)
+pycodestyle                  # ==2.14.0 (old version)
+pyflakes                     # ==3.4.0 (old version)
 pyinstrument                 # ==None
 pylint                       # ==3.3.9 (old version)
 pyproject-hooks              # ==None

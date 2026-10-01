@@ -49,8 +49,11 @@ MarkupSafe                   # ==1.1.1 (old version)
 mccabe                       # ==0.6.1 (old version)
 mdurl                        # ==None
 motor                        # ==2.1.0 (Mongo async client for 2.7)
+nab                          # ==None
 nab-index                    # ==None
-nab-python                   # ==None
+nab-markersets               # ==None
+nab-project                  # ==None
+nab-provider                 # ==None
 nab-resolver                 # ==None
 packaging                    # ==None
 paramiko                     # ==2.12.0 (SSH client for 2.7)
@@ -73,6 +76,8 @@ PyNaCl                       # ==1.4.0 (required by paramiko for 2.7)
 pyOpenSSL                    # ==21.0.0 (old version)
 pyparsing                    # ==2.2.2 (old version)
 pyproject-hooks              # ==None
+python-discovery             # ==None
+python-slugify               # ==6.1.2 (old version)
 pytz                         # ==2023.3 (required by legacy code for 2.7)
 PyYAML                       # ==5.4.1 (old version)
 pyzstd                       # ==None
