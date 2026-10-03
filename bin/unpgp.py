@@ -122,6 +122,7 @@ class Main:
                         path_new,
                         path,
                     ])
+                    print(f"{path}: Encrypted OpenPGP Message.")
                     task.run(pattern='^$')
                     if path_new.is_file():
                         file_time = int(path.stat().st_mtime)
