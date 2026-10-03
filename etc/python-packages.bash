@@ -16,25 +16,25 @@ exit_error() {
     exit 1
 }
 
-process_optiosn() {
-    MODE=install
+process_options() {
+    MODE="remove-install-check"
     while [ $# != 0 ]
     do
         case $1 in
         -pip)
-            MODE="piponly"
+            MODE="install-piponly"
             ;;
         -sys)
             export PIP_BREAK_SYSTEM_PACKAGES=1  # Fix >= 3.11
             ;;
-       -i)
-            MODE="install"
+        -i)
+            MODE="install-check"
             ;;
-       -c)
-            MODE="checkonly"
+        -c)
+            MODE="check"
             ;;
         -u)
-            MODE="uninstall"
+            MODE="remove-check"
             ;;
         -*)
             help
@@ -109,6 +109,67 @@ read_requirements() {
     fi
 }
 
+remove_packages() {
+    ERROR=
+    PACKAGES=$(pip_list)
+    for PACKAGE in $PACKAGES
+    do
+        NAME=${PACKAGE%==*}
+        if [ ! -v requirements[$NAME] ]
+        then
+            echo y | pip_uninstall $PACKAGE
+            echo -e "\033[33mUninstalled!\033[0m"
+        fi
+    done
+}
+
+install_packages() {
+    MODE=${1:-}
+    if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
+    then
+        get_pip || exit_error
+        echo -e "\033[33mInstalled!\033[0m"
+    fi
+
+    PACKAGES=$(check_packages | grep -v "not found" | awk '/ # Requirement / {print $NF}')
+    for PACKAGE in $(echo "$PACKAGES" | grep -E "^(pip|setuptools|wheel)([>=]=.*|)$")
+    do
+        echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
+        pip_install "$PACKAGE" || exit_error
+        echo -e "\033[33mInstalled!\033[0m"
+    done
+    [[ $MODE = *piponly* ]] && return
+
+    export CRYPTOGRAPHY_DONT_BUILD_RUST=1
+    for PACKAGE in $(echo "$PACKAGES" | grep -E -v "^(pip|setuptools|wheel)([>=]=.*|)$")
+    do
+        echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
+        pip_install "$PACKAGE" || continue
+        echo -e "\033[33mInstalled!\033[0m"
+    done
+
+    PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
+    find "$PYTHON_DIR/lib"/python* -type f -name '*test*.py' | \
+        grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | \
+        grep -v "IPython/testing" | \
+        xargs rm -rfv
+    find "$PYTHON_DIR"/*doc* -type d 2> /dev/null | xargs rm -rfv
+
+    if [ -w "$PY_EXE" ]
+    then
+        IFS=$'\n'
+        for FILE in $(grep "^#!/.*[/ ]python" ${PY_EXE%/*}/* 2> /dev/null | grep -v ":#!/usr/bin/env python$MAJOR_VER" | sed -e "s@:#!/.*@@")
+        do
+            echo "$FILE: #!/usr/bin/env python$MAJOR_VER"
+            sed -i "s@^#!/.*[/ ]python.*@#!/usr/bin/env python$MAJOR_VER@" "$FILE"
+        done
+        unset IFS
+    fi
+    LOCATION=$($PYTHON -m pip show pip 2> /dev/null | grep "^Location: " | sed -e "s/Location: //")
+    fmod -R "$LOCATION" 2>&1
+    [[ $LOCATION = */python_*/lib/python* ]] && fmod -R "${LOCATION%/lib/python*}" 2>&1
+}
+
 check_packages() {
     ERROR=
     PACKAGES=$(pip_list)
@@ -118,15 +179,11 @@ check_packages() {
         if [ -v requirements[$NAME] ]
         then
             REQUIRED=${requirements[$NAME]}
-            if [ "$REQUIRED" != "$PACKAGE" -a "$(echo "$REQUIRED" |grep "[>=]=")" ]
+            if [ "$REQUIRED" != "$PACKAGE" -a "$(echo "$REQUIRED" | grep "[>=]=")" ]
             then
                 echo $PACKAGE $REQUIRED | awk '{printf("%-27s  # Requirement %s\n", $1, $2)}'
                 ERROR=1
             fi
-        elif [ "$MODE" = "uninstall" ]
-        then
-            echo y | pip_uninstall $PACKAGE
-            echo -e "\033[33mUninstalled!\033[0m"
         else
             echo $PACKAGE | awk '{printf("%-27s  # Requirement not found\n", $1)}'
         fi
@@ -163,55 +220,8 @@ check_packages() {
     [ "$ERROR" ] && echo -e "\033[31mERROR!\033[0m" && exit_error
 }
 
-install_packages() {
-    MODE=${1:-}
-    if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
-    then
-        get_pip || exit_error
-        echo -e "\033[33mInstalled!\033[0m"
-    fi
 
-    PACKAGES=$(check_packages | grep -v "not found" | awk '/ # Requirement / {print $NF}')
-    for PACKAGE in $(echo "$PACKAGES" | grep -E "^(pip|setuptools|wheel)([>=]=.*|)$")
-    do
-        echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
-        pip_install "$PACKAGE" || exit_error
-        echo -e "\033[33mInstalled!\033[0m"
-    done
-    [ "$MODE" = "piponly" ] && return
-
-    export CRYPTOGRAPHY_DONT_BUILD_RUST=1
-    for PACKAGE in $(echo "$PACKAGES" | grep -E -v "^(pip|setuptools|wheel)([>=]=.*|)$")
-    do
-        echo -e "\033[33mInstalling package \"$PACKAGE\"...\033[0m"
-        pip_install "$PACKAGE" || continue
-        echo -e "\033[33mInstalled!\033[0m"
-    done
-
-    PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | "$PYTHON")
-    find "$PYTHON_DIR/lib"/python* -type f -name '*test*.py' | \
-        grep "/[^/]*test[^/]*/" | sed -e "s/\/[^\/]*$//" | uniq | \
-        grep -v "IPython/testing" | \
-        xargs rm -rfv
-    find "$PYTHON_DIR"/*doc* -type d 2> /dev/null | xargs rm -rfv
-
-    if [ -w "$PY_EXE" ]
-    then
-        IFS=$'\n'
-        for FILE in $(grep "^#!/.*[/ ]python" ${PY_EXE%/*}/* 2> /dev/null | grep -v ":#!/usr/bin/env python$MAJOR_VER" | sed -e "s@:#!/.*@@")
-        do
-            echo "$FILE: #!/usr/bin/env python$MAJOR_VER"
-            sed -i "s@^#!/.*[/ ]python.*@#!/usr/bin/env python$MAJOR_VER@" "$FILE"
-        done
-        unset IFS
-    fi
-    LOCATION=$($PYTHON -m pip show pip 2> /dev/null | grep "^Location: " | sed -e "s/Location: //")
-    fmod -R "$LOCATION" 2>&1
-    [[ $LOCATION = */python_*/lib/python* ]] && fmod -R "${LOCATION%/lib/python*}" 2>&1
-}
-
-
-process_optiosn "$@"
+process_options "$@"
 [ "$MYUNAME" = root -a "$PY_OWNER" != root ] && exec sudo -iu $PY_OWNER $(realpath "$0") "$@"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || PIP_INSTALL="$PIP_INSTALL --user"
 
@@ -240,6 +250,7 @@ else
     esac
 fi
 
-[ "$MODE" = install -o "$MODE" = piponly ] && install_packages "$MODE" && install_packages "$MODE"  # Retry
-[ "$MODE" != piponly ] && check_packages
+[[ $MODE = *remove-* ]] && remove_packages
+[[ $MODE = *install* ]] && install_packages "$MODE" && install_packages "$MODE"
+[[ $MODE = *check* ]] && check_packages
 echo -e "\033[33mOK!\033[0m"
