@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 
 from command_mod import Command
-from file_mod import FileUtil
 from subtask_mod import Exec
 
 
@@ -42,18 +41,15 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-        # Send ".java" to tmpfs
-        tmpdir = FileUtil.tmpdir(Path('.cache', 'java'))
+        # Send ".java" to ".cache/java"
+        path = Path(Path.home(), '.cache', 'java')
+        if not path.is_dir():
+            path.mkdir(parents=True)
         path = Path(Path.home(), '.java')
         if not path.is_symlink():
-            try:
+            if path.is_dir():
                 shutil.rmtree(path)
-            except OSError:
-                pass
-            try:
-                path.symlink_to(tmpdir)
-            except OSError:
-                pass
+            path.symlink_to(Path('.cache', 'java'))
 
     @staticmethod
     def run() -> int:

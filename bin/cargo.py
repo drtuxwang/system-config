@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MAVEN launcher
+Wrapper for "cargo" command
 """
 
 import os
@@ -41,24 +41,24 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
-        # Send ".m2" to ".cache/m2"
-        path = Path(Path.home(), '.cache', 'm2')
+        # Send ".cargo" to ".cache/cargo"
+        path = Path(Path.home(), '.cache', 'cargo')
         if not path.is_dir():
             path.mkdir(parents=True)
-        path = Path(Path.home(), '.m2')
+        path = Path(Path.home(), '.cargo')
         if not path.is_symlink():
             if path.is_dir():
                 shutil.rmtree(path)
-            path.symlink_to(Path('.cache', 'm2'))
+            path.symlink_to(Path('.cache', 'cargo'))
 
-    @staticmethod
-    def run() -> int:
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
-        mvn = Command('bin/mvn', args=sys.argv[1:], errors='stop')
-
-        Exec(mvn.get_cmdline()).run()
+        cargo = Command('cargo', errors='stop')
+        cargo.set_args(sys.argv[1:])
+        Exec(cargo.get_cmdline()).run()
 
         return 0
 

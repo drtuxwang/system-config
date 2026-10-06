@@ -3,6 +3,7 @@ binaryornot                  # ==0.4.4 (old version)
 bson                         # ==0.5.10 (required instead of bson-senao for 3.8)
 bson-senao                   # ==None
 build                        # ==None
+chardet                      # ==5.2.0 (old version)
 certifi                      # ==2025.10.5 (old version)
 defusedxml                   # ==None
 dnspython                    # ==2.6.1 (old version)
@@ -12,8 +13,12 @@ idna                         # ==3.15 (old version)
 imagesize                    # ==1.5.0 (old version)
 installer                    # ==None
 isort                        # ==5.13.2 (old version)
+markdown-it-py               # ==2.2.0 (old version)
+nab                          # ==None
 nab-index                    # ==None
-nab-python                   # ==None
+nab-markersets               # ==None
+nab-project                  # ==None
+nab-provider                 # ==None
 nab-resolver                 # ==None
 packaging                    # ==26.2
 pip                          # ==24.3.1 (old version)
@@ -36,6 +41,7 @@ tomli-w                      # ==None
 tomlkit                      # ==0.13.3 (old version)
 truststore                   # ==None
 typing-extensions            # ==4.13.2 (old version)
+virtualenv                   # ==21.4.3 (old version)
 urllib3                      # ==2.2.3 (old version)
 wheel                        # ==0.45.1 (old version)
 xmltodict                    # ==0.15.0 (old version)

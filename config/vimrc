@@ -81,5 +81,15 @@ augroup gpg
   autocmd BufWriteCmd,FileWriteCmd *.gpg execute 'write !gpg --default-recipient-self --encrypt --yes -o %'
 augroup END
 
+" Sequoia PGP
+augroup pgp
+  autocmd!
+  autocmd BufReadPre,FileReadPre *.pgp set viminfo=
+  autocmd BufReadPre,FileReadPre *.pgp set bin nobackup noswapfile noundofile
+  autocmd BufReadPost *.pgp :%!sq decrypt 2> /dev/null
+  autocmd BufReadPost *.pgp redraw!
+  autocmd BufWriteCmd,FileWriteCmd *.pgp execute 'write !sq encrypt --for-self --without-signature --overwrite --binary --output % --quiet'
+augroup END
+
 " Replace &nbsp; with proper space
 autocmd BufWritePre * %s/\%u00a0/\ /ge

@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from file_mod import FileUtil
 from subtask_mod import Batch, Exec
 
 
@@ -86,6 +85,16 @@ class Main:
                 return open(str(file), *args, **kwargs)
             Path.open = _open  # type: ignore
 
+        # Send ".rpmdb" to ".cache/rpmdb"
+        path = Path(Path.home(), '.cache', 'rpmdb')
+        if not path.is_dir():
+            path.mkdir(parents=True)
+        path = Path(Path.home(), '.rpmdb')
+        if not path.is_symlink():
+            if path.is_dir():
+                shutil.rmtree(path)
+            path.symlink_to(Path('.cache', 'rpmdb'))
+
     @staticmethod
     def _read_rpm_status(options: Options) -> dict:
         rpm = options.get_rpm()
@@ -129,19 +138,6 @@ class Main:
         """
         Start program
         """
-        # Send ".rpmdb" to tmpfs
-        tmpdir = FileUtil.tmpdir(Path('.cache', 'rpmdb'))
-        path = Path(Path.home(), '.rpmdb')
-        if not path.is_symlink():
-            try:
-                shutil.rmtree(path)
-            except OSError:
-                pass
-            try:
-                path.symlink_to(tmpdir)
-            except OSError:
-                pass
-
         options = Options()
 
         packages = self._read_rpm_status(options)

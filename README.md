@@ -50,6 +50,7 @@ the years.
  * compile/COMPILE-openmpi.bash    Compile script for Open MPI
  * compile/COMPILE-par2.bash       Compile script for Par2
  * compile/COMPILE-python*.bash    Compile script for Python
+ * compile/COMPILE-sequoia-pgp.bash  Compile script for Sequoia PGP
  * compile/COMPILE-tinyproxy.bash  Compile script for Tinyproxy
  * compile/COMPILE-tmux.bash       Compile script for TMUX
  * compile/COMPILE-unace.bash      Compile script for Unace unpacker
@@ -165,34 +166,35 @@ the years.
  * software/check-files.bash       Check source files exists
  * software/files/*                Files for building
  * software/get-0ad.bash           0AD 0.28.0 (Debian 13) bubblewrap portable app
- * software/get-7zip.bash          7-Zip 26.01 (Official) source code & Windows portable app
+ * software/get-7zip.bash          7-Zip 26.03 (Official) source code & Windows portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
  * software/get-curl-impersonate.bash  curl-impersonate 2.1.0 (Official) portable app
  * software/get-dneo.bash          Deno 2.9.5 (Official) portable app
- * software/get-edge.bash          Edge 151.0.4129.107 (Official) portable app
+ * software/get-edge.bash          Edge 152.0.4191.66 (Official) portable app
  * software/get-firefox.bash       Firefox 153.0esr (Official) portable app
  * software/get-git.bash           GIT 2.51.2 (Official) source code
  * software/get-git-lfs.bash       Git LFS 3.7.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
- * software/get-golang.bash        Golang 1.25.11 (Official) portable app
+ * software/get-golang.bash        Golang 1.25.13 (Official) portable app
  * software/get-grub-efi.bash      GRUB EFI 2.12 (Debian 13) boot loader
  * software/get-grub-pc.bash       GRUB PC 2.12 (Debian 13) boot loader
  * software/get-hardinfo.bash      Hardinfo 0.5.1 (Debian 12) bubblewrap portable app
  * software/get-hardinfo2.bash     Hardinfo 2.2.10 (Debian 13) bubblewrap portable app
- * software/get-helm.bash          Helm 3.19.5 (Official) source code & Linux portable app
+ * software/get-helm.bash          Helm 3.21.4 (Official) source code & Linux portable app
  * software/get-inkscape.bash      Inkscape 1.3.2 (Official) portable app
  * software/get-instant-client.bash Instant Client 23.26 (Official) library & portable app
  * software/get-isolinux.bash      ISOLIUX 4.05 (Debian 7) boot loader
- * software/get-k3s.bash           K3S 1.34.10 (Official) portable app
- * software/get-libreoffice.bash   LibreOffice 25.8.7.3 (Official) portable app
+ * software/get-k3s.bash           K3S 1.34.11 (Official) portable app
+ * software/get-libreoffice.bash   LibreOffice 26.2.5.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.11 (Official) portable app
  * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code
- * software/get-python.bash        Python 3.14.6 (Official) source code
+ * software/get-python.bash        Python 3.14.8 (Official) source code
+ * software/get-sequoia-pgp.bash   Sequoia PGP 1.4.1 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
- * software/get-tmux.bash          TMUX 3.6a (Official) source code
- * software/get-wesnoth.bash       Wesnoth 1.18.7 (Debian 13) bubblewrap portable app
+ * software/get-tmux.bash          TMUX 3.7c (Official) source code
+ * software/get-wesnoth.bash       Wesnoth 1.18.8 (Debian 13) bubblewrap portable app
  * software/get-wine.bash          WiNE 11.0 (Offical) bubblewrap portable app
  * software/setup-software.bash    Fetch and setup software
  * terraform-aws/1pxy/             Terraform AWS: 1pxy example
