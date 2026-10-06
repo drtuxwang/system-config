@@ -70,7 +70,7 @@ tomli-w==1.2.0               #   (required by pipdeptree)
 tomlkit==0.15.1              #   (required by pylint)
 truststore==0.10.4           #   (required by pipdeptree)
 typing-extensions==4.16.0    #   (required by beautifulsoup4)
-urllib3==2.7.0               #   (required by requests)
+urllib3==2.8.0               #   (required by requests)
 virtualenv==21.14.2          # Python Virtual Environments
 wheel==0.48.0                # Python wheel packaging
 xmltodict==1.0.4             # Convert XML to Python dict
