@@ -306,7 +306,7 @@ class Options:
         """
         firefox_path = Path(Path.home(), cls._get_profiles_dir())
         if Path(firefox_path, 'profile').is_dir():
-            for path in firefox_path.glob('firefox-*'):
+            for path in firefox_path.glob('*default*'):
                 try:
                     shutil.rmtree(path)
                 except OSError:
