@@ -302,11 +302,12 @@ class Options:
     @classmethod
     def fix_storage(cls) -> None:
         """
-        Redirect large extension storage to TMPDIR
+        Remove extra profiles and redirect large extension storage to TMPDIR
         """
         firefox_path = Path(Path.home(), cls._get_profiles_dir())
-        if Path(firefox_path, 'profile').is_dir():
-            for path in firefox_path.glob('*default*'):
+        paths = [x.parent for x in Path(firefox_path).glob('*/cookies.sqlite')]
+        if FileUtil.newest(paths).endswith('profile'):
+            for path in [x for x in paths if x.name != 'profile']:
                 try:
                     shutil.rmtree(path)
                 except OSError:
