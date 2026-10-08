@@ -28,6 +28,7 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
+os.environ["OPENCV_FFMPEG_LOGLEVEL"] = "-8"
 
 
 class Options:
