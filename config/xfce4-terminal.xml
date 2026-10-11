@@ -17,7 +17,7 @@
   <property name="color-selection" type="string" value="#000000000000"/>
   <property name="color-selection-background" type="string" value="#ffffffff0000"/>
   <property name="color-palette" type="string" value="rgb(221,221,221);rgb(170,0,0);rgb(0,170,0);rgb(170,136,0);rgb(0,0,170);rgb(136,0,170);rgb(0,136,170);rgb(170,170,170);rgb(221,221,221);rgb(170,0,0);rgb(0,170,0);rgb(170,136,0);rgb(0,0,170);rgb(136,0,170);rgb(0,136,170);rgb(170,170,170)"/>
-  <property name="word-chars" type="string" value="-A-Za-z0-9,./?%&amp;#:_=+@~–$"/>
+  <property name="word-chars" type="string" value="-A-Za-z0-9,./?%&amp;#:;_=+@~–$"/>
   <property name="misc-mouse-autohide" type="bool" value="true"/>
   <property name="misc-tab-close-middle-click" type="bool" value="false"/>
   <property name="misc-hyperlinks-enabled" type="bool" value="false"/>
