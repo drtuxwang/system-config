@@ -193,7 +193,7 @@ the years.
  * software/get-python.bash        Python 3.14.8 (Official) source code
  * software/get-sequoia-pgp.bash   Sequoia PGP 1.4.1 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
- * software/get-tmux.bash          TMUX 3.7c (Official) source code
+ * software/get-tmux.bash          TMUX 3.8 (Official) source code
  * software/get-wesnoth.bash       Wesnoth 1.18.8 (Debian 13) bubblewrap portable app
  * software/get-wine.bash          WiNE 11.0 (Offical) bubblewrap portable app
  * software/setup-software.bash    Fetch and setup software
