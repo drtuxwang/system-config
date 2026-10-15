@@ -91,29 +91,30 @@ class Main:
     @staticmethod
     def _dis(path: Path) -> int:
         """
-        Disassemble using dis
+        Disassemble using dis (PYC_MAGIC_NUMBER)
         """
         with path.open('rb') as ifile:
             magic = struct.unpack('h', ifile.read(2))[0]
-        # lib/importlib/_bootstrap_external.py
         if magic < 3400:
             version = (3, 7)   # 3.7 and older
         elif magic < 3450:
             version = (3, 10)  # 3.8, 3.9, 3.10
         elif magic < 3500:
-            version = (3, 11)  # 3.11
+            version = (3, 11)  # 3.11.0==3495
         elif magic < 3550:
-            version = (3, 12)  # 3.12
+            version = (3, 12)  # 3.12.0==3531
         elif magic < 3600:
-            version = (3, 13)  # 3.13
+            version = (3, 13)  # 3.13.0==3571
         elif magic < 3650:
-            version = (3, 14)  # 3.14
+            version = (3, 14)  # 3.14.0==3626
         elif magic < 3700:
-            version = (3, 26)  # 3.15(3.26)
+            version = (3, 15)  # 3.15.0==3666
         elif magic < 3750:
-            version = (3, 27)  # 3.16(3.27)
+            version = (3, 16)  # 3.16
+        elif magic < 3800:
+            version = (3, 17)  # 3.17
         else:
-            version = (3, 28)  # 3.17(3.28) and later
+            version = (3, 18)  # 3.18 and later
 
         # Run difference version of Python
         if sys.version_info[0:2] != version:
