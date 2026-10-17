@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.8.1'
-VERSION = 20260827
+RELEASE = '2.8.2'
+VERSION = 20261017
 
 
 class Command:
@@ -361,7 +361,8 @@ class LooseVersion:
         self._version = str(version)
         tokens = re.split(r'([\D]+)', '• '+self._version.lower())[1:]
         tokens = [' '+x if x.isalpha() else x for x in tokens]
-        if tokens[-1] == '':
+        tokens = [' •'+x if x[:1] == '.' and len(x) > 1 else x for x in tokens]
+        if tokens[-1] == '' and tokens[-2][1:].isalpha():
             tokens[-2] = tokens[-2][1:]
 
         self._tokens = [int(x) if x.isdigit() else x for x in tokens] + [' •']

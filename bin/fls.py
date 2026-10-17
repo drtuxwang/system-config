@@ -64,7 +64,7 @@ class Options:
             action='store_const',
             const='size',
             dest='order',
-            default='name',
+            default='version',
             help="Sort files by size.",
         )
         parser.add_argument(
@@ -72,7 +72,7 @@ class Options:
             action='store_const',
             const='mtime',
             dest='order',
-            default='name',
+            default='version',
             help="Sort files by modification time.",
         )
         parser.add_argument(
@@ -80,7 +80,7 @@ class Options:
             action='store_const',
             const='ctime',
             dest='order',
-            default='name',
+            default='version',
             help="Sort files by meta data change time."
         )
         parser.add_argument(

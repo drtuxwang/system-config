@@ -51,7 +51,7 @@ class TestLooseVersion(unittest.TestCase):
         """
         Test getting version.
         """
-        expected = [' ', '', ' •']
+        expected = ['• ', '', ' •']
 
         loose_version = command_mod.LooseVersion('')
 
