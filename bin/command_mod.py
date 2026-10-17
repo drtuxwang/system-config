@@ -362,6 +362,7 @@ class LooseVersion:
         tokens = re.split(r'([\D]+)', '• '+self._version.lower())[1:]
         tokens = [' '+x if x.isalpha() else x for x in tokens]
         tokens = [' •'+x if x[:1] == '.' and len(x) > 1 else x for x in tokens]
+        tokens = ['' if x == '/' else x for x in tokens]
         if tokens[-1] == '' and tokens[-2][1:].isalpha():
             tokens[-2] = tokens[-2][1:]
 
