@@ -362,7 +362,7 @@ then
     Darwin)
         if [ "`\ls --help 2>&1 | \grep ' --color'`" ]
         then
-            alias ls="ls -C --color=auto"
+            alias ls="ls -C -v --color=auto"
             alias grep="grep --color=auto"
         else
             alias ls="ls -C -G"
@@ -378,7 +378,7 @@ then
     Linux|*NT*)
         if [ "`\ls --help 2>&1 | \grep ' --color'`" ]
         then
-            alias ls="ls -C --color=auto"
+            alias ls="ls -C -v --color=auto"
             alias grep="grep --color=auto"
         else
             alias ls="ls -C"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# 7-Zip 26.03 (Official) source code & Windows portable app
+# 7-Zip 26.04 (Official) source code & Windows portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 source_settings() {
     NAME="7zip"
-    VERSION="26.03"
+    VERSION="26.04"
     PORT="source-cpp"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -23,7 +23,7 @@ source_settings() {
 
 windows_settings() {
     NAME="7zip"
-    VERSION="26.03"
+    VERSION="26.04"
     PORT="windows-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
