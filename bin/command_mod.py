@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, List, Sequence, Union
 
-RELEASE = '2.8.1'
-VERSION = 20260827
+RELEASE = '2.8.2'
+VERSION = 20261019
 
 
 class Command:
@@ -352,19 +352,24 @@ class CommandFile(Command):
 
 class LooseVersion:
     """
-    This class store version as sortable tokens.
+    This class store version as sortable tokens (software version sort)
 
     1.1 < 1.2b2 < 1.2rc1 < 1.2 < 1.2+git20220418 < 1.2-2 < 1.2.1 < 1.2a < 1.10
     """
 
     def __init__(self, version: Union[str, Path]) -> None:
         self._version = str(version)
+        self._tokenize()
+        self._itokens = [int(x) if x.isdigit() else 0 for x in self._tokens]
+
+    def _tokenize(self) -> None:
         tokens = re.split(r'([\D]+)', '• '+self._version.lower())[1:]
         tokens = [' '+x if x.isalpha() else x for x in tokens]
-        if tokens[-1] == '':
+        tokens = [' •'+x if x[:1] == '.' and len(x) > 1 else x for x in tokens]
+        tokens = ['' if x == '/' else x for x in tokens]
+        if tokens[-1] == '' and tokens[-2][1:].isalpha():
             tokens[-2] = tokens[-2][1:]
-
-        self._tokens = [int(x) if x.isdigit() else x for x in tokens] + [' •']
+        self._tokens = tokens + [' •']
 
     def get_version(self) -> str:
         """
@@ -378,30 +383,63 @@ class LooseVersion:
         """
         return self._tokens
 
-    def __lt__(self, other: object) -> bool:
-        if not isinstance(other, LooseVersion):
+    def get_itokens(self) -> list:
+        """
+        Return integer version tokens.
+        """
+        return self._itokens
+
+    def compare(self, other: object) -> int:
+        """
+        Return -1(<), 0(=), 1(>)
+        """
+        if type(self) is not type(other):
             return NotImplemented
-        return self.get_tokens() < other.get_tokens()
+
+        other_tokens = other.get_tokens()
+        other_itokens = other.get_itokens()
+        if self._tokens == other_tokens:
+            return 0
+        for i, token in enumerate(self._tokens):
+            if token == other_tokens[i]:
+                continue
+            if token.isdigit() and other_tokens[i].isdigit():
+                if self._itokens[i] > other_itokens[i]:
+                    return 1
+            elif token > other_tokens[i]:
+                return 1
+            break
+        return -1
+
+    def __lt__(self, other: object) -> bool:
+        return self.compare(other) < 0
 
     def __le__(self, other: object) -> bool:
-        if not isinstance(other, LooseVersion):
-            return NotImplemented
-        return self.get_tokens() <= other.get_tokens()
+        return self.compare(other) <= 0
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, LooseVersion):
-            return NotImplemented
-        return self.get_tokens() == other.get_tokens()
+        return self.compare(other) == 0
 
     def __ge__(self, other: object) -> bool:
-        if not isinstance(other, LooseVersion):
-            return NotImplemented
-        return self.get_tokens() >= other.get_tokens()
+        return self.compare(other) >= 0
 
     def __gt__(self, other: object) -> bool:
-        if not isinstance(other, LooseVersion):
-            return NotImplemented
-        return self.get_tokens() > other.get_tokens()
+        return self.compare(other) > 0
+
+
+class AlnumVersion(LooseVersion):
+    """
+    This class store version as sortable tokens (Alpha numeric sort).
+
+    1.1 < 1.2 < 1.2a < 1.2b2 < 1.2rc1 < 1.2+git20220418 < 1.2-2 < 1.2.1 < 1.10
+    """
+
+    def _tokenize(self) -> None:
+        tokens = re.split(r'([\D]+)', '• '+self._version.lower())[1:]
+        tokens = [' •'+x if x[:1] == '.' and len(x) > 1 else x for x in tokens]
+        tokens = ['•'+x if not x.isalnum() and x else x for x in tokens]
+        tokens = ['' if x == '•/' else x for x in tokens]
+        self._tokens = tokens + [' •']
 
 
 class Platform:

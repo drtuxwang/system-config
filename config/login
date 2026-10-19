@@ -180,7 +180,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     switch (`uname`)
     case Darwin:
         if ( "`\ls --help |& \grep '^ *--color'`" != "" ) then
-            alias ls "ls -C --color=auto"
+            alias ls "ls -C -v --color=auto"
             alias grep "grep --color=auto"
         else
             alias ls "ls -C -G"
@@ -189,7 +189,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     case Linux:
     case *NT*:
         if ( "`\ls --help |& \grep '^ *--color'`" != "" ) then
-            alias ls "ls -C --color=auto"
+            alias ls "ls -C -v --color=auto"
             alias grep "grep --color=auto"
         else
             alias ls "ls -C --color=auto"

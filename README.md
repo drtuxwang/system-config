@@ -166,7 +166,7 @@ the years.
  * software/check-files.bash       Check source files exists
  * software/files/*                Files for building
  * software/get-0ad.bash           0AD 0.28.0 (Debian 13) bubblewrap portable app
- * software/get-7zip.bash          7-Zip 26.03 (Official) source code & Windows portable app
+ * software/get-7zip.bash          7-Zip 26.04 (Official) source code & Windows portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
@@ -193,7 +193,7 @@ the years.
  * software/get-python.bash        Python 3.14.8 (Official) source code
  * software/get-sequoia-pgp.bash   Sequoia PGP 1.4.1 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
- * software/get-tmux.bash          TMUX 3.7c (Official) source code
+ * software/get-tmux.bash          TMUX 3.8 (Official) source code
  * software/get-wesnoth.bash       Wesnoth 1.18.8 (Debian 13) bubblewrap portable app
  * software/get-wine.bash          WiNE 11.0 (Offical) bubblewrap portable app
  * software/setup-software.bash    Fetch and setup software

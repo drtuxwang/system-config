@@ -68,7 +68,7 @@
       <property name="&lt;Alt&gt;Down" type="string" value="/opt/software/bin/xvolume -dec"/>
       <property name="&lt;Alt&gt;Up" type="string" value="/opt/software/bin/xvolume -inc"/>
       <property name="AudioRaiseVolume" type="string" value="/opt/software/bin/xvolume -inc"/>
-      <property name="F8" type="string" value="/opt/software/bin/zhspeak -xclip"/>
+      <property name="F8" type="string" value="/opt/software/bin/zhspeak -xclip -zh"/>
       <property name="F9" type="string" value="/opt/software/bin/zhspeak -xclip -zhy"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;BackSpace" type="string" value="/opt/software/bin/xlogout"/>
     </property>

@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import Iterator, List, Union
 
-from command_mod import LooseVersion
+from command_mod import LooseVersion, AlnumVersion
 from file_mod import FileStat
 
 
@@ -64,7 +64,7 @@ class Options:
             action='store_const',
             const='size',
             dest='order',
-            default='name',
+            default='alnum',
             help="Sort files by size.",
         )
         parser.add_argument(
@@ -72,7 +72,7 @@ class Options:
             action='store_const',
             const='mtime',
             dest='order',
-            default='name',
+            default='alnum',
             help="Sort files by modification time.",
         )
         parser.add_argument(
@@ -80,7 +80,7 @@ class Options:
             action='store_const',
             const='ctime',
             dest='order',
-            default='name',
+            default='alnum',
             help="Sort files by meta data change time."
         )
         parser.add_argument(
@@ -88,7 +88,7 @@ class Options:
             action='store_const',
             const='version',
             dest='order',
-            default='name',
+            default='alnum',
             help="Sort files as loose versions."
         )
         parser.add_argument(
@@ -115,7 +115,7 @@ class Options:
         if self._args.files:
             self._files = [os.path.expandvars(x) for x in self._args.files]
         else:
-            self._files = sorted(os.listdir())
+            self._files = os.listdir()
 
 
 class Main:
@@ -186,6 +186,11 @@ class Main:
             file_stats = sorted(
                 file_stats,
                 key=lambda s: LooseVersion(s.get_file()),
+            )
+        else:
+            file_stats = sorted(
+                file_stats,
+                key=lambda s: AlnumVersion(s.get_file()),
             )
         if options.get_reverse_flag():
             return reversed(file_stats)

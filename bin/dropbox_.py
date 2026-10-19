@@ -215,7 +215,8 @@ class DropboxClient:
             except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
                 logger.error('Unable to upload "dropbox://%s".', file)
                 errors += 1
-            logger.info('Uploaded %d bytes.', len(data))
+            else:
+                logger.info('Uploaded %d bytes.', len(data))
 
         return errors
 
