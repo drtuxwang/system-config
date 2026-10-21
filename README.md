@@ -170,7 +170,7 @@ the years.
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
- * software/get-curl-impersonate.bash  curl-impersonate 2.1.0 (Official) portable app
+ * software/get-curl-impersonate.bash  curl-impersonate 2.3.0 (Official) portable app
  * software/get-dneo.bash          Deno 2.9.5 (Official) portable app
  * software/get-edge.bash          Edge 152.0.4191.66 (Official) portable app
  * software/get-firefox.bash       Firefox 153.0esr (Official) portable app

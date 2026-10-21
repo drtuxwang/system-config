@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# curl-impersonate 2.1.1 (Official) portable app
+# curl-impersonate 2.3.0 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,8 @@ set -e
 
 app_settings() {
     NAME="curl-impersonate"
-    VERSION="2.1.1"
+    VERSION="2.3.0"
+    FIREFOX_ESR="curl_firefox153"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -16,16 +17,25 @@ app_settings() {
         https://github.com/lexiforest/curl-impersonate/releases/download/v$VERSION/curl-impersonate-v$VERSION.x86_64-linux-gnu.tar.gz
     "
     APP_SHELL="
-        cp -p curl-impersonate curl-impersonate.bin
-        strip curl-impersonate.bin
-        touch -r curl-impersonate curl-impersonate.bin
+        strip curl-impersonate
+        touch -r LICENSE curl-impersonate
+        mkdir bin
+        mv LICENSE** curl* bin/
     "
-    APP_START="curl-impersonate.bin"
-    APP_LINK="curl-impersonate"
+    APP_START="bin/curl-impersonate"
+    APP_LINK="curl-chrome curl-firefox"
 }
 
 app_start() {
     MYDIR=$(realpath "${0%/*}")
+    case ${0##*/} in
+    curl-chrome)
+        APP_START="bin/$(ls -1vr "$MYDIR/bin" | awk '/curl_chrome.*[0-9]$/ {print; exit}')"
+        ;;
+    curl-firefox)
+        APP_START="bin/$FIREFOX_ESR"
+        ;;
+    esac
     [ "${_SANDBOX_PARENT:-}" ] && exec "$MYDIR/$APP_START" "$@"
     exec /usr/bin/bwrap \
         --ro-bind / / \

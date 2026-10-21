@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
 
-PYLD_MAIN="curl_impersonate_"
 source "${0%/*}/pyld_mod.bash"
