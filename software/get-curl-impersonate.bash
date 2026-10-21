@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# curl-impersonate 2.3.0 (Official) portable app
+# curl-impersonate 2.2.3 (Official) portable app
 #
 
 set -e
@@ -8,8 +8,7 @@ set -e
 
 app_settings() {
     NAME="curl-impersonate"
-    VERSION="2.3.0"
-    FIREFOX_ESR="curl_firefox153"
+    VERSION="2.2.3"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
@@ -28,15 +27,10 @@ app_settings() {
 
 app_start() {
     MYDIR=$(realpath "${0%/*}")
-    case ${0##*/} in
-    curl-chrome)
-        APP_START="bin/$(ls -1vr "$MYDIR/bin" | awk '/curl_chrome.*[0-9]$/ {print; exit}')"
-        ;;
-    curl-firefox)
-        APP_START="bin/$FIREFOX_ESR"
-        ;;
-    esac
+    [ "${0##*/}" = curl-chrome ] && APP_START="bin/$(ls -1vr "$MYDIR/bin" | awk '/curl_chrome.*[0-9]$/ {print; exit}')"
+    [ "${0##*/}" = curl-firefox ] && APP_START="bin/$(ls -1vr "$MYDIR/bin" | awk '/curl_firefox.*[0-9]$/ {print; exit}')"
     [ "${_SANDBOX_PARENT:-}" ] && exec "$MYDIR/$APP_START" "$@"
+		echo debugX APP_START=$APP_START
     exec /usr/bin/bwrap \
         --ro-bind / / \
         --tmpfs /home \
