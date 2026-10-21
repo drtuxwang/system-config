@@ -30,8 +30,8 @@ from subtask_mod import Batch, Child, ExecutableCallError
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '7.1.2'
-VERSION = 20260919
+RELEASE = '7.2.0'
+VERSION = 20261021
 MYIP_URL = 'http://ifconfig.me'
 
 # pylint: disable=too-many-lines
@@ -2440,6 +2440,7 @@ class Software:
             [' ImageMagick ', '.*ImageMagick | .*', 'ImageMagick'],
         ),
         (['curl', '--version'], ['^curl ', 'curl | .*', '']),
+        (['curl-impersonate', '--version'], ['url-impersonate/', '.*curl-impersonate/', '']),
         (['docker', '--version'], [' version ', '.*version |,.*', '']),
         (['dockerd', '--version'], [' version ', '.*version |,.*', '']),
         (['edge', '--version'], ['^Microsoft Edge ', '.* Edge | .*', '']),
