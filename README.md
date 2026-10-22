@@ -190,7 +190,7 @@ the years.
  * software/get-libreoffice.bash   LibreOffice 26.2.5.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.11 (Official) portable app
  * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code
- * software/get-python.bash        Python 3.14.8 (Official) source code
+ * software/get-python.bash        Python 3.14.9 (Official) source code
  * software/get-sequoia-pgp.bash   Sequoia PGP 1.4.1 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
  * software/get-tmux.bash          TMUX 3.8 (Official) source code
