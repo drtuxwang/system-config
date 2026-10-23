@@ -7,6 +7,7 @@ import argparse
 import itertools
 import logging
 import os
+import mimetypes
 import signal
 import sys
 from pathlib import Path
@@ -109,6 +110,7 @@ class Main:
         hasher = cv2.img_hash.PHash_create()
 
         for path in paths:
+            info = mimetypes.guess_type(path)[0]
             if path.is_dir():
                 if options.get_recursive_flag() and not path.is_symlink():
                     try:
@@ -117,7 +119,7 @@ class Main:
                         ))
                     except PermissionError:
                         pass
-            elif path.is_file():
+            elif path.is_file() and info and info.startswith('image/'):
                 image = cv2.imread(path)
                 if image is not None:
                     image_phash[path] = hasher.compute(image).tobytes().hex()

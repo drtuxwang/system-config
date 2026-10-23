@@ -6,6 +6,7 @@ Show image files with same phash finger print.
 import argparse
 import itertools
 import logging
+import mimetypes
 import os
 import signal
 import sys
@@ -109,6 +110,7 @@ class Main:
         hasher = cv2.img_hash.PHash_create()
 
         for path in paths:
+            info = mimetypes.guess_type(path)[0]
             if path.is_dir():
                 if options.get_recursive_flag() and not path.is_symlink():
                     try:
@@ -117,7 +119,7 @@ class Main:
                         ))
                     except PermissionError:
                         pass
-            elif path.is_file():
+            elif path.is_file() and info and info.startswith('video/'):
                 video = cv2.VideoCapture(path)
                 total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
                 fps = int(video.get(cv2.CAP_PROP_FPS))

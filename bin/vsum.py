@@ -6,6 +6,7 @@ Calculate checksum lines using phash, file size and file modification time.
 import argparse
 import itertools
 import logging
+import mimetypes
 import os
 import signal
 import sys
@@ -158,7 +159,7 @@ class Main:
         return phashes
 
     @classmethod
-    def _update(
+    def _update(  # pylint: disable=too-many-locals
         cls,
         phashes: dict,
         recursive: bool,
@@ -169,6 +170,7 @@ class Main:
         hasher = cv2.img_hash.PHash_create()
 
         for path in paths:
+            info = mimetypes.guess_type(path)[0]
             if path.is_dir():
                 if recursive and not path.is_symlink():
                     try:
@@ -177,7 +179,7 @@ class Main:
                         ))
                     except PermissionError:
                         pass
-            elif path.is_file():
+            elif path.is_file() and info and info.startswith('video/'):
                 file_stat = FileStat(path)
                 key = (
                      str(path),
