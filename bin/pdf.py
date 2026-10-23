@@ -4,6 +4,7 @@ Create PDF from text/images/postscript/PDF/ODF files.
 """
 
 import argparse
+import mimetypes
 import os
 import signal
 import sys
@@ -11,7 +12,6 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from config_mod import Mime
 from file_mod import FileUtil
 from subtask_mod import Batch, Task
 
@@ -289,18 +289,20 @@ class Main:
                 ]
             if not path.is_file():
                 raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
-            mimetype = Mime.get(path)
-            if mimetype == 'application/pdf':
+            info = mimetypes.guess_type(path)[0]
+            if info == 'application/pdf':
                 info = f'PDF file {path}'
                 args.extend(['-f', path])
             else:
+                if not info:
+                    info = ''
                 self._tmpfile = f'{tmp_path}{len(self._tempfiles) + 1}'
-                if mimetype.startswith('image/'):
+                if info.startswith('image/'):
                     info = self._image(path)
                     self._tempfiles.append(self._tmpfile + '.jpg')
-                elif mimetype == 'application/postscript':
+                elif info == 'application/postscript':
                     info = self._postscript(path)
-                elif mimetype.startswith('application/vnd.oasis.opendocument'):
+                elif info.startswith('application/vnd.oasis.opendocument'):
 
                     info = self._soffice(path)
                 else:

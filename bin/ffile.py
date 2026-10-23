@@ -4,6 +4,7 @@ Determine file information
 """
 
 import argparse
+import mimetypes
 import os
 import re
 import signal
@@ -14,7 +15,6 @@ from typing import List
 import imagesize  # type: ignore
 
 from command_mod import Command
-from config_mod import Mime
 from logging_mod import Message
 from subtask_mod import Batch
 
@@ -117,7 +117,9 @@ class Main:
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                info = Mime.get(Path(file))
+                info = mimetypes.guess_type(file)[0]
+                if not info:
+                    info = ''
                 if info.startswith('image/'):
                     x, y = imagesize.get(file)
                     info = f'{info}  {x}:{y}'

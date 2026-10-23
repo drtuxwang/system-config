@@ -4,6 +4,7 @@ View files using default application
 """
 
 import argparse
+import mimetypes
 import os
 import signal
 import sys
@@ -11,7 +12,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 from command_mod import Command, CommandFile
-from config_mod import Config, Mime
+from config_mod import Config
 from subtask_mod import Daemon, Task
 
 
@@ -111,11 +112,11 @@ class Main:
             elif '://' in str(path):
                 action = config.get_app('web_browser')
             elif path.is_file():
-                mimetype = Mime.get(path)
-                action = config.get_mimeapp(mimetype, view=True)
+                info = mimetypes.guess_type(path)[0]
+                action = config.get_mimeapp(info, view=True)
                 if not action:
                     raise SystemExit(
-                        f"{sys.argv[0]}: unknown {mimetype} mimetype: {path}",
+                        f"{sys.argv[0]}: unknown {info} mimetype: {path}",
                     )
             else:
                 raise SystemExit(f"{sys.argv[0]}: cannot find file: {path}")

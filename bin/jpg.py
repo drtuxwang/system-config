@@ -4,6 +4,7 @@ Convert images to JPEG files.
 """
 
 import argparse
+import mimetypes
 import os
 import signal
 import sys
@@ -11,7 +12,6 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from config_mod import Mime
 from file_mod import FileStat
 from subtask_mod import Batch
 
@@ -96,8 +96,8 @@ class Main:
         convert = options.get_convert()
 
         for path in [x for x in options.get_files() if x.is_file()]:
-            mimetype = Mime.get(path)
-            if mimetype.startswith('image/') and mimetype != 'image/jpeg':
+            info = mimetypes.guess_type(path)[0]
+            if info and info.startswith('image/') and info != 'image/jpeg':
                 path_new = path.with_suffix('.jpg')
                 if not path_new.exists():
                     print(f"{path} => {path_new}")
