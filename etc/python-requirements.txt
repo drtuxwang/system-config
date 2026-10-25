@@ -15,9 +15,9 @@ dill==0.3.9                  #   (required by pylint)
 distlib==0.4.4               #   (required by virtualenv)
 dnspython==2.8.0             # DNS client
 EditorConfig==0.12.4         #   (required by jsbeautifier)
-filelock==4.1.2              #   (required by virtualenv)
+filelock==4.2.4              #   (required by virtualenv)
 gitdb==4.0.12                #   (required by GitPython)
-GitPython==3.1.62            # Library to interact with Git repositories
+GitPython==3.2.1             # Library to interact with Git repositories
 Glances==4.5.8               # Cross-platform system monitoring tool
 gTTS==2.5.4                  # Google Text-to-Speech
 idna==3.19                   #   (required by requests)
