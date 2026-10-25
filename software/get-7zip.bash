@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# 7-Zip 26.04 (Official) source code & Windows portable app
+# 7-Zip 26.05 (Official) source code & Windows portable app
 #
 
 set -e
@@ -8,12 +8,12 @@ set -e
 
 source_settings() {
     NAME="7zip"
-    VERSION="26.04"
+    VERSION="26.05"
     PORT="source-cpp"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
-        https://www.7-zip.org/a/7z${VERSION//./}-src.tar.xz
+        https://github.com/ip7z/7zip/releases/download/$VERSION/7z${VERSION//./}-src.tar.xz
         ${0%/*}/../compile/COMPILE-7zip.bash
     "
     APP_SHELL="
@@ -23,7 +23,7 @@ source_settings() {
 
 windows_settings() {
     NAME="7zip"
-    VERSION="26.04"
+    VERSION="26.05"
     PORT="windows-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"

@@ -6,6 +6,7 @@ build                        # ==None
 chardet                      # ==5.2.0 (old version)
 certifi                      # ==2025.10.5 (old version)
 defusedxml                   # ==None
+python-discovery             # ==1.6.1 (old version)
 dnspython                    # ==2.6.1 (old version)
 filelock                     # ==3.16.1 (old version)
 Glances                      # ==None

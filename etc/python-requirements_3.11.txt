@@ -1,2 +1,2 @@
 binaryornot                  # ==0.4.4 (old version)
-backports.zstd==1.6.0        #   (required by pyzstd for 3.11)
+backports.zstd               # ==1.6.0 (required by pyzstd for 3.11)

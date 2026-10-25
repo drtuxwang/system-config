@@ -166,11 +166,11 @@ the years.
  * software/check-files.bash       Check source files exists
  * software/files/*                Files for building
  * software/get-0ad.bash           0AD 0.28.0 (Debian 13) bubblewrap portable app
- * software/get-7zip.bash          7-Zip 26.04 (Official) source code & Windows portable app
+ * software/get-7zip.bash          7-Zip 26.05 (Official) source code & Windows portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.6.4 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
- * software/get-curl-impersonate.bash  curl-impersonate 2.1.0 (Official) portable app
+ * software/get-curl-impersonate.bash  curl-impersonate 2.3.1 (Official) portable app
  * software/get-dneo.bash          Deno 2.9.5 (Official) portable app
  * software/get-edge.bash          Edge 152.0.4191.66 (Official) portable app
  * software/get-firefox.bash       Firefox 153.0esr (Official) portable app
@@ -190,7 +190,7 @@ the years.
  * software/get-libreoffice.bash   LibreOffice 26.2.5.2 (Official) portable app
  * software/get-openjdk-jdk.bash   OpenJDK JDK 21.0.11 (Official) portable app
  * software/get-openmpi.bash       Open MPI 5.0.10 (Official) source code
- * software/get-python.bash        Python 3.14.8 (Official) source code
+ * software/get-python.bash        Python 3.14.9 (Official) source code
  * software/get-sequoia-pgp.bash   Sequoia PGP 1.4.1 (Official) source code
  * software/get-shotcut.bash       Shotcut 26.1.30 (Official) portable app
  * software/get-tmux.bash          TMUX 3.8 (Official) source code

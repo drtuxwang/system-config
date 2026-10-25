@@ -8,6 +8,7 @@ Copyright GPL v2: 2017-2026 By Dr Colin Kong
 """
 
 import json
+import mimetypes
 import os
 import re
 import sys
@@ -19,12 +20,11 @@ from typing import Any, Generator, List, Tuple, Union
 
 import bson  # type: ignore
 import dicttoxml  # type: ignore
-import magic  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '3.0.2'
-VERSION = 20261001
+RELEASE = '3.1.0'
+VERSION = 20261023
 
 
 class Config:
@@ -433,9 +433,12 @@ class Mime:
     @staticmethod
     def get(path: Path) -> str:
         """
-        Return list of mimetype of file.
+        Return mimetype of URI/file.
         """
-        return magic.from_file(path.resolve(), mime=True)
+        info = mimetypes.guess_type(path)[0]
+        if info:
+            return info
+        return ''
 
     @classmethod
     def list(cls, path: Path, mimetype: Union[str, tuple] = '',) -> List[Path]:

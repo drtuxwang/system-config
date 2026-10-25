@@ -4,6 +4,7 @@ Convert image file to text using OCR.
 """
 
 import argparse
+import mimetypes
 import os
 import signal
 import sys
@@ -11,7 +12,6 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from config_mod import Mime
 from file_mod import FileUtil
 from subtask_mod import Task
 
@@ -122,11 +122,11 @@ class Main:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{path}" image file.',
                 )
-            mimetype = Mime.get(path)
-            if mimetype == 'image/tiff':
+            info = mimetypes.guess_type(path)[0]
+            if info == 'image/tiff':
                 print(f'Converting "{path}" to "{path.stem}.txt"...')
                 self._ocr(path, path.stem)
-            elif mimetype.startswith('image/'):
+            elif info and info.startswith('image/'):
                 print(f'Converting "{path}" to "{path.stem}.txt"...')
                 task = Task(convert.get_cmdline() + [path, tmp_path])
                 task.run()

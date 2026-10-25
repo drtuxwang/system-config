@@ -4,6 +4,7 @@ Determine video file information
 """
 
 import argparse
+import mimetypes
 import os
 import re
 import signal
@@ -12,7 +13,6 @@ from pathlib import Path
 from typing import List
 
 from command_mod import Command
-from config_mod import Mime
 from logging_mod import Message
 from subtask_mod import Batch
 
@@ -116,8 +116,8 @@ class Main:
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                info = Mime.get(Path(file))
-                if info.startswith('video/'):
+                info = mimetypes.guess_type(file)[0]
+                if info and info.startswith('video/'):
                     info = f'{info}{cls._get_ffprobe(file)}'
                     if '  ' in info:
                         print(f"{Message(file).get(width)}  {info}")

@@ -4,6 +4,7 @@ Determine image file information
 """
 
 import argparse
+import mimetypes
 import os
 import signal
 import sys
@@ -12,7 +13,6 @@ from typing import List
 
 import imagesize  # type: ignore
 
-from config_mod import Mime
 from logging_mod import Message
 
 
@@ -79,8 +79,8 @@ class Main:
         if files:
             width = max(Message(x).width() for x in files)
             for file in files:
-                info = Mime.get(Path(file))
-                if info.startswith('image/'):
+                info = mimetypes.guess_type(file)[0]
+                if info and info.startswith('image/'):
                     x, y = imagesize.get(file)
                     info = f'{info}  {x}:{y}'
                     print(f"{Message(file).get(width)}  {info}")

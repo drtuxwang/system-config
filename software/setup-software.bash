@@ -119,29 +119,29 @@ prepare_start() {
     if [ "$APP_START" ]
     then
         echo -e "\033[33m=> $APP_DIRECTORY/$APP_START\033[0m"
-        if [ "$APP_LINK" ]
-        then
+        for LINK in $APP_LINK
+        do
             if [ "${APP_START##*/}" = "$APP_START" ]
             then
-                echo -e "\033[33m=> $APP_DIRECTORY/${APP_LINK##*/}\033[0m"
-                sed -e "s/^source/##source/" "$0" > "$APP_DIRECTORY/${APP_LINK##*/}"
-                echo "$APP_SETTINGS && app_start \"\$@\"" >> "$APP_DIRECTORY/${APP_LINK##*/}"
-                chmod ugo+x "$APP_DIRECTORY/${APP_LINK##*/}"
-                touch -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/${APP_LINK##*/}"
+                echo -e "\033[33m=> $APP_DIRECTORY/${LINK##*/}\033[0m"
+                sed -e "s/^source/##source/" "$0" > "$APP_DIRECTORY/${LINK##*/}"
+                echo "$APP_SETTINGS && app_start \"\$@\"" >> "$APP_DIRECTORY/${LINK##*/}"
+                chmod ugo+x "$APP_DIRECTORY/${LINK##*/}"
+                touch -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/${LINK##*/}"
             else
                 echo -e "\033[33m=> $APP_DIRECTORY/${APP_START##*/}\033[0m"
                 sed -e "s/^source/##source/" "$0" > "$APP_DIRECTORY/${APP_START##*/}"
                 echo "$APP_SETTINGS && app_start \"\$@\"" >> "$APP_DIRECTORY/${APP_START##*/}"
                 chmod ugo+x "$APP_DIRECTORY/${APP_START##*/}"
                 touch -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/${APP_START##*/}"
-                if [ "$APP_LINK" != "${APP_START##*/}" ]
+                if [ "$LINK" != "${APP_START##*/}" ]
                 then
-                    echo -e "\033[33m=> $APP_DIRECTORY/$APP_LINK\033[0m"
-                    ln -sf "${APP_START##*/}" "$APP_DIRECTORY/$APP_LINK"
-                    touch -h -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/$APP_LINK"
+                    echo -e "\033[33m=> $APP_DIRECTORY/$LINK\033[0m"
+                    ln -sf "${APP_START##*/}" "$APP_DIRECTORY/$LINK"
+                    touch -h -r "$APP_DIRECTORY/$APP_START" "$APP_DIRECTORY/$LINK"
                 fi
             fi
-        fi
+        done
     fi
 
     PATH=../bin:$PATH fmod -R "$APP_DIRECTORY" > /dev/null 2>&1
