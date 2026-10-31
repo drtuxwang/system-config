@@ -6,7 +6,7 @@ Desktop audio volume utility.
 import argparse
 import signal
 import sys
-from typing import Generator, List
+from typing import List, Tuple
 
 from command_mod import Command
 from subtask_mod import Batch, Task
@@ -23,29 +23,26 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_settings(self) -> dict:
+    def get_settings(self) -> Tuple[int, int]:
         """
-        Return settings dictionary.
+        Return settings tuple.
         """
         return self._settings
 
     @staticmethod
-    def _getvol() -> Generator[tuple, None, None]:
-        pacmd = Command('pacmd', errors='stop')
-        task = Batch(pacmd.get_cmdline() + ['list-sinks'])
-        task.run(pattern='index:|\tvolume:.*%')
-        index = '0'
+    def _getvol() -> int:
+        wpctl = Command('wpctl', errors='stop')
+        task = Batch(wpctl.get_cmdline() + ['get-volume', '@DEFAULT_SINK@'])
+        task.run(pattern='^Volume: ', error2output=True)
         try:
             for line in task.get_output():
-                if 'index:' in line:
-                    index = line.split()[-1]
-                elif 'volume:' in line:
-                    percent = int(line.split('%', 1)[0].split()[-1])
-                    yield index, percent
-        except ValueError as exception:
-            raise SystemExit(
-                f'{sys.argv[0]}: Cannot detect current Pulseaudio volume.',
-            ) from exception
+                if line.startswith('Volume: '):
+                    return int(float(line.split()[-1]) * 100)
+        except ValueError:
+            pass
+        raise SystemExit(
+            f'{sys.argv[0]}: Cannot detect current Pipewire volume.',
+        )
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -83,17 +80,17 @@ class Options:
         self._parse_args(args[1:])
         change = self._args.change
 
-        self._settings = {}
-        for index, volume in self._getvol():
-            if change == '+':
-                new_volume = min(round(int(volume+10.01), -1), MAX_VOLUME)
-            elif change == '-':
-                new_volume = max(round(int(volume-9.99), -1), 0)
-            elif change == '=':
-                new_volume = 100
-            else:
-                new_volume = min(volume, MAX_VOLUME)
-            self._settings[index] = (volume, new_volume)
+        volume = self._getvol()
+        print("debugX1", volume)
+        if change == '+':
+            new_volume = min(round(int(volume+10.01), -1), MAX_VOLUME)
+        elif change == '-':
+            new_volume = max(round(int(volume-9.99), -1), 0)
+        elif change == '=':
+            new_volume = 100
+        else:
+            new_volume = min(volume, MAX_VOLUME)
+        self._settings = (volume, new_volume)
 
 
 class Main:
@@ -125,11 +122,15 @@ class Main:
         """
         options = Options()
 
-        pactl = Command('pactl', errors='stop')
-        for index, settings in sorted(options.get_settings().items()):
-            print(f"Output {index}: {settings[0]}% => {settings[1]}%")
-            pactl.set_args(['set-sink-volume', f'{index}', f'{settings[1]}%'])
-            Task(pactl.get_cmdline()).run()
+        wpctl = Command('wpctl', errors='stop')
+        volume, new_volume = options.get_settings()
+        print(f"Output : {volume}% => {new_volume}%")
+        wpctl.set_args([
+            'set-volume',
+            '@DEFAULT_AUDIO_SINK@',
+            f'{new_volume/100}',
+        ])
+        Task(wpctl.get_cmdline()).run()
 
         return 0
 
