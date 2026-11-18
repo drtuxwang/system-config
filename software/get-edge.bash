@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Edge 152.0.4191.66 (Official) portable app
+# Edge 156.0.4314.58 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="edge"
-    VERSION="152.0.4191.66-1"
+    VERSION="156.0.4314.58-1"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_${VERSION%-*}-$PORT"
