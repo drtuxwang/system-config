@@ -1,4 +1,6 @@
 binaryornot                  # ==0.4.4 (old version)
 backports.zstd               # ==1.6.0 (required by pyzstd for 3.10)
+dnspython                    # ==2.8.0 (old version)
 filelock                     # ==3.32.7 (old version)
 pipdeptree                   # ==4.2.5 (old version)
+soupsieve                    # ==2.10 (old version)
