@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# curl-impersonate 2.3.1 (Official) portable app
+# curl-impersonate 2.3.2 (Official) portable app
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 app_settings() {
     NAME="curl-impersonate"
-    VERSION="2.3.1"
+    VERSION="2.3.2"
     FIREFOX="153"
     PORT="linux64-x86"
 
