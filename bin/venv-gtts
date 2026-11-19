@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# gtts virtualenv
+#
+
+virtualenv_setup() {
+    VENV_PYTHON="python3"
+    VENV_PACKAGE="gtts==2.5.4"
+    VENV_DEPENDS="click==8.1.8"
+}
+
+
+source "${0%/*}/venv_mod.bash"
