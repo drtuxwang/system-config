@@ -2,6 +2,7 @@ astroid                      # ==3.3.11 (old version)
 binaryornot                  # ==0.4.4 (old version)
 build                        # ==None
 chardet                      # ==5.2.0 (old version)
+click                        # ==8.1.8 (old version)
 dnspython                    # ==2.7.0 (old version)
 filelock                     # ==3.19.1 (old version)
 Glances                      # ==4.4.1 (old version)

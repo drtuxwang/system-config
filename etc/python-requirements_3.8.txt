@@ -3,8 +3,9 @@ binaryornot                  # ==0.4.4 (old version)
 bson                         # ==0.5.10 (required instead of bson-senao for 3.8)
 bson-senao                   # ==None
 build                        # ==None
-chardet                      # ==5.2.0 (old version)
 certifi                      # ==2025.10.5 (old version)
+chardet                      # ==5.2.0 (old version)
+click                        # ==8.1.8 (old version)
 defusedxml                   # ==None
 python-discovery             # ==1.6.1 (old version)
 dnspython                    # ==2.6.1 (old version)

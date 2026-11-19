@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 from typing import List
 
+# pylint: disable=import-error
 import gtts  # type: ignore
 
 from command_mod import Command, CommandFile
