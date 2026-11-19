@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Audacity 3.6.4 (Official) portable app
+# Audacity 3.7.9 (Official) portable app
 #
 
 set -e
@@ -8,12 +8,12 @@ set -e
 
 app_settings() {
     NAME="audacity"
-    VERSION="3.6.4"
+    VERSION="3.7.9"
     PORT="linux64-x86"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"
     APP_FILES="
-        https://github.com/audacity/audacity/releases/download/Audacity-$VERSION/audacity-linux-$VERSION-x64.AppImage
+        https://github.com/audacity/audacity/releases/download/Audacity-$VERSION/audacity-linux-$VERSION-x64-22.04.AppImage
     "
     APP_REMOVE="
         audacity
