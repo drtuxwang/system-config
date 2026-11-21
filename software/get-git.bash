@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# GIT 2.51.2 (Official) source code
+# GIT 2.51.3 (Official) source code
 #
 
 set -e
@@ -8,7 +8,7 @@ set -e
 
 source_settings() {
     NAME="git"
-    VERSION="2.51.2"
+    VERSION="2.51.3"
     PORT="source-c"
 
     APP_DIRECTORY="${NAME}_$VERSION-$PORT"

@@ -166,7 +166,7 @@ the years.
  * software/check-files.bash       Check source files exists
  * software/files/*                Files for building
  * software/get-0ad.bash           0AD 0.28.0 (Debian 13) bubblewrap portable app
- * software/get-7zip.bash          7-Zip 26.05 (Official) source code & Windows portable app
+ * software/get-7zip.bash          7-Zip 26.06 (Official) source code & Windows portable app
  * software/get-asmc.bash          Asmc 2.37.67 (Official) portable app
  * software/get-audacity.bash      Audacity 3.7.9 (Official) portable app
  * software/get-busybox.bash       Busybox 1.37.0 (frippery.org) portable app
@@ -174,7 +174,7 @@ the years.
  * software/get-dneo.bash          Deno 2.9.5 (Official) portable app
  * software/get-edge.bash          Edge 152.0.4191.66 (Official) portable app
  * software/get-firefox.bash       Firefox 153.0esr (Official) portable app
- * software/get-git.bash           GIT 2.51.2 (Official) source code
+ * software/get-git.bash           GIT 2.51.3 (Official) source code
  * software/get-git-lfs.bash       Git LFS 3.7.1 (Official) portable app
  * software/get-gnome-hearts.bash  Gnome Hearts 0.3.2 (Debian 9) portable app
  * software/get-golang.bash        Golang 1.25.13 (Official) portable app
